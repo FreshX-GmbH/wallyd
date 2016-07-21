@@ -95,7 +95,7 @@ bool uiLoop(void *p){
         if(strcmp(funcName, "video::video_refresh_timer") != 0){
              SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
         }
-        free(funcName);
+        //free(funcName);
         // TODO : This needs to be freed somehow
         // Dont free it here, the strings are still used in the maps etc...
         //if(event.user.data2) free(event.user.data2);

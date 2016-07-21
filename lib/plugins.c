@@ -38,7 +38,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 break;
             case CALL_TYPE_STR:
                 if(paramsTmp){
-                    //params = strdup(paramsTmp);
+                    params = strdup(paramsTmp);
                     params = paramsTmp;
                     slog(LVL_ALL,DEBUG,"call( %s(%s) )",funcName,params);
                     event.type = WALLY_CALL_STR;
