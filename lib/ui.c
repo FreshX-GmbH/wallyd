@@ -25,7 +25,7 @@ bool uiLoop(void *p){
     slog(LVL_NOISY,DEBUG,"UI Loop started and waiting for events");
     //int delay=0;
     SDL_Event event;
-    char *funcName;
+    char *funcName, *param;
     SDL_zero(event);
     for(;;) {
 #ifdef WAIT_EV
@@ -74,7 +74,7 @@ bool uiLoop(void *p){
                   thr_func(event.user.data2);
                   break;
             case WALLY_CALL_STR:
-                  char * param = strdup(event.user.data2);
+                  param = strdup(event.user.data2);
                   slog(LVL_ALL,DEBUG,"Threaded STR call to %s(%s)", funcName, param);
                   thr_func(event.user.data2);
                   break;
