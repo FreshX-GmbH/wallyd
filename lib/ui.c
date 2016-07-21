@@ -76,7 +76,7 @@ bool uiLoop(void *p){
             case WALLY_CALL_STR:
                   param = strdup(event.user.data2);
                   slog(LVL_ALL,DEBUG,"Threaded STR call to %s(%s)", funcName, param);
-                  thr_func(event.user.data2);
+                  thr_func(param);
                   break;
             case WALLY_CALL_NULL:
                   slog(LVL_ALL,DEBUG,"Threaded NULL call to %s()", funcName);
