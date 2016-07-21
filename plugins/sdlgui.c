@@ -192,20 +192,20 @@ void c_drawLine(char *str)
     drawLine(texName, x1, y1, x2, y2, col);
 }
 
-void c_drawFilledBox(char *str)
+void c_drawFilledBox(char *tmpStr)
 {
     SDL_Color col;
     SDL_Color scol;
-    
-    const char *texName= strsep(&str, " \t");
-    const char *x1Str  = strsep(&str, " \t");
-    const char *y1Str  = strsep(&str, " \t");
-    const char *wStr   = strsep(&str, " \t");
-    const char *hStr   = strsep(&str, " \t");
-    const char *strokeStr = strsep(&str, " \t");
-    const char *colStr    = strsep(&str, " \t");
-    const char *strColStr = strsep(&str, " \t");
-    const char *alphaStr  = strsep(&str, " \t");
+    char *str = strdup(tmpStr); 
+    char *texName= strsep(&str, " \t");
+    char *x1Str  = strsep(&str, " \t");
+    char *y1Str  = strsep(&str, " \t");
+    char *wStr   = strsep(&str, " \t");
+    char *hStr   = strsep(&str, " \t");
+    char *strokeStr = strsep(&str, " \t");
+    char *colStr    = strsep(&str, " \t");
+    char *strColStr = strsep(&str, " \t");
+    char *alphaStr  = strsep(&str, " \t");
     if(!texName || !x1Str || !y1Str || !wStr || !hStr || !strokeStr || !alphaStr){
     	slog(LVL_ALL,DEBUG, "c_drawFilledBox parse error : %s",str);
 	return;
