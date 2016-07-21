@@ -74,7 +74,8 @@ bool uiLoop(void *p){
                   thr_func(event.user.data2);
                   break;
             case WALLY_CALL_STR:
-                  slog(LVL_ALL,DEBUG,"Threaded STR call to %s(%s)", funcName, event.user.data2);
+                  char * param = strdup(event.user.data2);
+                  slog(LVL_ALL,DEBUG,"Threaded STR call to %s(%s)", funcName, param);
                   thr_func(event.user.data2);
                   break;
             case WALLY_CALL_NULL:
@@ -95,10 +96,8 @@ bool uiLoop(void *p){
         if(strcmp(funcName, "video::video_refresh_timer") != 0){
              SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
         }
-        //free(funcName);
         // TODO : This needs to be freed somehow
-        // Dont free it here, the strings are still used in the maps etc...
-        //if(event.user.data2) free(event.user.data2);
+        //free(funcName);
     }
     slog(LVL_NOISY,DEBUG,"UI Loop finished and waiting for events");
     return true;
