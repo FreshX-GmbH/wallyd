@@ -71,11 +71,12 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         // The thread loop will free(funcName);
         event.user.data1=funcName;
         event.user.data2=params;
+        // We give up the ownership of funcName + params here
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
         if(waitThread == true){
             // Enable the Mutex code for synced function calls
-            slog(LVL_ALL,DEBUG,"Wait until %s has finished.",funcName);
+            slog(LVL_ALL,DEBUG,"Wait %d ms until %s has finished.",SDLWAITTIMEOUT,funcName);
             if(SDL_MUTEX_TIMEDOUT == 
                     SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,SDLWAITTIMEOUT))
                 {
@@ -92,16 +93,9 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         }
         params = paramsTmp;
         ret = (*func)(params);
-        // In the non threaded call we free(funcName);
-        free(funcName);
+        // We give up the ownership of funcName + params here
     }
-    // To avoid memory leaks, we free the fkt name here
-    // the called function need to make a copy of the name if it reuses it
     
-    // TODO
-    //if(paramType == CALL_TYPE_STR && params != NULL){
-    //    free(params);
-    //}
     return ret;
 }
 bool callWithData(char *funcname, void *ret, void *params){
