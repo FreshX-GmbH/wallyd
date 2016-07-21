@@ -13,9 +13,9 @@ The wally daemon is a small daemon used to control wally devices right after sta
 * a plugin system (see ./plugin/myPlugin.c) which enables you to easily extend the daemon
 * embedded JavaScript engine to easily control the daemon / display
 * SDL2 driven (runs on macOS, Linux, Windows)
-* can be run as a part of your system (i.e. App, ScreenSaver etc) or as
+* can be run as a part of your system (i.e. seperate app, ScreenSaver etc) or as
 * standalone wally device (running from flash, SDCard, USB, HDD, network)
-* a dedicated wally device can be any kind linux ready hardware (see https://github.com/FreshXOpenSource/Firmware-builder)
+* a dedicated wally device can be any linux ready hardware (see https://github.com/FreshXOpenSource/Firmware-builder)
 * the standalone wally device firmware is highly robust to power failures / power off as in TV's etc
 
 Projects Wally (TV,Cam,ID,Photobooth) are used in
