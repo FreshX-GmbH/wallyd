@@ -1,0 +1,10 @@
+#define AV_CODEC_CAP_DRAW_HORIZ_BAND     (1 <<  0)
+#define AV_CODEC_CAP_DR1                 (1 <<  1)
+#define AV_CODEC_CAP_EXPERIMENTAL        (1 <<  9)
+#define AV_CODEC_CAP_FRAME_THREADS       (1 << 12)
+#define AV_CODEC_CAP_SLICE_THREADS       (1 << 13)
+#define CODEC_CAP_DRAW_HORIZ_BAND AV_CODEC_CAP_DRAW_HORIZ_BAND ///< Decoder can use draw_horiz_band callback.
+#define CODEC_CAP_DR1             AV_CODEC_CAP_DR1
+#define CODEC_CAP_EXPERIMENTAL     AV_CODEC_CAP_EXPERIMENTAL
+#define CODEC_CAP_FRAME_THREADS    AV_CODEC_CAP_FRAME_THREADS
+#define CODEC_CAP_SLICE_THREADS    AV_CODEC_CAP_SLICE_THREADS

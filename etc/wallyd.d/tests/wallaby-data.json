@@ -1,0 +1,72 @@
+{ 
+    "objects": [ 
+      { 
+        "id": "0", 
+        "style": {}, 
+        "geometry": { 
+          "x": 0, 
+          "y": 0 
+        } 
+      }, 
+      { 
+        "id": "3", 
+        "value": "", 
+        "style": { 
+          "whiteSpace": "wrap", 
+          "html": "1", 
+          "strokeColor": "#000000", 
+          "fillColor": "none", 
+          "strokeWidth": "10" 
+        }, 
+        "parent": "1", 
+        "vertex": "1", 
+        "geometry": { 
+          "x": 151.20000000000002, 
+          "y": 100.8, 
+          "width": 295.2, 
+          "height": 187.20000000000002, 
+          "as": null 
+        } 
+      }, 
+      { 
+        "id": "4", 
+        "value": "Wallaby Rockz", 
+        "style": { 
+          "text": true, 
+          "html": "1", 
+          "strokeColor": "none", 
+          "fillColor": "none", 
+          "align": "center", 
+          "verticalAlign": "middle", 
+          "whiteSpace": "wrap", 
+          "overflow": "hidden", 
+          "dashed": "1", 
+          "strokeWidth": "3", 
+          "fontSize": "47", 
+          "fontFamily": "LiberationSans" 
+        }, 
+        "parent": "1", 
+        "vertex": "1", 
+        "geometry": { 
+          "x": 180, 
+          "y": 136.79999999999998, 
+          "width": 230.4, 
+          "height": 115.2, 
+          "as": null 
+        } 
+      } 
+    ], 
+    "groups": [ 
+      { 
+        "id": "1", 
+        "parent": "0", 
+        "style": {}, 
+        "geometry": { 
+          "width": null, 
+          "height": null, 
+          "y": 0 
+        }, 
+        "layer": true 
+      } 
+    ] 
+}

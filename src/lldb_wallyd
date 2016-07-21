@@ -1,0 +1,3 @@
+#!/bin/sh
+
+glibtool --mode=execute lldb src/wallyd

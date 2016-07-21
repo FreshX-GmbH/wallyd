@@ -1,0 +1,3056 @@
+{
+    "objects": [
+      {
+        "id": "0",
+        "style": {},
+        "geometry": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": "138",
+        "value": "<key>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "dashed": "1",
+          "fontSize": "7",
+          "fontFamily": "LiberationSans",
+          "glass": "1"
+        },
+        "parent": "144",
+        "vertex": "1",
+        "geometry": {
+          "x": 1.44,
+          "y": 0,
+          "width": 64.08,
+          "height": 12.24,
+          "as": null
+        }
+      },
+      {
+        "id": "139",
+        "value": "<value>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "dashed": "1",
+          "fontSize": "7",
+          "fontFamily": "LiberationSans",
+          "glass": "1"
+        },
+        "parent": "144",
+        "vertex": "1",
+        "geometry": {
+          "x": 20.160000000000004,
+          "y": 0.72,
+          "width": 68.39999999999999,
+          "height": 11.52,
+          "as": null
+        }
+      },
+      {
+        "id": "76",
+        "value": "<description>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "127",
+        "vertex": "1",
+        "geometry": {
+          "x": 113.76,
+          "y": 3.6,
+          "width": 164.88,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "77",
+        "value": "<count>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "127",
+        "vertex": "1",
+        "geometry": {
+          "x": 262.08,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "81",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "1",
+          "exitY": "0.75",
+          "entryX": "1",
+          "entryY": "0.75",
+          "fontSize": "12",
+          "fontStyle": "0"
+        },
+        "parent": "127",
+        "source": "76",
+        "target": "76",
+        "edge": "1",
+        "geometry": {
+          "x": 278.76000000000005,
+          "y": 17.64,
+          "as": null
+        }
+      },
+      {
+        "id": "50",
+        "value": "<pos>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans",
+          "fontColor": "#FF0000"
+        },
+        "parent": "128",
+        "vertex": "1",
+        "geometry": {
+          "x": 6.4799999999999995,
+          "y": 3.5228571428571196,
+          "width": 27.36,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "51",
+        "value": "<article>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "128",
+        "vertex": "1",
+        "geometry": {
+          "x": 48.24,
+          "y": 3.6,
+          "width": 64.08,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "52",
+        "value": "<description>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "128",
+        "vertex": "1",
+        "geometry": {
+          "x": 113.76,
+          "y": 3.6,
+          "width": 164.88,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "53",
+        "value": "<count>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "128",
+        "vertex": "1",
+        "geometry": {
+          "x": 262.08,
+          "y": 3.6,
+          "width": 55.44,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "54",
+        "value": "<unit>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "128",
+        "vertex": "1",
+        "geometry": {
+          "x": 325.43999999999994,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "55",
+        "value": "<total>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "128",
+        "vertex": "1",
+        "geometry": {
+          "x": 398.88,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "56",
+        "value": "<price>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "128",
+        "vertex": "1",
+        "geometry": {
+          "x": 353.52,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "59",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "1",
+          "exitY": "0.75",
+          "entryX": "1",
+          "entryY": "0.75",
+          "fontSize": "12",
+          "fontStyle": "0"
+        },
+        "parent": "128",
+        "source": "52",
+        "target": "52",
+        "edge": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "64",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "0.5",
+          "exitY": "1",
+          "entryX": "0.5",
+          "entryY": "1",
+          "fontSize": "12",
+          "fontStyle": "0"
+        },
+        "parent": "128",
+        "source": "50",
+        "target": "50",
+        "edge": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "98",
+        "value": "<vat>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "130",
+        "vertex": "1",
+        "geometry": {
+          "x": 67.67999999999999,
+          "y": 22.24285714285712,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "100",
+        "value": "<total>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "130",
+        "vertex": "1",
+        "geometry": {
+          "x": 67.67999999999999,
+          "y": 40.96285714285712,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "88",
+        "value": "Summe",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "130",
+        "vertex": "1",
+        "geometry": {
+          "x": 8.64,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "90",
+        "value": "<sum>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "130",
+        "vertex": "1",
+        "geometry": {
+          "x": 67.67999999999999,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "97",
+        "value": "zzgl. <pc> MwSt",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "130",
+        "vertex": "1",
+        "geometry": {
+          "x": 8.64,
+          "y": 22.32,
+          "width": 75.60000000000001,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "99",
+        "value": "Gesamt",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "130",
+        "vertex": "1",
+        "geometry": {
+          "x": 9.36,
+          "y": 40.96285714285712,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "101",
+        "value": "",
+        "style": {
+          "line": true,
+          "html": "1",
+          "align": "left",
+          "strokeWidth": "2",
+          "fontStyle": "1"
+        },
+        "parent": "130",
+        "vertex": "1",
+        "geometry": {
+          "x": 8.64,
+          "y": 38.88,
+          "width": 115.2,
+          "height": 7.2,
+          "as": null
+        }
+      },
+      {
+        "id": "70",
+        "value": "",
+        "style": {
+          "line": true,
+          "html": "1",
+          "align": "right",
+          "fontSize": "12",
+          "spacingTop": "8",
+          "strokeWidth": "1"
+        },
+        "parent": "131",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 23.04,
+          "width": 451.43999999999994,
+          "height": 7.2,
+          "as": null
+        }
+      },
+      {
+        "id": "36",
+        "value": "",
+        "style": {
+          "line": true,
+          "html": "1",
+          "align": "right",
+          "fontSize": "12",
+          "spacingTop": "8",
+          "strokeWidth": "1"
+        },
+        "parent": "131",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 451.43999999999994,
+          "height": 7.2,
+          "as": null
+        }
+      },
+      {
+        "id": "20",
+        "value": "Pos.",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "131",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 7.2,
+          "width": 27.36,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "21",
+        "value": "Art-Nr.",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "131",
+        "vertex": "1",
+        "geometry": {
+          "x": 41.76,
+          "y": 7.2,
+          "width": 41.76,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "24",
+        "value": "Bezeichnung",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "131",
+        "vertex": "1",
+        "geometry": {
+          "x": 107.28,
+          "y": 7.2,
+          "width": 88.56,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "25",
+        "value": "Menge",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "131",
+        "vertex": "1",
+        "geometry": {
+          "x": 255.6,
+          "y": 7.2,
+          "width": 56.160000000000004,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "26",
+        "value": "Einheit",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "131",
+        "vertex": "1",
+        "geometry": {
+          "x": 318.96,
+          "y": 7.2,
+          "width": 56.160000000000004,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "27",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "0.75",
+          "exitY": "1",
+          "entryX": "0.75",
+          "entryY": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "131",
+        "source": "25",
+        "target": "25",
+        "edge": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "28",
+        "value": "Preis",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "131",
+        "vertex": "1",
+        "geometry": {
+          "x": 347.04,
+          "y": 7.2,
+          "width": 56.160000000000004,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "29",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "0.75",
+          "exitY": "1",
+          "entryX": "0.75",
+          "entryY": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "131",
+        "source": "28",
+        "target": "28",
+        "edge": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "30",
+        "value": "Gesamt",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "131",
+        "vertex": "1",
+        "geometry": {
+          "x": 392.40000000000003,
+          "y": 7.2,
+          "width": 56.160000000000004,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "155",
+        "value": "<positionsFooter>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "152",
+        "vertex": "1",
+        "geometry": {
+          "x": 8.64,
+          "y": 3.6,
+          "width": 444.96,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "156",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "1",
+          "exitY": "0.75",
+          "entryX": "1",
+          "entryY": "0.75",
+          "fontSize": "12",
+          "fontStyle": "0"
+        },
+        "parent": "152",
+        "source": "155",
+        "target": "155",
+        "edge": "1",
+        "geometry": {
+          "x": 278.76000000000005,
+          "y": 17.64,
+          "as": null
+        }
+      },
+      {
+        "id": "169",
+        "value": "",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "glass": "1",
+          "dashed": "1",
+          "fontSize": "12",
+          "fontColor": "#330000",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "176",
+        "vertex": "1",
+        "geometry": {
+          "x": 283.68,
+          "y": 5.76,
+          "width": 33.120000000000005,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "170",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "0.75",
+          "exitY": "1",
+          "entryX": "0.75",
+          "entryY": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "12",
+          "fontColor": "#330000"
+        },
+        "parent": "176",
+        "source": "169",
+        "target": "169",
+        "edge": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "171",
+        "value": "<total>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "glass": "1",
+          "dashed": "1",
+          "fontSize": "12",
+          "fontColor": "#330000",
+          "fontFamily": "LiberationSans",
+          "fontStyle": "1"
+        },
+        "parent": "176",
+        "vertex": "1",
+        "geometry": {
+          "x": 408.96,
+          "y": 5.040000000000001,
+          "width": 46.800000000000004,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "175",
+        "value": "Teilsumme",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "glass": "1",
+          "dashed": "1",
+          "fontSize": "12",
+          "fontColor": "#330000",
+          "fontFamily": "LiberationSans",
+          "fontStyle": "1"
+        },
+        "parent": "176",
+        "vertex": "1",
+        "geometry": {
+          "x": 340.56000000000006,
+          "y": 5.040000000000001,
+          "width": 72,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "6",
+        "value": "<sender>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontSize": "8",
+          "fontFamily": "LiberationSans",
+          "fontStyle": "4"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 84.96,
+          "y": 102.24,
+          "width": 255.6,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "7",
+        "value": "<name>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 84.96,
+          "y": 130.93920000000003,
+          "width": 227.52,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "8",
+        "value": "<address2>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 84.96,
+          "y": 142.4592,
+          "width": 227.52,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "9",
+        "value": "<address>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 84.96,
+          "y": 153.97920000000002,
+          "width": 227.52,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "10",
+        "value": "<city>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 84.96,
+          "y": 165.4992,
+          "width": 227.52,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "11",
+        "value": "[first]<title>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontFamily": "LiberationSans",
+          "fontSize": "12",
+          "fontStyle": "1"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 84.96,
+          "y": 241.20000000000002,
+          "width": 227.52,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "12",
+        "value": "[first]<subtitle>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10",
+          "fontStyle": "2"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 84.96,
+          "y": 255.6,
+          "width": 437.76,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "15",
+        "value": "<footer>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "top",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontSize": "8",
+          "fontFamily": "LiberationSans"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 84.96,
+          "y": 758.8799999999999,
+          "width": 448.56000000000006,
+          "height": 36.72,
+          "as": null
+        }
+      },
+      {
+        "id": "65",
+        "value": "image:logo",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "fillColor": "none",
+          "strokeColor": "#5D65DF"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 462.96,
+          "y": 112.32000000000001,
+          "width": 72,
+          "height": 72,
+          "as": null
+        }
+      },
+      {
+        "id": "110",
+        "value": "[first]qr:<revoprint>",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "1",
+          "fontSize": "12",
+          "align": "center",
+          "fillColor": "none",
+          "dashed": "1"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 462.96,
+          "y": 28.080000000000002,
+          "width": 72,
+          "height": 72,
+          "as": null
+        }
+      },
+      {
+        "id": "178",
+        "value": "Seite <_page> von <_pages>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "glass": "1",
+          "dashed": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10",
+          "fontColor": "#330000"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 254.16,
+          "y": 801.36,
+          "width": 116.64000000000001,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "185",
+        "value": "<description>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "182",
+        "geometry": {
+          "x": 113.76,
+          "y": 3.6,
+          "width": 164.88,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "186",
+        "value": "<count>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "182",
+        "geometry": {
+          "x": 262.08,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "187",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "1",
+          "exitY": "0.75",
+          "entryX": "1",
+          "entryY": "0.75",
+          "fontSize": "12",
+          "fontStyle": "0"
+        },
+        "edge": "1",
+        "parent": "182",
+        "source": "185",
+        "target": "185",
+        "geometry": {
+          "x": 278.76000000000005,
+          "y": 17.64,
+          "as": null
+        }
+      },
+      {
+        "id": "191",
+        "value": "<pos>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans",
+          "fontColor": "#FF0000"
+        },
+        "vertex": "1",
+        "parent": "188",
+        "geometry": {
+          "x": 6.4799999999999995,
+          "y": 3.5228571428571196,
+          "width": 27.36,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "192",
+        "value": "<article>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "188",
+        "geometry": {
+          "x": 48.24,
+          "y": 3.6,
+          "width": 64.08,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "193",
+        "value": "<description>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "188",
+        "geometry": {
+          "x": 113.76,
+          "y": 3.6,
+          "width": 164.88,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "194",
+        "value": "<count>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "188",
+        "geometry": {
+          "x": 262.08,
+          "y": 3.6,
+          "width": 55.44,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "195",
+        "value": "<unit>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "188",
+        "geometry": {
+          "x": 325.43999999999994,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "196",
+        "value": "<total>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "188",
+        "geometry": {
+          "x": 398.88,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "197",
+        "value": "<price>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "188",
+        "geometry": {
+          "x": 353.52,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "198",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "1",
+          "exitY": "0.75",
+          "entryX": "1",
+          "entryY": "0.75",
+          "fontSize": "12",
+          "fontStyle": "0"
+        },
+        "edge": "1",
+        "parent": "188",
+        "source": "193",
+        "target": "193",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "199",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "0.5",
+          "exitY": "1",
+          "entryX": "0.5",
+          "entryY": "1",
+          "fontSize": "12",
+          "fontStyle": "0"
+        },
+        "edge": "1",
+        "parent": "188",
+        "source": "191",
+        "target": "191",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "202",
+        "value": "<vat>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "200",
+        "geometry": {
+          "x": 67.67999999999999,
+          "y": 22.24285714285712,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "203",
+        "value": "<total>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "200",
+        "geometry": {
+          "x": 67.67999999999999,
+          "y": 40.96285714285712,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "205",
+        "value": "Summe",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "200",
+        "geometry": {
+          "x": 8.64,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "206",
+        "value": "<sum>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "200",
+        "geometry": {
+          "x": 67.67999999999999,
+          "y": 3.5228571428571196,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "207",
+        "value": "zzgl. <pc> MwSt",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "200",
+        "geometry": {
+          "x": 8.64,
+          "y": 22.32,
+          "width": 75.60000000000001,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "208",
+        "value": "Gesamt",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "200",
+        "geometry": {
+          "x": 9.36,
+          "y": 40.96285714285712,
+          "width": 56.160000000000004,
+          "height": 19.02857142857143,
+          "as": null
+        }
+      },
+      {
+        "id": "209",
+        "value": "",
+        "style": {
+          "line": true,
+          "html": "1",
+          "align": "left",
+          "strokeWidth": "2",
+          "fontStyle": "1"
+        },
+        "vertex": "1",
+        "parent": "200",
+        "geometry": {
+          "x": 8.64,
+          "y": 38.88,
+          "width": 115.2,
+          "height": 7.2,
+          "as": null
+        }
+      },
+      {
+        "id": "212",
+        "value": "",
+        "style": {
+          "line": true,
+          "html": "1",
+          "align": "right",
+          "fontSize": "12",
+          "spacingTop": "8",
+          "strokeWidth": "1"
+        },
+        "vertex": "1",
+        "parent": "210",
+        "geometry": {
+          "x": 0,
+          "y": 23.04,
+          "width": 451.43999999999994,
+          "height": 7.2,
+          "as": null
+        }
+      },
+      {
+        "id": "213",
+        "value": "",
+        "style": {
+          "line": true,
+          "html": "1",
+          "align": "right",
+          "fontSize": "12",
+          "spacingTop": "8",
+          "strokeWidth": "1"
+        },
+        "vertex": "1",
+        "parent": "210",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 451.43999999999994,
+          "height": 7.2,
+          "as": null
+        }
+      },
+      {
+        "id": "214",
+        "value": "Pos.",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "vertex": "1",
+        "parent": "210",
+        "geometry": {
+          "x": 0,
+          "y": 7.2,
+          "width": 27.36,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "215",
+        "value": "Art-Nr.",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "vertex": "1",
+        "parent": "210",
+        "geometry": {
+          "x": 41.76,
+          "y": 7.2,
+          "width": 41.76,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "216",
+        "value": "Bezeichnung",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "vertex": "1",
+        "parent": "210",
+        "geometry": {
+          "x": 107.28,
+          "y": 7.2,
+          "width": 88.56,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "217",
+        "value": "Menge",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "vertex": "1",
+        "parent": "210",
+        "geometry": {
+          "x": 255.6,
+          "y": 7.2,
+          "width": 56.160000000000004,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "218",
+        "value": "Einheit",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "vertex": "1",
+        "parent": "210",
+        "geometry": {
+          "x": 318.96,
+          "y": 7.2,
+          "width": 56.160000000000004,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "219",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "0.75",
+          "exitY": "1",
+          "entryX": "0.75",
+          "entryY": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "edge": "1",
+        "parent": "210",
+        "source": "217",
+        "target": "217",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "220",
+        "value": "Preis",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "vertex": "1",
+        "parent": "210",
+        "geometry": {
+          "x": 347.04,
+          "y": 7.2,
+          "width": 56.160000000000004,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "221",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "0.75",
+          "exitY": "1",
+          "entryX": "0.75",
+          "entryY": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "edge": "1",
+        "parent": "210",
+        "source": "220",
+        "target": "220",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "222",
+        "value": "Gesamt",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "10"
+        },
+        "vertex": "1",
+        "parent": "210",
+        "geometry": {
+          "x": 392.40000000000003,
+          "y": 7.2,
+          "width": 56.160000000000004,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "226",
+        "value": "<positionsFooter>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontStyle": "0",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "223",
+        "geometry": {
+          "x": 8.64,
+          "y": 3.6,
+          "width": 444.96,
+          "height": 18.72,
+          "as": null
+        }
+      },
+      {
+        "id": "227",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "1",
+          "exitY": "0.75",
+          "entryX": "1",
+          "entryY": "0.75",
+          "fontSize": "12",
+          "fontStyle": "0"
+        },
+        "edge": "1",
+        "parent": "223",
+        "source": "226",
+        "target": "226",
+        "geometry": {
+          "x": 278.76000000000005,
+          "y": 17.64,
+          "as": null
+        }
+      },
+      {
+        "id": "231",
+        "value": "",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "glass": "1",
+          "dashed": "1",
+          "fontSize": "12",
+          "fontColor": "#330000",
+          "fontFamily": "LiberationSans"
+        },
+        "vertex": "1",
+        "parent": "228",
+        "geometry": {
+          "x": 283.68,
+          "y": 5.76,
+          "width": 33.120000000000005,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "232",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "0.75",
+          "exitY": "1",
+          "entryX": "0.75",
+          "entryY": "1",
+          "fontFamily": "LiberationSans",
+          "fontSize": "12",
+          "fontColor": "#330000"
+        },
+        "edge": "1",
+        "parent": "228",
+        "source": "231",
+        "target": "231",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "233",
+        "value": "<total>",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "right",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "glass": "1",
+          "dashed": "1",
+          "fontSize": "12",
+          "fontColor": "#330000",
+          "fontFamily": "LiberationSans",
+          "fontStyle": "1"
+        },
+        "vertex": "1",
+        "parent": "228",
+        "geometry": {
+          "x": 408.96,
+          "y": 5.040000000000001,
+          "width": 46.800000000000004,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "234",
+        "value": "Teilsumme",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "left",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "glass": "1",
+          "dashed": "1",
+          "fontSize": "12",
+          "fontColor": "#330000",
+          "fontFamily": "LiberationSans",
+          "fontStyle": "1"
+        },
+        "vertex": "1",
+        "parent": "228",
+        "geometry": {
+          "x": 340.56000000000006,
+          "y": 5.040000000000001,
+          "width": 72,
+          "height": 14.4,
+          "as": null
+        }
+      }
+    ],
+    "groups": [
+      {
+        "label": "",
+        "link": "tableBody",
+        "id": "134",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "1",
+          "fillColor": "none",
+          "dashed": "1",
+          "fontColor": "#0000EE",
+          "fontStyle": "4",
+          "glass": "1"
+        },
+        "parent": "132",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 88.56,
+          "height": 56.88,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow",
+        "id": "144",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4",
+          "fontSize": "7",
+          "glass": "1"
+        },
+        "parent": "132",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 88.56,
+          "height": 12.24,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "135",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "1",
+          "fillColor": "none",
+          "dashed": "1",
+          "fontSize": "7",
+          "glass": "1"
+        },
+        "parent": "144",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 88.56,
+          "height": 12.24,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableBody",
+        "id": "35",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "align": "center",
+          "fillColor": "none",
+          "strokeColor": "#000000",
+          "dashed": "1",
+          "strokeWidth": "2",
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "parent": "124",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 471.59999999999997,
+          "height": 535.6800000000001,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableTopHeader",
+        "id": "120",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "fontColor": "#0000EE",
+          "fontStyle": "4",
+          "glass": "1"
+        },
+        "parent": "124",
+        "vertex": "1",
+        "geometry": {
+          "x": 5.759999999999977,
+          "y": 1.4399999999999977,
+          "width": 462.24,
+          "height": 68.39999999999999,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:template2",
+        "id": "127",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "parent": "124",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 5.759999999999977,
+          "y": 145.44000000000003,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:template2",
+        "id": "96",
+        "style": {
+          "group": true
+        },
+        "parent": "127",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "73",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "glass": "1"
+        },
+        "parent": "127",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:template1",
+        "id": "128",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "parent": "124",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 5.759999999999977,
+          "y": 104.4,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:template1",
+        "id": "95",
+        "style": {
+          "group": true
+        },
+        "parent": "128",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "67",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "glass": "1"
+        },
+        "parent": "128",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:total",
+        "id": "130",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "parent": "124",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 336.96000000000004,
+          "y": 186.48000000000005,
+          "width": 131.04,
+          "height": 65.52,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:total",
+        "id": "107",
+        "style": {
+          "group": true
+        },
+        "parent": "130",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 131.04,
+          "height": 65.52,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "84",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "glass": "1"
+        },
+        "parent": "130",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 131.04,
+          "height": 65.52,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableHeader",
+        "id": "131",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "parent": "124",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 10.799999999999983,
+          "y": 67.67999999999998,
+          "width": 451.43999999999994,
+          "height": 30.24,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableHeader",
+        "id": "72",
+        "style": {
+          "group": true
+        },
+        "parent": "131",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 451.43999999999994,
+          "height": 30.24,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableTotalFooter",
+        "id": "152",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "parent": "124",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 5.040000000000006,
+          "y": 296.6400000000001,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableTotalFooter",
+        "id": "153",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "parent": "152",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "154",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "glass": "1"
+        },
+        "parent": "152",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableFooter:sumUp",
+        "id": "176",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "parent": "124",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 5.759999999999977,
+          "y": 264.24,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableTotalFooter",
+        "id": "111",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "parent": "176",
+        "vertex": "1",
+        "connectable": "0",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "112",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "glass": "1"
+        },
+        "parent": "176",
+        "vertex": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableBody",
+        "id": "180",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "align": "center",
+          "fillColor": "none",
+          "strokeColor": "#000000",
+          "dashed": "1",
+          "strokeWidth": "2",
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "vertex": "1",
+        "parent": "179",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 471.59999999999997,
+          "height": 535.6800000000001,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableTopHeader",
+        "id": "181",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "fontColor": "#0000EE",
+          "fontStyle": "4",
+          "glass": "1"
+        },
+        "vertex": "1",
+        "parent": "179",
+        "geometry": {
+          "x": 5.759999999999977,
+          "y": 1.4399999999999977,
+          "width": 462.24,
+          "height": 68.39999999999999,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:template2",
+        "id": "182",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "179",
+        "geometry": {
+          "x": 5.759999999999977,
+          "y": 145.44000000000003,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:template2",
+        "id": "183",
+        "style": {
+          "group": true
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "182",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "184",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "glass": "1"
+        },
+        "vertex": "1",
+        "parent": "182",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:template1",
+        "id": "188",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "179",
+        "geometry": {
+          "x": 5.759999999999977,
+          "y": 104.4,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:template1",
+        "id": "189",
+        "style": {
+          "group": true
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "188",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "190",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "glass": "1"
+        },
+        "vertex": "1",
+        "parent": "188",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:total",
+        "id": "200",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "179",
+        "geometry": {
+          "x": 336.96000000000004,
+          "y": 186.48000000000005,
+          "width": 131.04,
+          "height": 65.52,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableRow:total",
+        "id": "201",
+        "style": {
+          "group": true
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "200",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 131.04,
+          "height": 65.52,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "204",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "glass": "1"
+        },
+        "vertex": "1",
+        "parent": "200",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 131.04,
+          "height": 65.52,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableHeader",
+        "id": "210",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "179",
+        "geometry": {
+          "x": 10.799999999999983,
+          "y": 67.67999999999998,
+          "width": 451.43999999999994,
+          "height": 30.24,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableHeader",
+        "id": "211",
+        "style": {
+          "group": true
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "210",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 451.43999999999994,
+          "height": 30.24,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableTotalFooter",
+        "id": "223",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "179",
+        "geometry": {
+          "x": 5.040000000000006,
+          "y": 296.6400000000001,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableTotalFooter",
+        "id": "224",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "223",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "225",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "glass": "1"
+        },
+        "vertex": "1",
+        "parent": "223",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableFooter:sumUp",
+        "id": "228",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "179",
+        "geometry": {
+          "x": 5.759999999999977,
+          "y": 264.24,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "link": "tableTotalFooter",
+        "id": "229",
+        "style": {
+          "group": true,
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "vertex": "1",
+        "connectable": "0",
+        "parent": "228",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "label": "",
+        "id": "230",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1",
+          "strokeWidth": "2",
+          "fontSize": "12",
+          "align": "center",
+          "dashed": "1",
+          "fillColor": "none",
+          "glass": "1"
+        },
+        "vertex": "1",
+        "parent": "228",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 462.24,
+          "height": 25.2,
+          "as": null
+        }
+      },
+      {
+        "id": "132",
+        "value": "[first]table:infos",
+        "parent": "0",
+        "style": {},
+        "geometry": {
+          "x": 447.84,
+          "y": 212.4,
+          "width": 88.56,
+          "height": 56.880000000000024
+        },
+        "link": "[first]table:infos",
+        "layer": true
+      },
+      {
+        "id": "124",
+        "value": "multiTable:positions",
+        "style": {},
+        "parent": "0",
+        "geometry": {
+          "x": 75.60000000000001,
+          "y": 205.92,
+          "width": 471.5999999999999,
+          "height": 535.6800000000001
+        },
+        "link": "multiTable:positions",
+        "layer": true
+      },
+      {
+        "id": "1",
+        "style": {},
+        "parent": "0",
+        "geometry": {
+          "width": null,
+          "height": null,
+          "y": 0
+        },
+        "layer": true
+      },
+      {
+        "id": "179",
+        "value": "multiTable:positions2",
+        "parent": "0",
+        "style": {},
+        "geometry": {
+          "x": 75.60000000000001,
+          "y": 205.92,
+          "width": 471.5999999999999,
+          "height": 535.6800000000001
+        },
+        "link": "multiTable:positions2",
+        "layer": true
+      }
+    ]
+}

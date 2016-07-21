@@ -1,0 +1,414 @@
+  {
+    "objects": [
+      {
+        "id": "0",
+        "style": {},
+        "geometry": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": "2",
+        "value": "",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 14.4,
+          "y": 237.6,
+          "width": 86.39999999999999,
+          "height": 43.199999999999996,
+          "as": null
+        }
+      },
+      {
+        "id": "3",
+        "value": "",
+        "style": {
+          "whiteSpace": "wrap",
+          "html": "1"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 309.59999999999997,
+          "y": 237.6,
+          "width": 86.39999999999999,
+          "height": 43.199999999999996,
+          "as": null
+        }
+      },
+      {
+        "id": "4",
+        "value": "",
+        "style": {
+          "rhombus": true,
+          "whiteSpace": "wrap",
+          "html": "1"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 180,
+          "y": 57.6,
+          "width": 57.6,
+          "height": 57.6,
+          "as": null
+        }
+      },
+      {
+        "id": "5",
+        "value": "The wallaby plugin roxxz!",
+        "style": {
+          "text": true,
+          "html": "1",
+          "fontSize": "24",
+          "fontStyle": "0",
+          "verticalAlign": "middle",
+          "align": "center",
+          "fontFamily": "Lato"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 100.8,
+          "y": 7.2,
+          "width": 188.64000000000001,
+          "height": 28.8,
+          "as": null
+        }
+      },
+      {
+        "id": "10",
+        "value": "Img 1",
+        "style": {
+          "shape": "image",
+          "html": "1",
+          "verticalAlign": "top",
+          "verticalLabelPosition": "bottom",
+          "imageAspect": "0",
+          "image": "https://cdn0.iconfinder.com/data/icons/brands-outlined-1/60/twitter-bird-animal-social-media-128.png"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 8.64,
+          "y": 57.6,
+          "width": 92.16,
+          "height": 92.16,
+          "as": null
+        }
+      },
+      {
+        "id": "11",
+        "value": "Img 1 Inv",
+        "style": {
+          "shape": "image",
+          "html": "1",
+          "verticalAlign": "top",
+          "verticalLabelPosition": "bottom",
+          "imageAspect": "0",
+          "image": "https://cdn0.iconfinder.com/data/icons/brands-outlined-1/60/twitter-bird-animal-social-media-128.png",
+          "flipV": "0",
+          "flipH": "1"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 309.59999999999997,
+          "y": 57.6,
+          "width": 92.16,
+          "height": 92.16,
+          "as": null
+        }
+      },
+      {
+        "id": "12",
+        "value": "Box 1",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 43.199999999999996,
+          "y": 252,
+          "width": 28.8,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "13",
+        "value": "Box 2",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 338.40000000000003,
+          "y": 252,
+          "width": 28.8,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "16",
+        "value": "",
+        "style": {
+          "endArrow": "none",
+          "html": "1",
+          "exitX": "0.5",
+          "exitY": "0",
+          "entryX": "0.25",
+          "entryY": "1"
+        },
+        "parent": "1",
+        "source": "2",
+        "target": "7",
+        "edge": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 36,
+          "height": 36,
+          "relative": 0.72,
+          "as": null,
+          "mxPoint": null
+        }
+      },
+      {
+        "id": "17",
+        "value": "",
+        "style": {
+          "endArrow": "none",
+          "html": "1",
+          "entryX": "0.75",
+          "entryY": "1",
+          "exitX": "0.5",
+          "exitY": "0"
+        },
+        "parent": "1",
+        "source": "3",
+        "target": "7",
+        "edge": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "width": 36,
+          "height": 36,
+          "relative": 0.72,
+          "as": null,
+          "mxPoint": null
+        }
+      },
+      {
+        "id": "18",
+        "value": "",
+        "style": {
+          "line": true,
+          "html": "1",
+          "yellow": true
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 7.2,
+          "y": 165.6,
+          "width": 93.60000000000001,
+          "height": 7.2,
+          "as": null
+        }
+      },
+      {
+        "id": "19",
+        "value": "",
+        "style": {
+          "line": true,
+          "html": "1",
+          "yellow": true
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 309.59999999999997,
+          "y": 165.6,
+          "width": 93.60000000000001,
+          "height": 7.2,
+          "as": null
+        }
+      },
+      {
+        "id": "20",
+        "value": "Heading",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontFamily": "Lato"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 172.79999999999998,
+          "y": 236.16,
+          "width": 72,
+          "height": 23.04,
+          "as": null
+        }
+      },
+      {
+        "id": "21",
+        "value": "Lorem ipsum dolor sit amet, consectetur ....",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden",
+          "fontFamily": "Lato"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 120.96,
+          "y": 268.56,
+          "width": 175.68,
+          "height": 12.24,
+          "as": null
+        }
+      },
+      {
+        "id": "23",
+        "style": {
+          "edgeStyle": "orthogonalEdgeStyle",
+          "rounded": "0",
+          "html": "1",
+          "exitX": "0.5",
+          "exitY": "1",
+          "entryX": "0.5",
+          "entryY": "0"
+        },
+        "parent": "1",
+        "source": "20",
+        "target": "21",
+        "edge": "1",
+        "geometry": {
+          "x": 0,
+          "y": 0,
+          "relative": 0.72,
+          "as": null
+        }
+      },
+      {
+        "id": "26",
+        "value": "IMG",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden"
+        },
+        "vertex": "1",
+        "parent": "1",
+        "geometry": {
+          "x": 39.6,
+          "y": 103.67999999999999,
+          "width": 28.8,
+          "height": 14.4,
+          "as": null
+        }
+      },
+      {
+        "id": "29",
+        "value": "IMG",
+        "style": {
+          "text": true,
+          "html": "1",
+          "strokeColor": "none",
+          "fillColor": "none",
+          "align": "center",
+          "verticalAlign": "middle",
+          "whiteSpace": "wrap",
+          "overflow": "hidden"
+        },
+        "vertex": "1",
+        "parent": "1",
+        "geometry": {
+          "x": 342,
+          "y": 103.67999999999999,
+          "width": 28.8,
+          "height": 14.4,
+          "as": null
+        }
+      }
+    ],
+    "groups": [
+      {
+        "label": "Link",
+        "link": "https://www.draw.io",
+        "id": "7",
+        "style": {
+          "text": true,
+          "html": "1",
+          "whiteSpace": "wrap",
+          "align": "center",
+          "verticalAlign": "middle",
+          "fontColor": "#0000EE",
+          "fontStyle": "4"
+        },
+        "parent": "1",
+        "vertex": "1",
+        "geometry": {
+          "x": 187.20000000000002,
+          "y": 72,
+          "width": 43.199999999999996,
+          "height": 28.8,
+          "as": null
+        }
+      },
+      {
+        "id": "1",
+        "parent": "0",
+        "style": {},
+        "geometry": {
+          "width": null,
+          "height": null,
+          "y": 0
+        },
+        "layer": true
+      }
+    ]
+  }

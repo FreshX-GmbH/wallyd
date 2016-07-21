@@ -1,0 +1,83 @@
+//
+//
+//  This is the wallyd startup file. It creates a default screen setup and displays the boot logo or video
+
+var video = new FFVideo('main');
+var v2 = new FFVideo('main');
+var client = new CloudClient();
+var log = new Duktape.Logger();
+//  We split this into two Objects later
+var my = new myPlugin("meinsmeinsmeins");
+var wally = new Wally();
+var screen = wally;
+var t = new Texture('test',0,0,10,'10%','FFFFFF');
+
+var config = { 
+    debug: 3,
+    logo : 'images/wally1920x1080.png',
+    testScreen: true,
+    startvideo: '../Firmware-bin/firmware/core.noarch/root/images/WallyStart.mp4',
+    startVideo : false,
+    ssdp : true
+};
+
+var colors = {
+    black     : '000000',
+    log       : '000000',
+    white     : 'FFFFFF',
+    stampColor: 'B00000'
+};
+
+var fonts = {
+    logfont  : { file : 'fonts/Lato-Bol.ttf', size : 12},
+    stampfont: { file : 'fonts/umbrage2.ttf',  size : 48},
+    font16   : { file : 'fonts/Lato-Bol.ttf', size : 16}
+};
+
+var textures = {
+    main      : { z: 10, x: 0,   y:    0,  w: '100%', h:-16, color : 'FFFFFF' },
+    info      : { z: 11, x: -480, y:   0,  w: '480', h:320, color : 'FFFFFF' },
+    bauch     : { z: 20, x: 0,   y: '86%', w: '100%', h: 64, color : '2FFFFF' },
+    log       : { z: 30, x: 0,   y: '-20', w: '100%', h: 20, color : 'EEEEEE' }, 
+    version   : { z: 40, x: -42, y: 0,     w: 42,     h: 16, color : '000000' },
+    network   : { z: 50, x: -20, y: -20,   w: 20,     h: 20, color : 'FFA500' }
+}
+
+wally.setDebug(config.debug);
+
+for (var c in colors){
+    screen.createColor(c,colors[c],'FF');
+}
+
+for (var f in fonts) {
+    screen.loadFont(f,fonts[f].file, fonts[f].size);
+}
+
+for (var t in textures) {
+    screen.createTexture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h,textures[t].color);
+}
+
+//   Display the test screen
+if(config.testScreen === true){
+    screen.showTextureTestScreen();
+} else {
+    log.info('WallyTV starting...');
+    screen.setImageScaled('main','images/wally1920x1080.png');
+    screen.setText('version','white','logfont',0,0,'R1372');
+    screen.setText('bauch','stampColor','stampfont',20,0,'Wally TV Test Screen');
+    wally.setDebug(4);
+}
+
+if(config.startVideo === true){
+    log.debug("Playing video : ",config.startvideo);
+    video.play('main', config.startvideo);
+    v2.play('info', config.video2);
+}
+
+client.discovery('blabla',function(ret){
+        log.info('discovery done :',ret);
+});
+
+wally.log('Searching for next Wallaby Server');
+
+wally.log(JSON.stringify(my.info()));
