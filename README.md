@@ -68,18 +68,16 @@ make && make install
 
 # Commands
 
-```
-  setpng <file>             - set and display png on mainTexture
-  setpngscaled <file>       - set and display png scaled on mainTexture
-  settext <x> <y> <text>    - set and display text on mainTexture
-  settext2 <x> <y> <text>   - set and display text on mainTexture using 2nd font
-  settextrot <x> <y> <rotate> <text> 
-                            - set, rotate and display text on mainTexture using 2nd font
-  video <filename | url>    - play video from file or url
-  log <text>                - copy mainTexture, add logText and display 
+Built-In system commands : 
 
-  discover                  - start an ssdp discovery
-  register [IP] [port]      - (re-)register at discovered server (or for use of IP/Port)
-  config                    - get system config from server
-  quit                      - quit the server
-```
+   sys::quit
+   sys::setDebug
+   sys::debug
+   sys::sleep
+   sys::loadPlugins
+   sys::callback
+   sys::info
+
+Besides this, each of the plugins exports various commands into the wallyd namespace as well as into the ecmascript space
+See the plugins for more info
+
