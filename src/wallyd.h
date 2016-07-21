@@ -17,8 +17,9 @@
 
 #define DEFAULT_THREAD_DELAY 2
 
-#define DEFAULT_WINDOW_WIDTH 800
-#define DEFAULT_WINDOW_HEIGHT 600
+//  0 = Auto detect
+#define DEFAULT_WINDOW_WIDTH 0
+#define DEFAULT_WINDOW_HEIGHT 0
 
 // Global
 extern FILE *fifo;
