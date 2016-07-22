@@ -10,7 +10,6 @@ var qr = require('./qr/qr.js');
 var p = utils.prettyPrint;
 
 function parseString(str){
-    if( str === undefined ) return "";
     var matchTable={};
     var splitter = /\$_.[A-Za-z0-9_]*;/g;
     var match = str.match(splitter);
@@ -37,14 +36,12 @@ function parseString(str){
 
 function renderScreen(context, tree, screen, data)
 {
-   var svg = new SVG();
-   var json,data;
-   var maxWidth=0, maxHeight=0;
-   var xScale=1.0, yScale=1.0;
-   var rX=0, rY=0;
-   var start = uv.hrtime();
-	
-   data = data.pages[0];
+    var svg = new SVG();
+    var json,data;
+    var maxWidth=0, maxHeight=0;
+    var xScale=1.0, yScale=1.0;
+    var rX=0, rY=0;
+    var start = uv.hrtime();
 
    // try{
    //    json = wally.readFile(file);
@@ -54,15 +51,27 @@ function renderScreen(context, tree, screen, data)
    //     return;
    // }
  
-   wally.setAutoRender(false);
-   gui.setTargetTexture(screen);
-
-    xScale = (config.width-10)/data._options.width;
-    yScale = (config.height-30)/data._options.height;
+    wally.setAutoRender(false);
+    gui.setTargetTexture(screen);
     
     for(var i = 0; i < data.objects.length; i++){
-        var obj = data.objects[i].options;
-	var value = data.objects[i].value;
+        var obj = data.objects[i];
+        if(obj.geometry.x < -1*rX)
+        rX = ~~(-1*obj.geometry.x);
+        if(obj.geometry.y < -1*rY)
+        rY = ~~(-1*obj.geometry.y);
+        if(obj.geometry.x + obj.geometry.width > maxWidth)
+        maxWidth = ~~obj.geometry.x + ~~obj.geometry.width;
+        if(obj.geometry.y + obj.geometry.height > maxHeight)
+        maxHeight = ~~obj.geometry.y + ~~obj.geometry.height;
+    }
+    maxWidth +=rX;
+    maxHeight+=rY;
+    xScale = (config.width-10)/maxWidth;
+    yScale = (config.height-30)/maxHeight;
+    
+    for(var i = 0; i < data.objects.length; i++){
+        var obj = data.objects[i];
         var X = ~~((obj.geometry.x+rX)*xScale);
         var Y = ~~((obj.geometry.y+rY)*yScale);
         var W = 0;
@@ -94,16 +103,26 @@ function renderScreen(context, tree, screen, data)
 
         //utils.dumpJSON(obj);
     
+        if(obj.style.shape === 'image'){
+            var h=~~obj.geometry.height*yScale;
+            var url = obj.style.image;
+            curl.downloadFile(url,'/tmp/test.png');
+            gui.loadImage(screen,'/tmp/test.png',X, Y, W,H,255);
+            //var img = curl.download(url);
+            //gui.loadImageMemory(screen,img,X, Y, W,H,255);
+            continue;
+        }
+    
         if(obj.style.text === true){
             var h=~~(obj.geometry.height*yScale);
             var fName = 'font'+h;
             var val = "";
             wally.loadFont(fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', h);
-            if(value.match(/\$_./)){
-               var destVal = parseString(value);
+            if(obj.value.match(/\$_./)){
+               var destVal = parseString(obj.value);
                gui.drawText(screen,X, Y, fName, color, destVal);
             } else {
-               gui.drawText(screen,X, Y, fName, color, value);
+               gui.drawText(screen,X, Y, fName, color, obj.value);
             }
         } else if(obj.style.endArrow !== undefined) {
             log.debug('Dont know how to handle object connectors yet.');
