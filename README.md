@@ -57,14 +57,14 @@ make && make install
 
 # To build in Linux or the firmware either
    
-##  Install packages : SDL2 SDL2-devel SDL2_image SDL2_ttf SDL2_gfx
-##  Required but included jsmn (Json parser from https://bitbucket.org/zserge/jsmn/wiki/Home)
-##  Required but included jsmn-example from https://github.com/alisdair/jsmn-example
-##  Required but included map_lib from https://github.com/jimlawless/map_lib
-##  Required but included hashtable from https://github.com/larsendt/hashtable
-##  Required but included duktape from https://github.com/svaarala/duktape
-##  Required but included dukluv from https://github.com/creationix/dukluv
-##  the sdl video plugin requires ffmpeg-devel
+* Install packages : SDL2 SDL2-devel SDL2_image SDL2_ttf SDL2_gfx
+* Required but included jsmn (Json parser from https://bitbucket.org/zserge/jsmn/wiki/Home)
+* Required but included jsmn-example from https://github.com/alisdair/jsmn-example
+* Required but included map_lib from https://github.com/jimlawless/map_lib
+* Required but included hashtable from https://github.com/larsendt/hashtable
+* Required but included duktape from https://github.com/svaarala/duktape
+* Required but included dukluv from https://github.com/creationix/dukluv
+* the sdl video plugin requires ffmpeg-devel
 
 # Commands
 
