@@ -1,10 +1,11 @@
-bin_PROGRAMS = wallyd testaudio dwallyd wallyc sdl_test
+bin_PROGRAMS = wallyd testaudio dwallyd wallyc sdl_test drmtest
 #resample2 testvideo
 testaudio_SOURCES = testaudio.c
 testvideo_SOURCES = testvideo.c
 ffplay_SOURCE = ffplay.c
 resample_SOURCES = resample2.c
 blend_SOURCES = blend.c
+drmtest_SOURCES = drmtest.c
 resample_LDFLAGS = -lswresample
 testvideo_LDFLAGS = -lswresample -lavutil -lavcodec -lavformat -lswscale
 ffplay_LDFLAGS = -lswresample -lavutil -lavcodec -lavformat -lswscale -lSDL -lavfilter -lavdevices cmdutils.o
