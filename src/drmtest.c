@@ -24,8 +24,6 @@ EGL_CONFORMANT, EGL_OPENGL_ES2_BIT,
 EGL_NONE };
 
 static const char device_name[] = "/dev/dri/card0";
-static const uint32_t drm_mode_connector_id = 18;
-static const uint32_t drm_mode_crtc_id = 21;
 
 int main(void) {
 
@@ -88,10 +86,12 @@ printf("Could not create context");
 exit(EXIT_FAILURE);
 }
 
+drmModeRes *res;
 drmModeConnector *conn;
 uint32_t conn_id, width, height;
 drmModeModeInfo modeinfo;
-conn = drmModeGetConnector(fd, drm_mode_connector_id);
+res = drmModeGetResources(fd);
+conn = drmModeGetConnector(fd, *res->connectors);
 conn_id = conn->connector_id;
 width = conn->modes[0].hdisplay;
 height = conn->modes[0].vdisplay;
@@ -132,7 +132,7 @@ printf("failed to create fb\n");
 exit(EXIT_FAILURE);
 }
 
-ret = drmModeSetCrtc(fd, drm_mode_crtc_id, drm_fb_id, 0, 0, &conn_id, 1,
+ret = drmModeSetCrtc(fd, *res->crtcs, drm_fb_id, 0, 0, &conn_id, 1,
 &modeinfo);
 if (ret) {
 printf("failed to set mode: %m\n");
@@ -146,8 +146,8 @@ gbm_bo_destroy(bo);
 gbm_surface_destroy(gs);
 eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 eglDestroyContext(dpy, ctx);
-// eglDestroySurface(dpy, surface);
-// eglTerminate(dpy);
+eglDestroySurface(dpy, surface);
+eglTerminate(dpy);
 gbm_device_destroy(gbm);
 close(fd);
 return 0;
