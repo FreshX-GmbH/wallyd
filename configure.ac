@@ -173,7 +173,7 @@ AS_IF([test "x$enable_video" != "xno"],
     ]
 ) 
 
-PKG_CHECK_MODULES(uv, [libuv],
+PKG_CHECK_MODULES(uv, [libuv >= 1.7],
    [
           CFLAGS="${CFLAGS} ${uv_CFLAGS}"
           LDFLAGS="${LDFLAGS} ${uv_LIBS}"
@@ -212,7 +212,12 @@ LDFLAGS="${LDFLAGS} -lSDL2_gfx"
 
 AC_CHECK_HEADERS(SDL2/SDL.h SDL2/SDL_image.h)
 
-AC_CHECK_HEADERS(uv.h)
+AC_CHECK_HEADERS(duv/duktape.h duv/dschema.h,
+ [], 
+ [
+        AC_MSG_ERROR([Please install dukluv from https://github.com/creationix/dukluv])
+ ]
+)
 
 PKG_CHECK_MODULES([PNG], [libpng >= 1.5])
 
