@@ -1,3 +1,4 @@
+#ifdef LINUX
 #include <fcntl.h>
 #include <stddef.h>
 #include <gbm.h>
@@ -152,4 +153,9 @@ gbm_device_destroy(gbm);
 close(fd);
 return 0;
 }
-
+#else
+int main(void) {
+	printf("Could not compile drmtest\n");
+	exit(1);
+}
+#endif
