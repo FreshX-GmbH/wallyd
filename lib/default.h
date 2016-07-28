@@ -14,7 +14,6 @@
 #define BIN_REBOOT "/sbin/reboot"
 #define BIN_PERSIST "/root/persist.sh"
 
-#define ETC_CONFIG      "/etc/wallyd.conf"
 #define ETC_CONFIG_BAK  "etc/wallyd.conf"
 #define ETC_FLAGS       "/tmp/flags"
 #define ETC_FLAGS_BAK   "etc/flags"

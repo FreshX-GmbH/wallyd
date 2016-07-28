@@ -316,7 +316,7 @@ void initializeConfig(void){
   initializeFlags();
 
   //ph->configMap=map_create();
-  if(getConfig(ph->configMap,ETC_CONFIG) > 0){
+  if(getConfig(ph->configMap,WALLYD_CONFIG) > 0){
     if(ht_contains_simple(ph->configMap,"threadDelay")) { 
       ph->threadDelay = atoi(ht_get_simple(ph->configFlagsMap,"threadDelay"));
     }
@@ -377,8 +377,8 @@ void readOptions(int argc, char **argv){
                 printf("Usage: wallyd [-h|-f|-s <startscript>|-c <configfile>]\n");
                 printf("\t-h : this help\n");
                 printf("\t-f : run in foreground\n");
-                printf("\t-c : use <configfile> (default /etc/wallyd.conf)\n");
-                printf("\t-s : run <startscript> (default /etc/wallyd.startup)\n");
+                printf("\t-c : use <configfile> (default "WALLYD_CONFIG")\n");
+                printf("\t-s : run <startscript> (default "WALLYD_CONFDIR"/wallyd.startup)\n");
                 exit(0);
                 break;
             case 'f':

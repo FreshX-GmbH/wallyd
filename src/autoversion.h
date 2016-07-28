@@ -1,2 +1,0 @@
-#define BUILD_NUMBER 1506
-#define BUILD_DATE 20160726
