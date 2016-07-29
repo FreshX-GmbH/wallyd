@@ -34,18 +34,17 @@ fd = open(device_name, O_RDWR);
 
 if (fd < 0) {
 /* Probably permissions error */
-printf("couldn't open %s, skipping\n", device_name);
-exit(EXIT_FAILURE);
+	printf("couldn't open %s, skipping\n", device_name);
+	exit(EXIT_FAILURE);
 }
 
-// Create a GBM device out of it.  Keep the fd around though, we'll still
-need it.
+// Create a GBM device out of it.  Keep the fd around though, we'll still need it.
 struct gbm_device *gbm;
 gbm = gbm_create_device(fd);
 
 if (gbm == NULL) {
-printf("GBM Device Creation Failed");
-exit(EXIT_FAILURE);
+	printf("GBM Device Creation Failed");
+	exit(EXIT_FAILURE);
 }
 
 // Get an EGL display from the GBM device.
@@ -53,15 +52,15 @@ EGLDisplay dpy;
 dpy = eglGetDisplay(gbm);
 
 if (dpy == EGL_NO_DISPLAY) {
-printf("Could not get EGL display");
-exit(EXIT_FAILURE);
+	printf("Could not get EGL display");
+	exit(EXIT_FAILURE);
 }
 
 // Initialize the display. Major and minor are version numbers.
 EGLint major, minor;
 if (eglInitialize(dpy, &major, &minor) == EGL_FALSE) {
-printf("Could initialize EGL display");
-exit(EXIT_FAILURE);
+	printf("Could initialize EGL display");
+	exit(EXIT_FAILURE);
 }
 
 // Tell the EGL we will be using the GL ES API.
@@ -74,17 +73,16 @@ EGLConfig config;
 EGLint n;
 
 if (!eglChooseConfig(dpy, egl_fb_config, &config, 1, &n) || n != 1) {
-printf("Failed to choose EGL FB config\n");
-exit(EXIT_FAILURE);
+	printf("Failed to choose EGL FB config\n");
+	exit(EXIT_FAILURE);
 }
 
-// Create an EGL context from the chosen config, and specify we want
-version 2 of GLES.
+// Create an EGL context from the chosen config, and specify we want version 2 of GLES.
 ctx = eglCreateContext(dpy, config, EGL_NO_CONTEXT, context_client_version);
 
 if (ctx == EGL_NO_CONTEXT) {
-printf("Could not create context");
-exit(EXIT_FAILURE);
+	printf("Could not create context");
+	exit(EXIT_FAILURE);
 }
 
 drmModeRes *res;
@@ -93,6 +91,10 @@ uint32_t conn_id, width, height;
 drmModeModeInfo modeinfo;
 res = drmModeGetResources(fd);
 conn = drmModeGetConnector(fd, *res->connectors);
+if(!conn){
+	printf("Could not get connector\n");
+	exit(EXIT_FAILURE);
+}
 conn_id = conn->connector_id;
 width = conn->modes[0].hdisplay;
 height = conn->modes[0].vdisplay;
@@ -102,16 +104,14 @@ drmModeFreeConnector(conn);
 // Create a GBM surface, and then get an EGL surface from that.
 EGLSurface surface;
 struct gbm_surface *gs;
-gs = gbm_surface_create(gbm, width, height, GBM_BO_FORMAT_ARGB8888,
-GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
+gs = gbm_surface_create(gbm, width, height, GBM_BO_FORMAT_ARGB8888, GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
 surface = eglCreateWindowSurface(dpy, config, gs, NULL);
 
 if (eglMakeCurrent(dpy, surface, surface, ctx) == EGL_FALSE) {
-printf("Could not make context current");
+	printf("Could not make context current");
 }
 
-// Render stuff. For now just clear the screen with a color, so we can at
-least tell it works.
+// Render stuff. For now just clear the screen with a color, so we can at least tell it works.
 glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 glClear(GL_COLOR_BUFFER_BIT);
 
@@ -123,7 +123,7 @@ bo = gbm_surface_lock_front_buffer(gs);
 handle = gbm_bo_get_handle(bo).u32;
 stride = gbm_bo_get_stride(bo);
 
-printf("handle=%d, stride=%d\n", handle, stride);
+printf("handle=%d, stride=%d, Resolution : %dx%d, %d\n", handle, stride, width, height, modeinfo);
 
 int ret;
 uint32_t drm_fb_id;
@@ -133,25 +133,25 @@ printf("failed to create fb\n");
 exit(EXIT_FAILURE);
 }
 
-ret = drmModeSetCrtc(fd, *res->crtcs, drm_fb_id, 0, 0, &conn_id, 1,
-&modeinfo);
+ret = drmModeSetCrtc(fd, *res->crtcs, drm_fb_id, 0, 0, &conn_id, 1, &modeinfo);
 if (ret) {
-printf("failed to set mode: %m\n");
+	printf("failed to set mode: %m\n");
 }
 
-sleep(2);
+	sleep(2);
 
-gbm_surface_release_buffer(gs, bo);
-drmModeRmFB(fd, drm_fb_id);
-gbm_bo_destroy(bo);
-gbm_surface_destroy(gs);
-eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-eglDestroyContext(dpy, ctx);
-eglDestroySurface(dpy, surface);
-eglTerminate(dpy);
-gbm_device_destroy(gbm);
-close(fd);
-return 0;
+	gbm_surface_release_buffer(gs, bo);
+	drmModeRmFB(fd, drm_fb_id);
+	// will be called via eglDestroySurface
+	// gbm_bo_destroy(bo);
+	gbm_surface_destroy(gs);
+	eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	eglDestroyContext(dpy, ctx);
+	eglDestroySurface(dpy, surface);
+	eglTerminate(dpy);
+	gbm_device_destroy(gbm);
+	close(fd);
+	return 0;
 }
 #else
 int main(void) {
