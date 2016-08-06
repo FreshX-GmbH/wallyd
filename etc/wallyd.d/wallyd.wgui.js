@@ -6,7 +6,7 @@ var wallaby = require('./modules/wallaby.js');
 var utils = require('./modules/utils.js');
 var log = require('./modules/log.js');
 
-var file = config.basedir+'/etc/wallyd.d/tests/revo.json';
+var file = config.basedir+'/etc/wallyd.d/tests/wallybill.json';
 var valsfile = "/tmp/co2.js";
 
 var loopDelay = 600;
@@ -20,7 +20,7 @@ context.privates.kw = 23;
 context.privates.date = date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear();
 context.privates.time = date.getHours()+':'+date.getMinutes();
 
-
+var page=0;
 var a = uv.new_timer();
 uv.timer_start(a, 1000, loopDelay, oninterval);
 
@@ -52,5 +52,11 @@ function oninterval() {
     }
     context.privates.date = date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear();
     context.privates.time = utils.pad(date.getHours(),2)+':'+utils.pad(date.getMinutes(),2)+':'+utils.pad(date.getSeconds(),2);
-    wallaby.renderScreen(context,context.privates,'main',data);
+    var dat = data.pages[page];
+    if(data.pages.length > 1){
+	page++;	
+	if(page > data.pages.length-1) { page = 0;}
+    }
+    log.info("Presenting page : "+page+" of "+data.pages.length+" with "+dat.objects.length+" elements");
+    wallaby.renderScreen(context,context.privates,'main',dat);
 }

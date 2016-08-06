@@ -39,157 +39,117 @@ function parseString(str){
 function renderScreen(context, tree, screen, data)
 {
    var svg = new SVG();
-   var json,data;
+   var json;
    var maxWidth=0, maxHeight=0;
    var xScale=1.0, yScale=1.0;
    var rX=0, rY=0;
    var start = uv.hrtime();
-	
-   data = data.pages[0];
 
-   // try{
-   //    json = wally.readFile(file);
-   //    data = JSON.parse(json);
-   // } catch(err) {
-   //     log.debug('Error loading and parsing screen file : '+err);
-   //     return;
-   // }
- 
+   log.info(data);
+	
    wally.setAutoRender(false);
    gui.setTargetTexture(screen);
 
-    xScale = (config.width-10)/data._options.width;
-    yScale = (config.height-30)/data._options.height;
+   var width = data._options.width ? data._options.width : data._options.size[0];
+   var height = data._options.height ? data._options.height : data._options.size[1];
+   xScale = (config.width-10)/width;
+   yScale = (config.height-30)/height;
     
-    for(var i = 0; i < data.objects.length; i++){
-        var obj = data.objects[i].options;
-	var value = data.objects[i].value;
-        var X = ~~((obj.geometry.x+rX)*xScale);
-        var Y = ~~((obj.geometry.y+rY)*yScale);
+   for(var i = 0; i < data.objects.length; i++){
+        var obj = data.objects[i];
+	var opts = obj.options;
+	var value = obj.value;
+        var X = ~~((opts.geometry.x+rX)*xScale);
+        var Y = ~~((opts.geometry.y+rY)*yScale);
         var W = 0;
         var H = 0;
         var color = 0;
         var alpha = 255;
         var fillColor = 0;
         var gradientColor = undefined;
-        if(obj.geometry.width){
-            W = ~~(obj.geometry.width*xScale);
+        if(opts.geometry.width){
+            W = ~~(opts.geometry.width*xScale);
         }
-        if(obj.geometry.height){
-            H = ~~(obj.geometry.height*yScale);
+        if(opts.geometry.height){
+            H = ~~(opts.geometry.height*yScale);
         }
-        if(obj.style.strokeColor) {
-            color= parseInt(obj.style.strokeColor.replace('#','0x'));
+        if(opts.style.strokeColor) {
+            color= parseInt(opts.style.strokeColor.replace('#','0x'));
         }
-        if(obj.style.fontColor) {
-            color= parseInt(obj.style.fontColor.replace('#','0x'));
+        if(opts.style.fontColor) {
+            color= parseInt(opts.style.fontColor.replace('#','0x'));
         }
-        if(obj.style.fillColor) {
-            fillColor= parseInt(obj.style.fillColor.replace('#','0x'));
+        if(opts.style.fillColor) {
+            fillColor= parseInt(opts.style.fillColor.replace('#','0x'));
         } else {
             alpha = 0;
         }
-        if(obj.style.gradientColor) {
-            gradientColor = parseInt(obj.style.gradientColor.replace('#','0x'));
+        if(opts.style.gradientColor) {
+            gradientColor = parseInt(opts.style.gradientColor.replace('#','0x'));
         }
+   
+        if(obj.type === 'image'){
+            curl.downloadFile(obj.path,'/tmp/test.png');
+            gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
+            continue;
+        }
+        if(obj.type === 'line'){
+            gui.drawLine(screen,X, Y, X + W, Y, 0);
+            continue;
+	}
+	// TODO
+        if(obj.type === 'rect'){
+	//    if(opts.edge && opts.edge > 0 ){
+	//    	log.error(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
+	//    	gui.drawFilledBox(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
+	//    }
+            continue;
+	}
+        if(obj.type === 'qr'){
+            var qrtext = parseString(opts.value.replace('qr:',''));
+            //var res = qr.image(qrtext, { type: 'svg' });
+            //log.debug(res);
+            var res = qr.file(qrtext,'/tmp/qr.svg', { type: 'svg' });
+            svg.svgToPng("/tmp/qr.svg","/tmp/qr.png");
+            log.debug('Placing QR Code at : ',X,Y,W,H);
+            gui.loadImage(screen,'/tmp/qr.png',X,Y,W,H,255);
+            //var ptr = svg.svgToImage(res.toString());
+            //var preview = Array.prototype.slice.call(ptr, 0, ptr.length).map(function (byte) {
+            //    return byte < 16 ? "0" + byte.toString(16) : byte.toString(16);
+            //}).join(" ");
+            //log.debug(preview);
+            //gui.putImage(screen,ptr,X,Y,W,H,255);
+            ////log.debug(preview);
+            //gui.putImage(screen,ptr,X,Y,W,H,255);
 
-        //utils.dumpJSON(obj);
-    
-        if(obj.style.text === true){
-            var h=~~(obj.geometry.height*yScale);
-            var fName = 'font'+h;
+            continue;
+	}
+
+        if(obj.type === 'text'){
+	    if(W === 0 || H === 0 || value === undefined || value.length === 0){
+		 continue;
+	    }
+	    //log.debug(obj);
+            var fName = 'font'+H;
             var val = "";
-            wally.loadFont(fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', h);
+            wally.loadFont(fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', H);
             if(value.match(/\$_./)){
                var destVal = parseString(value);
                gui.drawText(screen,X, Y, fName, color, destVal);
             } else {
                gui.drawText(screen,X, Y, fName, color, value);
             }
-        } else if(obj.style.endArrow !== undefined) {
-            log.debug('Dont know how to handle object connectors yet.');
-            continue;
-        } else if(obj.style.line === true){
-            log.debug('Line : ',JSON.stringify(obj.geometry));
-            gui.drawLine(screen,X, Y, X + W, Y, 0);
-        } else {
-            var stroke = obj.style.stroke || 1;
-            if (obj.style === {} || obj.geometry === {}){
-                continue;
-            }
-            if(gradientColor){
-                log.debug('Gradient box : ',JSON.stringify(obj.geometry));
-                gui.drawGradient(screen, X, Y, W, H, gradientColor, fillColor, true, false);
-            } else {
-                if(obj.value && obj.value.match(/^qr:/)){
-                    var qrtext = parseString(obj.value.replace('qr:',''));
-                    log.debug('Box is QR Code : ',qrtext);
-                    //var res = qr.image(qrtext, { type: 'svg' });
-                    //log.debug(res);
-                  var res = qr.file(qrtext,'/tmp/qr.svg', { type: 'svg' });
-                  svg.svgToPng("/tmp/qr.svg","/tmp/qr.png");
-                  log.debug('Placing QR Code at : ',X,Y,W,H);
-                  gui.loadImage(screen,'/tmp/qr.png',X,Y,W,H,255);
-                    //var ptr = svg.svgToImage(res.toString());
-                    //var preview = Array.prototype.slice.call(ptr, 0, ptr.length).map(function (byte) {
-                    //    return byte < 16 ? "0" + byte.toString(16) : byte.toString(16);
-                    //}).join(" ");
-                    //log.debug(preview);
-                    //gui.putImage(screen,ptr,X,Y,W,H,255);
-                    ////log.debug(preview);
-                    //gui.putImage(screen,ptr,X,Y,W,H,255);
-                    continue;
-                } else {
-                    log.debug('Filled box : ',JSON.stringify(obj.geometry));
-                    gui.drawFilledBox(screen, X, Y, W, H, stroke, fillColor, color, alpha);
-                    // TODO : print text
-                    log.debug('Box has text : ',obj.value);
-                }
-            }
-        }
+	    continue;
+	}
+        log.debug('Dont know how to handle type '+obj.type+' yet.');
     }
     
     wally.render(screen);
+    gui.clearTextureNoPaint(screen);
     
     end = uv.hrtime()-start;
     log.debug({'time': end /1000000000 });
     log.debug('Wallaby Screen has max size '+maxWidth+'x'+maxHeight+' Scaling by '+xScale+'x'+yScale+' Relocating by '+rX+'/'+rY);
-}
-
-function drawCO2JSON(screen,chunk){
-    var logs = JSON.parse(chunk);
-    var co = [];
-    var max = 0;
-    log.debug(logs.rows.length);
-    for(var i = 0; i < logs.rows.length; i++){
-      var obj = logs.rows[i].doc;
-      var time = obj._id.split(':')[1];
-      co.push([ time, obj.temp, obj.co2 ]);
-      if(max < obj.co2) max =obj.co2;
-    }
-    var rel = config.height/(2*max);
-    var colrel = 255/max;
-    //print(rel);
-    co.sort(function(a, b) {return a[0] - b[0]})
-    var color;
-    for(var i = 0; i < co.length; i++){
-        if((i % 20) == 0){
-            gui.resetTargetTexture();
-            wally.render(screen);
-            gui.setTargetTexture(screen);
-            time = uv.hrtime();
-            log.debug({'delay': (time-start)/1000000000});
-        }
-        color = 0x30FF00;
-        if(co[i][2] > 800){
-            color = 0xFFC000;
-        }
-        if(co[i][2] > 1200){
-            color = 0xFF4D00;
-        }
-        gui.drawLine(screen,i,config.height,i,config.height-co[i][2]*rel, color);
-        gui.drawLine(screen,i,0,i,co[i][1], color);
-    }
 }
 
 exports.renderScreen = renderScreen;

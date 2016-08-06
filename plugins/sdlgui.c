@@ -15,9 +15,24 @@ int js_setTargetTexture(duk_context *ctx){
     callWithString("gui::setTargetTexture",&ret,texName);
     return 0;
 }
+
 duk_ret_t *js_resetTargetTexture(duk_context *ctx){
     int ret;
     callWithString("gui::setTargetTexture",&ret,NULL);
+    return 0;
+}
+
+duk_ret_t *js_clearTexture(duk_context *ctx){
+    int ret;
+    const char *texName  = duk_require_string(ctx, 0);
+    callWithString("screen::clearTexture",&ret,texName);
+    return 0;
+}
+
+duk_ret_t *js_clearTextureNoPaint(duk_context *ctx){
+    int ret;
+    const char *texName  = duk_require_string(ctx, 0);
+    callWithString("screen::clearTextureNoPaint",&ret,texName);
     return 0;
 }
 
@@ -538,6 +553,8 @@ const duk_function_list_entry js_guiMethods[] = {
      {  "drawText"          , js_drawText,6},
      {  "loadImage"         , js_loadImageFile,7},
      {  "putImage"          , js_putImage,7},
+     {  "clearTexture"      , js_clearTexture,1},
+     {  "clearTextureNoPaint" , js_clearTextureNoPaint,1},
      {  "drawGradient"      , js_drawGradient,9},
      {  "setTargetTexture"  , js_setTargetTexture,1},
      {  "resetTargetTexture", js_resetTargetTexture,0},

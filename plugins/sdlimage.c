@@ -230,7 +230,6 @@ int clearTextureNoPaint(char *str){
    return fillTexture(getTexture(strtok(str, " ")),false);
 }
 
-
 int waitForTexture(char *str){
    slog(LVL_NOISY,DEBUG,"Waiting for texture %s",str);
    char *name = strtok(str, " ");

@@ -4883,7 +4883,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "qr",
@@ -9217,7 +9217,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "text",
@@ -13519,7 +13519,7 @@
           "type": "image",
           "options": {
             "id": "65",
-            "value": "image:logo",
+            "value": "http://www.freshx.de/assets/images/wallaby.png",
             "style": {
               "whiteSpace": "wrap",
               "html": "1",
@@ -13538,7 +13538,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "text",
@@ -18401,7 +18401,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "text",
@@ -22465,7 +22465,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "text",
@@ -26786,7 +26786,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "text",
@@ -31649,7 +31649,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "text",
@@ -35713,7 +35713,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "text",
@@ -40034,7 +40034,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "text",
@@ -44897,7 +44897,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "text",
@@ -48961,7 +48961,7 @@
               "as": null
             }
           },
-          "path": "./logo.jpg"
+          "path": "http://www.freshx.de/assets/images/wallaby.png"
         },
         {
           "type": "text",
