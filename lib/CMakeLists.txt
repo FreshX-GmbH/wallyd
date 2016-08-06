@@ -1,3 +1,5 @@
+project(libwallyd)
+
 set(LIB_SRC jsmn.c buf.c json.c util.c
     parseJson.c plugins.c hashtable.c
     connect.c sys.c memfs.c murmur.c

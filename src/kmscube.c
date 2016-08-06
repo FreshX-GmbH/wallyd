@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <signal.h>
 
 #include <xf86drm.h>
 #include <xf86drmMode.h>
@@ -39,6 +40,8 @@
 #include "esUtil.h"
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+
+int running = 1;
 
 static struct {
 	EGLDisplay display;
@@ -585,6 +588,21 @@ static void page_flip_handler(int fd, unsigned int frame,
 	*waiting_for_flip = 0;
 }
 
+void setQuit(void){
+   running = 0;
+}
+
+void setupSignalHandler(void){
+   struct sigaction sigIntHandler;
+
+   sigIntHandler.sa_handler = &setQuit;
+   sigemptyset(&sigIntHandler.sa_mask);
+   sigIntHandler.sa_flags = 0;
+
+   sigaction(SIGINT,  &sigIntHandler, NULL);
+   sigaction(SIGKILL,  &sigIntHandler, NULL);
+}
+
 int main(int argc, char *argv[])
 {
 	fd_set fds;
@@ -634,7 +652,7 @@ int main(int argc, char *argv[])
 	//	return ret;
 	}
 
-	while (1) {
+	while (running) {
 		struct gbm_bo *next_bo;
 		int waiting_for_flip = 1;
 
