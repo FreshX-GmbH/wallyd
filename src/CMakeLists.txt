@@ -4,7 +4,7 @@ set(TEST_SRC drmtest.c)
 
 #add_executable(swallyd ${WALLYD_SRC})
 add_executable(dwallyd ${DWALLYD_SRC})
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linuxx")
   pkg_check_modules(LIBDRM libdrm)
   pkg_check_modules(LIBDRI libdri)
   pkg_check_modules(LIBGLES2 libglesv2)

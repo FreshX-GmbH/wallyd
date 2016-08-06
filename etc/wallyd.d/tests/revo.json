@@ -4889,7 +4889,7 @@
           "type": "qr",
           "options": {
             "id": "110",
-            "value": "qr:<revoprint>",
+            "value": "qr:time=$_.time;",
             "style": {
               "whiteSpace": "wrap",
               "html": "1",

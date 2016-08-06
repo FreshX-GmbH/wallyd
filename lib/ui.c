@@ -513,17 +513,18 @@ bool sdlInit(void)
    ph->broadcomInit = false;
 #endif
 
+   //if(ph->loglevel > INFO){
+   	slog(LVL_QUIET,ERROR,"Setting SDL debug level to VERBOSE");
+   	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+   //} else {
+   //   SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
+   //}
+
    if ( SDL_Init( SDL_INIT_EVERYTHING ) == -1 ) {
       slog(LVL_QUIET,ERROR, " Failed to initialize SDL : %s", SDL_GetError());
       return false;
    }
 
-   //if(ph->loglevel > INFO){
-      slog(LVL_QUIET,ERROR,"Setting SDL debug level to VERBOSE");
-      SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
-   //} else {
-   //   SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
-   //}
 
    if(ph->broadcomInit == true || w==0 || h==0 ){
       slog(LVL_NOISY,DEBUG,"Starting in full screen with current resolution : %d==%d / %d / %d",true,ph->broadcomInit, w, h);
