@@ -14,6 +14,7 @@ function parseString(str){
     var matchTable={};
     var splitter = /\$_.[A-Za-z0-9_]*;/g;
     var match = str.match(splitter);
+    if(match === null) return str;
     for (var j = 0; j<match.length; j++)
     {
         var smatch = match[j].replace(/\$_./,'').replace(/;$/,'');

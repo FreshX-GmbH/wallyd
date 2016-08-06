@@ -6,6 +6,9 @@ var wallaby = require('./modules/wallaby.js');
 var utils = require('./modules/utils.js');
 var log = require('./modules/log.js');
 
+var file = config.basedir+'/etc/wallyd.d/tests/revo.json';
+var valsfile = "/tmp/co2.js";
+
 var loopDelay = 600;
 
 context.privates = {};
@@ -17,8 +20,6 @@ context.privates.kw = 23;
 context.privates.date = date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear();
 context.privates.time = date.getHours()+':'+date.getMinutes();
 
-var file = config.basedir+'/etc/wallyd.d/tests/co2.json';
-var valsfile = "/tmp/co2.js";
 
 var a = uv.new_timer();
 uv.timer_start(a, 1000, loopDelay, oninterval);

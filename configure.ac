@@ -212,7 +212,7 @@ LDFLAGS="${LDFLAGS} -lSDL2_gfx"
 
 AC_CHECK_HEADERS(SDL2/SDL.h SDL2/SDL_image.h)
 
-AC_CHECK_HEADERS(duv/duktape.h duv/dschema.h,
+AC_CHECK_HEADERS(duv/duktape.h duv/duv.h,
  [], 
  [
         AC_MSG_ERROR([Please install dukluv from https://github.com/creationix/dukluv])

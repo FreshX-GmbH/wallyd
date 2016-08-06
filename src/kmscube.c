@@ -592,7 +592,7 @@ void setQuit(void){
    running = 0;
 }
 
-void setupSignalHandler(void){
+void init_signal_handler(void){
    struct sigaction sigIntHandler;
 
    sigIntHandler.sa_handler = &setQuit;
@@ -601,6 +601,7 @@ void setupSignalHandler(void){
 
    sigaction(SIGINT,  &sigIntHandler, NULL);
    sigaction(SIGKILL,  &sigIntHandler, NULL);
+   printf("Activated handler for SIGINT + SIGKILL\n");
 }
 
 int main(int argc, char *argv[])
@@ -614,6 +615,8 @@ int main(int argc, char *argv[])
 	struct drm_fb *fb;
 	uint32_t i = 0;
 	int ret;
+
+	init_signal_handler();
 
 	ret = init_drm();
 	if (ret) {
