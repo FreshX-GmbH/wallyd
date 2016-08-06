@@ -518,6 +518,13 @@ bool sdlInit(void)
       return false;
    }
 
+   //if(ph->loglevel > INFO){
+      slog(LVL_QUIET,ERROR,"Setting SDL debug level to VERBOSE");
+      SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+   //} else {
+   //   SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
+   //}
+
    if(ph->broadcomInit == true || w==0 || h==0 ){
       slog(LVL_NOISY,DEBUG,"Starting in full screen with current resolution : %d==%d / %d / %d",true,ph->broadcomInit, w, h);
       ph->window = SDL_CreateWindow("wallyd", 

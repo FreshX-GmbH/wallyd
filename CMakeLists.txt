@@ -22,8 +22,8 @@ pkg_check_modules(LIBCURL libcurl)
 
 #target_link_libraries(wallyd ${LIBUV_LIBS} ${LIBSDL_LIBRARIES} 
 #    ${LIBCURL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDLIMG_LIBRARIES} duktape duv)
-include_directories(${LIBUV_INCLUDE_DIRS} ${LIBSDL_INCLUDE_DIRS} lib src)
-link_directories(${LIBUV_LIBRARY_DIRS} ${LIBSDL_LIBRARY_DIRS})
+include_directories(${LIBUV_INCLUDE_DIRS} ${LIBSDL_INCLUDE_DIRS} lib src /usr/local/include)
+link_directories(${LIBUV_LIBRARY_DIRS} ${LIBSDL_LIBRARY_DIRS} /usr/local/lib)
 
 # TODO
 #file (STRINGS "version" CMAKE_BUILD_NUMBER)

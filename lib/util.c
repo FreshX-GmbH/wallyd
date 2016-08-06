@@ -244,7 +244,7 @@ int getConfig(hash_table *map, const char *file)
          char *v = strtok(NULL, "=");
          // Skip null values
          if(!v) continue;
-         slog(LVL_NOISY,FULLDEBUG,"K/V : %s = %s",k,v);
+         //slog(LVL_NOISY,FULLDEBUG,"K/V : %s = %s",k,v);
          unsigned long vlen=strlen(v);
          // Skip empty values
          if(vlen < 1) continue;

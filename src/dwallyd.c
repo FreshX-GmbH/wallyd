@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
         slog(LVL_INFO,INFO,"Old FIFO found and removed.");
     }
 
-  const char *startup="/etc/wallyd.startup.js";
+  const char *startup=INSTALL_PREFIX"/etc/wallyd.startup.js";
   if (argc < 2) {
     char *newargv[2];
     argc++;
