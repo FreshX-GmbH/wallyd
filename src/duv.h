@@ -2,7 +2,7 @@
 #define DUV_H
 
 #include <uv.h>
-#include <duv/duktape.h>
+#include <duktape.h>
 #include <assert.h>
 
 #if !defined(_WIN32)
@@ -71,7 +71,7 @@ typedef struct {
 
 duk_ret_t dukopen_uv(duk_context *ctx);
 
-#include <duv/refs.h>
+#include <refs.h>
 #include "duvutil.h"
 #include "schema.h"
 #include "uv_schema.h"

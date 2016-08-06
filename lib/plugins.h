@@ -8,7 +8,7 @@
 #include <pthread.h>
 #include "default.h"
 #include "hashtable.h"
-#include <duv/duktape.h>
+#include <duktape.h>
 
 #define CALL_TYPE_PTR  0
 #define CALL_TYPE_STR  1

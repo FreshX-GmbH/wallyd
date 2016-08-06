@@ -1,5 +1,5 @@
 #include "sdlvideo.h"
-#include <duv/duktape.h>
+#include <duktape.h>
 
 #define PLUGIN_SCOPE "video"
 

@@ -1,7 +1,7 @@
 #include "../lib/plugins.h"
 #include "../lib/util.h"
 #include "autoversion.h"
-#include <duv/duktape.h>
+#include <duktape.h>
 #include "duktools.h"
 #include <stdbool.h>
 #include <sys/types.h>

@@ -1,7 +1,5 @@
 #include "plugins.h"
 #include "util.h"
-#include <duv/duktape.h>
-#include <duv/refs.h>
 #include <stdbool.h>
 
 #define PLUGIN_SCOPE "sys"

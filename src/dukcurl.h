@@ -1,7 +1,7 @@
 #ifndef DUKCURL_H
 #define DUKCURL_H
 
-#include <duv/duktape.h>
+#include <duktape.h>
 
 // The refs system is from dukluv.  The refs.c file can be linked in here
 // directly if dukluv isn't used.

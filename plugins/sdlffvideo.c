@@ -1,4 +1,4 @@
-#include <duv/duktape.h>
+#include <duktape.h>
 #include "sdlffvideo.h"
 
 #define PLUGIN_SCOPE "ffvideo"

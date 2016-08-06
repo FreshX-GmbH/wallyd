@@ -43,10 +43,10 @@
 # include "libavfilter/buffersrc.h"
 #endif
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_thread.h>
-#include <SDL2/SDL_events.h>
-#include "SDL2/SDL_syswm.h"
+#include <SDL.h>
+#include <SDL_thread.h>
+#include <SDL_events.h>
+#include "SDL_syswm.h"
 
 #define SDL_main main
 
