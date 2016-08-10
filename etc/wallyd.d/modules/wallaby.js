@@ -43,7 +43,7 @@ function renderScreen(context, tree, screen, data)
    var rX=0, rY=0;
    var start = new Date().getTime();
 
-   log.info(data);
+   //log.info(data);
 	
    wally.setAutoRender(false);
    gui.setTargetTexture(screen);
@@ -150,7 +150,7 @@ function renderScreen(context, tree, screen, data)
   
     var end = new Date().getTime()-start;
     log.debug({'time': end /1000 });
-    log.debug('Wallaby Screen has max size '+maxWidth+'x'+maxHeight+' Scaling by '+xScale+'x'+yScale+' Relocating by '+rX+'/'+rY);
+//    log.debug('Wallaby Screen has max size '+maxWidth+'x'+maxHeight+' Scaling by '+xScale+'x'+yScale+' Relocating by '+rX+'/'+rY);
 }
 
 exports.renderScreen = renderScreen;
