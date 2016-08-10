@@ -1,11 +1,21 @@
-(function(){
 "use strict";
 
-var width = 80;
-
+var Handle = require('./classes.js').Handle;
+var Req = require('./classes.js').Req;
+stdout = uv.new_tty(1, false);
+stdin = uv.new_tty(0, true);
+stderr = uv.new_tty(2, false);
+var date = new Date();
+var width;
 var quote, quote2, obracket, cbracket, obrace, cbrace, comma, colon;
 
-var theme = nucleus.dofile('modules/theme-256.js');
+try {
+  width = uv.tty_get_winsize(stdout).width;
+} catch (e) {
+  width = 80;
+}
+
+var theme = require('./theme-256.js');
 
 quote = colorize("quotes", '"', "string");
 quote2 = colorize("quotes", '"');
@@ -16,12 +26,106 @@ cbrace = colorize("braces", '}');
 comma = colorize("sep", ',');
 colon = colorize("sep", ':');
 
+function pad(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
+function hashCode(str) { // java String#hashCode
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+       hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+} 
+
+function intToRGB(i){
+    var c = (i & 0x00FFFFFF)
+        .toString(16)
+        .toUpperCase();
+    return "00000".substring(0, 6 - c.length) + c;
+}
+
+var getRO = function (obj, i) {
+    if(typeof obj !== 'object' || obj === null) {
+        return undefined;
+    }
+    if (i in obj) {
+        return obj[i];
+    }
+    return undefined;
+};
+
+exports.concatPath = function (path, add) {
+    var components;
+    if (Array.isArray(add)) {
+        components = add;
+    } else if (typeof add === 'string') {
+        var seperator = '.';
+        if (add.indexOf('|') !== -1) {
+            seperator = '|';
+        }
+        components = add.split(seperator);
+    } else {
+        throw new Error('[Utils] Can not add path: '+add);
+    }
+    Array.prototype.push.apply(path, components);
+    return path;
+};
+
+exports.getValue = function (obj, path, def) {
+    if (!obj || path === undefined) {
+        return def;
+    }
+    path = exports.concatPath([], path);
+    obj = path.slice(0, path.length - 1).reduce(getRO, obj);
+    var idx = path[path.length - 1];
+    if (obj !== null && typeof obj === 'object' && idx in obj && obj[idx] !== null && obj[idx] !== undefined) {
+        return obj[idx];
+    }
+    return def;
+};
+
+//var cache=[];
+//print(JSON.stringify(context,function(key, value) {
+//    if (typeof value === 'object' && value !== null) {
+//        if (cache.indexOf(value) !== -1) {
+//            // Circular reference found, discard key
+//            return;
+//        }
+//        // Store value in our collection
+//        cache.push(value);
+//    }
+//    return value;
+//},2));
+
 function color(color_name) {
  return "\x1b[" + (color_name ? theme[color_name] : "0") + "m";
 }
 
 function colorize(color_name, string, reset_name) {
   return color(color_name) + string + color(reset_name);
+}
+
+function dumpJSON(obj){
+  print(parseJSON(obj));
+}
+function parseJSON(obj)
+{
+  var cache=[];
+  return JSON.stringify(obj,function(key, value) {
+    if (typeof value === 'object' && value !== null) {
+        if (cache.indexOf(value) !== -1) {
+            // Circular reference found, discard key
+            //cache.push("["+value+"]");
+            return;
+        }
+        // Store value in our collection
+        cache.push(value);
+    }
+    return value;
+  },2);
 }
 
 function dump(value) {
@@ -93,12 +197,11 @@ function dump(value) {
     if (name === "Number") {
       return colorize("number", "[Number " + value + "]");
     }
+    if (value instanceof Handle || value instanceof Req) {
+      return colorize("object", "[" + value.constructor.name + " " + info[1] + "]");
+    }
     if (name !== "Object" && name !== "Array" && name !== "global") {
       return colorize("object", "[" + name + " " + info[1] + "]");
-    }
-    if (typeof value.inspect === "function") {
-      var out = value.inspect();
-      if (out) return colorize("object", value.inspect());
     }
 
     var index = seen.indexOf(value);
@@ -164,11 +267,17 @@ function prettyPrint() {
   print(Array.prototype.map.call(arguments, dump).join(" "));
 }
 
-return {
-  prettyPrint: prettyPrint,
-  dump: dump,
-  color: color,
-  colorize: colorize,
+module.exports = {
+    stdin: stdin,
+    stdout: stdout,
+    stderr: stderr,
+    prettyPrint: prettyPrint,
+    pad: pad,
+    dump: dump,
+    dumpJSON: dumpJSON,
+    parseJSON: parseJSON,
+    color: color,
+    colorize: colorize,
+    hashCode: hashCode
 };
 
-})();

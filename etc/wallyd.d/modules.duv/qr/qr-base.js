@@ -1,8 +1,8 @@
 "use strict";
 
-var encode = require('./encode');
-var calculateEC = require('./errorcode');
-var matrix = require('./matrix');
+var encode = require('./encode.js');
+var calculateEC = require('./errorcode.js');
+var matrix = require('./matrix.js');
 
 function _deepCopy(obj) {
     return JSON.parse(JSON.stringify(obj));

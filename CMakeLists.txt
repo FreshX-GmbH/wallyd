@@ -5,6 +5,15 @@ project(wallyd)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(PKG_CONFIG_USE_CMAKE_PREFIX_PATH on)
 
+# Compile video support (requires libffmpeg)
+set(WITH_VIDEO off)
+
+# We compile agains seaduk ? Otherwise we compile agains dukluv
+set(WITH_SEADUK on)
+
+# We want to gently wait for events or poll agressivly (more performant)
+set(WAIT_EV off)
+
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -D__WITH_MURMUR -std=gnu99")
 
 find_package(PkgConfig)
@@ -12,21 +21,29 @@ pkg_check_modules(LIBUV libuv>=1.7)
 pkg_check_modules(LIBSDL sdl2>=2.0)
 pkg_check_modules(LIBSDLTTF SDL2_ttf>=2.0)
 pkg_check_modules(LIBSDLIMG SDL2_image>=2.0)
-pkg_check_modules(LIBSDLGFX SDL2_gfx>=1.0)
-pkg_check_modules(LIBSWRE libswresample)
-pkg_check_modules(LIBAVUTIL libavutil)
-pkg_check_modules(LIBAVCODEC libavcodec)
-pkg_check_modules(LIBAVFORMAT libavformat)
-pkg_check_modules(LIBSWSCALE libswscale)
+#pkg_check_modules(LIBSDLGFX SDL2_gfx>=1.0)
+if(WITH_VIDEO STREQUAL on)
+	set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DWITH_VIDEO")
+	pkg_check_modules(LIBSWRE libswresample)
+	pkg_check_modules(LIBAVUTIL libavutil)
+	pkg_check_modules(LIBAVCODEC libavcodec)
+	pkg_check_modules(LIBAVFORMAT libavformat)
+	pkg_check_modules(LIBSWSCALE libswscale)
+endif()
 pkg_check_modules(LIBCURL libcurl)
 pkg_check_modules(LIBDUV dukluv)
 
-#target_link_libraries(wallyd ${LIBUV_LIBS} ${LIBSDL_LIBRARIES} 
-#    ${LIBCURL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDLIMG_LIBRARIES} duktape duv)
+if(WITH_SEADUK STREQUAL on)
+	set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DWITH_SEADUK -std=gnu99")
+endif()
+if(WAIT_EV STREQUAL on)
+	set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DWAIT_EV")
+endif()
+
 include_directories(${LIBUV_INCLUDE_DIRS} ${LIBSDL_INCLUDE_DIRS} ${LIBDUV_INCLUDE_DIRS} lib src)
 link_directories(${LIBUV_LIBRARY_DIRS} ${LIBSDL_LIBRARY_DIRS})
 
-# TODO
+# TODO : Build Versioning
 #file (STRINGS "version" CMAKE_BUILD_NUMBER)
 #execute_process(COMMAND echo \$\(\(${CMAKE_BUILD_NUMBER}+1\)\) OUTPUT_FILE version2)
 
@@ -63,6 +80,6 @@ set(PREFSDIR ${SYSCONFDIR}/${CMAKE_PROJECT_NAME}/wallyd.d)
 configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/etc/wallyd.conf" "${CMAKE_CURRENT_SOURCE_DIR}/wallyd.conf")
 configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/lib/autoversion.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/lib/autoversion.h" )
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/wallyd.conf" DESTINATION ${SYSCONFDIR})
-install(FILES etc/wallyd.startup.js DESTINATION ${SYSCONFDIR})
+#install(FILES etc/wallyd.startup.js DESTINATION ${SYSCONFDIR})
 install(DIRECTORY etc/wallyd.d DESTINATION ${SYSCONFDIR})
 

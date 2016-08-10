@@ -1,6 +1,6 @@
 "use strict";
 
-var crc32 = require('./crc32');
+var crc32 = require('./crc32.js');
 
 var PNG_HEAD = Buffer([137,80,78,71,13,10,26,10]);
 var PNG_IHDR = Buffer([0,0,0,13,73,72,68,82,0,0,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0]);

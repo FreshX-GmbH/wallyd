@@ -38,7 +38,8 @@ for (var f in fonts) {
 }
 
 for (var t in textures) {
-    context.tex[t] = new Texture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h,textures[t].color);
+    //context.tex[t] = new Texture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h,textures[t].color);
+    screen.createTexture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h,textures[t].color);
 }
 
 //   Display the test screen
@@ -58,3 +59,5 @@ if(config.startVideo === true){
         print('Error in video play ',err);
     }
 }
+
+p(this);

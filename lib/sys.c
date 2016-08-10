@@ -163,7 +163,9 @@ duk_ret_t my_setter(duk_context *ctx){
 }
 
 int js_initSysPlugin(duk_context *ctx){
+#ifndef WITH_SEADUK
    duv_ref_setup(ctx);
+#endif
    duk_push_c_function(ctx, js_sys_ctor, 1 );
    duk_push_object(ctx);
    duk_put_function_list(ctx, -1, sysMethods);

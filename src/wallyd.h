@@ -35,7 +35,7 @@ uv_loop_t * loop;
 uv_loop_t loop;
 #endif
 
-char *startupScript = "/etc/wallyd.startup";
+extern char *startupScript;
 
 void onNewConnection(uv_stream_t *server, int status);
 bool processCommand(char *cmd);

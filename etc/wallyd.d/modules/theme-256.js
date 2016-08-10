@@ -1,35 +1,34 @@
-
 // nice color theme using 256-mode colors
+({
+  property:  "38;5;253",
+  braces:    "38;5;247",
+  sep:       "38;5;240",
 
-exports.property  = "38;5;253";
-exports.braces    = "38;5;247";
-exports.sep       = "38;5;240";
+  undefined: "38;5;244",
+  boolean:   "38;5;220", // yellow-orange
+  number:    "38;5;202", // orange
+  string:    "38;5;34",  // darker green
+  quotes:    "38;5;40",  // green
+  escape:    "38;5;46",  // bright green
+  function:  "38;5;129", // purple
+  cfunction: "38;5;161", // purple-red
+  thread:    "38;5;199", // pink
 
-exports.undefined = "38;5;244";
-exports.boolean   = "38;5;220"; // yellow-orange
-exports.number    = "38;5;202"; // orange
-exports.string    = "38;5;34";  // darker green
-exports.quotes    = "38;5;40";  // green
-exports.escape    = "38;5;46";  // bright green
-exports.function  = "38;5;129"; // purple
-exports.cfunction = "38;5;161"; // purple-red
-exports.thread    = "38;5;199"; // pink
+  regexp:    "38;5;214", // yellow-orange
+  date:      "38;5;153", // blue-purple
 
-exports.regexp    = "38;5;214"; // yellow-orange
-exports.date      = "38;5;153"; // blue-purple
+  null:      "38;5;27",  // dark blue
+  object:    "38;5;27",  // blue
+  buffer:    "38;5;39",  // blue2
+  dbuffer:   "38;5;69",  // teal
+  pointer:   "38;5;124", // red
 
-exports.null      = "38;5;27";  // dark blue
-exports.object    = "38;5;27";  // blue
-exports.buffer    = "38;5;39";  // blue2
-exports.dbuffer   = "38;5;69";  // teal
-exports.pointer   = "38;5;124"; // red
+  info:      "38;5;40",  // bright green
+  warn:      "38;5;202", // orange
+  debug:     "38;5;27",  // blue
 
-exports.info      = "38;5;40";  // bright green
-exports.warn      = "38;5;202"; // orange
-exports.debug     = "38;5;27";  // blue
-
-exports.error     = "38;5;196"; // bright red
-exports.success   = "38;5;120;48;5;22";  // bright green
-exports.failure   = "38;5;215;48;5;52";  // bright green
-exports.highlight = "38;5;45;48;5;236";  // bright teal with grey background
-
+  error:     "38;5;196", // bright red
+  success:   "38;5;120;48;5;22",  // bright green
+  failure:   "38;5;215;48;5;52",  // bright green
+  highlight: "38;5;45;48;5;236",  // bright teal with grey background
+})

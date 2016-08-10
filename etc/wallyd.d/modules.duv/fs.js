@@ -1,11 +1,12 @@
-(function(){
 "use strict";
 
 var BUFFER_SIZE = 8;
-var uv = nucleus.uv;
+var stdout = uv.new_tty(1, false);
+var stdin = uv.new_tty(0, true);
+var stderr = uv.new_tty(2, false);
 
 function readdir(path,callback){
-  nucleus.scandir(path, function (req){
+  uv.fs_scandir(path, function (req){
     if(!req){
         print('ERROR in scandir');
         return callback('error',null);
@@ -69,7 +70,7 @@ function openSync (path, flags, mode_) {
 function readFileSync (filename, encoding_) {
   var encoding = encoding_ ? encoding_ : 'utf8';
 
-  var fd = uv.fs_open(filename, 'r', 438); // 438 = 0666
+  var fd = uv.fs_open(filename, 'r', 0666);
   var buf;
   var count = 0;
   var r;
@@ -106,7 +107,7 @@ function readFile (filename, callback) {
   var count = 0;
 
   try {
-    fd = uv.fs_open(filename, 'r', 438); // 438 = 0666
+    fd = uv.fs_open(filename, 'r', 0666);
   } catch (err) {
     return callback(err);
   }
@@ -148,7 +149,7 @@ function existsSync (path) {
 function writeFileSync (filename, buf, encoding_) {
   var encoding = encoding_ ? encoding_ : 'utf8';
 
-  var fd = uv.fs_open(filename, 'w', 438); // 438 = 0666
+  var fd = uv.fs_open(filename, 'w', 0666);
   uv.fs_write(fd, buf, -1);
   uv.fs_close(fd);
   return buf;
@@ -159,7 +160,7 @@ function writeFile (filename, buf, callback) {
   var count = 0;
 
   try {
-    fd = uv.fs_open(filename, 'w', 438); // 438 = 0666
+    fd = uv.fs_open(filename, 'w', 0666);
   } catch (err) {
     return callback(err);
   }
@@ -167,11 +168,10 @@ function writeFile (filename, buf, callback) {
   return uv.fs_write(fd, buf, 0, callback);
 }
 
-return {
-    //stderr: new uv.Tty(2, false),
-    //stdin:  new uv.Tty(0, true),
-    //stdout: new uv.Tty(1, false),
-
+module.exports={
+    stdout: stdout,
+    stdin:  stdin,
+    stderr: stderr,
     readdir:  readdir,
     readFile: readFile,
     readFileSync: readFileSync,
@@ -180,5 +180,3 @@ return {
     writeFileSync: writeFileSync,
     writeFile: writeFile
 };
-
-})();

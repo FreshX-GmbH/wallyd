@@ -25,7 +25,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <duktape.h>
-#include <refs.h>
+//#include <refs.h>
 
 #ifndef _WIN32
 #include <sys/time.h>

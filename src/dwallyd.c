@@ -9,6 +9,12 @@ uv_pipe_t server;
 duk_ret_t duv_stash_argv(duk_context *ctx);
 void duv_dump_error(duk_context *ctx, duk_idx_t idx);
 void duvThread(void *ctx);
+char *startupScript = WALLYD_CONFDIR"/wallyd.startup.js";
+
+#ifdef WITH_SEADUK
+int gargc;
+char **gargv;
+#endif
 
 #define UV_SOCKET_BUFFER_SIZE 8192
 
@@ -28,18 +34,6 @@ int main(int argc, char *argv[])
     ph = pluginsInit();
     utilInit(ph,DEFAULT_LOG_LEVEL);
 
-//    long size;
-//    char *start;
-//    void *data = mapDataFile("/etc/wallyd.tar",&size);
-//    slog(LVL_NOISY,DEBUG,"Size : %d, File at %p",size,data);
-//    list_mem_tar(data,&start,size);
-//    if(openVFS(ph, "/etc/wallyd.data") == false){
-//        slog(LVL_NOISY,DEBUG,"Failed to open VFS");
-//        exit(1);
-//    }
-//    char *f = getVFSFile(ph, "/etc/wallyd.conf", &size);
-//    slog(LVL_NOISY,DEBUG,"%s",f);
-
     slog(LVL_INFO,INFO,"Wally Image Server R%u (Build %u) starting.",BUILD_NUMBER,BUILD_DATE);
 
     // assing signal handlers for ctrl+c
@@ -54,12 +48,10 @@ int main(int argc, char *argv[])
     // init curl lib
     url_init();
 
-
     // init SDL Lib
     if(!sdlInit()){
       exit(1);
     }
-
 
     // Tie loop and context together
     ctx = duk_create_heap(NULL, NULL, NULL, &loop, (duk_fatal_function)my_duk_fatal);
@@ -101,6 +93,12 @@ int main(int argc, char *argv[])
     }
 
   const char *startup=INSTALL_PREFIX"/etc/wallyd.startup.js";
+#ifdef WITH_SEADUK
+  slog(LVL_NOISY,DEBUG,"Seaduk initializing");
+  gargc = argc;
+  gargv = argv;
+  uv_thread_create(&uv_thread, &duvThread, ctx);
+#else
   if (argc < 2) {
     char *newargv[2];
     argc++;
@@ -131,6 +129,7 @@ int main(int argc, char *argv[])
   duk_push_string(ctx, argv[1]);
   // Start the JS startup script in a thread 
   uv_thread_create(&uv_thread, &duvThread, ctx);
+#endif
 
   // Loop the SDL stuff in the main thread
   uiLoop(ph);
@@ -139,6 +138,7 @@ int main(int argc, char *argv[])
   duk_destroy_heap(ctx);
 }
 
+#ifndef WITH_SEADUK
 void duvThread(void *ctx){
  if (duk_pcall(ctx, 1)) {
     duv_dump_error(ctx, -1);
@@ -147,37 +147,38 @@ void duvThread(void *ctx){
     return;
   }
 }
+#endif
 
 // UVinize
-void uvThread(void *p){
-    int ret;
-    slog(LVL_NOISY,FULLDEBUG,"UVThread running.");
-
-    if ((ret = uv_pipe_bind(&server, FIFO))) {
-        slog(LVL_QUIET,ERROR, "Bind error %s\n", uv_err_name(ret));
-        return;
-    }
-    if ((ret = uv_listen((uv_stream_t*) &server, UV_SOCKET_BUFFER_SIZE, onNewConnection))) {
-        slog(LVL_QUIET,ERROR, "Listen error %s\n", uv_err_name(ret));
-        return;
-    }
-
-    // process the startupsctip <etcdir>/wallyd.conf if existant
-    //processStartupScript(startupScript);
-    //js_evalFile(startupScript);
-    ret=0;
-    callWithString("js::evalFile",&ret,startupScript);
-
-    slog(LVL_NOISY,FULLDEBUG,"Before uv_run");
-    uv_run(uv_default_loop(), UV_RUN_DEFAULT);
-
-    slog(LVL_NOISY,DEBUG,"Wally Main loop done. Exit");
-    uv_fs_req_cleanup(&openReq);
-    uv_fs_req_cleanup(&readReq);
-    uv_fs_req_cleanup(&closeReq);
-    return;
-}
-
+//void uvThread(void *p){
+//    int ret;
+//    slog(LVL_NOISY,FULLDEBUG,"UVThread running.");
+//
+//    if ((ret = uv_pipe_bind(&server, FIFO))) {
+//        slog(LVL_QUIET,ERROR, "Bind error %s\n", uv_err_name(ret));
+//        return;
+//    }
+//    if ((ret = uv_listen((uv_stream_t*) &server, UV_SOCKET_BUFFER_SIZE, onNewConnection))) {
+//        slog(LVL_QUIET,ERROR, "Listen error %s\n", uv_err_name(ret));
+//        return;
+//    }
+//
+//    // process the startupsctip <etcdir>/wallyd.conf if existant
+//    //processStartupScript(startupScript);
+//    //js_evalFile(startupScript);
+//    ret=0;
+//    callWithString("js::evalFile",&ret,startupScript);
+//
+//    slog(LVL_NOISY,FULLDEBUG,"Before uv_run");
+//    uv_run(uv_default_loop(), UV_RUN_DEFAULT);
+//
+//    slog(LVL_NOISY,DEBUG,"Wally Main loop done. Exit");
+//    uv_fs_req_cleanup(&openReq);
+//    uv_fs_req_cleanup(&readReq);
+//    uv_fs_req_cleanup(&closeReq);
+//    return;
+//}
+//
 void allocBuffer(uv_handle_t* handle, size_t size, uv_buf_t* buf) {
       buf->base = malloc(size);
       buf->len = size;

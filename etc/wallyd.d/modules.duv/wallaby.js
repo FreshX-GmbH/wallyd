@@ -1,11 +1,13 @@
 'use strict';
 
-//var curl = require('curl');
-//var qr = require('modules/qr/qr');
-var uv = nucleus.uv;
 var gui = new GUI();
 var wally = new Wally();
 var config = wally.getConfig();
+var utils = require('./utils.js');
+var log = require('./log.js');
+var curl = require('./curl.js');
+var qr = require('./qr/qr.js');
+var p = utils.prettyPrint;
 
 function parseString(str){
     if( str === undefined ) return "";
@@ -17,10 +19,10 @@ function parseString(str){
     {
         var smatch = match[j].replace(/\$_./,'').replace(/;$/,'');
         log.debug(smatch);
-        if(context.privates && context.privates[smatch]){
-             var val = context.privates[smatch].toString();
-             matchTable[smatch] = val;
-         } else {
+            if(context.privates && context.privates[smatch]){
+                val = context.privates[smatch].toString();
+                matchTable[smatch] = val;
+            } else {
             log.error("Key ",smatch," not found in context.privates");
         }
     }
@@ -41,7 +43,7 @@ function renderScreen(context, tree, screen, data)
    var maxWidth=0, maxHeight=0;
    var xScale=1.0, yScale=1.0;
    var rX=0, rY=0;
-   var start = new Date().getTime();
+   var start = uv.hrtime();
 
    log.info(data);
 	
@@ -87,9 +89,8 @@ function renderScreen(context, tree, screen, data)
         }
    
         if(obj.type === 'image'){
-            //curl.downloadFile(obj.path,'/tmp/test.png');
-            //gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
-	    log.debug('Download not yet implemented.');
+            curl.downloadFile(obj.path,'/tmp/test.png');
+            gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
             continue;
         }
         if(obj.type === 'line'){
@@ -105,12 +106,10 @@ function renderScreen(context, tree, screen, data)
             continue;
 	}
         if(obj.type === 'qr'){
-	    log.debug('QR not yet ported');
-	    continue;
             var qrtext = parseString(opts.value.replace('qr:',''));
             //var res = qr.image(qrtext, { type: 'svg' });
             //log.debug(res);
-            //var res = qr.file(qrtext,'/tmp/qr.svg', { type: 'svg' });
+            var res = qr.file(qrtext,'/tmp/qr.svg', { type: 'svg' });
             svg.svgToPng("/tmp/qr.svg","/tmp/qr.png");
             log.debug('Placing QR Code at : ',X,Y,W,H);
             gui.loadImage(screen,'/tmp/qr.png',X,Y,W,H,255);
@@ -147,9 +146,9 @@ function renderScreen(context, tree, screen, data)
     
     wally.render(screen);
     gui.clearTextureNoPaint(screen);
-  
-    var end = new Date().getTime()-start;
-    log.debug({'time': end /1000 });
+    
+    end = uv.hrtime()-start;
+    log.debug({'time': end /1000000000 });
     log.debug('Wallaby Screen has max size '+maxWidth+'x'+maxHeight+' Scaling by '+xScale+'x'+yScale+' Relocating by '+rX+'/'+rY);
 }
 

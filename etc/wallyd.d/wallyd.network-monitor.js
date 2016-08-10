@@ -1,8 +1,5 @@
 'use strict';
 
-var utils = require('./modules/utils.js');
-var p = utils.prettyPrint;
-
 function assert(cond, message) {
   if (!cond) {
     throw new Error(message || 'Assertion Failure');

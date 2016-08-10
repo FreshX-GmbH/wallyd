@@ -7,6 +7,6 @@ var textures = {
 }
 
 for (var t in textures) {
-    texture = new Texture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h,textures[t].color);
-    tex[t] = texture;
+    screen.createTexture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h,textures[t].color);
+//    tex[t] = texture;
 }

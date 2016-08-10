@@ -1,7 +1,9 @@
-(function(){
 "use strict";
 
+var utils = require('./utils.js');
 var date = new Date();
+
+var theme = require('./theme-256.js');
 
 function printlog()
 {
@@ -27,12 +29,11 @@ function log_fulldebug(){
       printlog(4,arguments);
 }
 
-return {
-	error: log_error,
-	warn: log_warn,
-	info: log_info,
-	debug: log_debug,
-	fulldebug: log_fulldebug
+module.exports = {
+  error: log_error,
+  warn:  log_warn,
+  info:  log_info,
+  debug: log_debug,
+  fulldebug: log_fulldebug
 };
 
-})();

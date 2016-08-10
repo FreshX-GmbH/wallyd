@@ -1,9 +1,9 @@
 "use strict";
 
-var QR = require('./qr-base').QR;
-var png = require('./png');
-var vector = require('./vector');
-var fs = nucleus.dofile('modules/fs.js');
+var QR = require('./qr-base.js').QR;
+var png = require('./png.js');
+var vector = require('./vector.js');
+var fs = require('../fs.js');
 
 var BITMAP_OPTIONS = {
     parse_url: false,

@@ -71,7 +71,7 @@ typedef struct {
 
 duk_ret_t dukopen_uv(duk_context *ctx);
 
-#include <refs.h>
+//#include <refs.h>
 #include "duvutil.h"
 #include "schema.h"
 #include "uv_schema.h"

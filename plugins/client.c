@@ -54,10 +54,12 @@ void *wallyClientThread(void *argPtr){
                   if(ph->location) {
                      if(run_callback){
                         slog(LVL_NOISY,DEBUG,"Executing JS Callback for client discovery");
+#ifndef WITH_SEADUK
                         duv_push_ref(ctx, finishCallback);
                         duk_push_string(ctx, ph->location);
                         duk_call(ctx, 1);
                         duk_to_int(ctx, -1);
+#endif
                      }
                      saveLocation(FLAGFILE);
                   }
@@ -271,8 +273,10 @@ duk_ret_t js_client_ctor(duk_context *ctx)
 
 void js_client_init(duk_context *ctx) {
    slog(LVL_NOISY,DEBUG,"Constructing cloud object");
-   
+  
+#ifndef WITH_SEADUK 
    duv_ref_setup(ctx);
+#endif
 
    duk_push_c_function(ctx, js_client_ctor, 5 );
 

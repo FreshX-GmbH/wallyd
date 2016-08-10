@@ -1,10 +1,7 @@
 'use strict';
 
-var log = require('./modules/log.js');
-var Tcp = require('./modules/classes.js').Tcp;
+var Tcp = require('./modules/classes').Tcp;
 var server, socket, client;
-var wally = new Wally();
-var gui = new GUI();
 var port = 1338;
 
 function assert(cond, message) {
