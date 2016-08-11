@@ -12,7 +12,7 @@ set(WITH_VIDEO off)
 set(WITH_SEADUK on)
 
 # We want to gently wait for events or poll agressivly (more performant)
-set(WAIT_EV off)
+set(WAIT_EV on)
 
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -D__WITH_MURMUR -std=gnu99")
 
