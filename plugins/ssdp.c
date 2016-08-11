@@ -1,4 +1,5 @@
 #include "ssdp.h"
+#include "../src/nucly/duv.h"
 
 #define PLUGIN_SCOPE "ssdp"
 
@@ -160,4 +161,15 @@ char *initPlugin(pluginHandler *_ph){
     wally_put_function_list(c_SSDPMethods);
     slog(LVL_NOISY,FULLDEBUG,"Plugin ssdp initializing. PH is at 0x%x",ph);
     return PLUGIN_SCOPE;
+}
+
+duk_ret_t duv_udp_send(duk_context *ctx) {
+  dschema_check(ctx, (const duv_schema_entry[]) {
+    {"host", duk_is_string},
+    {"port", duk_is_number},
+    {"data", duk_is_string},
+    {"callback", dschema_is_continuation},
+    {0,0}
+  });
+  return 0;
 }
