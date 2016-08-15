@@ -354,7 +354,7 @@ void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
         /* Print output */
         if (level <= slg.level || slg.pretty)
         {
-            if (level <= slg.level) 
+            if (level <= slg.level) {
                 if (flag != SLOG_NONE) {
                     if (level > LVL_QUIET) {
                         if (level > SLOG_INFO) {
@@ -371,6 +371,7 @@ void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
                 } else {
                     printf("[%s]", slog_get(&mdate, "%s\n",prints));
                 }
+        }
         }
 
         /* Save log in file */
