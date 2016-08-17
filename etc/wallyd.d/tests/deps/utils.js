@@ -68,7 +68,7 @@ function dump(value) {
       return colorize("thread", "[Thread " + info[1] + "]");
     }
     if (name === "Buffer") {
-      var preview = Array.prototype.slice.call(value, 0, 10).map(function (byte) {
+      var preview = Array.prototype.slice.call(value, 0, 50).map(function (byte) {
         return byte < 16 ? "0" + byte.toString(16) : byte.toString(16);
       }).join(" ");
       if (value.length > 10) { preview += "..."; }

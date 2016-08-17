@@ -9,11 +9,13 @@ uv_pipe_t server;
 duk_ret_t duv_stash_argv(duk_context *ctx);
 void duv_dump_error(duk_context *ctx, duk_idx_t idx);
 void duvThread(void *ctx);
-char *startupScript = WALLYD_CONFDIR"/wallyd.startup.js";
 
 #ifdef WITH_SEADUK
 int gargc;
 char **gargv;
+char *startupScript = WALLYD_CONFDIR"/wallyd.d";
+#else
+char *startupScript = WALLYD_CONFDIR"/wallyd.d/main.js";
 #endif
 
 #define UV_SOCKET_BUFFER_SIZE 8192
@@ -92,18 +94,24 @@ int main(int argc, char *argv[])
         slog(LVL_INFO,INFO,"Old FIFO found and removed.");
     }
 
-  const char *startup=INSTALL_PREFIX"/etc/wallyd.startup.js";
 #ifdef WITH_SEADUK
-  slog(LVL_NOISY,DEBUG,"Seaduk initializing");
+  slog(LVL_NOISY,DEBUG,"Seaduk initializing.";
   gargc = argc;
   gargv = argv;
+  if(argc < 2){
+      const char *nargv[2];
+      nargv[0] = argv[0];
+      nargv[1] = startupScript;
+      argc++;
+      gargv = (char **) nargv;
+  }
   uv_thread_create(&uv_thread, &duvThread, ctx);
 #else
   if (argc < 2) {
     char *newargv[2];
     argc++;
     newargv[0]=argv[0];
-    newargv[1]=startup;
+    newargv[1]=startupScript;
     argv=newargv;
   }
 
