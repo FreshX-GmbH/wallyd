@@ -1,6 +1,7 @@
 *.xcuserstate
 Plugins.xcscheme
 config/*
+CMakeFiles
 config.h*
 config.log
 config.status

@@ -96,9 +96,9 @@ int main(int argc, char *argv[])
       argc++;
       gargv = (char **) nargv;
   }
-//  if(pthread_create(&uv_thr, NULL, &duvThread, ctx) != 0){
-//    slog(LVL_ALL,ERROR,"Failed to create seaduk thread!");
-//  }
+  if(pthread_create(&uv_thr, NULL, &duvThread, ctx) != 0){
+    slog(LVL_ALL,ERROR,"Failed to create seaduk thread!");
+  }
 #else
   if (argc < 2) {
     char *newargv[2];

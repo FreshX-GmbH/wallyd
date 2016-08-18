@@ -22,7 +22,7 @@ static duk_ret_t nucleus_exit(duk_context *ctx) {
 }
 
 static char* base;
-static mz_zip_archive zip;
+//static mz_zip_archive zip;
 
 static struct {
   // (path -- data or null)
@@ -63,7 +63,7 @@ static void resolve(duk_context *ctx) {
   duk_call(ctx, 2);
   duk_replace(ctx, 0);
 }
-
+/*
 static duk_ret_t read_from_zip(duk_context *ctx) {
   canonicalize(ctx);
   const char* filename = duk_get_string(ctx, 0);
@@ -134,6 +134,7 @@ static duk_ret_t scan_from_zip(duk_context *ctx) {
   duk_push_true(ctx);
   return 1;
 }
+*/
 
 static duk_ret_t read_from_disk(duk_context *ctx) {
   resolve(ctx);
@@ -305,7 +306,7 @@ static void duk_put_nucleus(duk_context *ctx, int argc, char *argv[], int argsta
 
   duk_put_global_string(ctx, "nucleus");
 }
-
+/*
 void add_zip_dir(const char* path, const char* prefix) {
   struct dirent *dp;
   DIR *dir = opendir(path);
@@ -372,7 +373,7 @@ void build_zip(const char* source, const char* target, enum build_mode mode) {
   add_zip_dir(source, "");
   exit(1);
 }
-
+*/
 void setupSocket(void *p){
     int ret;
     int flags = 128;
@@ -508,8 +509,8 @@ void duvThread(void *ctx){
 //    resource.scan = scan_from_zip;
 //  }
 //  else {
-//    resource.read = read_from_disk;
-//    resource.scan = scan_from_disk;
+    resource.read = read_from_disk;
+    resource.scan = scan_from_disk;
 //  }
 
   // Setup context with global.nucleus
@@ -517,27 +518,18 @@ void duvThread(void *ctx){
   //printf("\nSetting up socket listener : 0x%x.\n",ctx);
   //setupSocket(ctx);
   printf("\nEntering UVRUN(0x%x) %s/%s (argv:%s, %s,argc:%d)\n\n",ctx,base,entry.data,argv[0],argv[1],argc);
-  //duk_put_nucleus(ctx, argc, argv, argc);
-  char *test="print('abc');"; 
-  // Run main.js function
-  if(duk_peval_lstring(ctx,"print('abc');",strlen("print('abc');"))){
+  duk_put_nucleus(ctx, argc, argv, argc);
+
+  duk_push_string(ctx, "nucleus.dofile('");
+  duk_push_lstring(ctx, entry.data, entry.len);
+  duk_push_string(ctx, "')");
+  duk_concat(ctx, 3);
+  if (duk_peval(ctx)) {
     duk_dump_context_stderr(ctx);
     duk_get_prop_string(ctx, -1, "stack");
     fprintf(stderr, "Uncaught %s\n", duk_safe_to_string(ctx, -1));
     exit(1);
   }
-
-  //duk_push_string(ctx, "nucleus.dofile('");
-  //duk_push_lstring(ctx, entry.data, entry.len);
-  //duk_push_string(ctx, "')");
-  //duk_concat(ctx, 3);
-  //duk_peval(ctx);
-  //if (duk_peval(ctx)) {
-  //  duk_dump_context_stderr(ctx);
-  //  duk_get_prop_string(ctx, -1, "stack");
-  //  fprintf(stderr, "Uncaught %s\n", duk_safe_to_string(ctx, -1));
-  //  exit(1);
-  //}
   uv_run(&loop, UV_RUN_DEFAULT);
   slog(LVL_QUIET,INFO,"Seaduk interpreter has finished.");
 //  duk_destroy_heap(ctx);
