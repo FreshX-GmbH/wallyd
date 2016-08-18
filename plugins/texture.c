@@ -28,9 +28,11 @@ char *cleanupPlugin(void *p){
 
 static duk_ret_t js_setter(duk_context *ctx) {
     slog(LVL_INFO,INFO,"Setter called");
+    return 0;
 }
 static duk_ret_t js_getter(duk_context *ctx) {
     slog(LVL_INFO,INFO,"Getter called");
+    return 0;
 }
 // the destructor
 duk_ret_t js_texture_dtor(duk_context *ctx)

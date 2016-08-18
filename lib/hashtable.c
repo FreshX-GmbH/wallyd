@@ -160,27 +160,27 @@ void ht_destroy(hash_table *table)
 
 void ht_insert_simple(hash_table *table, char *key, void *value)
 {
-    slog(LVL_NOISY,DEBUG,"create : %s", key);
+//    slog(LVL_NOISY,DEBUG,"create : %s", key);
     hash_entry *entry = he_create(table->flags, key, strlen(key)+1, value, sizeof(void*));
 
-    slog(LVL_NOISY,DEBUG,"insert_he");
+//    slog(LVL_NOISY,DEBUG,"insert_he");
     ht_insert_he(table, entry);
 }
 
 void ht_remove_simple(hash_table *table, char *key)
 {
-    slog(LVL_NOISY,DEBUG,"remove : %s",key);
+//    slog(LVL_NOISY,DEBUG,"remove : %s",key);
     ht_remove(table, key,strlen(key)+1);
 }
 
 void ht_insert(hash_table *table, void *key, size_t key_size, void *value,
         size_t value_size)
 {
-    slog(LVL_NOISY,DEBUG,"create : %s",key);
+//    slog(LVL_NOISY,DEBUG,"create : %s",key);
     hash_entry *entry = he_create(table->flags, key, key_size, value,
             value_size);
 
-    slog(LVL_NOISY,DEBUG,"insert_he");
+//    slog(LVL_NOISY,DEBUG,"insert_he");
     ht_insert_he(table, entry);
 }
 

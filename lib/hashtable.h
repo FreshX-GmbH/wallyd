@@ -17,7 +17,7 @@
 
 /// The initial size of the hash table.
 #ifndef HT_INITIAL_SIZE
-#define HT_INITIAL_SIZE 64
+#define HT_INITIAL_SIZE 128
 #endif //HT_INITIAL_SIZE
 
 /// The hash_entry struct. This is considered to be private

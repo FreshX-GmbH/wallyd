@@ -4,30 +4,20 @@
 
 // Our global context
 pluginHandler *ph;
-uv_pipe_t server;
-
-duk_ret_t duv_stash_argv(duk_context *ctx);
-void duv_dump_error(duk_context *ctx, duk_idx_t idx);
-void duvThread(void *ctx);
 
 #ifdef WITH_SEADUK
 int gargc;
 char **gargv;
-char *startupScript = WALLYD_CONFDIR"/wallyd.d";
+const char *startupScript = WALLYD_CONFDIR"/wallyd.d";
+pthread_t uv_thr;
 #else
-char *startupScript = WALLYD_CONFDIR"/wallyd.d/main.js";
+const char *startupScript = WALLYD_CONFDIR"/wallyd.d/main.js";
 #endif
-
-#define UV_SOCKET_BUFFER_SIZE 8192
 
 int main(int argc, char *argv[]) 
 {
     duk_context *ctx;
     int ret;
-
-    uv_thread_t uv_thread;
-    uv_loop_init(&loop);
-    uv_setup_args(argc, argv);
 
     // read startup parameters
     readOptions(argc,argv);
@@ -56,14 +46,15 @@ int main(int argc, char *argv[])
     }
 
     // Tie loop and context together
-    ctx = duk_create_heap(NULL, NULL, NULL, &loop, (duk_fatal_function)my_duk_fatal);
+    //ctx = duk_create_heap(NULL, NULL, NULL, &loop, (duk_fatal_function)my_duk_fatal);
+    ctx = duk_create_heap(NULL, NULL, NULL, &loop,NULL);
     if (!ctx) {
       fprintf(stderr, "Problem initiailizing duktape heap\n");
       return -1;
     }
-    loop.data = ctx;
     ph->ctx = ctx;
-
+    duk_push_string(ctx, "print('Hello world!');");
+    duk_peval(ctx);
 
     if(ht_get_simple(ph->configMap,"basedir") != NULL) {
       ph->basedir=ht_get_simple(ph->configMap,"basedir");
@@ -95,7 +86,7 @@ int main(int argc, char *argv[])
     }
 
 #ifdef WITH_SEADUK
-  slog(LVL_NOISY,DEBUG,"Seaduk initializing.";
+  slog(LVL_NOISY,DEBUG,"Seaduk initializing, ctx is at 0x%x.",ctx);
   gargc = argc;
   gargv = argv;
   if(argc < 2){
@@ -105,7 +96,9 @@ int main(int argc, char *argv[])
       argc++;
       gargv = (char **) nargv;
   }
-  uv_thread_create(&uv_thread, &duvThread, ctx);
+//  if(pthread_create(&uv_thr, NULL, &duvThread, ctx) != 0){
+//    slog(LVL_ALL,ERROR,"Failed to create seaduk thread!");
+//  }
 #else
   if (argc < 2) {
     char *newargv[2];
@@ -136,6 +129,7 @@ int main(int argc, char *argv[])
   duk_push_c_function(ctx, duv_main, 1);
   duk_push_string(ctx, argv[1]);
   // Start the JS startup script in a thread 
+  slog(LVL_NOISY,FULLDEBUG,"Seaduk thread starting");
   uv_thread_create(&uv_thread, &duvThread, ctx);
 #endif
 
@@ -150,43 +144,13 @@ int main(int argc, char *argv[])
 void duvThread(void *ctx){
  if (duk_pcall(ctx, 1)) {
     duv_dump_error(ctx, -1);
-    uv_loop_close(&loop);
+    uv_loop_close(loop);
     duk_destroy_heap(ctx);
     return;
   }
 }
 #endif
 
-// UVinize
-//void uvThread(void *p){
-//    int ret;
-//    slog(LVL_NOISY,FULLDEBUG,"UVThread running.");
-//
-//    if ((ret = uv_pipe_bind(&server, FIFO))) {
-//        slog(LVL_QUIET,ERROR, "Bind error %s\n", uv_err_name(ret));
-//        return;
-//    }
-//    if ((ret = uv_listen((uv_stream_t*) &server, UV_SOCKET_BUFFER_SIZE, onNewConnection))) {
-//        slog(LVL_QUIET,ERROR, "Listen error %s\n", uv_err_name(ret));
-//        return;
-//    }
-//
-//    // process the startupsctip <etcdir>/wallyd.conf if existant
-//    //processStartupScript(startupScript);
-//    //js_evalFile(startupScript);
-//    ret=0;
-//    callWithString("js::evalFile",&ret,startupScript);
-//
-//    slog(LVL_NOISY,FULLDEBUG,"Before uv_run");
-//    uv_run(uv_default_loop(), UV_RUN_DEFAULT);
-//
-//    slog(LVL_NOISY,DEBUG,"Wally Main loop done. Exit");
-//    uv_fs_req_cleanup(&openReq);
-//    uv_fs_req_cleanup(&readReq);
-//    uv_fs_req_cleanup(&closeReq);
-//    return;
-//}
-//
 void allocBuffer(uv_handle_t* handle, size_t size, uv_buf_t* buf) {
       buf->base = malloc(size);
       buf->len = size;
@@ -200,24 +164,31 @@ void onClose(uv_handle_t* handle){
 
 void onNewConnection(uv_stream_t *server, int status)
 {
+    slog(LVL_QUIET,DEBUG,"New connection on socket "FIFO);
     if (status == -1) {
         slog(LVL_QUIET,ERROR,"New connection error on socket "FIFO);
         return;
     }
-    uv_tcp_t *client = (uv_tcp_t*) malloc(sizeof(uv_tcp_t));
-    uv_tcp_init(uv_default_loop(), client);
-    if (uv_accept(server, (uv_stream_t*) client) == 0) {
-        uv_os_fd_t fd;
-        uv_fileno((const uv_handle_t*) client, &fd);
-        slog(LVL_NOISY,FULLDEBUG, "Worker %d: Accepted fd %d", getpid(), fd);
-        uv_read_start((uv_stream_t*) client, allocBuffer, onRead);
-    } else {
-        uv_close((uv_handle_t*) client, onClose);
+    uv_tcp_t client; //= (uv_tcp_t*) malloc(sizeof(uv_tcp_t));
+    uv_tcp_init(&loop, &client);
+    if (uv_accept(server, (uv_stream_t*) &client) == 0) {
+        uv_read_start((uv_stream_t*) &client, allocBuffer, onRead);
     }
+    else {
+        uv_close((uv_handle_t*) &client, NULL);
+    }
+//    if (uv_accept(server, (uv_stream_t*) &client) == 0) {
+//        uv_os_fd_t fd;
+//        uv_fileno((const uv_handle_t*) &client, &fd);
+//        slog(LVL_NOISY,FULLDEBUG, "Worker %d: Accepted fd %d", getpid(), fd);
+//        uv_read_start((uv_stream_t*) &client, allocBuffer, onRead);
+//    } else {
+//        uv_close((uv_handle_t*) &client, onClose);
+//    }
 }
 
 void onRead(uv_stream_t* _client, ssize_t nread, const uv_buf_t* buffer) {
-
+    slog(LVL_ALL,DEBUG,"onRead");
     if (nread == -1) {
         slog(LVL_NOISY,DEBUG, "Reached EOF on command socket");
         uv_close((uv_handle_t *) _client, onClose);

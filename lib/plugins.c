@@ -160,10 +160,10 @@ bool openPlugin(char *path, char* name)
     void *nameCopy = NULL;
     asprintf((char**)&nameCopy,"%s",name);
     handle = dlopen (path, RTLD_LAZY);
-    slog(LVL_INFO,INFO,"Loading plugin : %s", nameCopy);
+//    slog(LVL_INFO,INFO,"Loading plugin : %s", nameCopy);
     // Save the DL Handle for later, it has to stay open as long as we need the functions
     ht_insert_simple(ph->plugins,nameCopy,handle);
-    slog(LVL_NOISY,FULLDEBUG,"Saved plugin as %s in plugin map",name);
+//    slog(LVL_NOISY,FULLDEBUG,"Saved plugin as %s in plugin map",name);
     if (!handle) {
         slog(LVL_QUIET,ERROR,"Could not load plugin %s : %s",path,error);
         return false;
@@ -173,11 +173,11 @@ bool openPlugin(char *path, char* name)
         slog(LVL_QUIET,ERROR,"initPlugin() failed or not found (Error : %s)",error);
         return false;
     } else {
-       slog(LVL_NOISY,FULLDEBUG,"initPlugin() is now at 0x%x / handle at 0x%x",*initPlugin,handle);
+//       slog(LVL_NOISY,FULLDEBUG,"initPlugin() is now at 0x%x / handle at 0x%x",*initPlugin,handle);
     }
     // Initialize Plugin
     // TODO : Save return + function into command map
-    slog(LVL_NOISY,FULLDEBUG,"Plugin loaded : %s", (*initPlugin)(ph));
+//    slog(LVL_NOISY,FULLDEBUG,"Plugin loaded : %s", (*initPlugin)(ph));
     return true;
 }
 

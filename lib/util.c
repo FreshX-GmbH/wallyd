@@ -216,7 +216,7 @@ const char *getConfigEntry(const char *key){
 
 int getConfig(hash_table *map, const char *file)
 {
-   slog(LVL_NOISY,FULLDEBUG,"Map : 0x%x, Filename : %s",map,file);
+//   slog(LVL_NOISY,FULLDEBUG,"Map : 0x%x, Filename : %s",map,file);
    int count=0;
    FILE *fp = fopen(file,"r");
    if (fp == NULL){
@@ -228,7 +228,7 @@ int getConfig(hash_table *map, const char *file)
       unsigned long l=0;
       while (fgets ( line, 512, fp ) != NULL ) /* read a line */
       {
-         slog(LVL_NOISY,FULLDEBUG,"Read %d bytes from %s",strlen(line),file);
+//         slog(LVL_NOISY,FULLDEBUG,"Read %d bytes from %s",strlen(line),file);
          // skip comment lines
          if(line[0] == '#') continue;
          if(line[0] == ';') continue;
@@ -254,9 +254,9 @@ int getConfig(hash_table *map, const char *file)
               memset(v,0,vlen);
               memcpy(v,vnew,vlen-2);
               free(vnew);
-              slog(LVL_NOISY,FULLDEBUG,"Removed leading and trailing \" from value. its now : %s",v);
+              //slog(LVL_NOISY,FULLDEBUG,"Removed leading and trailing \" from value. its now : %s",v);
          }
-         slog(LVL_NOISY,FULLDEBUG,"Splitting cleaned line %s into key %s = %s",line,k,v);
+         //slog(LVL_NOISY,FULLDEBUG,"Splitting cleaned line %s into key %s = %s",line,k,v);
          if(!k || !v){
             slog(LVL_INFO,WARN,"Line %s is not valid. Ignored.");
             continue;

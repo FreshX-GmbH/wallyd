@@ -373,12 +373,34 @@ void build_zip(const char* source, const char* target, enum build_mode mode) {
   exit(1);
 }
 
+void setupSocket(void *p){
+    int ret;
+    int flags = 128;
+    //slog(LVL_NOISY,FULLDEBUG,"Fifo thread starting on "FIFO);
+    struct sockaddr_in addr;
+    uv_ip4_addr(BIND_HOST, BIND_PORT,&addr);
+    ret = uv_tcp_bind(&tcp, (const struct sockaddr*)&addr, SO_REUSEADDR | SO_LINGER);
+    if(ret){
+        slog(LVL_QUIET,ERROR, "Bind error %s\n", uv_err_name(ret));
+    }
+    ret = uv_listen((uv_stream_t*) &tcp, UV_SOCKET_BUFFER_SIZE, onNewConnection);
+    if(ret){
+        slog(LVL_QUIET,ERROR, "Listen error %s\n", uv_err_name(ret));
+    }
+}
+
 //int main(int argc, char *argv[]) {
 void duvThread(void *ctx){
   int argc = gargc;
   char **argv = gargv;
   bool isZip = false;
   int argstart = 1;
+
+  uv_thread_t uv_thread;
+  uv_loop_init(&loop);
+  uv_tcp_init(&loop,&tcp);
+  uv_setup_args(argc, argv);
+
   // If we detect a zip file appended to self, use it.
 //  if (mz_zip_reader_init_file(&zip, argv[0], 0)) {
 //    base = argv[0];
@@ -492,22 +514,31 @@ void duvThread(void *ctx){
 
   // Setup context with global.nucleus
 
-  duk_put_nucleus(ctx, argc, argv, argc);
-
-  printf("\nEntering UVRUN %s/%s\n\n",base,entry.data);
-  
+  //printf("\nSetting up socket listener : 0x%x.\n",ctx);
+  //setupSocket(ctx);
+  printf("\nEntering UVRUN(0x%x) %s/%s (argv:%s, %s,argc:%d)\n\n",ctx,base,entry.data,argv[0],argv[1],argc);
+  //duk_put_nucleus(ctx, argc, argv, argc);
+  char *test="print('abc');"; 
   // Run main.js function
-  duk_push_string(ctx, "nucleus.dofile('");
-  duk_push_lstring(ctx, entry.data, entry.len);
-  duk_push_string(ctx, "')");
-  duk_concat(ctx, 3);
-  if (duk_peval(ctx)) {
+  if(duk_peval_lstring(ctx,"print('abc');",strlen("print('abc');"))){
     duk_dump_context_stderr(ctx);
     duk_get_prop_string(ctx, -1, "stack");
     fprintf(stderr, "Uncaught %s\n", duk_safe_to_string(ctx, -1));
     exit(1);
   }
-//  uv_run(&loop, UV_RUN_DEFAULT);
+
+  //duk_push_string(ctx, "nucleus.dofile('");
+  //duk_push_lstring(ctx, entry.data, entry.len);
+  //duk_push_string(ctx, "')");
+  //duk_concat(ctx, 3);
+  //duk_peval(ctx);
+  //if (duk_peval(ctx)) {
+  //  duk_dump_context_stderr(ctx);
+  //  duk_get_prop_string(ctx, -1, "stack");
+  //  fprintf(stderr, "Uncaught %s\n", duk_safe_to_string(ctx, -1));
+  //  exit(1);
+  //}
+  uv_run(&loop, UV_RUN_DEFAULT);
   slog(LVL_QUIET,INFO,"Seaduk interpreter has finished.");
-  duk_destroy_heap(ctx);
+//  duk_destroy_heap(ctx);
 }
