@@ -12,6 +12,7 @@ if(nucleus){
 	var extra = nucleus.dofile('modules/extra.js');
 	var fs    = nucleus.dofile('modules/fs.js');
 	log.info('Seaduk modules initialized');
+        p(nucleus.envkeys());
 } else {
 	var modules = homedir+'/modules.duv';
 	var log = {info:print, error:print, debug:print};

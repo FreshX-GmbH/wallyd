@@ -163,7 +163,7 @@ bool openPlugin(char *path, char* name)
 //    slog(LVL_INFO,INFO,"Loading plugin : %s", nameCopy);
     // Save the DL Handle for later, it has to stay open as long as we need the functions
     ht_insert_simple(ph->plugins,nameCopy,handle);
-//    slog(LVL_NOISY,FULLDEBUG,"Saved plugin as %s in plugin map",name);
+    slog(LVL_NOISY,FULLDEBUG,"Saved plugin as %s in plugin map",name);
     if (!handle) {
         slog(LVL_QUIET,ERROR,"Could not load plugin %s : %s",path,error);
         return false;
@@ -177,7 +177,8 @@ bool openPlugin(char *path, char* name)
     }
     // Initialize Plugin
     // TODO : Save return + function into command map
-//    slog(LVL_NOISY,FULLDEBUG,"Plugin loaded : %s", (*initPlugin)(ph));
+    char *r = (*initPlugin)(ph);
+    slog(LVL_NOISY,FULLDEBUG,"Plugin loaded : %s", r);
     return true;
 }
 
@@ -230,7 +231,7 @@ int pluginLoader(char *path){
         slog(LVL_QUIET,ERROR,"Could not open plugin folder %s",path);
         return -1;
     }
-    slog(LVL_INFO,WARN,"Loaded %d plugins",pcount);
+    slog(LVL_INFO,INFO,"Loaded %d plugins",pcount);
     ph->pluginCount = pcount;
     ph->pluginLoaderDone = true;
     return 0;

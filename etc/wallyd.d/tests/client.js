@@ -11,7 +11,7 @@ var request = createClient({
     encode: httpCodec.decoder()
 }, function(stream) {
     p(stream);
-    stream.write('GET /fxcrm HTTP/1.0\n\n',function(err){
+    stream.write('GET /quest HTTP/1.1\n\n',function(err){
 	if(err) throw err;
 	p("Client write done",err);
     });
@@ -30,7 +30,6 @@ request.readStart(onRead);
 function onRead(err,res){
     p("Client read : ",err,res);
 }
-
 
 // Start the libuv event loop
 uv.run();

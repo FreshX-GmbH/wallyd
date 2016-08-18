@@ -370,7 +370,7 @@ char *initPlugin(pluginHandler *_ph){
    ph=_ph;
    ctx = ph->ctx;
 
-   slog(LVL_NOISY,FULLDEBUG,"Constructing wally object");
+   slog(LVL_ALL,DEBUG,"Constructing wally object");
 
    wally_put_function_list(c_JSMethods);
    
@@ -380,8 +380,7 @@ char *initPlugin(pluginHandler *_ph){
    duk_put_prop_string(ctx, -2, "prototype");
    duk_put_global_string(ctx, "Wally");  /* -> stack: [ ] */
 
-
-    slog(LVL_NOISY,FULLDEBUG,"Plugin initialized. PH is at 0x%x",_ph);
+    slog(LVL_ALL,DEBUG,"Plugin initialized. PH is at 0x%x",_ph);
     return PLUGIN_SCOPE;
 }
 

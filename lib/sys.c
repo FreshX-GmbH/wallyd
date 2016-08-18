@@ -202,9 +202,7 @@ char *initSysPlugin(pluginHandler *_ph){
    ctx = ph->ctx;
 
    wally_put_function_list(c_systemMethods);
-#ifndef DWALLYD
    js_initSysPlugin(ctx);
-#endif
 
   return PLUGIN_SCOPE;
 }

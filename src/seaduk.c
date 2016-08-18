@@ -515,9 +515,9 @@ void duvThread(void *ctx){
 
   // Setup context with global.nucleus
 
-  //printf("\nSetting up socket listener : 0x%x.\n",ctx);
-  //setupSocket(ctx);
-  printf("\nEntering UVRUN(0x%x) %s/%s (argv:%s, %s,argc:%d)\n\n",ctx,base,entry.data,argv[0],argv[1],argc);
+  slog(LVL_ALL,DEBUG,"Setting up socket listener.");
+  setupSocket(ctx);
+  //printf("\nEntering UVRUN(0x%x) %s/%s (argv:%s, %s,argc:%d)\n\n",ctx,base,entry.data,argv[0],argv[1],argc);
   duk_put_nucleus(ctx, argc, argv, argc);
 
   duk_push_string(ctx, "nucleus.dofile('");
