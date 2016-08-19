@@ -194,7 +194,7 @@ duk_ret_t js_getConfig(duk_context *ctx)
 {
    duk_idx_t obj_idx = duk_push_object(ctx);
    DUK_PUSH_PROP_INT("release",BUILD_NUMBER);
-   DUK_PUSH_PROP_INT("builddate",BUILD_DATE);
+   DUK_PUSH_PROP_STRING("builddate",BUILD_DATE);
    DUK_PUSH_PROP_INT("debug",ph->loglevel);
    DUK_PUSH_PROP_INT("width",ph->width);
    DUK_PUSH_PROP_INT("height",ph->height);
@@ -206,9 +206,33 @@ duk_ret_t js_getConfig(duk_context *ctx)
    DUK_PUSH_PROP_STRING("ubootenv", DEFAULT_UBOOT_ENV);
    DUK_PUSH_PROP_STRING("flagfile", FLAGFILE);
    DUK_PUSH_PROP_STRING("kernelconf" , KERNEL_DEFAULT_CONFIG);
+#ifdef __powerpc__
+   DUK_PUSH_PROP_STRING("arch" , "ppc");
+#endif
+#ifdef __mips__
+   DUK_PUSH_PROP_STRING("arch" , "mips");
+#endif
+#ifdef __i386__
+   DUK_PUSH_PROP_STRING("arch" , "x86_32");
+#endif
+#ifdef __amd64__
+   DUK_PUSH_PROP_STRING("arch" , "x86_64");
+#endif
+#ifdef __arm__
+   DUK_PUSH_PROP_STRING("arch" , "arm"__TARGET_ARCH_ARM);
+#endif
    DUK_PUSH_PROP_BOOL("registered", ph->registered);
    DUK_PUSH_PROP_BOOL("ssdp", ph->ssdp);
    DUK_PUSH_PROP_BOOL("cloud", ph->cloud);
+// TODO : export configMap
+//   int kc=0,i;
+//   char **keys = ht_keys(ph->configMap, &kc);
+//   slog(LVL_ALL,ERROR,"Exporting %d keys to JS",kc);
+//   for(int i=0; i < key_count; i++){
+//      char *name = keys[i];
+//      DUK_PUSH_PROP_STRING(name, ht_get_simple(ph->configMap, name));
+//   }
+
    return 1;
 }
 

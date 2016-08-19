@@ -47,8 +47,9 @@ include_directories(${LIBUV_INCLUDE_DIRS} ${LIBSDL_INCLUDE_DIRS} ${LIBDUV_INCLUD
 link_directories(${LIBUV_LIBRARY_DIRS} ${LIBSDL_LIBRARY_DIRS})
 
 # TODO : Build Versioning
-#file (STRINGS "version" CMAKE_BUILD_NUMBER)
-#execute_process(COMMAND echo \$\(\(${CMAKE_BUILD_NUMBER}+1\)\) OUTPUT_FILE version2)
+file (STRINGS "version" CURR_BUILD_NUMBER)
+execute_process(COMMAND bin/incrementVersion ${CURR_BUILD_NUMBER} RESULT_VARIABLE CMAKE_BUILD_NUMBER OUTPUT_FILE version)
+file (STRINGS "version" CMAKE_BUILD_NUMBER)
 
 string(TIMESTAMP CMAKE_BUILD_DATE "%Y-%m-%d")
 

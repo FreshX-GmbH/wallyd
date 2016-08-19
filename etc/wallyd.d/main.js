@@ -38,8 +38,6 @@ config = context.config;
 
 log.info('Preparing wallyd basic setup');
 
-//p(this);
-
 if(nucleus){
     log.info('Executing all js files');
     files = nucleus.scandir('.',function(f,type){
