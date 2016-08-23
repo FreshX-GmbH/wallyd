@@ -6,7 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(PKG_CONFIG_USE_CMAKE_PREFIX_PATH on)
 
 # Compile video support (requires libffmpeg)
-set(WITH_VIDEO off)
+set(WITH_VIDEO on)
 
 # We compile agains seaduk ? Otherwise we compile agains dukluv
 set(WITH_SEADUK on)

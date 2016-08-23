@@ -9,6 +9,6 @@ set(LIB_SRC jsmn.c buf.c json.c util.c
 add_library(wallyd SHARED ${LIB_SRC})
 
 target_link_libraries(wallyd ${LIBUV_LIBS} ${LIBSDL_LIBRARIES} 
-    ${LIBCURL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDLIMG_LIBRARIES} duktape duv)
+    ${LIBCURL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDLIMG_LIBRARIES} ${LIBDUV_LIBRARIES})
 
 install(TARGETS wallyd DESTINATION ${LIB_INSTALL_DIR})

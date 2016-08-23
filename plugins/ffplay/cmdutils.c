@@ -1864,7 +1864,6 @@ int show_help(void *optctx, const char *opt, const char *arg)
     } else {
         show_help_default(topic, par);
     }
-
     av_freep(&topic);
     return 0;
 }

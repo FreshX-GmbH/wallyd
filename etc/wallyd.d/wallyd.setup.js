@@ -12,7 +12,7 @@ var textures = {
 }
 
 if(config.startVideo === true && textures.video == undefined){
-    textures.video = { z: 51, x: -200, y: -160, w: 200,    h: 160,color : 'FFA500' };
+    textures.video = { z: 51, x: 0, y: 0, w: '100%',    h: -20,color : 'FFA500' };
 }
 
 var colors = {
@@ -51,13 +51,15 @@ if(config.testScreen === true){
     screen.setText('version','black','logfont',0,0,'R'+config.wally.release/1000);
 }
 
+print("Playing video : "+config.startVideo+" -> "+config.video);
 if(config.startVideo === true){
     try{
-        var video = new FFVideo();
-        video.play('video', config.video);
+        print("Playing video1");
+        context.startVideo = new FFVideo();
+        print("Playing video2");
+        context.startVideo.play('video', config.video);
+        print("Playing video3");
     } catch(err) {
         print('Error in video play ',err);
     }
 }
-
-p(this);

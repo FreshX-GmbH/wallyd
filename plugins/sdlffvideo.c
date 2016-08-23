@@ -1,4 +1,5 @@
 #include <duktape.h>
+#include <duv.h>
 #include "sdlffvideo.h"
 
 #define PLUGIN_SCOPE "ffvideo"
@@ -25,6 +26,10 @@ int video_open(VideoState *is, int force_set_video_mode)
     loop = 100;
 
     return 0;
+}
+
+void *videoFinishCallback(VideoState *is){
+  slog(LVL_ALL,ERROR,"Video finished");
 }
 
 void *createTextureCallback(VideoState *is){
@@ -61,7 +66,7 @@ int renderVideo(char *str)
        slog(LVL_QUIET,ERROR,"Wrong parameters for play(name,url) : (%s)",str);
       return -1;
     }
-    slog(LVL_NOISY,DEBUG, "FFPlugin going to play on screen %s : %s\n",screen, file);
+    slog(LVL_ALL,DEBUG, "FFPlugin going to play on screen %s : %s\n",screen, file);
 
     VideoObject *vo = getVideoObject(ph->ctx);
 
@@ -77,12 +82,26 @@ int renderVideo(char *str)
     setRenderer(ph->renderer);
     setDisplayTextureCallback(displayTextureCallback);
     setCreateTextureCallback(createTextureCallback);
+    setFinishCallback(videoFinishCallback);
 
     vo->is = renderFFVideo(file);
     vo->is->TI = TI;
     vo->is->VO = vo;
     slog(LVL_NOISY,DEBUG, "FFVideo Object : 0x%x, is : 0x%x",vo,vo->is);
     return ret;
+}
+
+duk_ret_t ff_finish(duk_context *ctx) {
+  dschema_check(ctx, (const duv_schema_entry[]) {
+     {"callback", dschema_is_continuation},
+     {0,0}
+   });
+  duk_put_prop_string(ctx, 0, "\xffon-finish");
+  return 0;
+}
+
+void ff_on_finish(void *p) {
+    duv_emit(p, "\xffon-finish", 0, 0);
 }
 
 int setVideoTexture(char *str)
@@ -137,11 +156,17 @@ int js_play(duk_context *ctx)
 
 duk_ret_t js_info(duk_context *ctx)
 {
-   duk_push_this(ctx);  /* -> stack: [ this ] */
-   duk_get_prop_string(ctx, -1, "name");
-   const char *name = duk_safe_to_string(ctx, -1);
-   duk_pop(ctx);
-   duk_push_sprintf(ctx, "{ id : %s, width: %d, height: %d }",name,10,10);
+   duk_push_object(ctx);
+   duk_push_int(ctx, 1920);
+   duk_put_prop_string(ctx, -2, "width");
+   duk_push_int(ctx, 1080);
+   duk_put_prop_string(ctx, -2, "height");
+   if(ph->playVideo == true){
+      duk_push_string(ctx, "playing");
+   } else {
+      duk_push_string(ctx, "stopped");
+   }
+   duk_put_prop_string(ctx, -2, "status");
    return 1;
 }
 

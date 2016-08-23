@@ -30,18 +30,20 @@ context = {
         logo    : homedir+'/images/wally1920x1080.png',
         video   : homedir+'/images/WallyStart.mp4',
         testScreen: false,
-        startVideo : false,
+        startVideo : true,
     }
 };
 
 config = context.config;
 
 log.info('Preparing wallyd basic setup');
+setup = nucleus.dofile('wallyd.setup.js');
+p('Video : ',context.startVideo.info());
 
-if(nucleus){
+if(typeof(nucleus) === 'string'){
     log.info('Executing all js files');
     files = nucleus.scandir('.',function(f,type){
-        if(type === 'file' && f.match('\.js$') && !f.match('^main.js$')){
+        if(type === 'file' && f.match('\.js$') && !f.match('^main.js$') && !f.match('^wallyd.setup.js$')){
       //     try {
       //       log.debug('Running ',f);
              this.f = nucleus.dofile(f);
@@ -49,27 +51,6 @@ if(nucleus){
       //       log.error('Failed to run ',f,' : ',err);
       //     }
 	}
-    });
-} else {
-    wally.evalFile(modules+'/wally.setup.js');
-    files = fs.readdir(homedir,function(err,files){
-        if(err){
-            log.error('Error reading files from ',homedir);
-            return;
-        }
-        utils.dumpJSON(files);
-        for(var i in files){
-            var f = files[i];
-            if(!f.type || (f.type === 'file' && !f.name.match('\.js$'))){
-              continue;
-            }
-            try {
-              log.info('Running ',f.name);
-              var x = require(homedir+'/'+f.name);
-            } catch(err) {
-              log.error('Failed to run ',f.name,' : ',err);
-            }
-          }
     });
     p(context);
 }	

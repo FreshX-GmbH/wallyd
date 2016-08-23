@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.1)
 
 if (APPLE)
     set(SOEXT "dylib")
@@ -5,7 +6,8 @@ else()
     set(SOEXT "so")
 endif()
 
-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lduktape -lduv -lwallyd -L../lib")
+string(REPLACE ";" " -l" TEMP_DUV_LIBS "${LIBDUV_LIBRARIES}")
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lwallyd -L../lib -l${TEMP_DUV_LIBS}")
 
 add_library(myPlugin MODULE myPlugin.c)
 add_library(texture MODULE texture.c)
@@ -28,8 +30,8 @@ if(WITH_VIDEO STREQUAL on)
 	install(TARGETS sdlffvideo DESTINATION ${LIB_INSTALL_DIR}/wallyd)
 endif()
 
-target_link_libraries(sdlgui ${LIBSDL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDLIMG_LIBRARIES})
-target_link_libraries(svg2image ${LIBSDL_LIBRARIES})
-target_link_libraries(sdlimage ${LIBSDL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDLIMG_LIBRARIES} SDL2_gfx)
+target_link_libraries(sdlgui ${LIBSDL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDLIMG_LIBRARIES} ${LIBDUV_LIBRARIES})
+target_link_libraries(svg2image ${LIBSDL_LIBRARIES} ${LIBDUV_LIBRARIES})
+target_link_libraries(sdlimage ${LIBSDL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDLIMG_LIBRARIES} ${LIBDUV_LIBRARIES} SDL2_gfx)
 
 install(TARGETS myPlugin texture sdlimage sdlgui screen js ssdp opencv svg2image watchdog gpio client DESTINATION ${LIB_INSTALL_DIR}/wallyd)

@@ -25,10 +25,6 @@
 
 pluginHandler *ph;
 
-#ifdef DMALLOC
-#include "dmalloc.h"
-#endif
-
 #define AVCODEC_MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
 
 #define MAX_QUEUE_SIZE (15 * 1024 * 1024)

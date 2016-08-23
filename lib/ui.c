@@ -514,8 +514,8 @@ bool sdlInit(void)
 #endif
 
    //if(ph->loglevel > INFO){
-   	slog(LVL_QUIET,INFO,"Setting SDL debug level to VERBOSE");
-   	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+//   	slog(LVL_QUIET,INFO,"Setting SDL debug level to VERBOSE");
+//   	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
    //} else {
    //   SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
    //}

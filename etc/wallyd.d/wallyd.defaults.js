@@ -12,7 +12,7 @@ context.config = {
     modules : _config.basedir+'/etc/wallyd.d/modules',
     testScreen: false,
     video: _config.basedir+'/etc/wallyd.d/images/WallyStart.mp4',
-    startVideo : false,
+    startVideo : true,
 };
 
 colors = {

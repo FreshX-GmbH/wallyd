@@ -288,6 +288,7 @@ typedef void (*dcb_func)(VideoState *is, void *);
 typedef void *(*ccb_func)(VideoState *is);
 dcb_func displayTex=NULL;
 ccb_func createTex=NULL;
+ccb_func finishVideo=NULL;
 
 extern int callWithData(char *, int *, void*);
 void log_print(int line, const char *filename, int level, char *fmt,...);
@@ -299,6 +300,9 @@ void setDisplayTextureCallback(void *f){
 }
 void setCreateTextureCallback(void *f){
     createTex=f;
+}
+void setFinishCallback(void *f){
+    finishVideo=f;
 }
 #define wlog(...) log_print(__LINE__, __FILE__, __VA_ARGS__ )
 #endif
@@ -2390,6 +2394,11 @@ static void stream_component_close(VideoState *is, int stream_index)
         return;
     avctx = ic->streams[stream_index]->codec;
 
+    if(finishVideo != NULL){
+         finishVideo(is);
+    }
+    printf("=========== FF DONE ==========");
+
     switch (avctx->codec_type) {
     case AVMEDIA_TYPE_AUDIO:
         packet_queue_abort(&is->audioq);
@@ -2523,8 +2532,13 @@ static int read_thread(void *arg)
         av_dict_free(&opts[i]);
     av_freep(&opts);
 
-    if (ic->pb)
+    if (ic->pb){
         ic->pb->eof_reached = 0; // FIXME hack, ffplay maybe should not use url_feof() to test for the end
+
+        if(finishVideo != NULL){
+             finishVideo(is);
+        }
+    }
 
     if (seek_by_bytes < 0)
         seek_by_bytes = !!(ic->iformat->flags & AVFMT_TS_DISCONT);
