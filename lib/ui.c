@@ -53,6 +53,10 @@ bool uiLoop(void *p){
             //slog(LVL_NOISY,FULLDEBUG,"Ignoring event %d",event.type);
             continue; 
         }
+        if(event.type == SDL_USEREVENT+2 ){
+            slog(LVL_NOISY,DEBUG,"Caught a ff video quit event.");
+            continue;
+        }
         if(event.user.data1 == NULL){
             slog(LVL_INFO,WARN,"Ignoring event, no function given");
             continue; 
@@ -64,7 +68,7 @@ bool uiLoop(void *p){
 
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
         if(!thr_func){
-            slog(LVL_INFO,WARN,"Threaded function %s not defined.",funcName);
+            slog(LVL_INFO,WARN,"Threaded function %s not defined (%d).",funcName,event.type);
             continue;
         } 
  

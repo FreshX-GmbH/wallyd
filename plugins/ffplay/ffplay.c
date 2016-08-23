@@ -304,7 +304,8 @@ void setCreateTextureCallback(void *f){
 void setFinishCallback(void *f){
     finishVideo=f;
 }
-#define wlog(...) log_print(__LINE__, __FILE__, __VA_ARGS__ )
+
+#define wlog(...) slog(0,__VA_ARGS__ )
 #endif
 
 /*
@@ -2394,11 +2395,6 @@ static void stream_component_close(VideoState *is, int stream_index)
         return;
     avctx = ic->streams[stream_index]->codec;
 
-    if(finishVideo != NULL){
-         finishVideo(is);
-    }
-    printf("=========== FF DONE ==========");
-
     switch (avctx->codec_type) {
     case AVMEDIA_TYPE_AUDIO:
         packet_queue_abort(&is->audioq);
@@ -2472,6 +2468,11 @@ static void stream_component_close(VideoState *is, int stream_index)
     default:
         break;
     }
+    if(finishVideo != NULL){
+         finishVideo(is);
+    }
+    printf("=========== FF DONE ==========\n");
+
 }
 
 static int decode_interrupt_cb(void *ctx)
@@ -2534,10 +2535,6 @@ static int read_thread(void *arg)
 
     if (ic->pb){
         ic->pb->eof_reached = 0; // FIXME hack, ffplay maybe should not use url_feof() to test for the end
-
-        if(finishVideo != NULL){
-             finishVideo(is);
-        }
     }
 
     if (seek_by_bytes < 0)
@@ -2730,7 +2727,6 @@ static int read_thread(void *arg)
     while (!is->abort_request) {
         SDL_Delay(100);
     }
-
     ret = 0;
  fail:
     /* close each stream */
@@ -2769,7 +2765,7 @@ static VideoState *stream_open(const char *filename, AVInputFormat *iformat)
     is->texture = NULL;
 
 #ifdef WALLY_PLUGIN
-    wlog(2,"Creating FF player threads");
+    printf("Creating FF player threads\n");
 #endif
 
     /* start video display */
@@ -3462,9 +3458,10 @@ VideoState *renderFFVideo(char *filename)
 
     av_init_packet(&flush_pkt);
     flush_pkt.data = (uint8_t *)&flush_pkt;
+    autoexit=1;
 
 #ifdef WALLY_PLUGIN
-    wlog(2,"Opening stream : %s",filename);
+    printf("Opening stream : %s",filename);
 #endif
 
     VideoState *is = stream_open(filename, NULL);

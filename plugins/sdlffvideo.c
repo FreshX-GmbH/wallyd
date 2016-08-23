@@ -27,10 +27,26 @@ int video_open(VideoState *is, int force_set_video_mode)
 
     return 0;
 }
+duk_ret_t ff_finish(duk_context *ctx) {
+  dschema_check(ctx, (const duv_schema_entry[]) {
+     {"callback", dschema_is_continuation},
+     {0,0}
+   });
+  duk_push_object(ctx);
+  duk_put_prop_string(ctx, 0, "\xffon-finish");
+  return 0;
+}
+
+void ff_on_finish(duk_context *ctx) {
+    slog(LVL_ALL,DEBUG,"Emiting finish callback");
+    duv_emit(ctx, "\xffon-finish", 0, 0);
+}
 
 void *videoFinishCallback(VideoState *is){
-  slog(LVL_ALL,ERROR,"Video finished");
+  slog(LVL_ALL,ERROR,"Video finished (%x)",ph->ctx);
+//  ff_on_finish(ph->ctx);
 }
+
 
 void *createTextureCallback(VideoState *is){
     slog(LVL_ALL,DEBUG,"Creating Video texture with is : 0x%x",is);
@@ -89,19 +105,6 @@ int renderVideo(char *str)
     vo->is->VO = vo;
     slog(LVL_NOISY,DEBUG, "FFVideo Object : 0x%x, is : 0x%x",vo,vo->is);
     return ret;
-}
-
-duk_ret_t ff_finish(duk_context *ctx) {
-  dschema_check(ctx, (const duv_schema_entry[]) {
-     {"callback", dschema_is_continuation},
-     {0,0}
-   });
-  duk_put_prop_string(ctx, 0, "\xffon-finish");
-  return 0;
-}
-
-void ff_on_finish(void *p) {
-    duv_emit(p, "\xffon-finish", 0, 0);
 }
 
 int setVideoTexture(char *str)
@@ -224,6 +227,7 @@ void js_video_init(duk_context *ctx) {
 const duk_function_list_entry videoMethods[] = {
     { "play",         js_play, 2 },
     { "info",         js_info, 0 },
+    { "onFinish",     ff_finish, 1 },
     { NULL,           NULL,        0 }
 };
 

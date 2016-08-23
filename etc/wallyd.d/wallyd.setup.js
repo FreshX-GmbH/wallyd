@@ -58,8 +58,11 @@ if(config.startVideo === true){
         context.startVideo = new FFVideo();
         print("Playing video2");
         context.startVideo.play('video', config.video);
+        context.startVideo.onFinish(function(){
+            print('done');
+        });
         print("Playing video3");
     } catch(err) {
-        print('Error in video play ',err);
+        print('Error in video play :',err);
     }
 }
