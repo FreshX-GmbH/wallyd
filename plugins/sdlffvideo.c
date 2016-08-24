@@ -32,19 +32,36 @@ duk_ret_t ff_finish(duk_context *ctx) {
      {"callback", dschema_is_continuation},
      {0,0}
    });
-  duk_push_object(ctx);
+  //duk_push_object(ctx);
+  duk_push_this(ctx);
   duk_put_prop_string(ctx, 0, "\xffon-finish");
-  return 0;
+  return 1;
 }
 
 void ff_on_finish(duk_context *ctx) {
-    slog(LVL_ALL,DEBUG,"Emiting finish callback");
-    duv_emit(ctx, "\xffon-finish", 0, 0);
+   int nargs=0;
+   uv_handle_t handle;
+   handle.data = ctx;
+//   slog(LVL_ALL,DEBUG,"Emiting finish callback");
+//   duk_get_prop_string(ctx, -1, "\xffon-finish");
+//   duk_del_prop_string(ctx, -2, "\xffon-finish");
+//   if (!duk_is_function(ctx, -1)) {
+//     duk_pop_n(ctx, 2 + nargs);
+//     return;
+//   }
+//   duk_insert(ctx, -(nargs + 2));
+//   // stack: fn args... this
+//   duk_insert(ctx, -(nargs + 1));
+//   // stack: fn this args...
+//   duk_call_method(ctx, nargs);
+//   //stack: result
+//   duk_pop(ctx);
+    duv_emit(&handle, "\xffon-finish", 0, true);
 }
 
 void *videoFinishCallback(VideoState *is){
   slog(LVL_ALL,ERROR,"Video finished (%x)",ph->ctx);
-//  ff_on_finish(ph->ctx);
+  ff_on_finish(ph->ctx);
 }
 
 
