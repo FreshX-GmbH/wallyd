@@ -24,3 +24,4 @@ CMakeCache.txt
 *.dylib
 install_manifest.txt
 autoversion.h
+*/cmake_install.cmake
