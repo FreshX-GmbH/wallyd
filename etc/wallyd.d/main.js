@@ -36,11 +36,9 @@ context = {
 
 config = context.config;
 
-log.info('Preparing wallyd basic setup');
-setup = nucleus.dofile('wallyd.setup.js');
-p('Video : ',context.startVideo.info());
-
-if(typeof(nucleus) === 'string'){
+// This is called after the startVideo or immediately if startVideo === false
+context.onVideoFinished = function(){
+  if(nucleus){
     log.info('Executing all js files');
     files = nucleus.scandir('.',function(f,type){
         if(type === 'file' && f.match('\.js$') && !f.match('^main.js$') && !f.match('^wallyd.setup.js$')){
@@ -53,4 +51,8 @@ if(typeof(nucleus) === 'string'){
 	}
     });
     p(context);
-}	
+  }
+}
+
+log.info('Preparing wallyd basic setup');
+setup = nucleus.dofile('wallyd.setup.js');

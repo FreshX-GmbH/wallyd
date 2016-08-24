@@ -228,6 +228,6 @@ void video_refresh(VideoState *);
 void setRenderer(SDL_Renderer *);
 void setDisplayTextureCallback(void *);
 void setCreateTextureCallback(void *);
-
+void setFinishCallback(void *f);
 
 #endif

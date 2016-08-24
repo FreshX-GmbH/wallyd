@@ -6,6 +6,9 @@
 
 bool rendering = false;
 int loop;
+int finishCallback;
+
+#define KEYLEN sizeof(void*)*2+1
 
 const duk_function_list_entry videoMethods[];
 
@@ -27,43 +30,27 @@ int video_open(VideoState *is, int force_set_video_mode)
 
     return 0;
 }
-duk_ret_t ff_finish(duk_context *ctx) {
-  dschema_check(ctx, (const duv_schema_entry[]) {
-     {"callback", dschema_is_continuation},
-     {0,0}
-   });
-  //duk_push_object(ctx);
-  duk_push_this(ctx);
-  duk_put_prop_string(ctx, 0, "\xffon-finish");
-  return 1;
-}
-
-void ff_on_finish(duk_context *ctx) {
-   int nargs=0;
-   uv_handle_t handle;
-   handle.data = ctx;
-//   slog(LVL_ALL,DEBUG,"Emiting finish callback");
-//   duk_get_prop_string(ctx, -1, "\xffon-finish");
-//   duk_del_prop_string(ctx, -2, "\xffon-finish");
-//   if (!duk_is_function(ctx, -1)) {
-//     duk_pop_n(ctx, 2 + nargs);
-//     return;
-//   }
-//   duk_insert(ctx, -(nargs + 2));
-//   // stack: fn args... this
-//   duk_insert(ctx, -(nargs + 1));
-//   // stack: fn this args...
-//   duk_call_method(ctx, nargs);
-//   //stack: result
-//   duk_pop(ctx);
-    duv_emit(&handle, "\xffon-finish", 0, true);
-}
 
 void *videoFinishCallback(VideoState *is){
-  slog(LVL_ALL,ERROR,"Video finished (%x)",ph->ctx);
-  ff_on_finish(ph->ctx);
-}
+   slog(LVL_ALL,ERROR,"Video finished");
 
+   duk_context *ctx = ph->ctx;
+   ph->playVideo = false;
+
+   duk_push_heap_stash(ctx);
+   duk_get_prop_string(ctx, -1, "\xffon-finish");
+   duk_remove(ctx, 0);
+   duk_remove(ctx, 0);
+   duk_remove(ctx, 0);
+   slog(LVL_ALL,DEBUG,"Emitting on-finish callback : %d\n",duk_get_top(ctx));
+   if (!duk_is_function(ctx, 0)) {
+     slog(LVL_ALL,ERROR,"FFVideo : no valid callback found.\n");
+     return NULL;
+   }
+   duk_call(ctx, 0);
+   duk_pop(ctx);
+   return NULL;
+}
 
 void *createTextureCallback(VideoState *is){
     slog(LVL_ALL,DEBUG,"Creating Video texture with is : 0x%x",is);
@@ -99,7 +86,7 @@ int renderVideo(char *str)
        slog(LVL_QUIET,ERROR,"Wrong parameters for play(name,url) : (%s)",str);
       return -1;
     }
-    slog(LVL_ALL,DEBUG, "FFPlugin going to play on screen %s : %s\n",screen, file);
+    slog(LVL_ALL,INFO,"FFPlugin going to play on screen %s : %s\n",screen, file);
 
     VideoObject *vo = getVideoObject(ph->ctx);
 
@@ -161,25 +148,39 @@ char *resetVideo(char *p){
 
 int js_play(duk_context *ctx)
 {
-    //video::play main http://VIDEOURL
-    int ret;
-    char *cs;
-    int n = duk_get_top(ctx);
-    const char *name = duk_to_string(ctx,0);
-    const char *url = duk_to_string(ctx,1);
-    asprintf(&cs,"%s %s",name,url);
-    call("ffvideo::play",&ret,cs);
-    // TODO : make copy of the string IN the function utilizing it, not here
-    free(cs);
-    return 1;
+  char *cs;
+  int ret;
+  static char key[KEYLEN];
+  dschema_check(ctx, (const duv_schema_entry[]) {
+     {"texture", duk_is_string},
+     {"url ", duk_is_string},
+     {"callback", dschema_is_continuation},
+     {0,0}
+  });
+
+  const char *texname = duk_to_string(ctx,0);
+  const char *url = duk_to_string(ctx,1);
+  asprintf(&cs,"%s %s",texname,url);
+
+  // Push the callback
+  duk_push_heap_stash(ctx);
+  duk_dup(ctx, -2);
+  duk_put_prop_string(ctx, -2, "\xffon-finish");
+  duk_pop(ctx);
+
+  call("ffvideo::play",&ret,cs);
+  free(cs);
+  return 0;
 }
 
 duk_ret_t js_info(duk_context *ctx)
 {
+
+   VideoObject *vo = getVideoObject(ph->ctx);
    duk_push_object(ctx);
-   duk_push_int(ctx, 1920);
+   duk_push_int(ctx, vo->is->width);
    duk_put_prop_string(ctx, -2, "width");
-   duk_push_int(ctx, 1080);
+   duk_push_int(ctx, vo->is->height);
    duk_put_prop_string(ctx, -2, "height");
    if(ph->playVideo == true){
       duk_push_string(ctx, "playing");
@@ -201,11 +202,10 @@ duk_ret_t js_video_ctor(duk_context *ctx)
 {
     slog(LVL_NOISY,DEBUG, "New video object created.");
 
-    duk_push_this(ctx);
-    duk_dup(ctx, 0);  /* -> stack: [ name this name ] */
-    duk_put_prop_string(ctx, -2, "name");  /* -> stack: [ name this ] */
+    //duk_push_this(ctx);
+    uv_process_t *ff = duk_push_fixed_buffer(ctx, sizeof(uv_process_t));
+    duv_setup_handle(ctx, (uv_handle_t*)ff, DUV_PROCESS);
 
-    // Create a new VideoObject and bind it to the JS Object
     VideoObject *vo = malloc(sizeof(VideoObject));
     memset(vo,0,sizeof(VideoObject));
 
@@ -213,19 +213,15 @@ duk_ret_t js_video_ctor(duk_context *ctx)
 
     // This is a hidden property
     duk_push_pointer(ctx, vo);
-    duk_put_prop_string(ctx, -2, "\xff""\xff""vo");
+    duk_put_prop_string(ctx, -2, "\xffvo");
 
-    duk_push_this(ctx);  /* -> stack: [ this ] */
-    duk_get_prop_string(ctx, -1, "name");
-    const char *name = duk_safe_to_string(ctx, -1);
     duk_pop(ctx);
-    duk_push_sprintf(ctx, "{ id : %s, width: %d, height: %d }",name,10,10);
     return 1;
 }
 
 VideoObject *getVideoObject(duk_context *ctx) {
    duk_push_this(ctx);  /* -> stack: [ this ] */
-   duk_get_prop_string(ctx, -1, "\xff""\xff""vo");
+   duk_get_prop_string(ctx, -1, "\xffvo");
    return duk_to_pointer(ctx, -1);
 }
 
@@ -237,20 +233,19 @@ void js_video_init(duk_context *ctx) {
    duk_push_object(ctx);  
    duk_put_function_list(ctx, -1, videoMethods);
    duk_put_prop_string(ctx, -2, "prototype");
-   duk_put_global_string(ctx, "FFVideo");  /* -> stack: [ ] */
+   duk_put_global_string(ctx, "FFVideo"); 
 }
 
 // Video object methods
 const duk_function_list_entry videoMethods[] = {
-    { "play",         js_play, 2 },
+    { "play",         js_play, 3 },
     { "info",         js_info, 0 },
-    { "onFinish",     ff_finish, 1 },
     { NULL,           NULL,        0 }
 };
 
 const function_list_entry c_videoMethods[] = {
     {  PLUGIN_SCOPE"::alloc_picture", WFUNC_THRD, alloc_picture, 0 },
-    {  PLUGIN_SCOPE"::refresh_timer", WFUNC_THRD, video_refresh_timer,0 },
+    {  PLUGIN_SCOPE"::refresh_timer", WFUNC_THRD, video_refresh_timer, 0 },
     {  PLUGIN_SCOPE"::play"         , WFUNC_SYNC, renderVideo, 0  },
     {  PLUGIN_SCOPE"::reset"        , WFUNC_SYNC, resetVideo,  0  },
     {  NULL, 0, NULL, 0 }
