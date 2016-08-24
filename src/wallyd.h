@@ -18,7 +18,6 @@
 #define BIND_HOST "0.0.0.0"
 #define BIND_PORT 1120
 
-
 #define DEFAULT_THREAD_DELAY 2
 
 //  0 = Auto detect
@@ -30,19 +29,19 @@ extern FILE *fifo;
 extern char __BUILD_DATE;
 extern char __BUILD_NUMBER;
 
-uv_fs_t openReq;
-uv_fs_t readReq;
-uv_fs_t closeReq;
+extern uv_fs_t openReq;
+extern uv_fs_t readReq;
+extern uv_fs_t closeReq;
+extern uv_pipe_t server;
+extern uv_tcp_t tcp;
 
-uv_pipe_t server;
-uv_tcp_t tcp;
 void duvThread(void *ctx);
 #ifndef DWALLYD
 uv_loop_t * loop;
 duk_ret_t duv_stash_argv(duk_context *ctx);
 void duv_dump_error(duk_context *ctx, duk_idx_t idx);
 #else
-uv_loop_t loop;
+extern uv_loop_t loop;
 #endif
 
 extern const char *startupScript;

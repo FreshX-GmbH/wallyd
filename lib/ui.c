@@ -63,8 +63,7 @@ bool uiLoop(void *p){
         }
         ph->uiOwnCount++;
         funcName = strdup(event.user.data1);
-        // TODO : free this, somewhere!!
-        //free(event.user.data1);
+        // TODO : free this at the destination!!
 
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
         if(!thr_func){

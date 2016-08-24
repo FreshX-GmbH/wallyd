@@ -5,6 +5,12 @@
 // Our global context
 pluginHandler *ph;
 
+uv_fs_t openReq;
+uv_fs_t readReq;
+uv_fs_t closeReq;
+uv_pipe_t server;
+uv_tcp_t tcp;
+
 #ifdef WITH_SEADUK
 int gargc;
 char **gargv;
@@ -252,18 +258,20 @@ void initializeFlags(void){
       slog(LVL_NOISY,DEBUG,"Trying to open "ETC_FLAGS);
       if(getConfig(ph->configFlagsMap,ETC_FLAGS_BAK) == 0){
         slog(LVL_INFO,WARN,"Configfile in "ETC_FLAGS" nor "ETC_FLAGS_BAK" not found! Using default values.");
-        ph->width = ph->width ? ph->width : DEFAULT_WINDOW_WIDTH;
-        ph->height = ph->height ? ph->height : DEFAULT_WINDOW_HEIGHT;
+        ph->width =  DEFAULT_WINDOW_WIDTH;
+        ph->height = DEFAULT_WINDOW_HEIGHT;
       }
-  }
+  } 
 
   // params from /tmp/flags can still override w/h from wally.conf
   if(ht_contains_simple(ph->configFlagsMap,"W_WIDTH")){
       ph->width = atoi(ht_get_simple(ph->configFlagsMap,"W_WIDTH"));
+  } else {
       ph->width = ph->width ? ph->width : DEFAULT_WINDOW_WIDTH;
   }
   if(ht_get_simple(ph->configFlagsMap,"W_HEIGHT")){
       ph->height = atoi(ht_get_simple(ph->configFlagsMap,"W_HEIGHT"));
+  } else {
       ph->height = ph->height ? ph->height : DEFAULT_WINDOW_HEIGHT;
   }
   slog(LVL_NOISY,DEBUG,"W = %d / H = %d",ph->width,ph->height);

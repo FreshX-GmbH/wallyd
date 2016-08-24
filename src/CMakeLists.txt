@@ -22,14 +22,14 @@ endif()
 
 
 if(WITH_SEADUK STREQUAL on)
-	set(DWALLYD_SRC dwallyd.c nucly/env.c nucly/path.c seaduk.c ../lib/miniz.c)
-	add_executable(dwallyd ${DWALLYD_SRC})
-	target_link_libraries(dwallyd ${LIBUV_LIBRARIES} ${LIBSDL_LIBRARIES} wallyd seaduk)
+	set(DWALLYD_SRC wallyd.c nucly/env.c nucly/path.c seaduk.c ../lib/miniz.c)
+	add_executable(wallyd ${DWALLYD_SRC})
+	target_link_libraries(wallyd ${LIBUV_LIBRARIES} ${LIBSDL_LIBRARIES} libwallyd seaduk)
 else()
-	set(DWALLYD_SRC dwallyd.c duv.c schema.c dukcurl.c)
-	add_executable(dwallyd ${DWALLYD_SRC})
-	target_link_libraries(dwallyd ${LIBUV_LIBRARIES} ${LIBSDL_LIBRARIES} wallyd)
+	set(DWALLYD_SRC wallyd.c duv.c schema.c dukcurl.c)
+	add_executable(wallyd ${DWALLYD_SRC})
+	target_link_libraries(wallyd ${LIBUV_LIBRARIES} ${LIBSDL_LIBRARIES} libwallyd)
 endif()
 
-install(TARGETS dwallyd DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS wallyd DESTINATION ${BIN_INSTALL_DIR})
 

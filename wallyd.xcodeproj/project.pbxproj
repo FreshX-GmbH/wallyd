@@ -7,26 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F6C4F3C1CE367A600E927B1 /* wallyd.c in Sources */ = {isa = PBXBuildFile; fileRef = 65E98A0B1CC8D518000F291F /* wallyd.c */; };
-		2F6C4F411CE367AD00E927B1 /* liblibwallyd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 657CA6E91CC8F3CD0077576C /* liblibwallyd.dylib */; };
-		2F6C4F421CE367AD00E927B1 /* libdschema.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A601CC8DA40000F291F /* libdschema.a */; };
-		2F6C4F431CE367AD00E927B1 /* libduktape.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A611CC8DA40000F291F /* libduktape.a */; };
-		2F6C4F441CE367AD00E927B1 /* libavcodec.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A6E1CC8E290000F291F /* libavcodec.dylib */; };
-		2F6C4F451CE367AD00E927B1 /* libavdevice.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A6F1CC8E290000F291F /* libavdevice.dylib */; };
-		2F6C4F461CE367AD00E927B1 /* libavfilter.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A701CC8E290000F291F /* libavfilter.dylib */; };
-		2F6C4F471CE367AD00E927B1 /* libavformat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A711CC8E290000F291F /* libavformat.dylib */; };
-		2F6C4F481CE367AD00E927B1 /* libavresample.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A721CC8E290000F291F /* libavresample.dylib */; };
-		2F6C4F491CE367AD00E927B1 /* libavutil.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A731CC8E290000F291F /* libavutil.dylib */; };
-		2F6C4F4A1CE367AD00E927B1 /* libswresample.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A741CC8E290000F291F /* libswresample.dylib */; };
-		2F6C4F4B1CE367AD00E927B1 /* libuv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A7E1CC8E2DA000F291F /* libuv.dylib */; };
-		2F6C4F4C1CE367AD00E927B1 /* libswscale.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A751CC8E290000F291F /* libswscale.dylib */; };
-		2F6C4F4D1CE367AD00E927B1 /* libduv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A621CC8DA40000F291F /* libduv.a */; };
-		2F6C4F4E1CE367AD00E927B1 /* libSDL2_image.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A681CC8E227000F291F /* libSDL2_image.dylib */; };
-		2F6C4F4F1CE367AD00E927B1 /* libSDL2_gfx.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A6A1CC8E22C000F291F /* libSDL2_gfx.dylib */; };
-		2F6C4F501CE367AD00E927B1 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A801CC8E300000F291F /* libcurl.dylib */; };
-		2F6C4F511CE367AD00E927B1 /* libSDL2_ttf.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A6C1CC8E23F000F291F /* libSDL2_ttf.dylib */; };
-		2F6C4F521CE367AD00E927B1 /* libSDL2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A661CC8E21E000F291F /* libSDL2.dylib */; };
-		655D5D0E1CE5F0CD005342AC /* dwallyd.c in Sources */ = {isa = PBXBuildFile; fileRef = 655D5D0A1CE5F0CD005342AC /* dwallyd.c */; };
 		657CA7111CC8F4930077576C /* buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6EF1CC8F45E0077576C /* buf.c */; };
 		657CA7131CC8F49F0077576C /* connect.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6F11CC8F45E0077576C /* connect.c */; };
 		657CA7181CC8F49F0077576C /* hashtable.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6F61CC8F45E0077576C /* hashtable.c */; settings = {COMPILER_FLAGS = "-D__WITH_MURMUR -fPIC"; }; };
@@ -38,9 +18,6 @@
 		657CA7231CC8F49F0077576C /* sys.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA7011CC8F45E0077576C /* sys.c */; settings = {COMPILER_FLAGS = "-DWITH_SEADUK"; }; };
 		657CA7241CC8F49F0077576C /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA7021CC8F45E0077576C /* ui.c */; };
 		657CA7261CC8F49F0077576C /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA7041CC8F45E0077576C /* util.c */; settings = {COMPILER_FLAGS = "-D__WITH_MURMUR -fPIC"; }; };
-		657CA7281CC8F5410077576C /* liblibwallyd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 657CA6E91CC8F3CD0077576C /* liblibwallyd.dylib */; };
-		657CA7291CC8F6920077576C /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A801CC8E300000F291F /* libcurl.dylib */; };
-		657CA72A1CC8F6A60077576C /* libduv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A621CC8DA40000F291F /* libduv.a */; };
 		657CA72B1CC8F6AD0077576C /* libavcodec.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A6E1CC8E290000F291F /* libavcodec.dylib */; };
 		657CA72C1CC8F6AF0077576C /* libavdevice.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A6F1CC8E290000F291F /* libavdevice.dylib */; };
 		657CA72D1CC8F6B10077576C /* libavfilter.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A701CC8E290000F291F /* libavfilter.dylib */; };
@@ -53,24 +30,9 @@
 		657CA7341CC8F6C30077576C /* libSDL2_gfx.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A6A1CC8E22C000F291F /* libSDL2_gfx.dylib */; };
 		657CA7351CC8F6C50077576C /* libSDL2_image.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A681CC8E227000F291F /* libSDL2_image.dylib */; };
 		657CA7361CC8F6C70077576C /* libSDL2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A661CC8E21E000F291F /* libSDL2.dylib */; };
-		657CA7371CC8F6C80077576C /* libdschema.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A601CC8DA40000F291F /* libdschema.a */; };
-		657CA7381CC8F6C90077576C /* libduktape.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A611CC8DA40000F291F /* libduktape.a */; };
-		658B75351CE5F4AD008C1D20 /* dwallyd.c in Sources */ = {isa = PBXBuildFile; fileRef = 655D5D0A1CE5F0CD005342AC /* dwallyd.c */; settings = {COMPILER_FLAGS = "-DWITH_SEADUK"; }; };
-		65AE5BF71D0A33030080FEA3 /* slog.c in Sources */ = {isa = PBXBuildFile; fileRef = 65AE5BF61D0A33030080FEA3 /* slog.c */; };
 		65AE5BF81D0A332B0080FEA3 /* slog.c in Sources */ = {isa = PBXBuildFile; fileRef = 65AE5BF61D0A33030080FEA3 /* slog.c */; settings = {COMPILER_FLAGS = "-DDARWIN"; }; };
 		65B66F141D0B2DB90012E4F1 /* slog.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B66F131D0B2DAB0012E4F1 /* slog.h */; };
-		65D2024A1D66319E00854C78 /* seaduk.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D202491D66319E00854C78 /* seaduk.c */; settings = {ASSET_TAGS = (); }; };
-		65D202531D6631E100854C78 /* env.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D2024D1D6631E100854C78 /* env.c */; settings = {ASSET_TAGS = (); }; };
-		65D202551D6631E100854C78 /* path.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D202501D6631E100854C78 /* path.c */; settings = {ASSET_TAGS = (); }; };
-		65D202571D66321800854C78 /* getrssmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D202561D66321800854C78 /* getrssmem.c */; settings = {ASSET_TAGS = (); }; };
 		65D202581D6632A500854C78 /* getrssmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D202561D66321800854C78 /* getrssmem.c */; };
-		65D202591D6632D400854C78 /* seaduk.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D202491D66319E00854C78 /* seaduk.c */; };
-		65D2025A1D6632D900854C78 /* env.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D2024D1D6631E100854C78 /* env.c */; };
-		65D2025B1D6632DE00854C78 /* path.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D202501D6631E100854C78 /* path.c */; };
-		65D2025C1D66344600854C78 /* miniz.c in Sources */ = {isa = PBXBuildFile; fileRef = 65EAEEC71D093F430079D1A8 /* miniz.c */; };
-		65E98A631CC8DA40000F291F /* libdschema.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A601CC8DA40000F291F /* libdschema.a */; };
-		65E98A641CC8DA40000F291F /* libduktape.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A611CC8DA40000F291F /* libduktape.a */; };
-		65E98A651CC8DA40000F291F /* libduv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A621CC8DA40000F291F /* libduv.a */; };
 		65E98A671CC8E21E000F291F /* libSDL2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A661CC8E21E000F291F /* libSDL2.dylib */; };
 		65E98A691CC8E227000F291F /* libSDL2_image.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A681CC8E227000F291F /* libSDL2_image.dylib */; };
 		65E98A6B1CC8E22C000F291F /* libSDL2_gfx.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A6A1CC8E22C000F291F /* libSDL2_gfx.dylib */; };
@@ -84,12 +46,17 @@
 		65E98A7C1CC8E290000F291F /* libswresample.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A741CC8E290000F291F /* libswresample.dylib */; };
 		65E98A7D1CC8E290000F291F /* libswscale.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A751CC8E290000F291F /* libswscale.dylib */; };
 		65E98A7F1CC8E2DA000F291F /* libuv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A7E1CC8E2DA000F291F /* libuv.dylib */; };
-		65E98A811CC8E300000F291F /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A801CC8E300000F291F /* libcurl.dylib */; };
-		65EAEEC51D0933D10079D1A8 /* memfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 65EAEEC41D0933D10079D1A8 /* memfs.c */; };
 		65EAEEC61D0933DF0079D1A8 /* memfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 65EAEEC41D0933D10079D1A8 /* memfs.c */; settings = {COMPILER_FLAGS = "-D__WITH_MURMUR -fPIC"; }; };
-		65EAEEC81D093F430079D1A8 /* miniz.c in Sources */ = {isa = PBXBuildFile; fileRef = 65EAEEC71D093F430079D1A8 /* miniz.c */; };
 		65EAEEC91D09401B0079D1A8 /* miniz.c in Sources */ = {isa = PBXBuildFile; fileRef = 65EAEEC71D093F430079D1A8 /* miniz.c */; settings = {COMPILER_FLAGS = "-D__WITH_MURMUR -fPIC"; }; };
 		65EAEECC1D0942F20079D1A8 /* miniz.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EAEECA1D09417E0079D1A8 /* miniz.h */; };
+		65F40A891D6E2D5700E1AF69 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A801CC8E300000F291F /* libcurl.dylib */; };
+		65F40A8B1D6E2D7900E1AF69 /* libduv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65F40A8A1D6E2D7900E1AF69 /* libduv.dylib */; };
+		65F40A8D1D6E2D8300E1AF69 /* libseaduk.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65F40A8C1D6E2D8300E1AF69 /* libseaduk.dylib */; };
+		65F40A911D6E2E1C00E1AF69 /* seaduk.c in Sources */ = {isa = PBXBuildFile; fileRef = 65F40A901D6E2E1C00E1AF69 /* seaduk.c */; settings = {COMPILER_FLAGS = "-DWITH_SEADUK"; }; };
+		65F40A951D6E35C100E1AF69 /* wallyd.c in Sources */ = {isa = PBXBuildFile; fileRef = 65E98A0B1CC8D518000F291F /* wallyd.c */; settings = {COMPILER_FLAGS = "-DWITH_SEADUK"; }; };
+		65F40A961D6E35F500E1AF69 /* liblibwallyd.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 657CA6E91CC8F3CD0077576C /* liblibwallyd.dylib */; };
+		65F40A971D6E361400E1AF69 /* libseaduk.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65F40A8C1D6E2D8300E1AF69 /* libseaduk.dylib */; };
+		65F40A981D6E369F00E1AF69 /* libduv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65F40A8A1D6E2D7900E1AF69 /* libduv.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,15 +70,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		2F6C4F531CE367AD00E927B1 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		65E989DB1CC8D48D000F291F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,8 +82,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2F6C4F571CE367AD00E927B1 /* dwallyd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dwallyd; sourceTree = BUILT_PRODUCTS_DIR; };
-		655D5D0A1CE5F0CD005342AC /* dwallyd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dwallyd.c; path = src/dwallyd.c; sourceTree = SOURCE_ROOT; };
 		657CA6E91CC8F3CD0077576C /* liblibwallyd.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibwallyd.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		657CA6EF1CC8F45E0077576C /* buf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = buf.c; path = wallyd/lib/buf.c; sourceTree = "<group>"; };
 		657CA6F01CC8F45E0077576C /* buf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = buf.h; path = wallyd/lib/buf.h; sourceTree = "<group>"; };
@@ -151,21 +107,15 @@
 		657CA7051CC8F45E0077576C /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = wallyd/lib/util.h; sourceTree = "<group>"; };
 		65AE5BF61D0A33030080FEA3 /* slog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = slog.c; path = wallyd/lib/slog.c; sourceTree = "<group>"; };
 		65B66F131D0B2DAB0012E4F1 /* slog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = slog.h; path = wallyd/lib/slog.h; sourceTree = "<group>"; };
-		65D202491D66319E00854C78 /* seaduk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = seaduk.c; path = src/seaduk.c; sourceTree = SOURCE_ROOT; };
 		65D2024B1D6631E100854C78 /* dschema.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dschema.h; path = src/nucly/dschema.h; sourceTree = SOURCE_ROOT; };
 		65D2024C1D6631E100854C78 /* duv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = duv.h; path = src/nucly/duv.h; sourceTree = SOURCE_ROOT; };
-		65D2024D1D6631E100854C78 /* env.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = env.c; path = src/nucly/env.c; sourceTree = SOURCE_ROOT; };
 		65D2024E1D6631E100854C78 /* env.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = env.h; path = src/nucly/env.h; sourceTree = SOURCE_ROOT; };
-		65D202501D6631E100854C78 /* path.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = path.c; path = src/nucly/path.c; sourceTree = SOURCE_ROOT; };
 		65D202511D6631E100854C78 /* path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = path.h; path = src/nucly/path.h; sourceTree = SOURCE_ROOT; };
 		65D202521D6631E100854C78 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = src/nucly/utils.h; sourceTree = SOURCE_ROOT; };
 		65D202561D66321800854C78 /* getrssmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = getrssmem.c; path = wallyd/lib/getrssmem.c; sourceTree = "<group>"; };
 		65E989DD1CC8D48D000F291F /* wallyd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wallyd; sourceTree = BUILT_PRODUCTS_DIR; };
 		65E98A0B1CC8D518000F291F /* wallyd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wallyd.c; path = src/wallyd.c; sourceTree = "<group>"; };
 		65E98A0C1CC8D518000F291F /* wallyd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wallyd.h; path = src/wallyd.h; sourceTree = "<group>"; };
-		65E98A601CC8DA40000F291F /* libdschema.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdschema.a; path = /usr/local/lib/libdschema.a; sourceTree = "<absolute>"; };
-		65E98A611CC8DA40000F291F /* libduktape.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libduktape.a; path = /usr/local/lib/libduktape.a; sourceTree = "<absolute>"; };
-		65E98A621CC8DA40000F291F /* libduv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libduv.a; path = /usr/local/lib/libduv.a; sourceTree = "<absolute>"; };
 		65E98A661CC8E21E000F291F /* libSDL2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSDL2.dylib; path = /usr/local/lib/libSDL2.dylib; sourceTree = "<absolute>"; };
 		65E98A681CC8E227000F291F /* libSDL2_image.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSDL2_image.dylib; path = /usr/local/lib/libSDL2_image.dylib; sourceTree = "<absolute>"; };
 		65E98A6A1CC8E22C000F291F /* libSDL2_gfx.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSDL2_gfx.dylib; path = /usr/local/lib/libSDL2_gfx.dylib; sourceTree = "<absolute>"; };
@@ -183,34 +133,12 @@
 		65EAEEC41D0933D10079D1A8 /* memfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = memfs.c; path = wallyd/lib/memfs.c; sourceTree = "<group>"; };
 		65EAEEC71D093F430079D1A8 /* miniz.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = miniz.c; path = wallyd/lib/miniz.c; sourceTree = "<group>"; };
 		65EAEECA1D09417E0079D1A8 /* miniz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = miniz.h; path = wallyd/lib/miniz.h; sourceTree = "<group>"; };
+		65F40A8A1D6E2D7900E1AF69 /* libduv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libduv.dylib; path = /usr/local/lib/libduv.dylib; sourceTree = "<absolute>"; };
+		65F40A8C1D6E2D8300E1AF69 /* libseaduk.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libseaduk.dylib; path = /usr/local/lib/libseaduk.dylib; sourceTree = "<absolute>"; };
+		65F40A901D6E2E1C00E1AF69 /* seaduk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = seaduk.c; path = src/seaduk.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		2F6C4F401CE367AD00E927B1 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2F6C4F411CE367AD00E927B1 /* liblibwallyd.dylib in Frameworks */,
-				2F6C4F421CE367AD00E927B1 /* libdschema.a in Frameworks */,
-				2F6C4F431CE367AD00E927B1 /* libduktape.a in Frameworks */,
-				2F6C4F441CE367AD00E927B1 /* libavcodec.dylib in Frameworks */,
-				2F6C4F451CE367AD00E927B1 /* libavdevice.dylib in Frameworks */,
-				2F6C4F461CE367AD00E927B1 /* libavfilter.dylib in Frameworks */,
-				2F6C4F471CE367AD00E927B1 /* libavformat.dylib in Frameworks */,
-				2F6C4F481CE367AD00E927B1 /* libavresample.dylib in Frameworks */,
-				2F6C4F491CE367AD00E927B1 /* libavutil.dylib in Frameworks */,
-				2F6C4F4A1CE367AD00E927B1 /* libswresample.dylib in Frameworks */,
-				2F6C4F4B1CE367AD00E927B1 /* libuv.dylib in Frameworks */,
-				2F6C4F4C1CE367AD00E927B1 /* libswscale.dylib in Frameworks */,
-				2F6C4F4D1CE367AD00E927B1 /* libduv.a in Frameworks */,
-				2F6C4F4E1CE367AD00E927B1 /* libSDL2_image.dylib in Frameworks */,
-				2F6C4F4F1CE367AD00E927B1 /* libSDL2_gfx.dylib in Frameworks */,
-				2F6C4F501CE367AD00E927B1 /* libcurl.dylib in Frameworks */,
-				2F6C4F511CE367AD00E927B1 /* libSDL2_ttf.dylib in Frameworks */,
-				2F6C4F521CE367AD00E927B1 /* libSDL2.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		657CA6E61CC8F3CD0077576C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -220,17 +148,16 @@
 				657CA72F1CC8F6BD0077576C /* libavresample.dylib in Frameworks */,
 				657CA7321CC8F6C10077576C /* libswscale.dylib in Frameworks */,
 				657CA7331CC8F6C20077576C /* libSDL2_ttf.dylib in Frameworks */,
+				65F40A8B1D6E2D7900E1AF69 /* libduv.dylib in Frameworks */,
 				657CA7361CC8F6C70077576C /* libSDL2.dylib in Frameworks */,
-				657CA7371CC8F6C80077576C /* libdschema.a in Frameworks */,
-				657CA7381CC8F6C90077576C /* libduktape.a in Frameworks */,
 				657CA7351CC8F6C50077576C /* libSDL2_image.dylib in Frameworks */,
+				65F40A891D6E2D5700E1AF69 /* libcurl.dylib in Frameworks */,
+				65F40A8D1D6E2D8300E1AF69 /* libseaduk.dylib in Frameworks */,
 				657CA7341CC8F6C30077576C /* libSDL2_gfx.dylib in Frameworks */,
-				657CA7291CC8F6920077576C /* libcurl.dylib in Frameworks */,
 				657CA7311CC8F6BF0077576C /* libswresample.dylib in Frameworks */,
 				657CA7301CC8F6BE0077576C /* libavutil.dylib in Frameworks */,
 				657CA72E1CC8F6B20077576C /* libavformat.dylib in Frameworks */,
 				657CA72B1CC8F6AD0077576C /* libavcodec.dylib in Frameworks */,
-				657CA72A1CC8F6A60077576C /* libduv.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,22 +165,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				657CA7281CC8F5410077576C /* liblibwallyd.dylib in Frameworks */,
-				65E98A631CC8DA40000F291F /* libdschema.a in Frameworks */,
-				65E98A641CC8DA40000F291F /* libduktape.a in Frameworks */,
+				65F40A961D6E35F500E1AF69 /* liblibwallyd.dylib in Frameworks */,
 				65E98A761CC8E290000F291F /* libavcodec.dylib in Frameworks */,
+				65F40A981D6E369F00E1AF69 /* libduv.dylib in Frameworks */,
 				65E98A771CC8E290000F291F /* libavdevice.dylib in Frameworks */,
 				65E98A781CC8E290000F291F /* libavfilter.dylib in Frameworks */,
+				65F40A971D6E361400E1AF69 /* libseaduk.dylib in Frameworks */,
+				65E98A7F1CC8E2DA000F291F /* libuv.dylib in Frameworks */,
 				65E98A791CC8E290000F291F /* libavformat.dylib in Frameworks */,
 				65E98A7A1CC8E290000F291F /* libavresample.dylib in Frameworks */,
 				65E98A7B1CC8E290000F291F /* libavutil.dylib in Frameworks */,
 				65E98A7C1CC8E290000F291F /* libswresample.dylib in Frameworks */,
-				65E98A7F1CC8E2DA000F291F /* libuv.dylib in Frameworks */,
 				65E98A7D1CC8E290000F291F /* libswscale.dylib in Frameworks */,
-				65E98A651CC8DA40000F291F /* libduv.a in Frameworks */,
 				65E98A691CC8E227000F291F /* libSDL2_image.dylib in Frameworks */,
 				65E98A6B1CC8E22C000F291F /* libSDL2_gfx.dylib in Frameworks */,
-				65E98A811CC8E300000F291F /* libcurl.dylib in Frameworks */,
 				65E98A6D1CC8E23F000F291F /* libSDL2_ttf.dylib in Frameworks */,
 				65E98A671CC8E21E000F291F /* libSDL2.dylib in Frameworks */,
 			);
@@ -262,22 +187,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2F6C4F2F1CE365BE00E927B1 /* dwallyd */ = {
-			isa = PBXGroup;
-			children = (
-				65D2024B1D6631E100854C78 /* dschema.h */,
-				65D2024C1D6631E100854C78 /* duv.h */,
-				65D2024D1D6631E100854C78 /* env.c */,
-				65D2024E1D6631E100854C78 /* env.h */,
-				65D202501D6631E100854C78 /* path.c */,
-				65D202511D6631E100854C78 /* path.h */,
-				65D202521D6631E100854C78 /* utils.h */,
-				65D202491D66319E00854C78 /* seaduk.c */,
-				655D5D0A1CE5F0CD005342AC /* dwallyd.c */,
-			);
-			path = dwallyd;
-			sourceTree = "<group>";
-		};
 		657CA6ED1CC8F3EA0077576C /* lib */ = {
 			isa = PBXGroup;
 			children = (
@@ -317,6 +226,8 @@
 		657CA6EE1CC8F3F30077576C /* external libs */ = {
 			isa = PBXGroup;
 			children = (
+				65F40A8C1D6E2D8300E1AF69 /* libseaduk.dylib */,
+				65F40A8A1D6E2D7900E1AF69 /* libduv.dylib */,
 				65E98A801CC8E300000F291F /* libcurl.dylib */,
 				65E98A7E1CC8E2DA000F291F /* libuv.dylib */,
 				65E98A6E1CC8E290000F291F /* libavcodec.dylib */,
@@ -331,9 +242,6 @@
 				65E98A6A1CC8E22C000F291F /* libSDL2_gfx.dylib */,
 				65E98A681CC8E227000F291F /* libSDL2_image.dylib */,
 				65E98A661CC8E21E000F291F /* libSDL2.dylib */,
-				65E98A601CC8DA40000F291F /* libdschema.a */,
-				65E98A611CC8DA40000F291F /* libduktape.a */,
-				65E98A621CC8DA40000F291F /* libduv.a */,
 			);
 			name = "external libs";
 			sourceTree = "<group>";
@@ -344,7 +252,6 @@
 				657CA6EE1CC8F3F30077576C /* external libs */,
 				657CA6ED1CC8F3EA0077576C /* lib */,
 				65E98A0E1CC8D51E000F291F /* src */,
-				2F6C4F2F1CE365BE00E927B1 /* dwallyd */,
 				65E989DE1CC8D48D000F291F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -354,7 +261,6 @@
 			children = (
 				65E989DD1CC8D48D000F291F /* wallyd */,
 				657CA6E91CC8F3CD0077576C /* liblibwallyd.dylib */,
-				2F6C4F571CE367AD00E927B1 /* dwallyd */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -364,6 +270,12 @@
 			children = (
 				65E98A0B1CC8D518000F291F /* wallyd.c */,
 				65E98A0C1CC8D518000F291F /* wallyd.h */,
+				65F40A901D6E2E1C00E1AF69 /* seaduk.c */,
+				65D2024B1D6631E100854C78 /* dschema.h */,
+				65D2024C1D6631E100854C78 /* duv.h */,
+				65D2024E1D6631E100854C78 /* env.h */,
+				65D202511D6631E100854C78 /* path.h */,
+				65D202521D6631E100854C78 /* utils.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -401,23 +313,6 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		2F6C4F3D1CE367AD00E927B1 /* dwallyd */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2F6C4F541CE367AD00E927B1 /* Build configuration list for PBXNativeTarget "dwallyd" */;
-			buildPhases = (
-				2F6C4F3E1CE367AD00E927B1 /* Sources */,
-				2F6C4F401CE367AD00E927B1 /* Frameworks */,
-				2F6C4F531CE367AD00E927B1 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = dwallyd;
-			productName = wallyd;
-			productReference = 2F6C4F571CE367AD00E927B1 /* dwallyd */;
-			productType = "com.apple.product-type.tool";
-		};
 		657CA6E81CC8F3CD0077576C /* libwallyd */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 657CA6EA1CC8F3CD0077576C /* Build configuration list for PBXNativeTarget "libwallyd" */;
@@ -486,25 +381,12 @@
 			targets = (
 				65E989DC1CC8D48D000F291F /* wallyd */,
 				657CA6E81CC8F3CD0077576C /* libwallyd */,
-				2F6C4F3D1CE367AD00E927B1 /* dwallyd */,
 				658B75371CE5F6FC008C1D20 /* Plugins */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		2F6C4F3E1CE367AD00E927B1 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				65D2025C1D66344600854C78 /* miniz.c in Sources */,
-				65D2025B1D6632DE00854C78 /* path.c in Sources */,
-				65D2025A1D6632D900854C78 /* env.c in Sources */,
-				65D202591D6632D400854C78 /* seaduk.c in Sources */,
-				658B75351CE5F4AD008C1D20 /* dwallyd.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		657CA6E51CC8F3CD0077576C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -531,15 +413,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65EAEEC51D0933D10079D1A8 /* memfs.c in Sources */,
-				65D202571D66321800854C78 /* getrssmem.c in Sources */,
-				65D202551D6631E100854C78 /* path.c in Sources */,
-				65D202531D6631E100854C78 /* env.c in Sources */,
-				65EAEEC81D093F430079D1A8 /* miniz.c in Sources */,
-				65D2024A1D66319E00854C78 /* seaduk.c in Sources */,
-				65AE5BF71D0A33030080FEA3 /* slog.c in Sources */,
-				2F6C4F3C1CE367A600E927B1 /* wallyd.c in Sources */,
-				655D5D0E1CE5F0CD005342AC /* dwallyd.c in Sources */,
+				65F40A951D6E35C100E1AF69 /* wallyd.c in Sources */,
+				65F40A911D6E2E1C00E1AF69 /* seaduk.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -554,48 +429,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		2F6C4F551CE367AD00E927B1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					.,
-					./src/nucly,
-					./lib,
-					/usr/local/include,
-					/usr/local/include/duv,
-					/usr/local/include/SDL2,
-				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				OTHER_CFLAGS = (
-					"-DDARWIN",
-					"-D__WITH_MURMUR",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
-			};
-			name = Debug;
-		};
-		2F6C4F561CE367AD00E927B1 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					.,
-					./src/nucly,
-					./lib,
-					/usr/local/include,
-					/usr/local/include/duv,
-					/usr/local/include/SDL2,
-				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				OTHER_CFLAGS = (
-					"-DDARWIN",
-					"-D__WITH_MURMUR",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
-			};
-			name = Release;
-		};
 		657CA6EB1CC8F3CD0077576C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -781,15 +614,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2F6C4F541CE367AD00E927B1 /* Build configuration list for PBXNativeTarget "dwallyd" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2F6C4F551CE367AD00E927B1 /* Debug */,
-				2F6C4F561CE367AD00E927B1 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		657CA6EA1CC8F3CD0077576C /* Build configuration list for PBXNativeTarget "libwallyd" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -42,13 +42,13 @@ context.onVideoFinished = function(){
     log.info('Executing all js files');
     files = nucleus.scandir('.',function(f,type){
         if(type === 'file' && f.match('\.js$') && !f.match('^main.js$') && !f.match('^wallyd.setup.js$')){
-      //     try {
-      //       log.debug('Running ',f);
+           try {
+             log.debug('Running ',f);
              this.f = nucleus.dofile(f);
-      //     } catch(err) {
-      //       log.error('Failed to run ',f,' : ',err);
-      //     }
-	}
+           } catch(err) {
+             log.error('Failed to run ',f,' : ',err);
+           }
+	    }
     });
     p(context);
   }

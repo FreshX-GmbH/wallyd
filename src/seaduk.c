@@ -1,10 +1,10 @@
 #define _GNU_SOURCE
-#include "wallyd.h"
 
 #include "miniz.h"
 #include "nucly/duv.h"
 #include "nucly/env.h"
 #include "nucly/path.h"
+#include "wallyd.h"
 
 extern int gargc;
 extern char **gargv;

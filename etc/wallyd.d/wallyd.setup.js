@@ -46,7 +46,7 @@ for (var t in textures) {
 if(config.testScreen === true){
     screen.showTextureTestScreen();
 } else {
-    screen.log('WallyTV starting...'+config.wally.release);
+    screen.log('WallyTV starting...');
     screen.setImageScaled('main',config.logo);
     screen.setText('version','black','logfont',0,0,'R'+config.wally.release/1000);
 }
