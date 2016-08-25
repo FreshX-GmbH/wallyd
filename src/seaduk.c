@@ -377,7 +377,7 @@ void build_zip(const char* source, const char* target, enum build_mode mode) {
 void setupSocket(void *p){
     int ret;
     int flags = 128;
-    //slog(LVL_NOISY,FULLDEBUG,"Fifo thread starting on "FIFO);
+    //slog(DEBUG,FULLDEBUG,"Fifo thread starting on "FIFO);
     struct sockaddr_in addr;
     uv_ip4_addr(BIND_HOST, BIND_PORT,&addr);
     ret = uv_tcp_bind(&tcp, (const struct sockaddr*)&addr, SO_REUSEADDR | SO_LINGER);
@@ -515,7 +515,7 @@ void duvThread(void *ctx){
 
   // Setup context with global.nucleus
 
-  slog(LVL_ALL,DEBUG,"Setting up socket listener.");
+  slog(DEBUG,DEBUG,"Setting up socket listener.");
   setupSocket(ctx);
   //printf("\nEntering UVRUN(0x%x) %s/%s (argv:%s, %s,argc:%d)\n\n",ctx,base,entry.data,argv[0],argv[1],argc);
   duk_put_nucleus(ctx, argc, argv, argc);

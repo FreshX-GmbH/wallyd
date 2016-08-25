@@ -10,8 +10,8 @@ int getCode(char *filename)
 }
 
 char *initPlugin(pluginHandler *_ph){
-    slog(LVL_NOISY,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing");
+    slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing");
     exportSync(PLUGIN_SCOPE"::getCode",(*filename));
-    slog(LVL_NOISY,FULLDEBUG,"Plugin initialized. PH is at 0x%x",_ph);
+    slog(DEBUG,FULLDEBUG,"Plugin initialized. PH is at 0x%x",_ph);
     return PLUGIN_SCOPE;
 }

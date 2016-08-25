@@ -15,9 +15,9 @@ void dumpDebug(void){
 void wally_sleep(char *time){
     int t = strtol(time,NULL,10);
     if(t > 0){
-       slog(LVL_NOISY,FULLDEBUG,"Command processing sleeling for %d seconds",t);
+       slog(DEBUG,FULLDEBUG,"Command processing sleeling for %d seconds",t);
        sleep(t);
-       slog(LVL_NOISY,FULLDEBUG,"Command continues.");
+       slog(DEBUG,FULLDEBUG,"Command continues.");
     }
 }
 
@@ -25,13 +25,13 @@ void wally_registerCallback(char *str){
    char *all = str;
    char *name = strtok(str," ");
    char *rest = all+strlen(name)+1;
-   slog(LVL_NOISY,DEBUG,"Registering callback %s = %s",name,rest);
+   slog(DEBUG,DEBUG,"Registering callback %s = %s",name,rest);
    ht_insert_simple(ph->callbacks,name,rest);
 }
 
 void setDebug(char *str){
     getNum(strtok(str," "),&ph->loglevel);
-    slog(LVL_NOISY,DEBUG,"Setting new debug level to : %d",ph->loglevel);
+    slog(DEBUG,DEBUG,"Setting new debug level to : %d",ph->loglevel);
 }
 
 void cleanupWally(int s){

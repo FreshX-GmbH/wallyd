@@ -11,6 +11,9 @@ void drawFilledBox(char *textureName, SDL_Rect rect, int stroke, SDL_Color col, 
 
 int js_setTargetTexture(duk_context *ctx){
     int ret;
+    dschema_check(ctx, (const duv_schema_entry[]) {
+      {"texture", duk_is_string},
+      {0,0}});
     const char *texName  = duk_require_string(ctx, 0);
     callWithString("gui::setTargetTexture",&ret,texName);
     return 0;
@@ -24,6 +27,9 @@ duk_ret_t *js_resetTargetTexture(duk_context *ctx){
 
 duk_ret_t *js_clearTexture(duk_context *ctx){
     int ret;
+    dschema_check(ctx, (const duv_schema_entry[]) {
+      {"texture", duk_is_string},
+      {0,0} });
     const char *texName  = duk_require_string(ctx, 0);
     callWithString("screen::clearTexture",&ret,texName);
     return 0;
@@ -31,12 +37,22 @@ duk_ret_t *js_clearTexture(duk_context *ctx){
 
 duk_ret_t *js_clearTextureNoPaint(duk_context *ctx){
     int ret;
+    dschema_check(ctx, (const duv_schema_entry[]) {
+      {"texture", duk_is_string},
+      {0,0} });
     const char *texName  = duk_require_string(ctx, 0);
     callWithString("screen::clearTextureNoPaint",&ret,texName);
     return 0;
 }
 
 duk_ret_t js_putImage(duk_context *ctx){
+    dschema_check(ctx, (const duv_schema_entry[]) {
+      {"x1", duk_is_number},
+      {"y1", duk_is_number},
+      {"x2", duk_is_number},
+      {"y2", duk_is_number},
+      {"alpha", duk_is_number},
+      {0,0} });
     SDL_Color c;
     int ret;
     char *callStr;
@@ -62,6 +78,15 @@ duk_ret_t js_putImage(duk_context *ctx){
 
 
 int js_loadImageFile(duk_context *ctx){
+    dschema_check(ctx, (const duv_schema_entry[]) {
+       {"texture", duk_is_string},
+       {"file ", duk_is_string},
+       {"x1", duk_is_number},
+       {"y1", duk_is_number},
+       {"x2", duk_is_number},
+       {"y2", duk_is_number},
+       {"alpha", duk_is_number},
+       {0,0} });
     SDL_Color c;
     int ret;
     char *callStr;
@@ -80,6 +105,15 @@ int js_loadImageFile(duk_context *ctx){
 }
 
 int js_loadImageMemory(duk_context *ctx){
+    dschema_check(ctx, (const duv_schema_entry[]) {
+       {"texture", duk_is_string},
+       {"file ", duk_is_string},
+       {"x1", duk_is_number},
+       {"y1", duk_is_number},
+       {"x2", duk_is_number},
+       {"y2", duk_is_number},
+       {"alpha", duk_is_number},
+       {0,0} });
     SDL_Color c;
     int ret, size;
     char *callStr;
@@ -102,6 +136,17 @@ int js_drawGradient(duk_context *ctx){
     SDL_Color from,to;
     int ret;
     char *callStr;
+    dschema_check(ctx, (const duv_schema_entry[]) {
+       {"texture", duk_is_string},
+       {"x1", duk_is_number},
+       {"y1", duk_is_number},
+       {"x2", duk_is_number},
+       {"y2", duk_is_number},
+       {"fromColor", duk_is_number},
+       {"toColor", duk_is_number},
+       {"horizontal", duk_is_boolean},
+       {"hollow", duk_is_boolean},
+       {0,0} });
     const char *texName = duk_require_string(ctx, 0);
     const int x1 = duk_require_int(ctx, 1);
     const int y1 = duk_require_int(ctx, 2);
@@ -125,15 +170,22 @@ int js_drawLine(duk_context *ctx)
     int ret;
     SDL_Color c;
     char *callStr;
+    dschema_check(ctx, (const duv_schema_entry[]) {
+       {"texture", duk_is_string},
+       {"x1", duk_is_number},
+       {"y1", duk_is_number},
+       {"x2", duk_is_number},
+       {"y2", duk_is_number},
+       {"color", duk_is_number},
+       {0,0} });
     const char *texName = duk_require_string(ctx, 0);
     const int x1 = duk_require_int(ctx, 1);
     const int y1 = duk_require_int(ctx, 2);
     const int x2 = duk_require_int(ctx, 3);
     const int y2 = duk_require_int(ctx, 4);
     const int color = duk_require_int(ctx, 5);
-    //hexToColor(color, &c);
     asprintf(&callStr, "%s %d %d %d %d %x",texName,x1,y1,x2,y2,color);
-    slog(LVL_ALL,DEBUG,"gui::drawLine %s",callStr);
+    slog(TRACE,DEBUG,"gui::drawLine %s",callStr);
     callWithString("gui::drawLine",&ret,callStr);
     free(callStr);
     //drawLine(texName, x1,y1,x2,y2,c);
@@ -141,6 +193,14 @@ int js_drawLine(duk_context *ctx)
 }
 
 int js_drawText(duk_context *ctx){
+    dschema_check(ctx, (const duv_schema_entry[]) {
+       {"texture", duk_is_string},
+       {"x1", duk_is_number},
+       {"y1", duk_is_number},
+       {"font", duk_is_string},
+       {"color", duk_is_number},
+       {"text", duk_is_string},
+       {0,0}});
     int ret;
     char *callStr;
     const char *texName = duk_require_string(ctx, 0);
@@ -158,6 +218,14 @@ int js_drawText(duk_context *ctx){
 int js_drawBox(duk_context *ctx){
     int ret;
     char *callStr;
+    dschema_check(ctx, (const duv_schema_entry[]) {
+       {"texture", duk_is_string},
+       {"x", duk_is_number},
+       {"y", duk_is_number},
+       {"w", duk_is_number},
+       {"h", duk_is_number},
+       {"color", duk_is_number},
+       {0,0}});
     const char *texName = duk_require_string(ctx, 0);
     const int x = duk_require_int(ctx, 1);
     const int y = duk_require_int(ctx, 2);
@@ -173,6 +241,17 @@ int js_drawBox(duk_context *ctx){
 int js_drawFilledBox(duk_context *ctx){
     int ret;
     char *callStr;
+    dschema_check(ctx, (const duv_schema_entry[]) {
+       {"texture", duk_is_string},
+       {"x", duk_is_number},
+       {"y", duk_is_number},
+       {"w", duk_is_number},
+       {"h", duk_is_number},
+       {"stroke", duk_is_number},
+       {"color", duk_is_number},
+       {"strokeColor", duk_is_number},
+       {"alpha", duk_is_number},
+       {0,0}});
     const char *texName = duk_require_string(ctx, 0);
     const int x = duk_require_int(ctx, 1);
     const int y = duk_require_int(ctx, 2);
@@ -191,6 +270,14 @@ int js_drawFilledBox(duk_context *ctx){
 void c_drawLine(char *str)
 {
     SDL_Color col;
+//    dschema_check(ctx, (const duv_schema_entry[]) {
+//       {"texture", duk_is_string},
+//       {"x1", duk_is_number},
+//       {"y1", duk_is_number},
+//       {"x2", duk_is_number},
+//       {"y2", duk_is_number},
+//       {"color", duk_is_number},
+//       {0,0}});
     const char *texName= strsep(&str, " \t");
     const char *x1Str  = strsep(&str, " \t");
     const char *y1Str  = strsep(&str, " \t");
@@ -203,7 +290,7 @@ void c_drawLine(char *str)
     int y2=atoi(y2Str);
     int color=strtol(cStr,0,16);
     hexToColor(color, &col);
-    slog(LVL_ALL,DEBUG, "c_drawLine %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,x2,y2,col.r, col.g,col.b);
+    slog(TRACE,DEBUG, "c_drawLine %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,x2,y2,col.r, col.g,col.b);
     drawLine(texName, x1, y1, x2, y2, col);
 }
 
@@ -222,7 +309,7 @@ void c_drawFilledBox(char *tmpStr)
     char *strColStr = strsep(&str, " \t");
     char *alphaStr  = strsep(&str, " \t");
     if(!texName || !x1Str || !y1Str || !wStr || !hStr || !strokeStr || !alphaStr){
-    	slog(LVL_ALL,DEBUG, "c_drawFilledBox parse error : %s",str);
+    	slog(TRACE,DEBUG, "c_drawFilledBox parse error : %s",str);
 	return;
     }
     int x1=atoi(x1Str);
@@ -234,7 +321,7 @@ void c_drawFilledBox(char *tmpStr)
     int a=atoi(alphaStr);
     hexToColor(strtol(colStr,NULL,16), &col);
     hexToColor(strtol(strColStr,NULL,16), &scol);
-    slog(LVL_ALL,DEBUG, "c_drawFilledBox %s {%d,%d,%d,%d} s:%d {%d,%d,%d} {%d,%d,%d} a:%d",texName,x1,y1,w,h,s,
+    slog(TRACE,DEBUG, "c_drawFilledBox %s {%d,%d,%d,%d} s:%d {%d,%d,%d} {%d,%d,%d} a:%d",texName,x1,y1,w,h,s,
 	col.r,col.g,col.b, scol.r,scol.g,scol.b, a);
     drawFilledBox(texName, r, s, col, scol, a);
 }
@@ -254,7 +341,7 @@ void c_drawBox(char *str)
     int w=atoi(wStr);
     int h=atoi(hStr);
     hexToColor(strtol(colStr,NULL,16), &col);
-    slog(LVL_ALL,DEBUG, "c_drawBox %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,w,h,col.r,col.g,col.b);
+    slog(TRACE,DEBUG, "c_drawBox %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,w,h,col.r,col.g,col.b);
     drawBox(texName, x1, y1, w, h, col);
 }
 
@@ -279,7 +366,7 @@ void c_drawGradient(char *str)
     int hol=atoi(holStr);
     hexToColor(strtol(fcolStr,NULL,16), &fromcol);
     hexToColor(strtol(tcolStr,NULL,16), &tocol);
-    slog(LVL_ALL,DEBUG, "c_drawGradient %s {%d,%d,%d,%d} {...}{...} %d %d",texName,x1,y1,x2,y2,!hor, hol);
+    slog(TRACE,DEBUG, "c_drawGradient %s {%d,%d,%d,%d} {...}{...} %d %d",texName,x1,y1,x2,y2,!hor, hol);
     drawGradient(texName, r, fromcol,tocol,!hor,hol);
     renderActive(texName);
 }
@@ -341,14 +428,14 @@ c_loadImageFile(char *str)
  
    texInfo *TI = getTexture(texName);
    if(!TI) { return false; }
-   slog(LVL_ALL,FULLDEBUG,"File : %s",fileName);
+   slog(TRACE,FULLDEBUG,"File : %s",fileName);
    if(fileName == NULL){
       slog(LVL_QUIET,ERROR,"Wrong parameters setImageScale(name,file) (%s,%s).",TI->name,fileName);
       return false;
    }
 
    SDL_Rect srect = { 0,0,0,0 };
-   slog(LVL_NOISY,DEBUG,"Loading image %s",fileName);
+   slog(DEBUG,DEBUG,"Loading image %s",fileName);
    SDL_Texture *text = IMG_LoadTexture(ph->renderer,fileName);
    ph->textureCount++;
    if(text == NULL){
@@ -369,18 +456,18 @@ c_loadImageFile(char *str)
 
 void setTargetTexture(char *textureName){
     if(textureName){
-      slog(LVL_ALL,DEBUG,"setTarget %s",textureName);
+      slog(TRACE,DEBUG,"setTarget %s",textureName);
       texInfo *TI = getTexture(textureName);
       SDL_SetRenderTarget(ph->renderer,TI->texture);
       SDL_SetTextureBlendMode(TI->texture, SDL_BLENDMODE_BLEND);
     } else {
-      slog(LVL_ALL,DEBUG,"setTarget NULL");
+      slog(TRACE,DEBUG,"setTarget NULL");
       SDL_SetRenderTarget(ph->renderer,NULL);
     }
 }
 
 void drawLine(char *textureName, int x1, int y1, int x2, int y2, SDL_Color col) {
-//    slog(LVL_NOISY,DEBUG,"drawLine %s",textureName);
+//    slog(DEBUG,DEBUG,"drawLine %s",textureName);
 //    texInfo *TI = getTexture(textureName);
 //    if(!textureName || !TI){
 //        slog(LVL_QUIET,ERROR,"Texture %s not found.",textureName);
@@ -394,7 +481,7 @@ void drawLine(char *textureName, int x1, int y1, int x2, int y2, SDL_Color col) 
 }
 
 void drawBox(char *textureName, int x, int y, int w, int h, SDL_Color c) {
-   slog(LVL_ALL,DEBUG,"drawBox %s",textureName);
+   slog(TRACE,DEBUG,"drawBox %s",textureName);
 //   texInfo *TI = getTexture(textureName);
 //   SDL_SetRenderTarget(ph->renderer,TI->texture);
    SDL_Rect r= { x, y, w, h };
@@ -415,7 +502,7 @@ void vLine(char *textureName,int x, int y, int h, SDL_Color c)
 
 void drawFilledBox(char *textureName, SDL_Rect rect, int stroke, SDL_Color col, SDL_Color strokeCol, int alpha) {
     //SDL_SetRenderDrawColor(ph->renderer,strokeCol.r,strokeCol.g,strokeCol.b,0xff);
-    slog(LVL_ALL,DEBUG,"drawFilledBox %s Alpha:%d",textureName,alpha);
+    slog(TRACE,DEBUG,"drawFilledBox %s Alpha:%d",textureName,alpha);
 //    texInfo *TI = getTexture(textureName);
 //    SDL_SetRenderTarget(ph->renderer,TI->texture);
     drawBox(textureName, rect.x,rect.y, rect.w, stroke, strokeCol); 		// top
@@ -487,8 +574,8 @@ void drawGradient(char *textureName, SDL_Rect rect,const SDL_Color col1, SDL_Col
   float rstep = fabs(fr/run)*rdir;
   float gstep = fabs(fg/run)*gdir;
   float bstep = fabs(fb/run)*bdir;
-  slog(LVL_ALL,DEBUG,"Rect {%d,%d,%d,%d}",rect.x,rect.y,rect.w,rect.h);
-  slog(LVL_ALL,DEBUG,"Run %d, Steps %f, FMAX:%f, FMIN:%f r:%f,g:%f,b:%f",run,steps, maxrun,minrun,rstep, gstep, bstep);
+  slog(TRACE,DEBUG,"Rect {%d,%d,%d,%d}",rect.x,rect.y,rect.w,rect.h);
+  slog(TRACE,DEBUG,"Run %d, Steps %f, FMAX:%f, FMIN:%f r:%f,g:%f,b:%f",run,steps, maxrun,minrun,rstep, gstep, bstep);
   for (int i=0; i <= run; ++i) {
     int r = rbase+i*rstep;
     int g = gbase+i*gstep;
@@ -498,7 +585,7 @@ void drawGradient(char *textureName, SDL_Rect rect,const SDL_Color col1, SDL_Col
     } else {
       trect.x = rect.x; trect.y = rect.y+(int)ceil(i*steps); trect.w = rect.w; trect.h = isteps;
     }
-    //slog(LVL_ALL,DEBUG,"Step : {%d,%d,%d,%d} {%d,%d,%d}",trect.x,trect.y,trect.w,trect.h,r,g,b);
+    //slog(TRACE,DEBUG,"Step : {%d,%d,%d,%d} {%d,%d,%d}",trect.x,trect.y,trect.w,trect.h,r,g,b);
     SDL_SetRenderDrawColor(ph->renderer,r,g,b,0xff);
     SDL_RenderFillRect(ph->renderer,&trect);
   }
@@ -518,13 +605,13 @@ void drawButtonTest(char *textureName){
 }
 
 char *cleanupPlugin(void *p){
-   slog(LVL_NOISY,DEBUG,"Cleaning up plugin "PLUGIN_SCOPE);
+   slog(DEBUG,DEBUG,"Cleaning up plugin "PLUGIN_SCOPE);
    return NULL;
 }
 
 duk_ret_t js_gui_ctor(duk_context *ctx)
 {
-    slog(LVL_NOISY,DEBUG, "Getting access to gui object.");
+    slog(DEBUG,DEBUG, "Getting access to gui object.");
 
     duk_push_this(ctx);
     duk_dup(ctx, 0);  /* -> stack: [ name this name ] */
@@ -550,8 +637,8 @@ const duk_function_list_entry js_guiMethods[] = {
      {  "drawFilledBox"     , js_drawFilledBox,9},
      {  "drawBox"           , js_drawBox,6},
      {  "drawLine"          , js_drawLine,6},
-     {  "drawText"          , js_drawText,6},
      {  "loadImage"         , js_loadImageFile,7},
+     {  "drawText"          , js_drawText,6},
      {  "putImage"          , js_putImage,7},
      {  "clearTexture"      , js_clearTexture,1},
      {  "clearTextureNoPaint" , js_clearTextureNoPaint,1},
@@ -563,7 +650,7 @@ const duk_function_list_entry js_guiMethods[] = {
 
 char *initPlugin(pluginHandler *_ph){
    ph=_ph;
-   slog(LVL_NOISY,DEBUG, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
+   slog(DEBUG,DEBUG, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
    wally_put_function_list(c_SDLMethods);
 
    duk_push_c_function(ph->ctx, js_gui_ctor, 0 );
@@ -572,6 +659,6 @@ char *initPlugin(pluginHandler *_ph){
    duk_put_prop_string(ph->ctx, -2, "prototype");
    duk_put_global_string(ph->ctx, "GUI");  /* -> stack: [ ] */
 
-   slog(LVL_NOISY,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
+   slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
    return PLUGIN_SCOPE;
 }

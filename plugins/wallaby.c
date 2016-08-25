@@ -95,7 +95,7 @@ void drawGradient(char *textureName, SDL_Rect rect,const SDL_Color *col,bool ver
 }
 
 void drawButtonTest(char *textureName){
-   slog(LVL_NOISY,DEBUG,"Texture : %s", textureName);
+   slog(DEBUG,DEBUG,"Texture : %s", textureName);
    SDL_Rect r =  { 50,10,100,30 };
    SDL_Rect r2 =  { 300,10,100,100 };
    SDL_Rect r3 =  { 500,300,100,100 };
@@ -109,7 +109,7 @@ void drawButtonTest(char *textureName){
 }
 
 char *cleanupPlugin(void *p){
-   slog(LVL_NOISY,DEBUG,"Cleaning up plugin "PLUGIN_SCOPE);
+   slog(DEBUG,DEBUG,"Cleaning up plugin "PLUGIN_SCOPE);
    return NULL;
 }
 
@@ -122,8 +122,8 @@ const function_list_entry c_SDLMethods[] = {
 
 char *initPlugin(pluginHandler *_ph){
     ph=_ph;
-    slog(LVL_NOISY,FULLDEBUG, "Plugin "PLUGIN_SCOPE" initializing");
+    slog(DEBUG,FULLDEBUG, "Plugin "PLUGIN_SCOPE" initializing");
     wally_put_function_list(c_SDLMethods);
-    slog(LVL_NOISY,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
+    slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
     return PLUGIN_SCOPE;
 }

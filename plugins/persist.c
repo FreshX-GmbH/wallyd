@@ -15,7 +15,7 @@ bool persistConfig(hash_table *configMap)
          slog(LVL_QUIET,ERROR,"Could not allocate memory for persistMap");
          return false;
      }
-     slog(LVL_NOISY,DEBUG,"Persisting config to %s", DEFAULT_CMDLINE_TXT);
+     slog(DEBUG,DEBUG,"Persisting config to %s", DEFAULT_CMDLINE_TXT);
 
      if(ht_contains_simple(configMap,"updateServer")){
             ht_insert_simple(persistMap,"W_US",ht_get_simple(configMap,"updateServer"));
@@ -116,7 +116,7 @@ bool persistConfig(hash_table *configMap)
      while( 1 ){
         char *ret = fgetln(output, (size_t*)&num);
         if(!ret || num == 0 || errno) break;
-        slog(LVL_NOISY,DEBUG, "%s",ret);
+        slog(DEBUG,DEBUG, "%s",ret);
      }
 
      if (pclose(output) != 0) {

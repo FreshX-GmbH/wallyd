@@ -22,7 +22,7 @@ bool utilInit(void *_ph, int _loglevel){
    ph->conditionTimeout = 0;
    ph->logfileHandle = stderr;
    pthread_mutex_init (&logMutex,0);
-   slog_init(NULL, NULL, _loglevel, 0, 1);
+   slog_init(NULL, WALLYD_CONFDIR"/wallyd.conf", _loglevel, 0, 1);
    return true;
 }
 
@@ -60,7 +60,7 @@ void log_print(int line, const char *filename, int level, char *fmt,...)
 
     char *timeBuf = print_time();
 
-    if(level == HARDCORE)
+    if(level == TRACE)
         lvlString = "hardcore";
     if(level == FULLDEBUG)
         lvlString = "fulldebug";
@@ -216,11 +216,11 @@ const char *getConfigEntry(const char *key){
 
 int getConfig(hash_table *map, const char *file)
 {
-//   slog(LVL_NOISY,FULLDEBUG,"Map : 0x%x, Filename : %s",map,file);
+//   slog(TRACE,FULLDEBUG,"Map : 0x%x, Filename : %s",map,file);
    int count=0;
    FILE *fp = fopen(file,"r");
    if (fp == NULL){
-      slog(LVL_NOISY,DEBUG,"Can't open file %s.", file,count);
+      slog(TRACE,DEBUG,"Can't open file %s.", file,count);
       return 0;
    } else {
       char *line = (char*)malloc(512);
@@ -228,7 +228,7 @@ int getConfig(hash_table *map, const char *file)
       unsigned long l=0;
       while (fgets ( line, 512, fp ) != NULL ) /* read a line */
       {
-//         slog(LVL_NOISY,FULLDEBUG,"Read %d bytes from %s",strlen(line),file);
+//         slog(TRACE,FULLDEBUG,"Read %d bytes from %s",strlen(line),file);
          // skip comment lines
          if(line[0] == '#') continue;
          if(line[0] == ';') continue;
@@ -244,7 +244,7 @@ int getConfig(hash_table *map, const char *file)
          char *v = strtok(NULL, "=");
          // Skip null values
          if(!v) continue;
-         //slog(LVL_NOISY,FULLDEBUG,"K/V : %s = %s",k,v);
+         //slog(TRACE,FULLDEBUG,"K/V : %s = %s",k,v);
          unsigned long vlen=strlen(v);
          // Skip empty values
          if(vlen < 1) continue;
@@ -254,9 +254,9 @@ int getConfig(hash_table *map, const char *file)
               memset(v,0,vlen);
               memcpy(v,vnew,vlen-2);
               free(vnew);
-              //slog(LVL_NOISY,FULLDEBUG,"Removed leading and trailing \" from value. its now : %s",v);
+              //slog(TRACE,FULLDEBUG,"Removed leading and trailing \" from value. its now : %s",v);
          }
-         //slog(LVL_NOISY,FULLDEBUG,"Splitting cleaned line %s into key %s = %s",line,k,v);
+         //slog(TRACE,FULLDEBUG,"Splitting cleaned line %s into key %s = %s",line,k,v);
          if(!k || !v){
             slog(LVL_INFO,WARN,"Line %s is not valid. Ignored.");
             continue;
@@ -266,14 +266,14 @@ int getConfig(hash_table *map, const char *file)
          line=(char*)malloc(512);
          count++;
          if(count+1 > MAXCONF){
-            slog(LVL_QUIET,ERROR,"MaxConf Count reached.");
+            slog(ERROR,ERROR,"MaxConf Count reached.");
             break;
          }
       }
    fclose ( fp );
    }
    configEntries = count;
-   slog(LVL_NOISY,DEBUG,"Config entries in %s : %d",file,count);
+   slog(TRACE,DEBUG,"Config entries in %s : %d",file,count);
    return count;
 }
 
@@ -309,9 +309,10 @@ void cleanupWally(int s){
 
 void debugWally(void){
    FILE *f = fopen("/tmp/wally.debug","w");
-   size_t rss = getCurrentRSS();
+   long rss = getCurrentRSS();
+   long rssPeak = getPeakRSS();
    printf("============================================================\n");
-   printf("RSS Memory   : %d (%d kb) / Peak : %d (%d kb)\n",rss, rss/1024, getPeakRSS(), getPeakRSS()/1024);
+   printf("RSS Memory   : %lu (%lu kb) / Peak : %lu (%lu kb)\n",rss, rss/1024, rssPeak, rssPeak/1024);
    printf("UI All Count : %d\n",ph->uiAllCount);
    printf("UI Own Count : %d\n",ph->uiOwnCount);
    printf("UI EvTimeout : %d\n",ph->uiEventTimeout);
@@ -321,7 +322,7 @@ void debugWally(void){
    printf("Texture Count: %d\n",ph->textureCount);
    printf("Plugin Count : %d\n",ph->pluginCount);
    printf("============================================================\n");
-   fprintf(f,"RSS Memory   : %d (%d kb) / Peak : %d (%d kb)\n",rss, rss/1024, getPeakRSS(), getPeakRSS()/1024);
+   fprintf(f,"RSS Memory   : %lu (%lu kb) / Peak : %lu (%lu kb)\n",rss, rss/1024, rssPeak, rssPeak/1024);
    fprintf(f,"UI All Count : %d\n",ph->uiAllCount);
    fprintf(f,"UI Own Count : %d\n",ph->uiOwnCount);
    fprintf(f,"UI EvTimeout : %d\n",ph->uiEventTimeout);
@@ -351,7 +352,7 @@ void setupSignalHandler(void){
 }
 
 FILE *openLogfile(char *name){
-    slog(LVL_NOISY,DEBUG,"Opening Logfile and redirecting logs to %s",name);
+    slog(TRACE,DEBUG,"Opening Logfile and redirecting logs to %s",name);
     FILE *stream = fopen(name, "a");
     setbuf(stream, NULL);
     setvbuf(stream, NULL, _IONBF, 0);
@@ -410,7 +411,7 @@ int getNumOrPercentEx(char *str, int relativeTo, int *value,int base){
          return false;
       }
       *value = relativeTo * x / 100;
-      slog(LVL_NOISY,FULLDEBUG,"it's percent : %s = %d",str,*value);
+      slog(TRACE,FULLDEBUG,"it's percent : %s = %d",str,*value);
       return true;
    }
    if(str) x = (int)strtol(str,NULL,base);

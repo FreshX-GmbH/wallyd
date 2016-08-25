@@ -194,7 +194,7 @@ duk_ret_t js_gpio_dtor(duk_context *ctx)
 // Constructor of the JS Object
 duk_ret_t js_gpio_ctor(duk_context *ctx)
 {
-    slog(LVL_NOISY,DEBUG, "Creating new object of "PLUGIN_SCOPE);
+    slog(DEBUG,DEBUG, "Creating new object of "PLUGIN_SCOPE);
 
     myGPIO *mps = malloc(sizeof(myGPIO));
     mps->name = duk_require_string(ctx, 0);
@@ -223,11 +223,11 @@ duk_ret_t js_gpio_ctor(duk_context *ctx)
 
 int myGPIOInfo(char *i){
    if(i) {
-      slog(LVL_NOISY,DEBUG,"Info : %s", i);
+      slog(DEBUG,DEBUG,"Info : %s", i);
       // TODO : Get structure from hashmap('name');
       return true;
    } else {
-      slog(LVL_NOISY,DEBUG,"Wrong parameters calling "PLUGIN_SCOPE"::info <name>");
+      slog(DEBUG,DEBUG,"Wrong parameters calling "PLUGIN_SCOPE"::info <name>");
       return false;
    }
 }
@@ -265,7 +265,7 @@ const function_list_entry c_myGPIOMethods[] = {
 
 
 char *initPlugin(pluginHandler *_ph){
-    slog(LVL_NOISY,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
+    slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
     ph=_ph;
     ctx = ph->ctx;
 
@@ -281,7 +281,7 @@ char *initPlugin(pluginHandler *_ph){
 }
 
 char *cleanupPlugin(void *p){
-    slog(LVL_NOISY,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
+    slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
     return NULL;
 }
 

@@ -25,7 +25,7 @@ bool registerClient(char *loc)
          ht_get_simple(ph->configFlagsMap,"WALLY_ARCH"),
          ht_get_simple(ph->configFlagsMap,"WALLY_PLATFORM"),
          ht_get_simple(ph->configFlagsMap,"W_IPADDR"));
-   slog(LVL_NOISY,DEBUG,"RegURL : %s",registerURL);
+   slog(DEBUG,DEBUG,"RegURL : %s",registerURL);
  
    registerMap = malloc(sizeof(hash_table));
    ht_init(registerMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
@@ -40,7 +40,7 @@ bool registerClient(char *loc)
    } else {
          commandURL=NULL;
    }
-   slog(LVL_NOISY,DEBUG,"CmdURL : %s",commandURL);
+   slog(DEBUG,DEBUG,"CmdURL : %s",commandURL);
 
    return ph->registered;
 }

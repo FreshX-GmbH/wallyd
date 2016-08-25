@@ -32,7 +32,7 @@ int video_open(VideoState *is, int force_set_video_mode)
 }
 
 void *videoFinishCallback(VideoState *is){
-   slog(LVL_ALL,ERROR,"Video finished");
+   slog(TRACE,ERROR,"Video finished");
 
    duk_context *ctx = ph->ctx;
    ph->playVideo = false;
@@ -42,9 +42,9 @@ void *videoFinishCallback(VideoState *is){
    duk_remove(ctx, 0);
    duk_remove(ctx, 0);
    duk_remove(ctx, 0);
-   slog(LVL_ALL,DEBUG,"Emitting on-finish callback : %d\n",duk_get_top(ctx));
+   slog(TRACE,DEBUG,"Emitting on-finish callback : %d\n",duk_get_top(ctx));
    if (!duk_is_function(ctx, 0)) {
-     slog(LVL_ALL,ERROR,"FFVideo : no valid callback found.\n");
+     slog(TRACE,ERROR,"FFVideo : no valid callback found.\n");
      return NULL;
    }
    duk_call(ctx, 0);
@@ -53,21 +53,21 @@ void *videoFinishCallback(VideoState *is){
 }
 
 void *createTextureCallback(VideoState *is){
-    slog(LVL_ALL,DEBUG,"Creating Video texture with is : 0x%x",is);
+    slog(TRACE,DEBUG,"Creating Video texture with is : 0x%x",is);
     
     texInfo *TI = is->TI;
     if(TI->texture){
         SDL_DestroyTexture(TI->texture);
         ph->textureCount--;
     }
-    slog(LVL_ALL,DEBUG,"Creating video texture for %s, size %dx%d",TI->name, is->width, is->height);
+    slog(TRACE,DEBUG,"Creating video texture for %s, size %dx%d",TI->name, is->width, is->height);
     TI->texture = SDL_CreateTexture( ph->renderer, SDL_PIXELFORMAT_YV12, SDL_TEXTUREACCESS_STREAMING, is->width, is->height );
     ph->textureCount++;
     return TI->texture;
 }
 
 void displayTextureCallback(VideoState *is, void *p){
-    slog(LVL_NOISY,DEBUG,"Render IImage");
+    slog(DEBUG,DEBUG,"Render IImage");
     if(rendering == true) return;
     rendering = true;
     texInfo *TI = is->TI;
@@ -86,7 +86,7 @@ int renderVideo(char *str)
        slog(LVL_QUIET,ERROR,"Wrong parameters for play(name,url) : (%s)",str);
       return -1;
     }
-    slog(LVL_ALL,INFO,"FFPlugin going to play on screen %s : %s\n",screen, file);
+    slog(TRACE,INFO,"FFPlugin going to play on screen %s : %s\n",screen, file);
 
     VideoObject *vo = getVideoObject(ph->ctx);
 
@@ -107,7 +107,7 @@ int renderVideo(char *str)
     vo->is = renderFFVideo(file);
     vo->is->TI = TI;
     vo->is->VO = vo;
-    slog(LVL_NOISY,DEBUG, "FFVideo Object : 0x%x, is : 0x%x",vo,vo->is);
+    slog(DEBUG,DEBUG, "FFVideo Object : 0x%x, is : 0x%x",vo,vo->is);
     return ret;
 }
 
@@ -118,7 +118,7 @@ int setVideoTexture(char *str)
       slog(LVL_QUIET,ERROR,"Wrong paramters for setVideoTexture(name) : %s",str);
       return false;
    }
-   slog(LVL_NOISY,DEBUG,"Video output points now to texture %s and is set active",name);
+   slog(DEBUG,DEBUG,"Video output points now to texture %s and is set active",name);
    return 0;
 }
 
@@ -129,10 +129,10 @@ char *cleanupPlugin(void *p){
 
  //  slog(LVL_INFO,INFO,"Cleaning up video plugin. Waiting for threads to finish.");
  //  SDL_WaitThread(is->parse_tid,&status);
-  // slog(LVL_NOISY,DEBUG,"Thread 1/2 finished.");
+  // slog(DEBUG,DEBUG,"Thread 1/2 finished.");
   // SDL_CondSignal(is->pictq_cond);
   // SDL_WaitThread(is->video_tid,&status);
- //  slog(LVL_NOISY,DEBUG,"Thread 2/2 finished.");
+ //  slog(DEBUG,DEBUG,"Thread 2/2 finished.");
  //  if(is) free(is);
    return NULL;
 }
@@ -194,13 +194,13 @@ duk_ret_t js_info(duk_context *ctx)
 duk_ret_t js_video_dtor(duk_context *ctx)
 {
    free(getVideoObject(ctx));
-   slog(LVL_NOISY,DEBUG, "Video object destroyed.");
+   slog(DEBUG,DEBUG, "Video object destroyed.");
    return 0;
 }
 
 duk_ret_t js_video_ctor(duk_context *ctx)
 {
-    slog(LVL_NOISY,DEBUG, "New video object created.");
+    slog(DEBUG,DEBUG, "New video object created.");
 
     //duk_push_this(ctx);
     uv_process_t *ff = duk_push_fixed_buffer(ctx, sizeof(uv_process_t));
@@ -209,7 +209,7 @@ duk_ret_t js_video_ctor(duk_context *ctx)
     VideoObject *vo = malloc(sizeof(VideoObject));
     memset(vo,0,sizeof(VideoObject));
 
-    slog(LVL_ALL,DEBUG,"VideoOject located at : 0x%x",vo);
+    slog(TRACE,DEBUG,"VideoOject located at : 0x%x",vo);
 
     // This is a hidden property
     duk_push_pointer(ctx, vo);
@@ -227,7 +227,7 @@ VideoObject *getVideoObject(duk_context *ctx) {
 
 /* Initialize Video object into global object. */
 void js_video_init(duk_context *ctx) {
-   slog(LVL_NOISY,FULLDEBUG,"Constructing video object");
+   slog(DEBUG,FULLDEBUG,"Constructing video object");
 
    duk_push_c_function(ctx, js_video_ctor, 5 );
    duk_push_object(ctx);  
@@ -259,7 +259,7 @@ char *initPlugin(pluginHandler *_ph){
     wally_put_function_list(c_videoMethods);
     js_video_init(ctx);
 
-    slog(LVL_NOISY,FULLDEBUG,"Plugin video initialized. PH is at 0x%x",ph);
+    slog(DEBUG,FULLDEBUG,"Plugin video initialized. PH is at 0x%x",ph);
 
     return PLUGIN_SCOPE;
 }

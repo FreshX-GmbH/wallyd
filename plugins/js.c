@@ -24,7 +24,7 @@ const duk_function_list_entry wallyMethods[];
 
 static int js_evalFile(duk_context *ctx) {
    const char *filename = duk_to_string(ctx, 0);
-   slog(LVL_NOISY,DEBUG,"Execute file : %s (Top : %d)", filename, (long) duk_get_top(ctx));
+   slog(DEBUG,DEBUG,"Execute file : %s (Top : %d)", filename, (long) duk_get_top(ctx));
    duk_eval_file(ctx, filename);
    duk_pop(ctx);
    return 0;
@@ -227,7 +227,7 @@ duk_ret_t js_getConfig(duk_context *ctx)
 // TODO : export configMap
 //   int kc=0,i;
 //   char **keys = ht_keys(ph->configMap, &kc);
-//   slog(LVL_ALL,ERROR,"Exporting %d keys to JS",kc);
+//   slog(TRACE,ERROR,"Exporting %d keys to JS",kc);
 //   for(int i=0; i < key_count; i++){
 //      char *name = keys[i];
 //      DUK_PUSH_PROP_STRING(name, ht_get_simple(ph->configMap, name));
@@ -240,7 +240,7 @@ int js_setDebug(duk_context *ctx)
 {
     int n = duk_get_top(ctx);
     int lvl = duk_to_int(ctx,0);
-    slog(LVL_NOISY,DEBUG,"set debug : %d",lvl);
+    slog(TRACE,INFO,"Set loglevel to : %d",lvl);
     ph->loglevel = lvl;
     return 1;
 }
@@ -317,7 +317,7 @@ int evalFile(char *file){
     if (duk_peval_file(ctx,file) != 0) {
         slog(LVL_QUIET,ERROR,"JSError in file %s : %s", file, duk_safe_to_string(ctx, -1));
     } else {
-        slog(LVL_NOISY,DEBUG,"result is: %s", duk_safe_to_string(ctx, -1));
+        slog(DEBUG,DEBUG,"result is: %s", duk_safe_to_string(ctx, -1));
     }
     return 0;
 }
@@ -328,7 +328,7 @@ duk_ret_t js_exec(duk_context *ctx){
    char *tofree = str = strdup(duk_to_string(ctx,0));
    assert(str != NULL);
    cmd = strsep(&str, " \t");
-   slog(LVL_NOISY,DEBUG,"call : %s(%s)", cmd,str);
+   slog(DEBUG,DEBUG,"call : %s(%s)", cmd,str);
    call(cmd,&ret,str);
    free(tofree);
    return 0;
@@ -340,20 +340,20 @@ duk_ret_t evalScript(char *str){
     if (duk_peval(ctx) != 0) {
         slog(LVL_QUIET,ERROR,"JSError : %s", duk_safe_to_string(ctx, -1));
     } else {
-        slog(LVL_NOISY,DEBUG,"result is: %s", duk_safe_to_string(ctx, -1));
+        slog(DEBUG,DEBUG,"result is: %s", duk_safe_to_string(ctx, -1));
     }
     return 0;
 }
 
 char *cleanupPlugin(void *p){
     // TO BE DONE somewhere else : duk_destroy_heap(ctx);
-    slog(LVL_NOISY,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
+    slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
     return NULL;
 }
 
 duk_ret_t js_wally_ctor(duk_context *ctx)
 {
-    slog(LVL_NOISY,DEBUG, "Getting access to THE wally object.");
+    slog(DEBUG,DEBUG, "Getting access to THE wally object.");
 
     duk_push_this(ctx);
     duk_dup(ctx, 0);  /* -> stack: [ name this name ] */
@@ -390,11 +390,11 @@ const function_list_entry c_JSMethods[] = {
 };
 
 char *initPlugin(pluginHandler *_ph){
-   slog(LVL_NOISY,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing");
+   slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing");
    ph=_ph;
    ctx = ph->ctx;
 
-   slog(LVL_ALL,DEBUG,"Constructing wally object");
+   slog(TRACE,DEBUG,"Constructing wally object");
 
    wally_put_function_list(c_JSMethods);
    
@@ -404,7 +404,7 @@ char *initPlugin(pluginHandler *_ph){
    duk_put_prop_string(ctx, -2, "prototype");
    duk_put_global_string(ctx, "Wally");  /* -> stack: [ ] */
 
-    slog(LVL_ALL,DEBUG,"Plugin initialized. PH is at 0x%x",_ph);
+    slog(TRACE,DEBUG,"Plugin initialized. PH is at 0x%x",_ph);
     return PLUGIN_SCOPE;
 }
 

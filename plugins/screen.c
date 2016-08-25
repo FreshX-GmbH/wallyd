@@ -20,7 +20,7 @@ typedef struct screenPlugin
 extern const duk_function_list_entry myMethods[];
 
 char *cleanupPlugin(void *p){
-    slog(LVL_NOISY,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
+    slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
     return NULL;
 }
 
@@ -39,7 +39,7 @@ duk_ret_t getTextures(duk_context *ctx){
 }
 
 //duk_ret_t setAutoRender(duk_context *ctx){
-//    slog(LVL_NOISY,DEBUG,"Set autorender to ...");
+//    slog(DEBUG,DEBUG,"Set autorender to ...");
 //    return 0;
 //}
 
@@ -70,7 +70,7 @@ duk_ret_t js_screen_dtor(duk_context *ctx)
 duk_ret_t js_screen_ctor(duk_context *ctx)
 {
     int ret = 0;
-    slog(LVL_NOISY,DEBUG, "Creating new "PLUGIN_SCOPE" object");
+    slog(DEBUG,DEBUG, "Creating new "PLUGIN_SCOPE" object");
 
     screenPlugin *SP = malloc(sizeof(screenPlugin));
     duk_push_this(ctx);
@@ -100,7 +100,7 @@ const duk_function_list_entry screenMethods[] = {
 };
 
 char *initPlugin(pluginHandler *_ph){
-    slog(LVL_NOISY,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
+    slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
     ph=_ph;
     ctx = ph->ctx;
 

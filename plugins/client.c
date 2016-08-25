@@ -23,12 +23,12 @@ thrState clientState = DISCOVERY;
 
 //  Loop the client thread here
 void *wallyClientThread(void *argPtr){
-   slog(LVL_NOISY,DEBUG,"WallyClient Thread started. Waiting for plugins to get ready.");
+   slog(DEBUG,DEBUG,"WallyClient Thread started. Waiting for plugins to get ready.");
    pthread_mutex_init(&commandMutex,0);
    while(ph->pluginLoaderDone == false){
       usleep(100);
    }
-   slog(LVL_NOISY,FULLDEBUG,"WallyClient Thread started. Plugins ready.");
+   slog(DEBUG,FULLDEBUG,"WallyClient Thread started. Plugins ready.");
    commandMap = malloc(sizeof(hash_table));
    ht_init(commandMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
    tempMap = malloc(sizeof(hash_table));
@@ -36,6 +36,8 @@ void *wallyClientThread(void *argPtr){
 
    int startDelay = 1;
    int ret=0;
+   char *startDelayString = NULL;
+
    clientThreadRunning = true;
 
    while(clientThreadRunning == true) {
@@ -46,14 +48,16 @@ void *wallyClientThread(void *argPtr){
                   //    Both plugins (ssdp and cloudConnector) 
                   //    set ph->location and return once they registered
                   //    Cloud connector needs additional handling after
-                  if(ph->ssdp) {
-                      call("ssdp::discovery",&ret,&startDelay);
-                  } else if(ph->cloud) {
-                      call("cloud::connect",&ret,&startDelay);
-                  }     
-                  if(ph->location) {
+                asprintf(&startDelayString,"%d",startDelay);
+                if(ph->ssdp) {
+                      call("ssdp::discovery",&ret,startDelayString);
+                } else if(ph->cloud) {
+                      call("cloud::connect",&ret,startDelayString);
+                }
+                free(startDelayString);
+                if(ph->location) {
                      if(run_callback){
-                        slog(LVL_NOISY,DEBUG,"Executing JS Callback for client discovery");
+                        slog(DEBUG,DEBUG,"Executing JS Callback for client discovery");
 #ifndef WITH_SEADUK
                         duv_push_ref(ctx, finishCallback);
                         duk_push_string(ctx, ph->location);
@@ -64,32 +68,32 @@ void *wallyClientThread(void *argPtr){
                      saveLocation(FLAGFILE);
                   }
                   startDelay = 1;
-                  slog(LVL_NOISY,DEBUG,"Change state from discovery to register");
+                  slog(DEBUG,DEBUG,"Change state from discovery to register");
                   clientState = REGISTER;
                   break;
               case REGISTER:
                   if(ph->location){
                      if(registerClient(ph->location)){
-                        slog(LVL_NOISY,DEBUG,"Starting longpoll."); 
+                        slog(DEBUG,DEBUG,"Starting longpoll."); 
                         url_longpoll(commandURL,60,LONGPOLL_INIT,NULL);
                         clientState = COMMAND;
                      } else {
-                        slog(LVL_NOISY,DEBUG,"Registration failed."); 
+                        slog(DEBUG,DEBUG,"Registration failed."); 
                      }
                   } else {
                      slog(LVL_INFO,WARN,"Register was called without a valid location");
                   }
                   break;
               case COMMAND:
-                  slog(LVL_NOISY,DEBUG,"Requesting next core command from %s",commandURL);
+                  slog(DEBUG,DEBUG,"Requesting next core command from %s",commandURL);
                   int ret = getCommand(commandURL,60);
                   if(ret == true && ht_get_simple(commandMap,"command")){
                      int commandValid = false;
-                     slog(LVL_NOISY,DEBUG,"Command : %s",ht_get_simple(commandMap,"command"));
+                     slog(DEBUG,DEBUG,"Command : %s",ht_get_simple(commandMap,"command"));
                      // Handle the commands which are supported by the wallyd here
                      if(ht_compare(commandMap,"command","config")){
                            commandValid = true;
-                           slog(LVL_NOISY,DEBUG,"Preparing to persist config");
+                           slog(DEBUG,DEBUG,"Preparing to persist config");
                            if(persistConfig(registerMap)){
                               sendSuccess(ht_get_simple(commandMap,"id"));
                            }
@@ -97,23 +101,23 @@ void *wallyClientThread(void *argPtr){
                      if(ht_compare(commandMap,"command","reboot")){
                            commandValid = true;
                            sendSuccess(ht_get_simple(commandMap,"id"));
-                           slog(LVL_NOISY,DEBUG,"Preparing to reboot");
+                           slog(DEBUG,DEBUG,"Preparing to reboot");
                            system(BIN_REBOOT);
                      }
                      if(ht_compare(commandMap,"command","firmwareUpdate")){
                            commandValid = true;
                            sendSuccess(ht_get_simple(commandMap,"id"));
-                           slog(LVL_NOISY,DEBUG,"Preparing to update firmware");
+                           slog(DEBUG,DEBUG,"Preparing to update firmware");
                            system(BIN_UPDATEFW);
                      }
                      if(ht_compare(commandMap,"command","getlog")){
                            commandValid = true;
-                           slog(LVL_NOISY,DEBUG,"Preparing to send log to server");
+                           slog(DEBUG,DEBUG,"Preparing to send log to server");
                            //sendSuccess(ht_get_simple(commandMap,"id"));
                            //persistConfig(registerMap);
                      }
                      if(commandValid == false){
-                           slog(LVL_NOISY,DEBUG,"Command %s not valid. Ingoring.",ht_get_simple(commandMap,"command"));
+                           slog(DEBUG,DEBUG,"Command %s not valid. Ingoring.",ht_get_simple(commandMap,"command"));
                            sendFailed(ht_get_simple(commandMap,"id"),"unknown.command");
                      }
                   } else {
@@ -122,7 +126,7 @@ void *wallyClientThread(void *argPtr){
                   pthread_mutex_unlock(&commandMutex);
                   break;
               case QUIT:
-                  slog(LVL_NOISY,DEBUG,"Thread is quiting.");
+                  slog(DEBUG,DEBUG,"Thread is quiting.");
                   break;
            }
        sleep(threadDelay);
@@ -197,7 +201,7 @@ bool sendFailed(char *cmdid,char *err)
      char *failURL=NULL;
      slog(LVL_INFO,INFO,"Command failed. Notifying server.");
      asprintf(&failURL,"%s/commandfailed?uuid=%s&cmdid=%s&err=%s",ph->location,ph->uuid,cmdid,err);
-     slog(LVL_NOISY,DEBUG,"URL : %s",failURL);
+     slog(DEBUG,DEBUG,"URL : %s",failURL);
      char *retString = url_call(failURL);
      free(failURL);
      return true;
@@ -208,7 +212,7 @@ bool sendSuccess(char *cmdid)
      slog(LVL_INFO,INFO,"Command executed successfully. Notifying server.");
      char *successURL=NULL;
      asprintf(&successURL,"%s/commandsuccess?uuid=%s&cmdid=%s",ph->location,ph->uuid,cmdid);
-     slog(LVL_NOISY,DEBUG,"URL : %s",successURL);
+     slog(DEBUG,DEBUG,"URL : %s",successURL);
      char *retString = url_call(successURL);
      free(successURL);
      return true;
@@ -245,25 +249,25 @@ duk_ret_t js_discovery(duk_context *ctx)
    setDiscovery();
    run_callback = true;
 
-   slog(LVL_NOISY,DEBUG,"SSDP callback saved.");
+   slog(DEBUG,DEBUG,"SSDP callback saved.");
    return 0;
 }
 
 duk_ret_t js_register(duk_context *ctx)
 {
-   slog(LVL_NOISY,DEBUG,"Register comes here.");
+   slog(DEBUG,DEBUG,"Register comes here.");
    return 0;
 }
 
 duk_ret_t js_client_dtor(duk_context *ctx)
 {
-   slog(LVL_NOISY,DEBUG, "Cloud object destroyed.");
+   slog(DEBUG,DEBUG, "Cloud object destroyed.");
    return 0;
 }
 
 duk_ret_t js_client_ctor(duk_context *ctx)
 {
-    slog(LVL_NOISY,DEBUG, "New cloud object created.");
+    slog(DEBUG,DEBUG, "New cloud object created.");
     duk_push_this(ctx);
     duk_dup(ctx, 0);  /* -> stack: [ name this name ] */
     duk_put_prop_string(ctx, -2, "name");  /* -> stack: [ name this ] */
@@ -272,7 +276,7 @@ duk_ret_t js_client_ctor(duk_context *ctx)
 }
 
 void js_client_init(duk_context *ctx) {
-   slog(LVL_NOISY,DEBUG,"Constructing cloud object");
+   slog(DEBUG,DEBUG,"Constructing cloud object");
   
 #ifndef WITH_SEADUK 
    duv_ref_setup(ctx);
@@ -307,7 +311,7 @@ const function_list_entry c_clientMethods[] = {
 char *initPlugin(pluginHandler *phptr){
     ph=phptr;
     ctx = ph->ctx;
-    slog(LVL_NOISY,FULLDEBUG,"Plugin client initialized. PH is at 0x%x",ph);
+    slog(DEBUG,FULLDEBUG,"Plugin client initialized. PH is at 0x%x",ph);
     wally_put_function_list(c_clientMethods);
     js_client_init(ph->ctx);
     return PLUGIN_SCOPE;

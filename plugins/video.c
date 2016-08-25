@@ -316,7 +316,7 @@ void video_display(VideoState *is) {
         //        crc = crc + a[i] + b[i] + c[i];
         //    }
         //}
-        slog(LVL_NOISY,FULLDEBUG,"UpdateYUV {%d,%d,%d,%d} -> {%d,%d,%d,%d}, %d, %u",
+        slog(DEBUG,FULLDEBUG,"UpdateYUV {%d,%d,%d,%d} -> {%d,%d,%d,%d}, %d, %u",
                 srcRect.x, srcRect.y, srcRect.w, srcRect.h,
                 dstRect.x, dstRect.y, dstRect.w, dstRect.h, crc);
         SDL_UpdateYUVTexture(is->TI->texture, &srcRect, 
@@ -428,7 +428,7 @@ void alloc_picture(void *userdata) {
                 //is->TI->texture=NULL;
         	//SDL_DestroyTexture(is->TI->texture);
     	}
-    	slog(LVL_NOISY,FULLDEBUG,"Creating video texture %s, size %dx%d / CT:%d",is->TI->name, is->TI->rect->w, is->TI->rect->h, is->newTexture);
+    	slog(DEBUG,FULLDEBUG,"Creating video texture %s, size %dx%d / CT:%d",is->TI->name, is->TI->rect->w, is->TI->rect->h, is->newTexture);
     	is->TI->texture = SDL_CreateTexture(ph->renderer, SDL_PIXELFORMAT_YV12,
         	SDL_TEXTUREACCESS_STATIC , is->TI->rect->w, is->TI->rect->h);
     	//is->TI->texture = SDL_CreateTexture(ph->renderer, SDL_PIXELFORMAT_YV12,
@@ -567,10 +567,10 @@ int video_thread(void *arg) {
 
     pFrame = av_frame_alloc();
 
-    slog(LVL_NOISY,DEBUG,"Video thread started.");
+    slog(DEBUG,DEBUG,"Video thread started.");
 
     for (;;) {
-        slog(LVL_ALL,DEBUG,"Video thread loop : %d",packet->pts);
+        slog(TRACE,DEBUG,"Video thread loop : %d",packet->pts);
         if (packet_queue_get(&is->videoq, packet, 1) < 0) {
             // means we quit getting packets
             break;
@@ -815,12 +815,12 @@ int decode_thread(void *arg) {
     }
 
     if (audio_index >= 0) {
-	slog(LVL_NOISY,DEBUG,"Opening audio stream");
+	slog(DEBUG,DEBUG,"Opening audio stream");
         audio_stream_component_open(is, audio_index);
     }
 
     if (video_index >= 0) {
-	slog(LVL_NOISY,DEBUG,"Opening video stream");
+	slog(DEBUG,DEBUG,"Opening video stream");
         video_stream_component_open(is, video_index);
     }
 
@@ -854,7 +854,7 @@ int decode_thread(void *arg) {
             if (av_read_frame(is->ic, packet) < 0) {
                 if (is->ic->pb->error == 0) {
                     SDL_Delay(100); /* no error; wait for user input */
-                    slog(LVL_NOISY,DEBUG,"av_read_frame failed with no error. : %d",is->read_frame_fail);
+                    slog(DEBUG,DEBUG,"av_read_frame failed with no error. : %d",is->read_frame_fail);
                     is->read_frame_fail++;
                     // Find a proper solution for this / or test if video breaks on bad network?
                     if(is->read_frame_fail > VIDEO_FAIL_PACKETS)
@@ -879,7 +879,7 @@ int decode_thread(void *arg) {
     } else {
         slog(LVL_QUIET,ERROR, "%s: could not open audio and video (unsupported codec?)", is->filename);
     }
-    slog(LVL_NOISY,DEBUG,"Video decode thread finished.");
+    slog(DEBUG,DEBUG,"Video decode thread finished.");
         is->quit = true;
         SDL_CondSignal(is->videoq.cond);
         SDL_CondSignal(is->audioq.cond);

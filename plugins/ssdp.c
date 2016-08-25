@@ -22,7 +22,7 @@ bool parseSSDPResponse(char *buffer)
             }
         }
         if (strncmp(line, "LOCATION: ", 10) == 0) { 
-            slog(LVL_NOISY,FULLDEBUG,"Matching field %s",line);
+            slog(DEBUG,FULLDEBUG,"Matching field %s",line);
             asprintf(&loc,"%s",replace(replace(replace(line,"LOCATION: ",""),"\n",""),"\r",""));
         }
         line  = strtok(NULL, "\n");
@@ -31,10 +31,10 @@ bool parseSSDPResponse(char *buffer)
     // TODO : Free global location ptr
     if(ret) {
         ph->location = loc;
-        slog(LVL_NOISY,DEBUG,"Location saved.");
+        slog(DEBUG,DEBUG,"Location saved.");
     // otherwise free the ptr
     } else if(loc){
-        slog(LVL_NOISY,DEBUG,"Location ignored.");
+        slog(DEBUG,DEBUG,"Location ignored.");
         free(loc);
     }
     return ret;
@@ -60,7 +60,7 @@ void ssdpDiscovery(int *_sl){
     // We loop here forever since we get an error from the Broadcast sending
     // This is an inacceptable state for all the following wallyTV functions
     while(!sd) {
-        slog(LVL_NOISY,DEBUG,"Timeout delay : %d",sl);
+        slog(DEBUG,DEBUG,"Timeout delay : %d",sl);
         sleep(sl);
         sd = sendBroadcastPacket();
         if(sl < 10) sl++;
@@ -159,7 +159,7 @@ const function_list_entry c_SSDPMethods[] = {
 char *initPlugin(pluginHandler *_ph){
     ph=_ph;
     wally_put_function_list(c_SSDPMethods);
-    slog(LVL_NOISY,FULLDEBUG,"Plugin ssdp initializing. PH is at 0x%x",ph);
+    slog(DEBUG,FULLDEBUG,"Plugin ssdp initializing. PH is at 0x%x",ph);
     return PLUGIN_SCOPE;
 }
 

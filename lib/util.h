@@ -3,6 +3,7 @@
 
 #define _GNU_SOURCE
 
+#include "autoversion.h"
 #include "json.h"
 #include "miniz.h"
 #include "hashtable.h"
@@ -48,27 +49,28 @@
 // Maximal json items to parse and store
 #define JSONMAXCONF 2048
 
-#define FATAL       SLOG_FATAL
-#define ERROR       SLOG_ERROR
-#define WARN        SLOG_WARN
-#define INFO        SLOG_INFO
-#define DEBUG       SLOG_DEBUG
-#define FULLDEBUG   SLOG_LIVE
-#define HARDCORE    SLOG_LIVE
+#define FATAL       LVL_FATAL
+#define ERROR       LVL_ERROR
+#define WARN        LVL_WARN
+#define INFO        LVL_INFO
+#define DEBUG       LVL_DEBUG
+#define TRACE       LVL_TRACE
+#define FULLDEBUG   LVL_TRACE
+#define LVL_QUIET   LVL_ERROR
 
-#define LVL_NONE    0
-#define LVL_QUIET   1
-#define LVL_INFO    2
-#define LVL_NOISY   3
-#define LVL_TRACE   4
-#define LVL_ALL     5
+#define LVL_FATAL     0
+#define LVL_ERROR     1
+#define LVL_WARN      2
+#define LVL_INFO      3
+#define LVL_DEBUG     4
+#define LVL_TRACE     5
 
 // Change to 0 or 1 in production
-#ifndef __FULLDEBUG
-#define DEFAULT_LOG_LEVEL 3
-#else
+//#ifndef __FULLDEBUG
+//#define DEFAULT_LOG_LEVEL 3
+//#else
 #define DEFAULT_LOG_LEVEL 5
-#endif
+//#endif
 //#define log(...) log_print(__LINE__, __FILE__, __VA_ARGS__ )
 //#define log(...) log4c_log(__LINE__,__FILE__,__VA_ARGS__)
 //#define log(level,...) slog(0,level,__VA_ARGS__)

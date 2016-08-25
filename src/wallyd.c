@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     }
 
 #ifdef WITH_SEADUK
-  slog(LVL_NOISY,DEBUG,"Seaduk initializing, ctx is at 0x%x.",ctx);
+  slog(DEBUG,DEBUG,"Seaduk initializing, ctx is at 0x%x.",ctx);
   gargc = argc;
   gargv = argv;
   if(argc < 2){
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
       gargv = (char **) nargv;
   }
   if(pthread_create(&uv_thr, NULL, &duvThread, ctx) != 0){
-    slog(LVL_ALL,ERROR,"Failed to create seaduk thread!");
+    slog(ERROR,ERROR,"Failed to create seaduk thread!");
   }
 #else
   if (argc < 2) {
@@ -116,8 +116,8 @@ int main(int argc, char *argv[])
 
   // Indefinetely Loop the SDL/UI thread loop in the main thread
   //
-  slog(LVL_NOISY,DEBUG,"ID is : %s",argv[0]);
-  slog(LVL_NOISY,DEBUG,"Startup script is : %s",argv[1]);
+  slog(DEBUG,DEBUG,"ID is : %s",argv[0]);
+  slog(DEBUG,DEBUG,"Startup script is : %s",argv[1]);
   // Stash argv for later access
   duk_push_pointer(ctx, (void *) argv);
   duk_push_int(ctx, argc);
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
   duk_push_c_function(ctx, duv_main, 1);
   duk_push_string(ctx, argv[1]);
   // Start the JS startup script in a thread 
-  slog(LVL_NOISY,FULLDEBUG,"Seaduk thread starting");
+  slog(DEBUG,FULLDEBUG,"Seaduk thread starting");
   uv_thread_create(&uv_thread, &duvThread, ctx);
 #endif
 
@@ -164,7 +164,7 @@ void allocBuffer(uv_handle_t* handle, size_t size, uv_buf_t* buf) {
 }
 
 void onClose(uv_handle_t* handle){
-    slog(LVL_NOISY,FULLDEBUG,"Handle closed. Freeing up.");
+    slog(DEBUG,FULLDEBUG,"Handle closed. Freeing up.");
     if(handle) { free(handle); }
 }
 
@@ -186,7 +186,7 @@ void onNewConnection(uv_stream_t *server, int status)
 //    if (uv_accept(server, (uv_stream_t*) &client) == 0) {
 //        uv_os_fd_t fd;
 //        uv_fileno((const uv_handle_t*) &client, &fd);
-//        slog(LVL_NOISY,FULLDEBUG, "Worker %d: Accepted fd %d", getpid(), fd);
+//        slog(DEBUG,FULLDEBUG, "Worker %d: Accepted fd %d", getpid(), fd);
 //        uv_read_start((uv_stream_t*) &client, allocBuffer, onRead);
 //    } else {
 //        uv_close((uv_handle_t*) &client, onClose);
@@ -194,9 +194,9 @@ void onNewConnection(uv_stream_t *server, int status)
 }
 
 void onRead(uv_stream_t* _client, ssize_t nread, const uv_buf_t* buffer) {
-    slog(LVL_ALL,DEBUG,"onRead");
+    slog(DEBUG,DEBUG,"onRead");
     if (nread == -1) {
-        slog(LVL_NOISY,DEBUG, "Reached EOF on command socket");
+        slog(DEBUG,DEBUG, "Reached EOF on command socket");
         uv_close((uv_handle_t *) _client, onClose);
         return;
     }
@@ -205,12 +205,12 @@ void onRead(uv_stream_t* _client, ssize_t nread, const uv_buf_t* buffer) {
         free(buffer->base);
         return;
     }
-    slog(LVL_NOISY,DEBUG,"Read (%u/%u bytes) : %s",nread,strlen(buffer->base),buffer->base);
+    slog(DEBUG,DEBUG,"Read (%u/%u bytes) : %s",nread,strlen(buffer->base),buffer->base);
     if(nread > 1){
         processCommand(buffer->base);
     }
     free(buffer->base);
-    slog(LVL_NOISY,DEBUG,"Closing handle");
+    slog(DEBUG,DEBUG,"Closing handle");
     uv_close((uv_handle_t*) _client, onClose);
 }
 
@@ -228,7 +228,7 @@ bool processCommand(char *buf)
         lineCopy = malloc(cmdLen+1);
         memset(lineCopy, 0, cmdLen+1);
         strncpy(lineCopy,cmd,cmdLen);
-        slog(LVL_NOISY,FULLDEBUG,"Processing line (%d) : %s",cmdLen,lineCopy);
+        slog(DEBUG,FULLDEBUG,"Processing line (%d) : %s",cmdLen,lineCopy);
         // NOTE : strtok changes strlen of cmd, so we save its length before
         if(cmd[0] != '#') {
             char *myCmd = strtok_r(lineCopy, " ", &spaceBreak);
@@ -236,26 +236,26 @@ bool processCommand(char *buf)
             if(cmdLen > strlen(myCmd)){
                 params = lineCopy+strlen(myCmd)+1;
             }
-            slog(LVL_ALL,DEBUG,"Command split into(%d) : %s(%s)",strlen(myCmd), myCmd, params);
+            slog(DEBUG,DEBUG,"Command split into(%d) : %s(%s)",strlen(myCmd), myCmd, params);
             if(callWithString(myCmd,&ret, params)){
                 validCmd++;
             }
         } else {
-            slog(LVL_NOISY,FULLDEBUG,"Ignoring comment line");
+            slog(DEBUG,FULLDEBUG,"Ignoring comment line");
         }
         cmd = strtok_r(NULL,"\n",&lineBreak);
         if(cmd == NULL) nextLine=false;
         free(lineCopy);
     }
-    slog(LVL_NOISY,FULLDEBUG,"Command stack executed.");
+    slog(DEBUG,FULLDEBUG,"Command stack executed.");
     return validCmd;
 }
 
 void initializeFlags(void){
-   slog(LVL_NOISY,FULLDEBUG,"Initializing flags file");
+   slog(DEBUG,FULLDEBUG,"Initializing flags file");
    // if /etc/wally.conf has h/w defined dont set DEFAULT_W/H
    if(getConfig(ph->configFlagsMap,ETC_FLAGS) == 0){
-      slog(LVL_NOISY,DEBUG,"Trying to open "ETC_FLAGS);
+      slog(DEBUG,DEBUG,"Trying to open "ETC_FLAGS);
       if(getConfig(ph->configFlagsMap,ETC_FLAGS_BAK) == 0){
         slog(LVL_INFO,WARN,"Configfile in "ETC_FLAGS" nor "ETC_FLAGS_BAK" not found! Using default values.");
         ph->width =  DEFAULT_WINDOW_WIDTH;
@@ -274,18 +274,18 @@ void initializeFlags(void){
   } else {
       ph->height = ph->height ? ph->height : DEFAULT_WINDOW_HEIGHT;
   }
-  slog(LVL_NOISY,DEBUG,"W = %d / H = %d",ph->width,ph->height);
+  slog(DEBUG,DEBUG,"W = %d / H = %d",ph->width,ph->height);
   if(!ht_contains_simple(ph->configFlagsMap,"W_MAC")){
      slog(LVL_QUIET,ERROR,"No MAC address found in configs/flags. Can not determine uuid for this device");
      ht_insert_simple(ph->configFlagsMap,"W_MAC",DEFAULT_MAC);
-     slog(LVL_NOISY,DEBUG,"Setting MAC to "DEFAULT_MAC);
+     slog(DEBUG,DEBUG,"Setting MAC to "DEFAULT_MAC);
      ph->uuid = DEFAULT_MAC;
   }
   ph->uuid = replace(ht_get_simple(ph->configFlagsMap,"W_MAC"),":","");
-  slog(LVL_NOISY,DEBUG,"UUID is : %s",ph->uuid);
+  slog(DEBUG,DEBUG,"UUID is : %s",ph->uuid);
 
   if(ht_contains_simple(ph->configFlagsMap,"W_CONNECT")){
-      slog(LVL_NOISY,DEBUG,"Connectivity type is : %s",ht_get_simple(ph->configFlagsMap,"W_CONNECT"));
+      slog(DEBUG,DEBUG,"Connectivity type is : %s",ht_get_simple(ph->configFlagsMap,"W_CONNECT"));
       if(strncmp(ht_get_simple(ph->configFlagsMap,"W_CONNECT"),"ssdp",4)){
         ph->ssdp = true; 
       }
@@ -310,25 +310,25 @@ void initializeConfig(void){
     }
     if(ht_contains_simple(ph->configMap,"raspberry") && strncmp(ht_get_simple(ph->configMap,"raspberry"),"true",4) == 0) { 
 	ph->broadcomInit = true; 
-        slog(LVL_NOISY,DEBUG,"BCM Chip support enabled.");
+        slog(DEBUG,DEBUG,"BCM Chip support enabled.");
     } else {
 	ph->broadcomInit = false; 
     }
     if(ht_contains_simple(ph->configMap,"disableAudio") && strncmp(ht_get_simple(ph->configMap,"disableAudio"),"true",4) == 0) { 
 	ph->disableAudio = true; 
-        slog(LVL_NOISY,DEBUG,"Audio stream part of video playing disabled.");
+        slog(DEBUG,DEBUG,"Audio stream part of video playing disabled.");
     }
     if(ht_contains_simple(ph->configMap,"disableVideo") && strncmp(ht_get_simple(ph->configMap,"disableVideo"),"true",4) == 0) { 
 	ph->disableVideo = true; 
-        slog(LVL_NOISY,DEBUG,"Video stream part of video playing disabled.");
+        slog(DEBUG,DEBUG,"Video stream part of video playing disabled.");
     }
     if(ht_contains_simple(ph->configMap,"disableVideoPQ") && strncmp(ht_get_simple(ph->configMap,"disableVideoPQ"),"true",4) == 0) { 
 	ph->disableVideoPQ = true; 
-        slog(LVL_NOISY,DEBUG,"Video stream Queue of video playing disabled.");
+        slog(DEBUG,DEBUG,"Video stream Queue of video playing disabled.");
     }
     if(ht_contains_simple(ph->configMap,"disableVideoDisplay") && strncmp(ht_get_simple(ph->configMap,"disableVideoDisplay"),"true",4) == 0) { 
 	ph->disableVideoDisplay = true; 
-        slog(LVL_NOISY,DEBUG,"Video stream display of video playing disabled.");
+        slog(DEBUG,DEBUG,"Video stream display of video playing disabled.");
     }
     if(ht_get_simple(ph->configMap,"foreground") != NULL && strncmp(ht_get_simple(ph->configMap,"foreground"),"true",4) == 0) { 
 	ph->daemonizing = false; 
@@ -341,15 +341,15 @@ void initializeConfig(void){
     }
     if(ht_get_simple(ph->configMap,"debug") != NULL) { 
         ph->loglevel = atoi(ht_get_simple(ph->configMap,"debug"));
-	slog(LVL_NOISY,DEBUG,"Set loglevel to : %d",ph->loglevel);
+	slog(DEBUG,DEBUG,"Set loglevel to : %d",ph->loglevel);
     }
     if(ht_get_simple(ph->configMap,"width") != NULL) { 
         ph->width = atoi(ht_get_simple(ph->configMap,"width"));
-	slog(LVL_NOISY,DEBUG,"Set Window width to : %d",ph->width);
+	slog(DEBUG,DEBUG,"Set Window width to : %d",ph->width);
     }
     if(ht_get_simple(ph->configMap,"height") != NULL) { 
         ph->height = atoi(ht_get_simple(ph->configMap,"height"));
-	slog(LVL_NOISY,DEBUG,"Set Window height to : %d",ph->height);
+	slog(DEBUG,DEBUG,"Set Window height to : %d",ph->height);
     }
   } else {
     slog(LVL_QUIET,ERROR,"Configfile "ETC_FLAGS" not found. Using defaults.");
@@ -397,13 +397,13 @@ void readOptions(int argc, char **argv){
 }
 
 void processStartupScript(char *file){
-  slog(LVL_NOISY,DEBUG,"Reading wallyd.startup script : %s",file);
+  slog(DEBUG,DEBUG,"Reading wallyd.startup script : %s",file);
   long fsize=0;
   char *cmds=NULL;
 
   FILE *f = fopen(file, "rb");
   if(!f){
-      slog(LVL_NOISY,DEBUG,"File not found. Not running any startup commands");
+      slog(DEBUG,DEBUG,"File not found. Not running any startup commands");
       return;
   }
 
@@ -416,7 +416,7 @@ void processStartupScript(char *file){
   fclose(f);
 
   cmds[fsize] = 0;
-  slog(LVL_NOISY,DEBUG,"Processing %d bytes from startupScript",fsize);
+  slog(DEBUG,DEBUG,"Processing %d bytes from startupScript",fsize);
   processCommand(cmds);
   free(cmds);
 }

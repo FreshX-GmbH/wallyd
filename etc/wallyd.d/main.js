@@ -53,6 +53,6 @@ context.onVideoFinished = function(){
     p(context);
   }
 }
-
 log.info('Preparing wallyd basic setup');
+log.debug('Loglevel : '+config.debug);
 setup = nucleus.dofile('wallyd.setup.js');

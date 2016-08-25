@@ -18,10 +18,10 @@ bool parseJSON(hash_table *map, char *js, char *inheritKey)
     if(js == NULL) {
        return NULL;
     } else {
-         slog(LVL_NOISY,DEBUG,"JSON RAW : %s",js);
+         slog(DEBUG,DEBUG,"JSON RAW : %s",js);
     }
     if(inheritKey){
-        slog(LVL_NOISY,DEBUG,"inheritKey set %s", inheritKey);
+        slog(DEBUG,DEBUG,"inheritKey set %s", inheritKey);
     }
 
     jsmntok_t *tokens = json_tokenise(js);
@@ -46,7 +46,7 @@ bool parseJSON(hash_table *map, char *js, char *inheritKey)
             childSize = t->size;
         }
 
-        slog(LVL_NOISY,DEBUG,"state:%s j:%d i:%d t->size:%d inheritCnt:%d parentCount:%d",
+        slog(DEBUG,DEBUG,"state:%s j:%d i:%d t->size:%d inheritCnt:%d parentCount:%d",
             stateString[state],j,i, t->size,inheritLoop,parentKeyCount);
 
         if(inheritLoop<=0){
@@ -69,7 +69,7 @@ bool parseJSON(hash_table *map, char *js, char *inheritKey)
         {
             case START:
                 if (t->type != JSMN_OBJECT){
-                    slog(LVL_NOISY,DEBUG,"Invalid response: root element must be an object.");
+                    slog(DEBUG,DEBUG,"Invalid response: root element must be an object.");
                     break;
                 }
 
@@ -80,7 +80,7 @@ bool parseJSON(hash_table *map, char *js, char *inheritKey)
                     state = STOP;
 
                 if (object_tokens % 2 != 0)
-                    slog(LVL_NOISY,DEBUG,"Invalid response: object must have even number of children.");
+                    slog(DEBUG,DEBUG,"Invalid response: object must have even number of children.");
 
                 break;
 
@@ -93,12 +93,12 @@ bool parseJSON(hash_table *map, char *js, char *inheritKey)
                     inheritLoop=t->size;
                     parentKeyCount+=inheritLoop;
                     object_tokens+=inheritLoop;
-                    slog(LVL_NOISY,DEBUG,"Set inherit key to %s for %d loops",inheritKey,inheritLoop);
-                    slog(LVL_NOISY,DEBUG,"Parentkey count reset to %d tokens",parentKeyCount);
+                    slog(DEBUG,DEBUG,"Set inherit key to %s for %d loops",inheritKey,inheritLoop);
+                    slog(DEBUG,DEBUG,"Parentkey count reset to %d tokens",parentKeyCount);
                     break;
                 } else 
                 if (t->type != JSMN_STRING){
-                    slog(LVL_NOISY,DEBUG,"Invalid response: object keys must be string or object. (is type %d)",t->type);
+                    slog(DEBUG,DEBUG,"Invalid response: object keys must be string or object. (is type %d)",t->type);
                     break;
                 }
 
@@ -127,7 +127,7 @@ bool parseJSON(hash_table *map, char *js, char *inheritKey)
 
             case SKIP:
                 if (t->type != JSMN_STRING && t->type != JSMN_PRIMITIVE){
-                    slog(LVL_NOISY,DEBUG,"Invalid response: object values must be strings or primitives.");
+                    slog(DEBUG,DEBUG,"Invalid response: object values must be strings or primitives.");
                     break;
                 }
 
@@ -148,22 +148,22 @@ bool parseJSON(hash_table *map, char *js, char *inheritKey)
                         if( t->size >0 ){
                             parentKey = currentKey;
                             parentKeyCount = t->size;
-                            slog(LVL_NOISY,DEBUG,"Parentkey set to %s for the next %d tokens",parentKey,parentKeyCount);
+                            slog(DEBUG,DEBUG,"Parentkey set to %s for the next %d tokens",parentKey,parentKeyCount);
                         } else {
-                            slog(LVL_NOISY,DEBUG,"Parentkey not set, substructure empty");
+                            slog(DEBUG,DEBUG,"Parentkey not set, substructure empty");
                             object_tokens++;
                         }
                     } else {
-                        slog(LVL_NOISY,DEBUG,"Invalid response: object values must be strings or primitives.");
+                        slog(DEBUG,DEBUG,"Invalid response: object values must be strings or primitives.");
                         break;
                     }
                 } else {
-                    slog(LVL_NOISY,DEBUG, "Seting key number %d : %s=%s",storeCount, storeKey,str);
+                    slog(DEBUG,DEBUG, "Seting key number %d : %s=%s",storeCount, storeKey,str);
                     //if(!map_haskey(map,storeKey)){
                         ht_insert_simple(map,storeKey,str);
                         storeCount++;
                     //} else {
-                    //    slog(LVL_NOISY,DEBUG, "Key is already set and key overwrite is disabled!");
+                    //    slog(DEBUG,DEBUG, "Key is already set and key overwrite is disabled!");
                     //}
                     if(storeKey)
                       free(storeKey);
@@ -178,16 +178,16 @@ bool parseJSON(hash_table *map, char *js, char *inheritKey)
                 break;
 
             case STOP:
-                slog(LVL_NOISY,DEBUG,"Consuming json token : %s", json_token_tostr(js, t));
+                slog(DEBUG,DEBUG,"Consuming json token : %s", json_token_tostr(js, t));
                 // Just consume the tokens
                 break;
 
             default:
-                slog(LVL_NOISY,DEBUG,"Invalid state %u", state);
+                slog(DEBUG,DEBUG,"Invalid state %u", state);
         }
     }
 
-    slog(LVL_NOISY,DEBUG,"Read %d json entries",storeCount);
+    slog(DEBUG,DEBUG,"Read %d json entries",storeCount);
     jsonEntries += storeCount;
 
     if(storeCount == 0) return false;

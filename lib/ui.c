@@ -5,34 +5,35 @@
 //  this thread once we want to render a new frame since
 //  OpenGL is single threaded
 
-#define dumpRect(x) slog(LVL_NOISY,DEBUG,"Rect : {%d,%d,%d,%d}",x->w, x->h,x->w,x->h);
+#define dumpRect(x) slog(DEBUG,DEBUG,"Rect : {%d,%d,%d,%d}",x->w, x->h,x->w,x->h);
 
 extern pluginHandler *ph;
 
 bool sdlStatus(void *ptr){
-   slog(LVL_NOISY,DEBUG,"not implemented");
+   slog(DEBUG,DEBUG,"not implemented");
    return true;
 }
 
 texInfo *getTexture(char *name){
    texInfo *t = ht_get_simple(ph->baseTextures,name);
-   slog(LVL_ALL,FULLDEBUG,"Texture %s is at 0x%x",name,t);
+   slog(TRACE,FULLDEBUG,"Texture %s is at 0x%x",name,t);
    return t;
 }
 
 // TODO : Allocate a SDL_Event Type dynamically
 bool uiLoop(void *p){
-    slog(LVL_NOISY,DEBUG,"UI Loop started and waiting for events");
+    slog(DEBUG,DEBUG,"UI Loop started and waiting for events");
     //int delay=0;
     SDL_Event event;
-    char *funcName, *param;
+    char *funcName;
+    const char *param;
     SDL_zero(event);
     for(;;) {
 #ifdef WAIT_EV
         int ret = SDL_WaitEvent(&event);
         ph->uiAllCount++;
         if(ret == 0){
-            slog(LVL_QUIET,ERROR,"Error while wating for events : %s",SDL_GetError());
+            slog(ERROR,ERROR,"Error while wating for events : %s",SDL_GetError());
             ph->uiEventTimeout++;
             continue;
         }
@@ -50,11 +51,11 @@ bool uiLoop(void *p){
         ph->eventDelay=1;
 #endif
         if(event.type < SDL_USEREVENT ){
-            //slog(LVL_NOISY,FULLDEBUG,"Ignoring event %d",event.type);
+            //slog(DEBUG,FULLDEBUG,"Ignoring event %d",event.type);
             continue; 
         }
         if(event.type == SDL_USEREVENT+2 ){
-            slog(LVL_NOISY,DEBUG,"Caught a ff video quit event.");
+            slog(DEBUG,DEBUG,"Caught a ff video quit event.");
             continue;
         }
         if(event.user.data1 == NULL){
@@ -73,28 +74,28 @@ bool uiLoop(void *p){
  
         switch(event.type){
             case WALLY_CALL_PTR:
-                  slog(LVL_ALL,DEBUG,"Threaded PTR call to %s(0x%x)", funcName, event.user.data2);
+                  slog(DEBUG,DEBUG,"Threaded PTR call to %s(0x%x)", funcName, event.user.data2);
                   thr_func(event.user.data2);
                   break;
             case WALLY_CALL_STR:
-                  param = strdup(event.user.data2);
-                  slog(LVL_ALL,DEBUG,"Threaded STR call to %s(%s)", funcName, param);
-                  thr_func(param);
+                  //param = strdup(event.user.data2);
+                  slog(DEBUG,DEBUG,"Threaded STR call to %s(%s)", funcName, event.user.data2);
+                  thr_func(strdup(event.user.data2));
                   break;
             case WALLY_CALL_NULL:
-                  slog(LVL_ALL,DEBUG,"Threaded NULL call to %s()", funcName);
+                  slog(DEBUG,DEBUG,"Threaded NULL call to %s()", funcName);
                   thr_func(NULL);
                   break;
             case WALLY_CALL_PS:
-                  slog(LVL_ALL,DEBUG,"Threaded PS call to %s(0x%x)", funcName, event.user.data2);
+                  slog(DEBUG,DEBUG,"Threaded PS call to %s(0x%x)", funcName, event.user.data2);
                   thr_func(event.user.data2);
                   break;
             case WALLY_CALL_CTX:
-                  slog(LVL_ALL,DEBUG,"Threaded CTX call to %s(0x%x)", funcName, event.user.data2);
+                  slog(DEBUG,DEBUG,"Threaded CTX call to %s(0x%x)", funcName, event.user.data2);
                   thr_func(event.user.data2);
                   break;
             default:
-                  slog(LVL_QUIET,ERROR,"Unknown threaded call event");
+                  slog(ERROR,ERROR,"Unknown threaded call event");
         }
         if(strcmp(funcName, "video::video_refresh_timer") != 0){
              SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
@@ -102,13 +103,13 @@ bool uiLoop(void *p){
         // TODO : This needs to be freed somehow
         //free(funcName);
     }
-    slog(LVL_NOISY,DEBUG,"UI Loop finished and waiting for events");
+    slog(DEBUG,DEBUG,"UI Loop finished and waiting for events");
     return true;
 }
 
 void **getTextureNamesByPrio(unsigned int *items){
    //ret = malloc(ph->baseTextures->key_count * sizeof(void *));
-   slog(LVL_NOISY,FULLDEBUG,"Resorting texture names - entries : %d", ph->baseTextures->key_count);
+   slog(DEBUG,FULLDEBUG,"Resorting texture names - entries : %d", ph->baseTextures->key_count);
    void **keys = ht_keys(ph->baseTextures,items);
    int i, j;
    // simple bubble sort
@@ -117,10 +118,10 @@ void **getTextureNamesByPrio(unsigned int *items){
         texInfo *TIa = getTexture(keys[j]);
         texInfo *TIb = getTexture(keys[j+1]);
         if(!TIa || !TIb) { 
-            slog(LVL_QUIET,ERROR,"Unexpected error in sorting texture priority"); 
+            slog(ERROR,ERROR,"Unexpected error in sorting texture priority"); 
             continue; 
         }
-        slog(LVL_ALL,DEBUG,"TI: 0x%x / 0x%x",TIa, TIb);
+        slog(DEBUG,DEBUG,"TI: 0x%x / 0x%x",TIa, TIb);
         if (TIa->z > TIb->z) {
               void *tmp = keys[j];
               keys[j] = keys[j + 1];
@@ -129,9 +130,9 @@ void **getTextureNamesByPrio(unsigned int *items){
       }
    }
    for (i = 0; i < ph->baseTextures->key_count; ++i) {
-      slog(LVL_ALL,DEBUG,"Key %d : %s",i,keys[i]);
+      slog(DEBUG,DEBUG,"Key %d : %s",i,keys[i]);
       //texInfo *TI = getTexture(keys[i]);
-      //slog(LVL_NOISY,DEBUG,"%s : 0x%x / 0x%x / 0x%x / 0x%x",keys[i], TI, TI->texture, TI->rect, TI->name);
+      //slog(DEBUG,DEBUG,"%s : 0x%x / 0x%x / 0x%x / 0x%x",keys[i], TI, TI->texture, TI->rect, TI->name);
    }
    return keys;
 }
@@ -155,14 +156,14 @@ int showTextureTestScreen(void *p){
       texInfo *TI = getTexture( keys[i]);
       SDL_Texture *t = TI->texture;
       SDL_Rect *src = TI->rect;
-      slog(LVL_NOISY,FULLDEBUG,"Presenting texture(0x%x) %s size %dx%d at pos %d,%d", TI,
+      slog(DEBUG,FULLDEBUG,"Presenting texture(0x%x) %s size %dx%d at pos %d,%d", TI,
             keys[i], src->w,src->h,src->x,src->y);
       asprintf(&tName,"%s(%d,%d) size %dx%d",keys[i],src->x,src->y,src->w,src->h);
-      slog(LVL_NOISY,DEBUG,"Name : %s",tName);
+      slog(DEBUG,DEBUG,"Name : %s",tName);
       if(font){
          SDL_Surface *surf = TTF_RenderText_Solid( font, tName, color );
          if(!surf) {
-            slog(LVL_QUIET,ERROR,"Could not create FontSurface : %s",SDL_GetError());
+            slog(ERROR,ERROR,"Could not create FontSurface : %s",SDL_GetError());
             return 1;
          }
          SDL_Texture *ft = SDL_CreateTextureFromSurface( ph->renderer, surf );
@@ -179,14 +180,14 @@ int showTextureTestScreen(void *p){
          SDL_DestroyTexture(ft);
          ph->textureCount--;
       } else {
-         slog(LVL_QUIET,ERROR,"Font 'logfont' not loaded");
+         slog(ERROR,ERROR,"Font 'logfont' not loaded");
       }
       free(tName);
    }
    SDL_SetRenderTarget(ph->renderer, NULL);
    SDL_RenderCopy(ph->renderer, TI->texture, NULL, NULL);
    SDL_RenderPresent( ph->renderer );
-   slog(LVL_NOISY,DEBUG,"All textures displayed.");
+   slog(DEBUG,DEBUG,"All textures displayed.");
    free(keys);
    return true;
 }
@@ -209,7 +210,7 @@ void renderActiveEx(char *startTex)
          start = true;
       }
       if(start == false) continue;
-      slog(LVL_ALL,DEBUG,"Key %d : %s",i,name);
+      slog(DEBUG,DEBUG,"Key %d : %s",i,name);
       TI = getTexture( name);
       if(TI->active == true && TI->autorender == true){
           SDL_Rect *mr = TI->rect;
@@ -217,7 +218,7 @@ void renderActiveEx(char *startTex)
 	       slog(LVL_INFO,INFO,"Refusing to place texture %s with invalid size.",name);
 	       continue;
           }
-          slog(LVL_ALL,FULLDEBUG,"RenderActive(%s,{%d,%d,%d,%d});",name,mr->x, mr->y, mr->w, mr->h);
+          slog(TRACE,FULLDEBUG,"RenderActive(%s,{%d,%d,%d,%d});",name,mr->x, mr->y, mr->w, mr->h);
           SDL_RenderCopy( ph->renderer, TI->texture, NULL, mr);
        }
    }
@@ -235,9 +236,9 @@ void renderActive(char *startTex)
 
 //   renders and displays a texture on the Main Renderer
 void renderTexture(SDL_Texture *t, SDL_Rect *mr){
-    slog(LVL_NOISY,DEBUG,"Display texture(0x%x,{%d,%d,%d,%d})",t, mr->x, mr->y, mr->w, mr->h);
+    slog(DEBUG,DEBUG,"Display texture(0x%x,{%d,%d,%d,%d})",t, mr->x, mr->y, mr->w, mr->h);
     if(mr == NULL || mr->w == 0 || mr->h == 0 || t == NULL){
-       slog(LVL_NOISY,DEBUG,"Refusing to place invalid texture or texture has an invalid size.");
+       slog(DEBUG,DEBUG,"Refusing to place invalid texture or texture has an invalid size.");
     } else {
        SDL_RenderClear(ph->renderer);
        SDL_RenderCopy(ph->renderer, t, mr, mr);
@@ -270,7 +271,7 @@ int createTextureEx(char *strTmp,bool isVideo){
       slog(LVL_INFO,WARN,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    } else {
-      slog(LVL_NOISY,FULLDEBUG,"Z-Value : %d",z,&r);
+      slog(DEBUG,FULLDEBUG,"Z-Value : %d",z,&r);
    }
    TI->z = z;
 
@@ -306,7 +307,7 @@ int createTextureEx(char *strTmp,bool isVideo){
       h=ph->height;
    }
    if(w == 0 || h == 0){
-      slog(LVL_QUIET,ERROR,"Refusing to create texture %s with size %dx%d",TI->name,w,h);
+      slog(ERROR,ERROR,"Refusing to create texture %s with size %dx%d",TI->name,w,h);
    }
    if(x!=-1 && y!=-1 && w!=-1 && h!=-1 && w != 0 && h != 0){
 
@@ -316,14 +317,14 @@ int createTextureEx(char *strTmp,bool isVideo){
       TI->c->a=255;
 
       if(isVideo == true) {
-         slog(LVL_NOISY,DEBUG,"Creating video texture named %s at (%d,%d) size %dx%d prio %d, color(%d,%d,%d,%d)",textureName,x,y,w,h,TI->z,TI->c->r,TI->c->g,TI->c->b,TI->c->a);
+         slog(DEBUG,DEBUG,"Creating video texture named %s at (%d,%d) size %dx%d prio %d, color(%d,%d,%d,%d)",textureName,x,y,w,h,TI->z,TI->c->r,TI->c->g,TI->c->b,TI->c->a);
          TI->texture = SDL_CreateTexture(ph->renderer, 
 	  	 SDL_PIXELFORMAT_RGBA8888,
                  SDL_TEXTUREACCESS_STREAMING | 
                  SDL_TEXTUREACCESS_TARGET, 
 		 w, h);
       } else {
-         slog(LVL_NOISY,DEBUG,"Creating texture named %s at (%d,%d) size %dx%d prio %d, color(%d,%d,%d,%d)",textureName,x,y,w,h,TI->z,TI->c->r,TI->c->g,TI->c->b,TI->c->a);
+         slog(DEBUG,DEBUG,"Creating texture named %s at (%d,%d) size %dx%d prio %d, color(%d,%d,%d,%d)",textureName,x,y,w,h,TI->z,TI->c->r,TI->c->g,TI->c->b,TI->c->a);
          TI->texture = SDL_CreateTexture(ph->renderer, 
 	  	 SDL_PIXELFORMAT_RGBA8888,
                  //SDL_TEXTUREACCESS_STREAMING | 
@@ -331,7 +332,7 @@ int createTextureEx(char *strTmp,bool isVideo){
 		 w, h);
       }
       if(!TI->texture){
-         slog(LVL_QUIET,ERROR,"Failed to create a texture : %s",SDL_GetError());
+         slog(ERROR,ERROR,"Failed to create a texture : %s",SDL_GetError());
          return false;
       }
       ph->textureCount++;
@@ -374,7 +375,7 @@ bool setTextureActive(char *s,bool active){
    }
    texInfo *TI = getTexture(name);
    if(!TI) {
-      slog(LVL_QUIET,ERROR,"Texture %s not found.",name);
+      slog(ERROR,ERROR,"Texture %s not found.",name);
       return false;
    }
    TI->active=active;
@@ -398,7 +399,7 @@ bool destroyTexture(char *s){
    char *name = strtok(s, " ");
    TI = getTexture(name);
    if(!TI) {
-      slog(LVL_QUIET,ERROR,"Texture %s not found.",name);
+      slog(ERROR,ERROR,"Texture %s not found.",name);
       return false;
    }
    ht_remove_simple(ph->baseTextures, name);
@@ -411,7 +412,7 @@ bool destroyTexture(char *s){
    free(TI);
    free(ph->texturePrio);
    ph->texturePrio = getTextureNamesByPrio(&items);
-   slog(LVL_NOISY,DEBUG,"Destroyed texture %s",s);
+   slog(DEBUG,DEBUG,"Destroyed texture %s",s);
    return true;
 }
 
@@ -426,9 +427,9 @@ bool renderTexName(char *s){
    TI = getTexture(name);
  
    SDL_Rect *mr = TI->rect;
-   slog(LVL_NOISY,DEBUG,"Render tex[%s] pos %dx%d size : %dx%d at 0x%x",name,mr->x, mr->y, mr->w, mr->h, TI->texture);
+   slog(DEBUG,DEBUG,"Render tex[%s] pos %dx%d size : %dx%d at 0x%x",name,mr->x, mr->y, mr->w, mr->h, TI->texture);
    if(mr == NULL || mr->w ==0 || mr->h == 0 || TI->texture == NULL){
-      slog(LVL_NOISY,DEBUG,"Refusing to place texture %d with invalid size.",name);
+      slog(DEBUG,DEBUG,"Refusing to place texture %d with invalid size.",name);
    } else {
       SDL_RenderClear(ph->renderer);
       SDL_RenderCopy(ph->renderer, TI->texture, mr, mr);
@@ -441,7 +442,7 @@ bool renderTexName(char *s){
 int setTexture(texInfo *TI, SDL_Texture *texture, SDL_Rect *origRect)
 {
    // This is fast
-   slog(LVL_NOISY,DEBUG,"Updating Texture[%s]",TI->name);
+   slog(DEBUG,DEBUG,"Updating Texture[%s]",TI->name);
    TI->rect->x = origRect->x;
    TI->rect->y = origRect->y;
    TI->rect->h = origRect->h;
@@ -454,7 +455,7 @@ int setTexture(texInfo *TI, SDL_Texture *texture, SDL_Rect *origRect)
 
 int addToTexture(texInfo *TI, SDL_Texture *src, SDL_Rect *origRect)
 {
-   slog(LVL_NOISY,DEBUG,"Adding a texture({%d,%d,%d,%d}) to %s",
+   slog(DEBUG,DEBUG,"Adding a texture({%d,%d,%d,%d}) to %s",
           origRect->x, origRect->y,
           origRect->w, origRect->h, TI->name);
    SDL_SetTextureBlendMode(TI->texture, SDL_BLENDMODE_BLEND);
@@ -468,11 +469,11 @@ int addToTexture(texInfo *TI, SDL_Texture *src, SDL_Rect *origRect)
 // into antoher at a given position 
 int copyToTexture(texInfo *TI, SDL_Texture *src, SDL_Rect *origRect)
 {
-   slog(LVL_NOISY,DEBUG,"not functional");
+   slog(DEBUG,DEBUG,"not functional");
    return false;
 // SDL_Rect *mr = ph->textureSize[i];
 //   SDL_Rect src = { 0, 0, origRect->w, origRect->h};
-//   slog(LVL_NOISY,DEBUG,"Copying texture(0x%x,{0,0,%d,%d}) to texture(%d,{%d,%d,%d,%d})",
+//   slog(DEBUG,DEBUG,"Copying texture(0x%x,{0,0,%d,%d}) to texture(%d,{%d,%d,%d,%d})",
 //          texture, origRect->w, origRect->h, 
 //          i, mr->x, mr->y, mr->w, mr->h);
 //   SDL_SetRenderTarget(ph->renderer,TI->texture);
@@ -487,7 +488,7 @@ int scaleToTexture(texInfo *TI, SDL_Texture *src, SDL_Rect *origRect)
 {
    // This is slow (speedup by just copying the texture pointer)
    SDL_Rect mr = {0, 0, TI->rect->w, TI->rect->h};
-   slog(LVL_NOISY,DEBUG,"Scaling texture({0,0,%d,%d}) to texture %s {%d,%d,%d,%d}",origRect->w, origRect->h,TI->name, mr.x,mr.y,mr.w,mr.h);
+   slog(DEBUG,DEBUG,"Scaling texture({0,0,%d,%d}) to texture %s {%d,%d,%d,%d}",origRect->w, origRect->h,TI->name, mr.x,mr.y,mr.w,mr.h);
 
    SDL_SetTextureBlendMode(TI->texture, SDL_BLENDMODE_BLEND);
    SDL_SetRenderTarget( ph->renderer, TI->texture );
@@ -517,45 +518,45 @@ bool sdlInit(void)
 #endif
 
    //if(ph->loglevel > INFO){
-//   	slog(LVL_QUIET,INFO,"Setting SDL debug level to VERBOSE");
+//   	slog(ERROR,INFO,"Setting SDL debug level to VERBOSE");
 //   	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
    //} else {
    //   SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
    //}
 
    if ( SDL_Init( SDL_INIT_EVERYTHING ) == -1 ) {
-      slog(LVL_QUIET,ERROR, " Failed to initialize SDL : %s", SDL_GetError());
+      slog(ERROR,ERROR, " Failed to initialize SDL : %s", SDL_GetError());
       return false;
    }
 
 
    if(ph->broadcomInit == true || w==0 || h==0 ){
-      slog(LVL_NOISY,DEBUG,"Starting in full screen with current resolution : %d==%d / %d / %d",true,ph->broadcomInit, w, h);
+      slog(DEBUG,DEBUG,"Starting in full screen with current resolution : %d==%d / %d / %d",true,ph->broadcomInit, w, h);
       ph->window = SDL_CreateWindow("wallyd", 
 	     SDL_WINDOWPOS_UNDEFINED, 
 	     SDL_WINDOWPOS_UNDEFINED, 
 	     0,0, 
 	SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_SHOWN);
       SDL_GetWindowSize(ph->window, &w, &h);
-      slog(LVL_NOISY,DEBUG,"Autodetermined display resolution : %dx%d",w, h);
+      slog(DEBUG,DEBUG,"Autodetermined display resolution : %dx%d",w, h);
       ph->width=w;
       ph->height=h;
    } else {
       if(w == 0 || h == 0){
-         slog(LVL_QUIET,ERROR,"Refusing to open a window with invalid size (%dx%d).",w,h);
+         slog(ERROR,ERROR,"Refusing to open a window with invalid size (%dx%d).",w,h);
          return false;
       }
-      slog(LVL_NOISY,DEBUG,"Starting in windowed with current resolution : %d==%d / %d / %d",true,ph->broadcomInit, w, h);
+      slog(DEBUG,DEBUG,"Starting in windowed with current resolution : %d==%d / %d / %d",true,ph->broadcomInit, w, h);
       ph->window = SDL_CreateWindow( "Server", 
 	    SDL_WINDOWPOS_UNDEFINED,
 	    SDL_WINDOWPOS_UNDEFINED,
 	    w, h, 
 	    SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
       SDL_GetWindowSize(ph->window, &w, &h);
-      slog(LVL_NOISY,DEBUG,"Redetermined display resolution : %dx%d",w, h);
-      slog(LVL_NOISY,DEBUG,"Window is at 0x%x.",ph->window);
+      slog(DEBUG,DEBUG,"Redetermined display resolution : %dx%d",w, h);
+      slog(DEBUG,DEBUG,"Window is at 0x%x.",ph->window);
       if ( ph->window == NULL || ph->window == 0x0 ) {
-	 slog(LVL_QUIET,ERROR, "Failed to get/create window : %s ", SDL_GetError());
+	 slog(ERROR,ERROR, "Failed to get/create window : %s ", SDL_GetError());
 	 return false;
       }
    }
@@ -565,7 +566,7 @@ bool sdlInit(void)
    SDL_ShowCursor( 0 ); 
 
    int numdrivers = SDL_GetNumRenderDrivers (); 
-   slog(LVL_QUIET,DEBUG,"Number of Render Drivers : %d",numdrivers);
+   slog(INFO,INFO,"Number of Render Drivers : %d",numdrivers);
    for(int i = 0; i < numdrivers; i++){
    	SDL_RendererInfo drinfo; 
    	SDL_GetRenderDriverInfo (i, &drinfo); 
@@ -586,7 +587,7 @@ bool sdlInit(void)
 
    // Unnice effekt on wallyTV
 #ifndef RASPBERRY
-   slog(LVL_NOISY,DEBUG,"Clearing renderer");
+   slog(DEBUG,DEBUG,"Clearing renderer");
    SDL_SetRenderDrawColor(ph->renderer, 0,0,0,255);
    SDL_RenderClear( ph->renderer );
    SDL_RenderPresent( ph->renderer );
@@ -618,7 +619,7 @@ bool sdlInit(void)
    //SDL_QueryTexture( ph->textures[i], NULL, NULL, &mr->w, &mr->h );
    // TODO : what is it doing? Do we need it?
    // SDL_SetTextureBlendMode(ph->textures[i], SDL_BLENDMODE_BLEND);
-   slog(LVL_NOISY,DEBUG,"Created temptexture at 0x%x size %dx%d", TI->texture, mr->w, mr->h);
+   slog(DEBUG,DEBUG,"Created temptexture at 0x%x size %dx%d", TI->texture, mr->w, mr->h);
 
    ph->tempTexture = TI;
 
@@ -676,7 +677,7 @@ bool loadFont(char *strTmp){
       slog(LVL_QUIET,ERROR, "Failed to load font : %s ",TTF_GetError());
       return false;
    } else {
-      slog(LVL_NOISY,DEBUG, "Font: %s loaded",file);
+      slog(DEBUG,DEBUG, "Font: %s loaded",file);
       ht_insert_simple(ph->fonts, name, f);
    }
    return true;
@@ -688,7 +689,7 @@ void hexToColor(int color, Color *c)
    c->g = (color >> 8)  & 0xff;
    c->b = color & 0xff;
    c->a = 0;
-   slog(LVL_ALL,FULLDEBUG,"color : %x = (%d,%d,%d)",color,c->r,c->g,c->b);
+   slog(TRACE,FULLDEBUG,"color : %x = (%d,%d,%d)",color,c->r,c->g,c->b);
 }
 
 // Create a new window and a new renderer and switch over
@@ -696,7 +697,7 @@ void resetScreen(void){
    int w=0,h=0;
    SDL_Window *window;
    if(ph->broadcomInit == true){
-      slog(LVL_NOISY,DEBUG,"Starting in full screen with current resolution : %d==%d / %d / %d",true,ph->broadcomInit, w, h);
+      slog(DEBUG,DEBUG,"Starting in full screen with current resolution : %d==%d / %d / %d",true,ph->broadcomInit, w, h);
       window = SDL_CreateWindow("wallyd", 
 	     SDL_WINDOWPOS_UNDEFINED, 
 	     SDL_WINDOWPOS_UNDEFINED, 
@@ -710,14 +711,14 @@ void resetScreen(void){
 	    SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_FOCUS  );
    }
    if ( window == NULL ){
-	 slog(LVL_QUIET,ERROR, "Failed to get/create window : %s ", SDL_GetError());
+	 slog(ERROR,ERROR, "Failed to get/create window : %s ", SDL_GetError());
 	 return;
    }
    SDL_GetWindowSize(window, &w, &h);
-   slog(LVL_NOISY,DEBUG,"Autodetermined new display resolution : %dx%d",w, h);
+   slog(DEBUG,DEBUG,"Autodetermined new display resolution : %dx%d",w, h);
    SDL_Renderer *renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC );
    if ( renderer == NULL ){
-	 slog(LVL_QUIET,ERROR, "Failed to get/create renderer : %s ", SDL_GetError());
+	 slog(ERROR,ERROR, "Failed to get/create renderer : %s ", SDL_GetError());
 	 return;
    }
    SDL_Window *oldw = ph->window;

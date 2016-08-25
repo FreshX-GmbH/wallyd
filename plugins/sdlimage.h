@@ -12,6 +12,7 @@
 #include "../lib/plugins.h"
 #include "../lib/ui.h"
 #include "../lib/util.h"
+#include "duv.h"
 
 #define LOGFONT_SIZE 20
 #define LOGFONT_COLOR { 0,0,0,0 }

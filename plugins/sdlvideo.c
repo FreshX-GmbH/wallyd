@@ -8,17 +8,17 @@ const duk_function_list_entry videoMethods[];
 int renderVideoEx(char * screen, char *file)
 {
     int ret = 0;
-    slog(LVL_NOISY,DEBUG, "Going to play on screen %s : %s\n",screen, file);
+    slog(DEBUG,DEBUG, "Going to play on screen %s : %s\n",screen, file);
 
     ph->playVideo = true;
 
     is->filename = av_malloc(strlen(file)+1);
-    slog(LVL_NOISY,DEBUG,"Screen name : 0x%x",is->screen);
+    slog(DEBUG,DEBUG,"Screen name : 0x%x",is->screen);
     is->screen = av_malloc(strlen(screen)+1);
 
     av_strlcpy(is->filename, file, strlen(file)+1);
     av_strlcpy(is->screen, screen, strlen(screen)+1);
-    slog(LVL_NOISY,DEBUG,"Screen name : 0x%x",is->screen);
+    slog(DEBUG,DEBUG,"Screen name : 0x%x",is->screen);
 
     is->pictq_mutex = SDL_CreateMutex();
     is->pictq_cond = SDL_CreateCond();
@@ -43,7 +43,7 @@ int renderVideoEx(char * screen, char *file)
 int renderVideo(char *str)
 {
    char *brk;
-   slog(LVL_NOISY,DEBUG,"Video(%s)",str);
+   slog(DEBUG,DEBUG,"Video(%s)",str);
    char *screen = strtok_r(str, " ", &brk);
 
    texInfo *TI = ht_get_simple(ph->baseTextures,screen);
@@ -61,7 +61,7 @@ int renderVideo(char *str)
    is->scaled = false;
    is->videoPosX = 0;
    is->videoPosY = 0;
-   slog(LVL_NOISY,DEBUG,"Playing to fullscreen at %s name %s",screen, filename);
+   slog(DEBUG,DEBUG,"Playing to fullscreen at %s name %s",screen, filename);
    return renderVideoEx(screen,filename);
 }
 
@@ -81,7 +81,7 @@ int renderVideoFullscreen(char *str)
 
 int renderVideoScaled(char *str)
 {
-   slog(LVL_NOISY,DEBUG,"VideoScaled(%s)",str);
+   slog(DEBUG,DEBUG,"VideoScaled(%s)",str);
    int x=0, y=0, w=0, h=0;
    char *brk;
    char *screen = strtok_r(str, " ", &brk);
@@ -114,7 +114,7 @@ int renderVideoScaled(char *str)
        slog(LVL_QUIET,ERROR,"Wrong parameters for playVideoScaled(name x y w h location) : (%s)",str);
       return -1;
    }
-   slog(LVL_NOISY,DEBUG,"Playing scaled to screen %s pos %d,%d size %dx%d name %s",screen, x,y,w,h,filename);
+   slog(DEBUG,DEBUG,"Playing scaled to screen %s pos %d,%d size %dx%d name %s",screen, x,y,w,h,filename);
    is->scaled = true;
    is->scaledWidth = w;
    is->scaledHeight = h;
@@ -146,7 +146,7 @@ int setVideoTexture(char *str)
       slog(LVL_QUIET,ERROR,"Wrong paramters for setVideoTexture(name) : %s",str);
       return false;
    }
-   slog(LVL_NOISY,DEBUG,"Video output points now to texture %s and is set active",name);
+   slog(DEBUG,DEBUG,"Video output points now to texture %s and is set active",name);
    return 0;
 }
 
@@ -155,12 +155,12 @@ int stopVideo(char *empty)
    int i=0;
    SDL_CondSignal(is->audioq.cond);
    SDL_CondSignal(is->videoq.cond);
-   slog(LVL_NOISY,DEBUG,"Stop Video");
+   slog(DEBUG,DEBUG,"Stop Video");
    ph->playVideo = false;
    is->quit = true;
    SDL_PauseAudio(1);
    SDL_CloseAudioDevice(dev);
-   slog(LVL_NOISY,DEBUG,"Stop Audio");
+   slog(DEBUG,DEBUG,"Stop Audio");
    // TODO : reset orig texture
    //if(ph->disableVideoAfterFinish){
    //   is->TI->active = false;
@@ -177,10 +177,10 @@ char *cleanupPlugin(void *p){
 
    slog(LVL_INFO,INFO,"Cleaning up video plugin. Waiting for threads to finish.");
    SDL_WaitThread(is->parse_tid,&status);
-   slog(LVL_NOISY,DEBUG,"Thread 1/2 finished.");
+   slog(DEBUG,DEBUG,"Thread 1/2 finished.");
    SDL_CondSignal(is->pictq_cond);
    SDL_WaitThread(is->video_tid,&status);
-   slog(LVL_NOISY,DEBUG,"Thread 2/2 finished.");
+   slog(DEBUG,DEBUG,"Thread 2/2 finished.");
    if(is) free(is);
    return NULL;
 }
@@ -304,13 +304,13 @@ duk_ret_t js_unpause(duk_context *ctx)
 
 duk_ret_t js_video_dtor(duk_context *ctx)
 {
-   slog(LVL_NOISY,DEBUG, "Video object destroyed.");
+   slog(DEBUG,DEBUG, "Video object destroyed.");
    return 0;
 }
 
 duk_ret_t js_video_ctor(duk_context *ctx)
 {
-    slog(LVL_NOISY,DEBUG, "New video object created.");
+    slog(DEBUG,DEBUG, "New video object created.");
 
     duk_push_this(ctx);
     duk_dup(ctx, 0);  /* -> stack: [ name this name ] */
@@ -328,7 +328,7 @@ duk_ret_t js_video_print(duk_context *ctx) {
 
 /* Initialize Video object into global object. */
 void js_video_init(duk_context *ctx) {
-   slog(LVL_NOISY,DEBUG,"Constructing video object");
+   slog(DEBUG,DEBUG,"Constructing video object");
 
    duk_push_c_function(ctx, js_video_ctor, 5 );
 
@@ -386,7 +386,7 @@ char *initPlugin(pluginHandler *_ph){
 
     wally_put_function_list(c_videoMethods);
 
-    slog(LVL_NOISY,DEBUG,"Plugin video initialized. PH is at 0x%x",ph);
+    slog(DEBUG,DEBUG,"Plugin video initialized. PH is at 0x%x",ph);
 
     return PLUGIN_SCOPE;
 }

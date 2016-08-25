@@ -27,11 +27,11 @@ jsmntok_t * json_tokenise(char *js)
     }
 
     if (ret == JSMN_ERROR_INVAL){
-        slog(LVL_QUIET,ERROR,"jsmn_parse: invalid JSON string");
+        slog(ERROR,ERROR,"jsmn_parse: invalid JSON string");
         return NULL;
     }
     if (ret == JSMN_ERROR_PART){
-        slog(LVL_QUIET,ERROR,"jsmn_parse: truncated JSON string");
+        slog(ERROR,ERROR,"jsmn_parse: truncated JSON string");
         return NULL;
     }
 

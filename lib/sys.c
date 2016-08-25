@@ -28,9 +28,9 @@ void dumpDebug(void){
 void wally_sleep(char *time){
     int t = atoi(time);
     if(t > 0){
-       slog(LVL_NOISY,FULLDEBUG,"Command processing sleeling for %d seconds",t);
+       slog(DEBUG,FULLDEBUG,"Command processing sleeling for %d seconds",t);
        sleep(t);
-       slog(LVL_NOISY,FULLDEBUG,"Command continues.");
+       slog(DEBUG,FULLDEBUG,"Command continues.");
     }
 }
 
@@ -38,17 +38,17 @@ void wally_registerCallback(char *str){
    char *all = str;
    char *name = strtok(str," ");
    char *rest = all+strlen(name)+1;
-   slog(LVL_NOISY,DEBUG,"Registering callback %s = %s",name,rest);
+   slog(DEBUG,DEBUG,"Registering callback %s = %s",name,rest);
    ht_insert_simple(ph->callbacks,name,rest);
 }
 
 void setDebug(char *str){
     getNum(strtok(str," "),&ph->loglevel);
-    slog(LVL_NOISY,DEBUG,"Setting new debug level to : %d",ph->loglevel);
+    slog(DEBUG,DEBUG,"Setting new debug level to : %d",ph->loglevel);
 }
 
 char *cleanupPlugin(void *p){
-   slog(LVL_NOISY,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
+   slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
    return NULL;
 }
 
@@ -78,7 +78,7 @@ duk_ret_t js_sys_dtor(duk_context *ctx)
 // Constructor of the JS Object
 duk_ret_t js_sys_ctor(duk_context *ctx)
 {
-    slog(LVL_NOISY,DEBUG, "Creating new object of "PLUGIN_SCOPE);
+    slog(DEBUG,DEBUG, "Creating new object of "PLUGIN_SCOPE);
 
     sysStructure *mps = malloc(sizeof(sysStructure));
     mps->name = duk_require_string(ctx, 0);
@@ -107,11 +107,11 @@ duk_ret_t js_sys_ctor(duk_context *ctx)
 
 bool sysInfo(char *i){
    if(i) {
-      slog(LVL_NOISY,DEBUG,"Info : %s", i);
+      slog(DEBUG,DEBUG,"Info : %s", i);
       // TODO : Get structure from hashmap('name');
       return true;
    } else {
-      slog(LVL_NOISY,DEBUG,"Wrong parameters calling "PLUGIN_SCOPE"::info <name>");
+      slog(DEBUG,DEBUG,"Wrong parameters calling "PLUGIN_SCOPE"::info <name>");
       return false;
    }
 }
@@ -130,7 +130,7 @@ duk_ret_t js_log(duk_context *ctx)
 {
  //  int num = 0;
  //  char *elem=NULL;
-   slog(LVL_NOISY,DEBUG,"Found %d log elements",duk_get_top(ctx));
+   slog(DEBUG,DEBUG,"Found %d log elements",duk_get_top(ctx));
    for(int i = 0 ; i < duk_get_top(ctx); i++){
    }
     return 0;
@@ -197,7 +197,7 @@ const function_list_entry c_systemMethods[] = {
 };
  
 char *initSysPlugin(pluginHandler *_ph){
-   slog(LVL_NOISY,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
+   slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
    ph=_ph;
    ctx = ph->ctx;
 

@@ -12,7 +12,7 @@ size_t HeaderCallback( void *ptr, size_t size, size_t nmemb, void *userdata)
     {
         //Curl::longpoll_url = hdr.substr(0x10);
         //Curl::longpoll_url = Curl::longpoll_url.substr(0, Curl::longpoll_url.length()-2);
-        slog(LVL_NOISY,DEBUG, "Longpoll url %s -> %s", longpoll_url, ptr);
+        slog(DEBUG,DEBUG, "Longpoll url %s -> %s", longpoll_url, ptr);
         longpoll_active = true;
     }
     return bytes;
@@ -26,7 +26,7 @@ static size_t ResponseCallback(void *buffer, size_t size, size_t nmemb, void *us
     if (buf->limit - buf->len < total)
     {
         buf = mybuf_size(buf, buf->limit + total);
-        slog(LVL_NOISY,DEBUG,"%s",buf);
+        slog(DEBUG,DEBUG,"%s",buf);
     }
 
     mybuf_concat(buf, buffer, total);
@@ -36,7 +36,7 @@ static size_t ResponseCallback(void *buffer, size_t size, size_t nmemb, void *us
 
 char *url_call(char *url)
 {
-    slog(LVL_NOISY,DEBUG,"Reading data from %s",url);
+    slog(DEBUG,DEBUG,"Reading data from %s",url);
     CURL *curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, url);
     mybuf_t *buf = mybuf_size(NULL, BUFFER_SIZE);
@@ -60,7 +60,7 @@ char *url_call(char *url)
     free(buf->data);
     free(buf);
 
-    slog(LVL_NOISY,DEBUG,"Read : %s",js);
+    slog(DEBUG,DEBUG,"Read : %s",js);
     return js;
 }
 
@@ -75,7 +75,7 @@ char *url_longpoll(char *url, int timeout, int type, char *postdata)
     longpoll_url = url;
     lpbuf = mybuf_size(NULL, BUFFER_SIZE);
     if(type == LONGPOLL_INIT){
-        slog(LVL_NOISY,DEBUG,"Setting up long polling to %s",url);
+        slog(DEBUG,DEBUG,"Setting up long polling to %s",url);
     }
     struct curl_slist *headerlist = curl_slist_append(NULL, "Accept: application/json");
     headerlist = curl_slist_append(headerlist, "Content-Type: application/json");

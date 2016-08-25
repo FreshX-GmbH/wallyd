@@ -25,7 +25,7 @@ int openVFS(pluginHandler *ph, char *file){
 void *getVFSFile(pluginHandler *ph,char *file, size_t *pSize){
     char *ptr = NULL;//mz_zip_extract_archive_file_to_heap(file, ph->VFSName, pSize, 0);
     if(ptr == 0){
-        slog(LVL_NOISY,DEBUG,"Could not find %s in VFS",file);
+        slog(DEBUG,DEBUG,"Could not find %s in VFS",file);
         return NULL;
     }
     return ptr;
@@ -54,7 +54,7 @@ void *getVFSFile(pluginHandler *ph,char *file, size_t *pSize){
 //int list_mem_tar( struct tar *tar, char **start, long length ){
 //    for( ; tar->name[0]; tar+=1+(length+511)/512 ){
 //        sscanf( tar->size, "%o", length);
-//        slog(LVL_NOISY,DEBUG, "%d / %s",tar->size,tar->name);
+//        slog(DEBUG,DEBUG, "%d / %s",tar->size,tar->name);
 //        //*start = (char*)(tar+1);
 //    }
 //    return 0;
@@ -63,7 +63,7 @@ void *getVFSFile(pluginHandler *ph,char *file, size_t *pSize){
 //int is_file_in_tar( struct tar *tar, char *name, char **start, int *length ){
 //    for( ; tar->name[0]; tar+=1+(*length+511)/512 ){
 //        sscanf( tar->size, "%o", length);
-//        slog(LVL_NOISY,DEBUG, tar->name);
+//        slog(DEBUG,DEBUG, tar->name);
 //        if( !strcmp(tar->name,name) ){ *start = (char*)(tar+1); return 1; }
 //    }
 //    return 0;
@@ -86,7 +86,7 @@ void *getVFSFile(pluginHandler *ph,char *file, size_t *pSize){
 //    lseek(fd,0,0);
 //
 //    start = mmap(NULL, *size, PROT_READ, MAP_PRIVATE, fd, 0);
-//    slog(LVL_NOISY,DEBUG,"VFS %s open, %d bytes, data at 0x%x",file,*size,start);
+//    slog(DEBUG,DEBUG,"VFS %s open, %d bytes, data at 0x%x",file,*size,start);
 //
 //    if(start == MAP_FAILED){
 //        slog(LVL_QUIET,ERROR,"Could not mmap %s into memory, err %d",errno);
@@ -97,6 +97,6 @@ void *getVFSFile(pluginHandler *ph,char *file, size_t *pSize){
 //int getMemFile(char *tar, char *name){
 //    //  tar=mmap(NULL, 808960, PROT_READ, MAP_PRIVATE, fd, 0);
 //    char *start; int length;
-//    slog(LVL_NOISY,DEBUG,"VFS : %s : %.*s",name,length,start);
+//    slog(DEBUG,DEBUG,"VFS : %s : %.*s",name,length,start);
 //    return is_file_in_tar(tar,name,&start,&length);
 //}

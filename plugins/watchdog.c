@@ -23,7 +23,7 @@ extern pluginHandler *ph;
 extern const duk_function_list_entry myMethods[];
 
 char *cleanupPlugin(void *p){
-    slog(LVL_NOISY,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
+    slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
     return NULL;
 }
 
@@ -38,7 +38,7 @@ int watchdog_pushImage(char *args){
       slog(LVL_QUIET,ERROR,"Usage : "PLUGIN_SCOPE"::pushImage name texture type timeout imagePath");
       return 0;
    }
-   slog(LVL_NOISY,DEBUG,"Push-%s(%s,%s,%d,%s)",type,texture,timeout,img);
+   slog(DEBUG,DEBUG,"Push-%s(%s,%s,%d,%s)",type,texture,timeout,img);
    return 0;
 }
 
@@ -69,12 +69,12 @@ int watchdog_push(char *args){
       slog(LVL_QUIET,ERROR,"Usage : "PLUGIN_SCOPE"::push name texture type timeout message");
       return 0;
    }
-   slog(LVL_NOISY,DEBUG,"Push-%s(%s,%d,%s)",type,texture,timeout,message);
+   slog(DEBUG,DEBUG,"Push-%s(%s,%d,%s)",type,texture,timeout,message);
    return 0;
 }
 
 duk_ret_t js_watchdog_push(duk_context *ctx){
-   slog(LVL_NOISY,DEBUG,"Push JS not implemented");
+   slog(DEBUG,DEBUG,"Push JS not implemented");
    return 0;
 }
 
@@ -105,7 +105,7 @@ duk_ret_t js_watchdog_dtor(duk_context *ctx)
 duk_ret_t js_watchdog_ctor(duk_context *ctx)
 {
     void *ptr = NULL;
-    slog(LVL_NOISY,DEBUG, "Creating new object of "PLUGIN_SCOPE);
+    slog(DEBUG,DEBUG, "Creating new object of "PLUGIN_SCOPE);
 
     // Push special this binding to the function being constructed
     duk_push_this(ctx);
@@ -154,7 +154,7 @@ const function_list_entry c_watchdogMethods[] = {
 
 
 char *initPlugin(pluginHandler *_ph){
-    slog(LVL_NOISY,DEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
+    slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
     ph=_ph;
     ctx = ph->ctx;
 

@@ -82,7 +82,7 @@ void slog_get_date(SlogDate *sdate)
 
     /* Get micro seconds */
     clock_gettime(CLOCK_MONOTONIC, &now);
-    sdate->usec = now.tv_nsec / 10000000;
+    sdate->usec = (int)now.tv_nsec / 10000000;
 }
 
 /* 
@@ -309,69 +309,62 @@ void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
     va_end(args);
 
     /* Check logging levels */
+    //printf("DBG : %d < %d / %d\n",level,slg.level,flag);
     if(!level || level <= slg.level || level <= slg.file_level)
     {
         /* Handle flags */
         switch(flag) 
         {
-            case SLOG_LIVE:
+            case TRACE:
                 strncpy(color, CLR_NORMAL, sizeof(color));
-                strncpy(alarm, "LIVE ", sizeof(alarm));
+                strncpy(alarm, "TRACE", sizeof(alarm));
                 break;
-            case SLOG_INFO:
-                strncpy(color, CLR_GREEN, sizeof(color));
-                strncpy(alarm, "INFO ", sizeof(alarm));
-                break;
-            case SLOG_WARN:
-                strncpy(color, CLR_YELLOW, sizeof(color));
-                strncpy(alarm, "WARN ", sizeof(alarm));
-                break;
-            case SLOG_DEBUG:
+            case DEBUG:
                 strncpy(color, CLR_BLUE, sizeof(color));
                 strncpy(alarm, "DEBUG", sizeof(alarm));
                 break;
-            case SLOG_ERROR:
+            case WARN:
+                strncpy(color, CLR_YELLOW, sizeof(color));
+                strncpy(alarm, "WARN ", sizeof(alarm));
+                break;
+            case INFO:
+                strncpy(color, CLR_GREEN, sizeof(color));
+                strncpy(alarm, "INFO ", sizeof(alarm));
+                break;
+            case ERROR:
                 strncpy(color, CLR_RED, sizeof(color));
                 strncpy(alarm, "ERROR", sizeof(alarm));
                 break;
-            case SLOG_FATAL:
+            case FATAL:
                 strncpy(color, CLR_RED, sizeof(color));
                 strncpy(alarm, "FATAL", sizeof(alarm));
                 break;
-            case SLOG_PANIC:
-                strncpy(color, CLR_WHITE, sizeof(color));
-                strncpy(alarm, "PANIC", sizeof(alarm));
-                break;
-            case SLOG_NONE:
-                strncpy(prints, string, sizeof(string));
-                break;
             default:
                 strncpy(prints, string, sizeof(string));
-                flag = SLOG_NONE;
+                //flag = SLOG_NONE;
                 break;
         }
 
         /* Print output */
         if (level <= slg.level || slg.pretty)
         {
-            if (level <= slg.level) {
-                if (flag != SLOG_NONE) {
-                    if (level > LVL_QUIET) {
-                        if (level > SLOG_INFO) {
-                            sprintf(prints, "%s:%d] %s", srcfile, line, string);
-                            printf("[%s][T:%x][%s\n", strclr(color, alarm), (unsigned int)pthread_self(), slog_get_short(&mdate, "%s",prints));
-                        } else {
-                            sprintf(prints, "%s:%d] %s", srcfile, line, string);
-                            printf("[%s][%s\n", strclr(color, alarm), slog_get_short(&mdate, "%s",prints));
-                        }
-                    } else {
-                        sprintf(prints, "%s:%d] %s", srcfile, line, string);
-                        printf("[%s][%s\n", strclr(color, alarm), slog_get(&mdate, "%s",prints));
-                    }
-                } else {
-                    printf("[%s]", slog_get(&mdate, "%s\n",prints));
-                }
-        }
+          if (level <= slg.level) {
+            if (level > INFO) {
+              if (level > SLOG_INFO) {
+                sprintf(prints, "%s:%d] %s", srcfile, line, string);
+                int thr_id = (unsigned int)pthread_self();
+                printf("[%s][T:%x][%s\n", strclr(color, alarm), thr_id, slog_get_short(&mdate, "%s",prints));
+              } else {
+                sprintf(prints, "%s:%d] %s", srcfile, line, string);
+                printf("[%s][%s\n", strclr(color, alarm), slog_get_short(&mdate, "%s",prints));
+              }
+            } else {
+              sprintf(prints, "%s:%d] %s", srcfile, line, string);
+              printf("[%s][%s\n", strclr(color, alarm), slog_get(&mdate, "%s",prints));
+            }
+          } else {
+            printf("[%s]", slog_get(&mdate, "%s\n",prints));
+          }
         }
 
         /* Save log in file */

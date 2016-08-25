@@ -22,7 +22,7 @@ typedef struct texturePlugin
 extern const duk_function_list_entry myMethods[];
 
 char *cleanupPlugin(void *p){
-    slog(LVL_NOISY,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
+    slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
     return NULL;
 }
 
@@ -116,7 +116,7 @@ const duk_function_list_entry textureMethods[] = {
 };
 
 char *initPlugin(pluginHandler *_ph){
-    slog(LVL_NOISY,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
+    slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
     ph=_ph;
     ctx = ph->ctx;
     duk_push_c_function(ctx, js_texture_ctor, 7 );

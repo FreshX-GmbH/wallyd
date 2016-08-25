@@ -20,7 +20,7 @@ int js_svgToImage(duk_context *ctx){
       slog(LVL_QUIET,ERROR,"Failed to parse svg to IMG");
       return 0;
     } else {
-      slog(LVL_NOISY,DEBUG,"Parsed svg to IMG, size %d",size);
+      slog(DEBUG,DEBUG,"Parsed svg to IMG, size %d",size);
       void *p = duk_push_buffer(ctx, size, 0);
       memcpy(p,image,size);
       nsvgDelete(image);
@@ -95,10 +95,10 @@ int svgToTex(char *str)
     unsigned char* img = NULL;
     int w, h;
     
-    slog(LVL_NOISY,DEBUG,"parsing %s", fileName);
+    slog(DEBUG,DEBUG,"parsing %s", fileName);
     image = nsvgParseFromFile(fileName, "px", 96.0f);
     if (image == NULL) {
-    	slog(LVL_NOISY,DEBUG,"Could not open SVG image.");
+    	slog(DEBUG,DEBUG,"Could not open SVG image.");
     	goto error;
     }
     w = (int)image->width;
@@ -106,17 +106,17 @@ int svgToTex(char *str)
     
     rast = nsvgCreateRasterizer();
     if (rast == NULL) {
-    	slog(LVL_NOISY,DEBUG,"Could not init rasterizer.");
+    	slog(DEBUG,DEBUG,"Could not init rasterizer.");
     	goto error;
     }
     
     img = malloc(w*h*4);
     if (img == NULL) {
-    	slog(LVL_NOISY,DEBUG,"Could not alloc image buffer.");
+    	slog(DEBUG,DEBUG,"Could not alloc image buffer.");
     	goto error;
     }
     
-    slog(LVL_NOISY,DEBUG,"rasterizing image %d x %d\n", w, h);
+    slog(DEBUG,DEBUG,"rasterizing image %d x %d\n", w, h);
     nsvgRasterize(rast, image, 0,0,1, img, w, h, w*4);
     SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(img, //pointer to the pixels
             w, //Width
@@ -192,10 +192,10 @@ int svgToPng(char *str)
     unsigned char* img = NULL;
     int w, h;
     
-    slog(LVL_NOISY,DEBUG,"parsing %s", fileName);
+    slog(DEBUG,DEBUG,"parsing %s", fileName);
     image = nsvgParseFromFile(fileName, "px", 96.0f);
     if (image == NULL) {
-    	slog(LVL_NOISY,DEBUG,"Could not open SVG image.");
+    	slog(DEBUG,DEBUG,"Could not open SVG image.");
     	goto error;
     }
     w = (int)image->width;
@@ -203,21 +203,21 @@ int svgToPng(char *str)
     
     rast = nsvgCreateRasterizer();
     if (rast == NULL) {
-    	slog(LVL_NOISY,DEBUG,"Could not init rasterizer.");
+    	slog(DEBUG,DEBUG,"Could not init rasterizer.");
     	goto error;
     }
     
     img = malloc(w*h*4);
     if (img == NULL) {
         nsvgDeleteRasterizer(rast);
-    	slog(LVL_NOISY,DEBUG,"Could not alloc image buffer.");
+    	slog(DEBUG,DEBUG,"Could not alloc image buffer.");
     	goto error;
     }
     
-    slog(LVL_NOISY,DEBUG,"rasterizing image %d x %d", w, h);
+    slog(DEBUG,DEBUG,"rasterizing image %d x %d", w, h);
     nsvgRasterize(rast, image, 0,0,1, img, w, h, w*4);
     
-    slog(LVL_NOISY,DEBUG,"writing %s",pngName);
+    slog(DEBUG,DEBUG,"writing %s",pngName);
     stbi_write_png(pngName, w, h, 4, img, w*4);
     
 error:
@@ -244,13 +244,13 @@ const duk_function_list_entry js_svgMethods[] = {
 };
 
 char *cleanupPlugin(void *p){
-   slog(LVL_NOISY,DEBUG,"Cleaning up plugin "PLUGIN_SCOPE);
+   slog(DEBUG,DEBUG,"Cleaning up plugin "PLUGIN_SCOPE);
    return NULL;
 }
 
 duk_ret_t js_svg_ctor(duk_context *ctx)
 {
-    slog(LVL_NOISY,DEBUG, "Getting access to SVG object.");
+    slog(DEBUG,DEBUG, "Getting access to SVG object.");
 
     duk_push_this(ctx);
     duk_dup(ctx, 0);  /* -> stack: [ name this name ] */
@@ -260,7 +260,7 @@ duk_ret_t js_svg_ctor(duk_context *ctx)
 
 char *initPlugin(pluginHandler *_ph){
    ph=_ph;
-   slog(LVL_NOISY,DEBUG, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
+   slog(DEBUG,DEBUG, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
    wally_put_function_list(c_SDLMethods);
 
    duk_push_c_function(ph->ctx, js_svg_ctor, 0 );
@@ -269,7 +269,7 @@ char *initPlugin(pluginHandler *_ph){
    duk_put_prop_string(ph->ctx, -2, "prototype");
    duk_put_global_string(ph->ctx, "SVG");  /* -> stack: [ ] */
 
-   slog(LVL_NOISY,DEBUG,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
+   slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
    return PLUGIN_SCOPE;
 }
 
