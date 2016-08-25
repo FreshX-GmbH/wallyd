@@ -20,6 +20,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linuxx")
   install(TARGETS modeset DESTINATION ${BIN_INSTALL_DIR})
 endif()
 
+set(WALLYC_SRC wallyc.cpp tcp.cpp)
+add_executable(wallyc ${WALLYC_SRC})
+target_link_libraries(wallyc)
 
 if(WITH_SEADUK STREQUAL on)
 	set(DWALLYD_SRC wallyd.c nucly/env.c nucly/path.c seaduk.c ../lib/miniz.c)

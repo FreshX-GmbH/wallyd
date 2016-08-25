@@ -100,28 +100,27 @@ typedef struct{
 
 } pluginHandler;
 
+extern pluginHandler *ph;
 typedef int (*wally_c_function)(char *parameter);
 typedef struct function_list_entry function_list_entry;
 struct function_list_entry {
         const char *name;
-        // Sync call or threaded?
         int threaded;
         wally_c_function value;
         int nargs;
 };
 
 int pluginLoader(char *path);
-bool exportSync(char *name, void *f);
-bool exportThreaded(char *name, void *);
+bool exportSync(const char *, void *);
+bool exportThreaded(const char *, void *);
 bool callWithData(char *name, void *ret, void *params);
 bool callWithString(char *name, void *ret, char *paramString);
 bool call(char *name, void *ret, char *paramString);
 bool callNonBlocking(char *funcname, int *ret, void *params);
-//bool callThreadWithString(pthread_t thr, char *funcname, void *ret, char *params);
 int sendWallyCommand(char *cmd, char *log);
 int cleanupPlugins(void);
 bool callEx(char *, void *, void *,int ,bool );
 void export_function_list(char *scope, const function_list_entry *funcs);
-void wally_put_function_list(const function_list_entry *funcs);
+void wally_put_function_list(const function_list_entry *);
 
 #endif

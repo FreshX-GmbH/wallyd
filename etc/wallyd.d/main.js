@@ -34,26 +34,31 @@ context = {
     }
 };
 
-config = context.config;
+// This is called after the startVideo 
+// or immediately if startVideo==false
 
-// This is called after the startVideo or immediately if startVideo === false
+function runTexApp(name){
+       try {
+          this.f = nucleus.dofile(name);
+       } catch(err) {
+          log.error('Failed to run : ',name);
+       }
+}
+
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
-  if(nucleus){
-    log.info('Executing all js files');
-    files = nucleus.scandir('.',function(f,type){
-        if(type === 'file' && f.match('\.js$') && !f.match('^main.js$') && !f.match('^wallyd.setup.js$')){
-           try {
-             log.debug('Running ',f);
-             this.f = nucleus.dofile(f);
-           } catch(err) {
-             log.error('Failed to run ',f,' : ',err);
-           }
-	    }
-    });
-    p(context);
-  }
-}
-log.info('Preparing wallyd basic setup');
-log.debug('Loglevel : '+config.debug);
-setup = nucleus.dofile('wallyd.setup.js');
+  screen.log('Initializing texApps ...');
+//  for (var t in textures) {
+//    taName = 'texapps/'+t+'.js';
+//    log.info('Running texApp : ',t);
+//    screen.log('Initializing texApp : '+t);
+//    var timer = new uv.Timer();
+//    timer.start(0, 1, runTexApp(taName));
+//  }
+//  p(context);
+};
+
+context.setup = nucleus.dofile('defaults.js');
+context.ssdp  = nucleus.dofile('ssdp.js');
+context.exec  = nucleus.dofile('execserver.js');
+p(context);

@@ -198,7 +198,7 @@ const function_list_entry c_systemMethods[] = {
  
 char *initSysPlugin(pluginHandler *_ph){
    slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
-   ph=_ph;
+   //ph=_ph;
    ctx = ph->ctx;
 
    wally_put_function_list(c_systemMethods);

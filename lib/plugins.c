@@ -1,5 +1,6 @@
 #include "util.h"
 #include "dlfcn.h"
+#include "plugins.h"
 #include <dirent.h>
 #include <SDL_events.h>
 #include <SDL_mutex.h>
@@ -8,7 +9,7 @@
 
 pluginHandler *ph;
 pthread_mutex_t callMutex=PTHREAD_MUTEX_INITIALIZER;
-//
+
 //  Paramtyp 0 : pointer
 //           1 : string
 //           2 : PointerStruct *PS
@@ -112,7 +113,7 @@ bool callNonBlocking(char *funcname, int *ret, void *params){
     return callEx(funcname,ret,params,CALL_TYPE_PTR,false);
 }
 
-bool exportThreaded(char *name, void *f){
+bool exportThreaded(const char *name, void *f){
     if(!ht_contains(ph->functions,name,strlen(name))){
         ht_insert_simple(ph->thr_functions,name,f);
         // Enable this code for synced function calls
@@ -125,7 +126,7 @@ bool exportThreaded(char *name, void *f){
 }
 
 
-bool exportSync(char *name, void *f){
+bool exportSync(const char *name, void *f){
     if(!ht_contains(ph->functions,name,strlen(name))){
         ht_insert_simple(ph->functions,name,f);
         slog(DEBUG,FULLDEBUG,"Function %s registered",name);
@@ -138,14 +139,14 @@ bool exportSync(char *name, void *f){
 // our own try
 void wally_put_function_list(const function_list_entry *funcs) {
     const function_list_entry *ent = funcs;
-
     if (ent != NULL) {
         while (ent->name != NULL) {
             if(ent->threaded == true){
-                slog(DEBUG,DEBUG,"FKT_THRD : %s (%d args)",ent->name,ent->nargs);
+                slog(0,DEBUG,"FKT_THRD : %s (%d args)",ent->name,ent->nargs);
                 exportThreaded(ent->name,ent->value);
             } else {
-                slog(DEBUG,DEBUG,"FKT_SYNC : %s (%d args)",ent->name,ent->nargs);
+                slog(0,ERROR,"Function %s %p %p %p",ent->name,ent->value,ph,ph->functions);
+                slog(0,DEBUG,"FKT_SYNC : %s (%d args)",ent->name,ent->nargs);
                 exportSync(ent->name,ent->value);
             }
             ent++;
@@ -164,7 +165,7 @@ bool openPlugin(char *path, char* name)
 //    slog(LVL_INFO,INFO,"Loading plugin : %s", nameCopy);
     // Save the DL Handle for later, it has to stay open as long as we need the functions
     ht_insert_simple(ph->plugins,nameCopy,handle);
-    slog(DEBUG,FULLDEBUG,"Saved plugin as %s in plugin map",name);
+    slog(DEBUG,FULLDEBUG,"Saved plugin as %s in plugin map %p",name,ph);
     if (!handle) {
         slog(ERROR,ERROR,"Could not load plugin %s : %s",path,error);
         return false;
@@ -174,12 +175,12 @@ bool openPlugin(char *path, char* name)
         slog(ERROR,ERROR,"initPlugin() failed or not found (Error : %s)",error);
         return false;
     } else {
-//       slog(DEBUG,FULLDEBUG,"initPlugin() is now at 0x%x / handle at 0x%x",*initPlugin,handle);
+       slog(0,ERROR,"initPlugin() is now at 0x%x / handle at 0x%x",*initPlugin,handle);
     }
     // Initialize Plugin
     // TODO : Save return + function into command map
     char *r = (*initPlugin)(ph);
-    slog(DEBUG,FULLDEBUG,"Plugin loaded : %s", r);
+    slog(0,DEBUG,"Plugin loaded : %s", r);
     return true;
 }
 
@@ -240,10 +241,9 @@ int pluginLoader(char *path){
 
 pluginHandler *pluginsInit(void){
 
-    pthread_mutex_init (&callMutex,0);
-
     ph=malloc(sizeof(pluginHandler));
     memset(ph,sizeof(pluginHandler),0);
+    pthread_mutex_init(&callMutex,0);
 
     if(!ph) {
         slog(ERROR,ERROR,"Could not allocate memory. Exit");

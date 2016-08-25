@@ -1,7 +1,7 @@
 #define _GNU_SOURCE
 
 #include "miniz.h"
-#include "nucly/duv.h"
+#include "duv.h"
 #include "nucly/env.h"
 #include "nucly/path.h"
 #include "wallyd.h"
@@ -391,7 +391,7 @@ void setupSocket(void *p){
 }
 
 //int main(int argc, char *argv[]) {
-void duvThread(void *ctx){
+void *duvThread(void *ctx){
   int argc = gargc;
   char **argv = gargv;
   bool isZip = false;
@@ -533,4 +533,5 @@ void duvThread(void *ctx){
   uv_run(&loop, UV_RUN_DEFAULT);
   slog(LVL_QUIET,INFO,"Seaduk interpreter has finished.");
 //  duk_destroy_heap(ctx);
+  return NULL;
 }

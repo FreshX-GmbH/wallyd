@@ -390,23 +390,22 @@ const function_list_entry c_JSMethods[] = {
 };
 
 char *initPlugin(pluginHandler *_ph){
-   slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing");
    ph=_ph;
+   slog(0,ERROR,"Plugin "PLUGIN_SCOPE" initializing (PH: %p)",ph);
    ctx = ph->ctx;
 
    slog(TRACE,DEBUG,"Constructing wally object");
 
    wally_put_function_list(c_JSMethods);
    
-   duk_push_c_function(ctx, js_wally_ctor, 0 );
+//   duk_push_c_function(ctx, js_wally_ctor, 0 );
    duk_push_object(ctx);
    duk_put_function_list(ctx, -1, wallyMethods);
    duk_put_prop_string(ctx, -2, "prototype");
    duk_put_global_string(ctx, "Wally");  /* -> stack: [ ] */
 
-    slog(TRACE,DEBUG,"Plugin initialized. PH is at 0x%x",_ph);
+    slog(TRACE,DEBUG,"Plugin initialized. PH is at 0x%x",ph);
     return PLUGIN_SCOPE;
 }
-
 
 #endif

@@ -28,12 +28,13 @@ bool uiLoop(void *p){
     const char *param;
     SDL_Event event;
     for(;;) {
-        SDL_zero(event);
+        //SDL_zero(event);
 #ifdef WAIT_EV
-        int ret = SDL_WaitEvent(&event);
+        int ret = SDL_WaitEventTimeout(&event,3000);
         ph->uiAllCount++;
         if(ret == 0){
             slog(ERROR,ERROR,"Error while wating for events : %s",SDL_GetError());
+            slog(0,ERROR,"Current Thread : %p",pthread_self());
             ph->uiEventTimeout++;
             continue;
         }
@@ -43,15 +44,15 @@ bool uiLoop(void *p){
         if(ret == 0){
             SDL_Delay(ph->eventDelay);
             ph->uiEventTimeout++;
-            if(ph->eventDelay < 50){
+            if(ph->eventDelay < 100){
                ph->eventDelay++;
             }
             continue;
         }
-        ph->eventDelay=1;
+        ph->eventDelay=5;
 #endif
         if(event.type < SDL_USEREVENT ){
-            //slog(DEBUG,FULLDEBUG,"Ignoring event %d",event.type);
+            slog(DEBUG,FULLDEBUG,"Ignoring event %d",event.type);
             continue; 
         }
         if(event.type == SDL_USEREVENT+2 ){
@@ -64,8 +65,9 @@ bool uiLoop(void *p){
         }
         ph->uiOwnCount++;
         funcName = strdup(event.user.data1);
-        free(event.user.data1);
         // TODO : free this at the destination!!
+        //if(event.user.data1)
+        //   free(event.user.data1);
 
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
         if(!thr_func){
@@ -75,7 +77,7 @@ bool uiLoop(void *p){
  
         switch(event.type){
             case WALLY_CALL_PTR:
-                  slog(DEBUG,DEBUG,"Threaded PTR call to %s(0x%x)", funcName, event.user.data2);
+                  //slog(DEBUG,DEBUG,"Threaded PTR call to %s(0x%x)", funcName, event.user.data2);
                   thr_func(event.user.data2);
                   break;
             case WALLY_CALL_STR:

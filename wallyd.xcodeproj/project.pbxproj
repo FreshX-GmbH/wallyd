@@ -107,8 +107,6 @@
 		657CA7051CC8F45E0077576C /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = wallyd/lib/util.h; sourceTree = "<group>"; };
 		65AE5BF61D0A33030080FEA3 /* slog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = slog.c; path = wallyd/lib/slog.c; sourceTree = "<group>"; };
 		65B66F131D0B2DAB0012E4F1 /* slog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = slog.h; path = wallyd/lib/slog.h; sourceTree = "<group>"; };
-		65D2024B1D6631E100854C78 /* dschema.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dschema.h; path = src/nucly/dschema.h; sourceTree = SOURCE_ROOT; };
-		65D2024C1D6631E100854C78 /* duv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = duv.h; path = src/nucly/duv.h; sourceTree = SOURCE_ROOT; };
 		65D2024E1D6631E100854C78 /* env.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = env.h; path = src/nucly/env.h; sourceTree = SOURCE_ROOT; };
 		65D202511D6631E100854C78 /* path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = path.h; path = src/nucly/path.h; sourceTree = SOURCE_ROOT; };
 		65D202521D6631E100854C78 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = src/nucly/utils.h; sourceTree = SOURCE_ROOT; };
@@ -271,8 +269,6 @@
 				65E98A0B1CC8D518000F291F /* wallyd.c */,
 				65E98A0C1CC8D518000F291F /* wallyd.h */,
 				65F40A901D6E2E1C00E1AF69 /* seaduk.c */,
-				65D2024B1D6631E100854C78 /* dschema.h */,
-				65D2024C1D6631E100854C78 /* duv.h */,
 				65D2024E1D6631E100854C78 /* env.h */,
 				65D202511D6631E100854C78 /* path.h */,
 				65D202521D6631E100854C78 /* utils.h */,

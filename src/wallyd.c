@@ -2,23 +2,17 @@
 #include "wallyd.h"
 #include <uv.h>
 
-// Our global context
-pluginHandler *ph;
-
 uv_fs_t openReq;
 uv_fs_t readReq;
 uv_fs_t closeReq;
 uv_pipe_t server;
 uv_tcp_t tcp;
+uv_loop_t loop;
 
-#ifdef WITH_SEADUK
 int gargc;
 char **gargv;
 const char *startupScript = WALLYD_CONFDIR"/wallyd.d";
 pthread_t uv_thr;
-#else
-const char *startupScript = WALLYD_CONFDIR"/wallyd.d/main.js";
-#endif
 
 int main(int argc, char *argv[]) 
 {
@@ -29,10 +23,11 @@ int main(int argc, char *argv[])
     readOptions(argc,argv);
 
     // init plugin system (do not load the plugins yet)
-    ph = pluginsInit();
+    pluginsInit();
     utilInit(ph,DEFAULT_LOG_LEVEL);
 
     slog(LVL_INFO,INFO,"Wally Image Server R%u (Build %u) starting.",BUILD_NUMBER,BUILD_DATE);
+    slog(0,ERROR,"Current Thread : %p / PH : %p",pthread_self(),ph);
 
     // assing signal handlers for ctrl+c
     setupSignalHandler();
@@ -59,8 +54,6 @@ int main(int argc, char *argv[])
       return -1;
     }
     ph->ctx = ctx;
-    duk_push_string(ctx, "print('Hello world!');");
-    duk_peval(ctx);
 
     if(ht_get_simple(ph->configMap,"basedir") != NULL) {
       ph->basedir=ht_get_simple(ph->configMap,"basedir");
@@ -91,7 +84,6 @@ int main(int argc, char *argv[])
         slog(LVL_INFO,INFO,"Old FIFO found and removed.");
     }
 
-#ifdef WITH_SEADUK
   slog(DEBUG,DEBUG,"Seaduk initializing, ctx is at 0x%x.",ctx);
   gargc = argc;
   gargv = argv;
@@ -105,39 +97,6 @@ int main(int argc, char *argv[])
   if(pthread_create(&uv_thr, NULL, &duvThread, ctx) != 0){
     slog(ERROR,ERROR,"Failed to create seaduk thread!");
   }
-#else
-  if (argc < 2) {
-    char *newargv[2];
-    argc++;
-    newargv[0]=argv[0];
-    newargv[1]=startupScript;
-    argv=newargv;
-  }
-
-  // Indefinetely Loop the SDL/UI thread loop in the main thread
-  //
-  slog(DEBUG,DEBUG,"ID is : %s",argv[0]);
-  slog(DEBUG,DEBUG,"Startup script is : %s",argv[1]);
-  // Stash argv for later access
-  duk_push_pointer(ctx, (void *) argv);
-  duk_push_int(ctx, argc);
-  if (duk_safe_call(ctx, duv_stash_argv, 2, 1)) {
-    duv_dump_error(ctx, -1);
-    uv_loop_close(&loop);
-    duk_destroy_heap(ctx);
-    return 1;
-  }
-  duk_pop(ctx);
-
-  // Initializie duv curl plugin
-  dukopen_curl(ctx);
-
-  duk_push_c_function(ctx, duv_main, 1);
-  duk_push_string(ctx, argv[1]);
-  // Start the JS startup script in a thread 
-  slog(DEBUG,FULLDEBUG,"Seaduk thread starting");
-  uv_thread_create(&uv_thread, &duvThread, ctx);
-#endif
 
   // Loop the SDL stuff in the main thread
   uiLoop(ph);
@@ -145,17 +104,6 @@ int main(int argc, char *argv[])
   uv_loop_close(&loop);
   duk_destroy_heap(ctx);
 }
-
-#ifndef WITH_SEADUK
-void duvThread(void *ctx){
- if (duk_pcall(ctx, 1)) {
-    duv_dump_error(ctx, -1);
-    uv_loop_close(loop);
-    duk_destroy_heap(ctx);
-    return;
-  }
-}
-#endif
 
 void allocBuffer(uv_handle_t* handle, size_t size, uv_buf_t* buf) {
       buf->base = malloc(size);
@@ -183,14 +131,6 @@ void onNewConnection(uv_stream_t *server, int status)
     else {
         uv_close((uv_handle_t*) &client, NULL);
     }
-//    if (uv_accept(server, (uv_stream_t*) &client) == 0) {
-//        uv_os_fd_t fd;
-//        uv_fileno((const uv_handle_t*) &client, &fd);
-//        slog(DEBUG,FULLDEBUG, "Worker %d: Accepted fd %d", getpid(), fd);
-//        uv_read_start((uv_stream_t*) &client, allocBuffer, onRead);
-//    } else {
-//        uv_close((uv_handle_t*) &client, onClose);
-//    }
 }
 
 void onRead(uv_stream_t* _client, ssize_t nread, const uv_buf_t* buffer) {

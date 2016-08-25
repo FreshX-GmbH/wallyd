@@ -384,14 +384,12 @@ static void packet_queue_flush(PacketQueue *q)
     SDL_UnlockMutex(q->mutex);
 }
 
-#ifndef WALLY_PLUGIN
 static void packet_queue_destroy(PacketQueue *q)
 {
     packet_queue_flush(q);
     SDL_DestroyMutex(q->mutex);
     SDL_DestroyCond(q->cond);
 }
-#endif // WALLY_PLUGIN
 
 static void packet_queue_abort(PacketQueue *q)
 {
@@ -946,7 +944,7 @@ static inline int compute_mod(int a, int b)
 //            s->xpos= s->xleft;
 //    }
 //}
-
+#endif
 static void stream_close(VideoState *is)
 {
     VideoPicture *vp;
@@ -984,6 +982,8 @@ static void stream_close(VideoState *is)
 #endif
     av_free(is);
 }
+
+#ifndef WALLY_PLUGIN
 
 static void do_exit(VideoState *is)
 {
@@ -2469,6 +2469,7 @@ static void stream_component_close(VideoState *is, int stream_index)
         break;
     }
     if(finishVideo != NULL){
+         stream_close(is);
          finishVideo(is);
     }
     printf("=========== FF DONE ==========\n");

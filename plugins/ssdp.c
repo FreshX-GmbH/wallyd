@@ -1,5 +1,5 @@
 #include "ssdp.h"
-#include "../src/nucly/duv.h"
+#include "duv.h"
 
 #define PLUGIN_SCOPE "ssdp"
 
