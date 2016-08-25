@@ -123,7 +123,7 @@ const function_list_entry c_SDLMethods[] = {
 char *initPlugin(pluginHandler *_ph){
     ph=_ph;
     slog(DEBUG,FULLDEBUG, "Plugin "PLUGIN_SCOPE" initializing");
-    wally_put_function_list(c_SDLMethods);
+    wally_put_function_list(ph,c_SDLMethods);
     slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
     return PLUGIN_SCOPE;
 }

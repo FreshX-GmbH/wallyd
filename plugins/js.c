@@ -24,7 +24,7 @@ const duk_function_list_entry wallyMethods[];
 
 static int js_evalFile(duk_context *ctx) {
    const char *filename = duk_to_string(ctx, 0);
-   slog(DEBUG,DEBUG,"Execute file : %s (Top : %d)", filename, (long) duk_get_top(ctx));
+   slog(0,DEBUG,"Execute file : %s (Top : %d)", filename, (long) duk_get_top(ctx));
    duk_eval_file(ctx, filename);
    duk_pop(ctx);
    return 0;
@@ -396,9 +396,9 @@ char *initPlugin(pluginHandler *_ph){
 
    slog(TRACE,DEBUG,"Constructing wally object");
 
-   wally_put_function_list(c_JSMethods);
+   wally_put_function_list(ph,c_JSMethods);
    
-//   duk_push_c_function(ctx, js_wally_ctor, 0 );
+   duk_push_c_function(ctx, js_wally_ctor, 0 );
    duk_push_object(ctx);
    duk_put_function_list(ctx, -1, wallyMethods);
    duk_put_prop_string(ctx, -2, "prototype");

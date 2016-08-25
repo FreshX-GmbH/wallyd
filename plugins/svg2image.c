@@ -261,7 +261,7 @@ duk_ret_t js_svg_ctor(duk_context *ctx)
 char *initPlugin(pluginHandler *_ph){
    ph=_ph;
    slog(DEBUG,DEBUG, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
-   wally_put_function_list(c_SDLMethods);
+   wally_put_function_list(ph,c_SDLMethods);
 
    duk_push_c_function(ph->ctx, js_svg_ctor, 0 );
    duk_push_object(ph->ctx);

@@ -163,9 +163,6 @@ duk_ret_t my_setter(duk_context *ctx){
 }
 
 int js_initSysPlugin(duk_context *ctx){
-#ifndef WITH_SEADUK
-   duv_ref_setup(ctx);
-#endif
    duk_push_c_function(ctx, js_sys_ctor, 1 );
    duk_push_object(ctx);
    duk_put_function_list(ctx, -1, sysMethods);
@@ -196,12 +193,11 @@ const function_list_entry c_systemMethods[] = {
    {  NULL, 0, NULL, 0 }
 };
  
-char *initSysPlugin(pluginHandler *_ph){
+char *initSysPlugin(){
    slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
-   //ph=_ph;
    ctx = ph->ctx;
 
-   wally_put_function_list(c_systemMethods);
+   wally_put_function_list(ph,c_systemMethods);
    js_initSysPlugin(ctx);
 
   return PLUGIN_SCOPE;

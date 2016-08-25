@@ -384,7 +384,7 @@ char *initPlugin(pluginHandler *_ph){
     // Create Video Object
     js_video_init(ctx);
 
-    wally_put_function_list(c_videoMethods);
+    wally_put_function_list(ph,c_videoMethods);
 
     slog(DEBUG,DEBUG,"Plugin video initialized. PH is at 0x%x",ph);
 

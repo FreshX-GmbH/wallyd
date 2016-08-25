@@ -125,7 +125,6 @@ bool exportThreaded(const char *name, void *f){
     return false;
 }
 
-
 bool exportSync(const char *name, void *f){
     if(!ht_contains(ph->functions,name,strlen(name))){
         ht_insert_simple(ph->functions,name,f);
@@ -137,7 +136,8 @@ bool exportSync(const char *name, void *f){
 }
 
 // our own try
-void wally_put_function_list(const function_list_entry *funcs) {
+void wally_put_function_list(pluginHandler *_ph, const function_list_entry *funcs) {
+    if(!ph) ph=_ph;
     const function_list_entry *ent = funcs;
     if (ent != NULL) {
         while (ent->name != NULL) {

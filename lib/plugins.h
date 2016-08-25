@@ -121,6 +121,6 @@ int sendWallyCommand(char *cmd, char *log);
 int cleanupPlugins(void);
 bool callEx(char *, void *, void *,int ,bool );
 void export_function_list(char *scope, const function_list_entry *funcs);
-void wally_put_function_list(const function_list_entry *);
+void wally_put_function_list(pluginHandler *ph, const function_list_entry *);
 
 #endif

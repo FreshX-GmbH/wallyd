@@ -8,23 +8,21 @@ uv_fs_t closeReq;
 uv_pipe_t server;
 uv_tcp_t tcp;
 uv_loop_t loop;
+pthread_t uv_thr;
 
 int gargc;
 char **gargv;
 const char *startupScript = WALLYD_CONFDIR"/wallyd.d";
-pthread_t uv_thr;
 
 int main(int argc, char *argv[]) 
 {
-    duk_context *ctx;
     int ret;
 
     // read startup parameters
     readOptions(argc,argv);
-
     // init plugin system (do not load the plugins yet)
     pluginsInit();
-    utilInit(ph,DEFAULT_LOG_LEVEL);
+    utilInit(DEFAULT_LOG_LEVEL);
 
     slog(LVL_INFO,INFO,"Wally Image Server R%u (Build %u) starting.",BUILD_NUMBER,BUILD_DATE);
     slog(0,ERROR,"Current Thread : %p / PH : %p",pthread_self(),ph);
@@ -39,21 +37,19 @@ int main(int argc, char *argv[])
     daemonize(ph->daemonizing);
 
     // init curl lib
-    url_init();
+    //url_init();
 
-    // init SDL Lib
+    // init SDL2
     if(!sdlInit()){
       exit(1);
     }
 
-    // Tie loop and context together
     //ctx = duk_create_heap(NULL, NULL, NULL, &loop, (duk_fatal_function)my_duk_fatal);
-    ctx = duk_create_heap(NULL, NULL, NULL, &loop,NULL);
-    if (!ctx) {
+    ph->ctx = duk_create_heap(NULL, NULL, NULL, &loop,NULL);
+    if (!ph->ctx) {
       fprintf(stderr, "Problem initiailizing duktape heap\n");
       return -1;
     }
-    ph->ctx = ctx;
 
     if(ht_get_simple(ph->configMap,"basedir") != NULL) {
       ph->basedir=ht_get_simple(ph->configMap,"basedir");
@@ -62,7 +58,7 @@ int main(int argc, char *argv[])
     }
 
     // export system plugin functions
-    initSysPlugin(ph);
+    initSysPlugin();
 
     // load plugins
     if(ht_get_simple(ph->configMap,"plugins") != NULL) {
@@ -84,7 +80,7 @@ int main(int argc, char *argv[])
         slog(LVL_INFO,INFO,"Old FIFO found and removed.");
     }
 
-  slog(DEBUG,DEBUG,"Seaduk initializing, ctx is at 0x%x.",ctx);
+  slog(DEBUG,DEBUG,"Seaduk initializing, ctx is at 0x%x.",ph->ctx);
   gargc = argc;
   gargv = argv;
   if(argc < 2){
@@ -94,15 +90,15 @@ int main(int argc, char *argv[])
       argc++;
       gargv = (char **) nargv;
   }
-  if(pthread_create(&uv_thr, NULL, &duvThread, ctx) != 0){
+  if(pthread_create(&uv_thr, NULL, &duvThread, ph->ctx) != 0){
     slog(ERROR,ERROR,"Failed to create seaduk thread!");
   }
 
   // Loop the SDL stuff in the main thread
-  uiLoop(ph);
+  uiLoop(NULL);
 
   uv_loop_close(&loop);
-  duk_destroy_heap(ctx);
+  duk_destroy_heap(ph->ctx);
 }
 
 void allocBuffer(uv_handle_t* handle, size_t size, uv_buf_t* buf) {

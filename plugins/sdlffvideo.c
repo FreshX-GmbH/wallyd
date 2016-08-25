@@ -256,7 +256,7 @@ char *initPlugin(pluginHandler *_ph){
     ph->disableVideoAfterFinish = true;
     duk_context *ctx = ph->ctx;
 
-    wally_put_function_list(c_videoMethods);
+    wally_put_function_list(ph,c_videoMethods);
     js_video_init(ctx);
 
     slog(DEBUG,FULLDEBUG,"Plugin video initialized. PH is at 0x%x",ph);

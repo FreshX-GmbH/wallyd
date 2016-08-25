@@ -11,7 +11,7 @@ char *logFile;
 //struct map_t *configMap;
 pthread_mutex_t logMutex=PTHREAD_MUTEX_INITIALIZER;
 
-bool utilInit(void *_ph, int _loglevel){
+bool utilInit(int _loglevel){
    ph->loglevel = _loglevel;
    ph->uiAllCount = 0;
    ph->uiOwnCount = 0;

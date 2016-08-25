@@ -30,35 +30,29 @@ context = {
         logo    : homedir+'/images/wally1920x1080.png',
         video   : homedir+'/images/WallyStart.mp4',
         testScreen: false,
-        startVideo : true,
-    }
+        startVideo : false,
+    },
+    p:p
 };
 
 // This is called after the startVideo 
 // or immediately if startVideo==false
 
-function runTexApp(name){
-       try {
-          this.f = nucleus.dofile(name);
-       } catch(err) {
-          log.error('Failed to run : ',name);
-       }
-}
-
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
   screen.log('Initializing texApps ...');
-//  for (var t in textures) {
-//    taName = 'texapps/'+t+'.js';
-//    log.info('Running texApp : ',t);
-//    screen.log('Initializing texApp : '+t);
-//    var timer = new uv.Timer();
-//    timer.start(0, 1, runTexApp(taName));
-//  }
-//  p(context);
+  for (var t in textures) {
+    log.info('Running texApp : ',t);
+    screen.log('Initializing texApp : '+t);
+    var taName = 'texapps/'+t+'.js';
+    nucleus.dofile(taName);
+ //   var timer = new uv.Timer();
+ //   timer.start(0, 1, function(){ print(nucleus.dofile(taName));});
+  }
+  p(context);
 };
 
 context.setup = nucleus.dofile('defaults.js');
-context.ssdp  = nucleus.dofile('ssdp.js');
+//context.ssdp  = nucleus.dofile('ssdp.js');
 context.exec  = nucleus.dofile('execserver.js');
 p(context);

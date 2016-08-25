@@ -28,7 +28,6 @@ bool uiLoop(void *p){
     const char *param;
     SDL_Event event;
     for(;;) {
-        //SDL_zero(event);
 #ifdef WAIT_EV
         int ret = SDL_WaitEventTimeout(&event,3000);
         ph->uiAllCount++;
@@ -42,6 +41,7 @@ bool uiLoop(void *p){
         int ret = SDL_PollEvent(&event);
         ph->uiAllCount++;
         if(ret == 0){
+            SDL_zero(event);
             SDL_Delay(ph->eventDelay);
             ph->uiEventTimeout++;
             if(ph->eventDelay < 100){

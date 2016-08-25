@@ -70,7 +70,7 @@ char *initSDLThread(pluginHandler *);
 void fifoThread(void *p);
 void readOptions(int argc, char **argv);
 void processStartupScript(char *file);
-void initSysPlugin(void *);
+void initSysPlugin(void);
 static void my_duk_fatal(duk_context *ctx, int code, const char *msg);
 extern duk_ret_t duv_main(duk_context *ctx);
 extern duk_ret_t dukopen_curl(duk_context *ctx);

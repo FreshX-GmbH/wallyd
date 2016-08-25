@@ -269,7 +269,7 @@ char *initPlugin(pluginHandler *_ph){
     ph=_ph;
     ctx = ph->ctx;
 
-    wally_put_function_list(c_myGPIOMethods);
+    wally_put_function_list(ph,c_myGPIOMethods);
 
     duk_push_c_function(ctx, js_gpio_ctor, 1 );
     duk_push_object(ctx);

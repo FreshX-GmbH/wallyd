@@ -312,7 +312,7 @@ char *initPlugin(pluginHandler *phptr){
     ph=phptr;
     ctx = ph->ctx;
     slog(DEBUG,FULLDEBUG,"Plugin client initialized. PH is at 0x%x",ph);
-    wally_put_function_list(c_clientMethods);
+    wally_put_function_list(ph,c_clientMethods);
     js_client_init(ph->ctx);
     return PLUGIN_SCOPE;
 }

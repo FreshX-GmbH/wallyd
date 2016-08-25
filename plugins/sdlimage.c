@@ -491,7 +491,7 @@ char *initPlugin(pluginHandler *_ph){
     slog(DEBUG,FULLDEBUG,
         "Plugin SDL2 initializing, PH is at 0x%x, window at 0x%x, renderer at 0x%x, winRenderer at 0x%x",
         ph,ph->window, ph->renderer, SDL_GetRenderer(ph->window));
-    wally_put_function_list(c_SDLMethods);
+    wally_put_function_list(ph,c_SDLMethods);
 
     slog(DEBUG,FULLDEBUG,"Plugin SDL2 initialized. PH is at 0x%x",ph);
     return PLUGIN_SCOPE;

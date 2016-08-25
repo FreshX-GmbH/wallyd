@@ -158,7 +158,7 @@ char *initPlugin(pluginHandler *_ph){
     ph=_ph;
     ctx = ph->ctx;
 
-    wally_put_function_list(c_watchdogMethods);
+    wally_put_function_list(ph,c_watchdogMethods);
 
     duk_push_c_function(ctx, js_watchdog_ctor, 7 );
     duk_push_object(ctx);

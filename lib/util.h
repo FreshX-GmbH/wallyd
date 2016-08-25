@@ -83,7 +83,7 @@ void cleanupUtil(void);
 void cleanupWally(int);
 void setupSignalHandler(void);
 void log_print(int line, const char *filename, int level, char *fmt,...);
-bool utilInit(void *,int);
+bool utilInit(int);
 int daemonize(bool);
 
 #define getNumOrPercent(a,b,c) getNumOrPercentEx(a,b,c,10)

@@ -158,7 +158,7 @@ const function_list_entry c_SSDPMethods[] = {
 
 char *initPlugin(pluginHandler *_ph){
     ph=_ph;
-    wally_put_function_list(c_SSDPMethods);
+    wally_put_function_list(ph,c_SSDPMethods);
     slog(DEBUG,FULLDEBUG,"Plugin ssdp initializing. PH is at 0x%x",ph);
     return PLUGIN_SCOPE;
 }

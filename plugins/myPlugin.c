@@ -130,7 +130,7 @@ char *initPlugin(pluginHandler *_ph){
     duk_put_prop_string(ctx, -2, "prototype");
     duk_put_global_string(ctx, "myPlugin");  /* -> stack: [ ] */
 
-    wally_put_function_list(c_myPluginMethods);
+    wally_put_function_list(ph,c_myPluginMethods);
     return PLUGIN_SCOPE;
 }
 
