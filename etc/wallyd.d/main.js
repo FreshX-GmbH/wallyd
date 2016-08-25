@@ -53,6 +53,6 @@ context.onVideoFinished = function(){
 };
 
 context.setup = nucleus.dofile('defaults.js');
-//context.ssdp  = nucleus.dofile('ssdp.js');
+context.ssdp  = nucleus.dofile('ssdp.js');
 context.exec  = nucleus.dofile('execserver.js');
 p(context);
