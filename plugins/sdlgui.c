@@ -99,7 +99,7 @@ int js_loadImageFile(duk_context *ctx){
     const int alpha = duk_require_int(ctx, 6);
     SDL_Rect r = {x1,y1,x2,y2};
     asprintf(&callStr,"%s %s %d %d %d %d %d",texName,fileName, x1,y1,x2,y2,alpha);
-    call("gui::loadImageFile",&ret,callStr);
+    callWithString("gui::loadImageFile",&ret,callStr);
     free(callStr);
     return 0;
 }
@@ -160,7 +160,7 @@ int js_drawGradient(duk_context *ctx){
     hexToColor(fromcolor, &from);
     hexToColor(tocolor, &to);
     asprintf(&callStr,"%s %d %d %d %d %x %x %d %d",texName,x1,y1,x2,y2,fromcolor,tocolor,horizontal, hollow);
-    call("gui::drawGradient",&ret,callStr);
+    callWithString("gui::drawGradient",&ret,callStr);
     free(callStr);
     return 0;
 }
@@ -185,7 +185,7 @@ int js_drawLine(duk_context *ctx)
     const int y2 = duk_require_int(ctx, 4);
     const int color = duk_require_int(ctx, 5);
     asprintf(&callStr, "%s %d %d %d %d %x",texName,x1,y1,x2,y2,color);
-    slog(TRACE,DEBUG,"gui::drawLine %s",callStr);
+    slog(0,DEBUG,"gui::drawLine %s",callStr);
     callWithString("gui::drawLine",&ret,callStr);
     free(callStr);
     //drawLine(texName, x1,y1,x2,y2,c);
@@ -210,7 +210,7 @@ int js_drawText(duk_context *ctx){
     const char *color = duk_require_int(ctx, 4);
     const char *text = duk_require_string(ctx, 5);
     asprintf(&callStr, "%s %d %d %s %x %s",texName,x1,y1,font,color,text);
-    call("gui::drawText",&ret,callStr);
+    callWithString("gui::drawText",&ret,callStr);
     free(callStr);
     return 0;
 }
@@ -233,7 +233,7 @@ int js_drawBox(duk_context *ctx){
     const int h = duk_require_int(ctx, 4);
     const char *color = duk_require_int(ctx, 5);
     asprintf(&callStr, "%s %d %d %d %d %x",texName,x,y,w,h,color);
-    call("gui::drawBox",&ret,callStr);
+    callWithString("gui::drawBox",&ret,callStr);
     free(callStr);
     return 0;
 }
@@ -262,7 +262,7 @@ int js_drawFilledBox(duk_context *ctx){
     const int strokeCol = duk_require_int(ctx, 7);
     const int alpha = duk_require_int(ctx, 8);
     asprintf(&callStr, "%s %d %d %d %d %d %x %x %d",texName,x,y,w,h,stroke,color, strokeCol, alpha);
-    call("gui::drawFilledBox",&ret,callStr);
+    callWithString("gui::drawFilledBox",&ret,callStr);
     free(callStr);
     return 0;
 }
@@ -290,7 +290,7 @@ void c_drawLine(char *str)
     int y2=atoi(y2Str);
     int color=strtol(cStr,0,16);
     hexToColor(color, &col);
-    slog(TRACE,DEBUG, "c_drawLine %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,x2,y2,col.r, col.g,col.b);
+    slog(DEBUG,DEBUG, "c_drawLine %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,x2,y2,col.r, col.g,col.b);
     drawLine(texName, x1, y1, x2, y2, col);
 }
 
@@ -309,7 +309,7 @@ void c_drawFilledBox(char *tmpStr)
     char *strColStr = strsep(&str, " \t");
     char *alphaStr  = strsep(&str, " \t");
     if(!texName || !x1Str || !y1Str || !wStr || !hStr || !strokeStr || !alphaStr){
-    	slog(TRACE,DEBUG, "c_drawFilledBox parse error : %s",str);
+    	slog(DEBUG,DEBUG, "c_drawFilledBox parse error : %s",str);
 	return;
     }
     int x1=atoi(x1Str);
@@ -321,7 +321,7 @@ void c_drawFilledBox(char *tmpStr)
     int a=atoi(alphaStr);
     hexToColor(strtol(colStr,NULL,16), &col);
     hexToColor(strtol(strColStr,NULL,16), &scol);
-    slog(TRACE,DEBUG, "c_drawFilledBox %s {%d,%d,%d,%d} s:%d {%d,%d,%d} {%d,%d,%d} a:%d",texName,x1,y1,w,h,s,
+    slog(DEBUG,DEBUG, "c_drawFilledBox %s {%d,%d,%d,%d} s:%d {%d,%d,%d} {%d,%d,%d} a:%d",texName,x1,y1,w,h,s,
 	col.r,col.g,col.b, scol.r,scol.g,scol.b, a);
     drawFilledBox(texName, r, s, col, scol, a);
 }
@@ -341,7 +341,7 @@ void c_drawBox(char *str)
     int w=atoi(wStr);
     int h=atoi(hStr);
     hexToColor(strtol(colStr,NULL,16), &col);
-    slog(TRACE,DEBUG, "c_drawBox %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,w,h,col.r,col.g,col.b);
+    slog(DEBUG,DEBUG, "c_drawBox %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,w,h,col.r,col.g,col.b);
     drawBox(texName, x1, y1, w, h, col);
 }
 
@@ -366,7 +366,7 @@ void c_drawGradient(char *str)
     int hol=atoi(holStr);
     hexToColor(strtol(fcolStr,NULL,16), &fromcol);
     hexToColor(strtol(tcolStr,NULL,16), &tocol);
-    slog(TRACE,DEBUG, "c_drawGradient %s {%d,%d,%d,%d} {...}{...} %d %d",texName,x1,y1,x2,y2,!hor, hol);
+    slog(DEBUG,DEBUG, "c_drawGradient %s {%d,%d,%d,%d} {...}{...} %d %d",texName,x1,y1,x2,y2,!hor, hol);
     drawGradient(texName, r, fromcol,tocol,!hor,hol);
     renderActive(texName);
 }
@@ -428,7 +428,7 @@ c_loadImageFile(char *str)
  
    texInfo *TI = getTexture(texName);
    if(!TI) { return false; }
-   slog(TRACE,FULLDEBUG,"File : %s",fileName);
+   slog(DEBUG,FULLDEBUG,"File : %s",fileName);
    if(fileName == NULL){
       slog(LVL_QUIET,ERROR,"Wrong parameters setImageScale(name,file) (%s,%s).",TI->name,fileName);
       return false;
@@ -456,12 +456,12 @@ c_loadImageFile(char *str)
 
 void setTargetTexture(char *textureName){
     if(textureName){
-      slog(TRACE,DEBUG,"setTarget %s",textureName);
+      slog(DEBUG,DEBUG,"setTarget %s",textureName);
       texInfo *TI = getTexture(textureName);
       SDL_SetRenderTarget(ph->renderer,TI->texture);
       SDL_SetTextureBlendMode(TI->texture, SDL_BLENDMODE_BLEND);
     } else {
-      slog(TRACE,DEBUG,"setTarget NULL");
+      slog(DEBUG,DEBUG,"setTarget NULL");
       SDL_SetRenderTarget(ph->renderer,NULL);
     }
 }
@@ -481,7 +481,7 @@ void drawLine(char *textureName, int x1, int y1, int x2, int y2, SDL_Color col) 
 }
 
 void drawBox(char *textureName, int x, int y, int w, int h, SDL_Color c) {
-   slog(TRACE,DEBUG,"drawBox %s",textureName);
+   slog(DEBUG,DEBUG,"drawBox %s",textureName);
 //   texInfo *TI = getTexture(textureName);
 //   SDL_SetRenderTarget(ph->renderer,TI->texture);
    SDL_Rect r= { x, y, w, h };
@@ -502,7 +502,7 @@ void vLine(char *textureName,int x, int y, int h, SDL_Color c)
 
 void drawFilledBox(char *textureName, SDL_Rect rect, int stroke, SDL_Color col, SDL_Color strokeCol, int alpha) {
     //SDL_SetRenderDrawColor(ph->renderer,strokeCol.r,strokeCol.g,strokeCol.b,0xff);
-    slog(TRACE,DEBUG,"drawFilledBox %s Alpha:%d",textureName,alpha);
+    slog(DEBUG,DEBUG,"drawFilledBox %s Alpha:%d",textureName,alpha);
 //    texInfo *TI = getTexture(textureName);
 //    SDL_SetRenderTarget(ph->renderer,TI->texture);
     drawBox(textureName, rect.x,rect.y, rect.w, stroke, strokeCol); 		// top

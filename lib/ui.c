@@ -24,11 +24,11 @@ texInfo *getTexture(char *name){
 bool uiLoop(void *p){
     slog(DEBUG,DEBUG,"UI Loop started and waiting for events");
     //int delay=0;
-    SDL_Event event;
     char *funcName;
     const char *param;
-    SDL_zero(event);
+    SDL_Event event;
     for(;;) {
+        SDL_zero(event);
 #ifdef WAIT_EV
         int ret = SDL_WaitEvent(&event);
         ph->uiAllCount++;
@@ -64,6 +64,7 @@ bool uiLoop(void *p){
         }
         ph->uiOwnCount++;
         funcName = strdup(event.user.data1);
+        free(event.user.data1);
         // TODO : free this at the destination!!
 
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
@@ -78,9 +79,11 @@ bool uiLoop(void *p){
                   thr_func(event.user.data2);
                   break;
             case WALLY_CALL_STR:
-                  //param = strdup(event.user.data2);
-                  slog(DEBUG,DEBUG,"Threaded STR call to %s(%s)", funcName, event.user.data2);
-                  thr_func(strdup(event.user.data2));
+                  param = strdup(event.user.data2);
+                  slog(DEBUG,DEBUG,"Threaded STR call to %s(%s)", funcName, param);
+                  // ??
+                  free(event.user.data2);
+                  thr_func(param);
                   break;
             case WALLY_CALL_NULL:
                   slog(DEBUG,DEBUG,"Threaded NULL call to %s()", funcName);

@@ -38,6 +38,7 @@ config = context.config;
 
 // This is called after the startVideo or immediately if startVideo === false
 context.onVideoFinished = function(){
+  wally.destroyTexture('video');
   if(nucleus){
     log.info('Executing all js files');
     files = nucleus.scandir('.',function(f,type){

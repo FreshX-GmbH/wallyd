@@ -12,7 +12,7 @@ set(WITH_VIDEO on)
 set(WITH_SEADUK on)
 
 # We want to gently wait for events or poll agressivly (more performant)
-set(WAIT_EV on)
+set(WAIT_EV off)
 
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -D__WITH_MURMUR -std=gnu99 -g")
 
@@ -33,8 +33,10 @@ endif()
 pkg_check_modules(LIBCURL libcurl)
 
 if(WITH_SEADUK STREQUAL on)
-	set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DWITH_SEADUK -std=gnu99")
-	pkg_check_modules(LIBDUV seaduk)
+        pkg_check_modules(LIBDUV seaduk)
+        string(REPLACE " " "-I" TEMP_DUV_INC "${LIBDUV_INCLUDEDIR}")
+        set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lwallyd -L../lib -l${TEMP_DUV_LIBS}")
+        set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=gnu99 -DWITH_SEADUK -I${TEMP_DUV_INC}")
 else()
 	pkg_check_modules(LIBDUV dukluv)
 endif()

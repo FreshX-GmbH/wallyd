@@ -112,7 +112,7 @@ duk_ret_t js_readdir(duk_context *ctx) {
 int js_showTextureTestScreen(duk_context *ctx)
 {
     int ret;
-    call("screen::showTextureTestScreen",&ret,NULL);
+    callWithString("screen::showTextureTestScreen",&ret,NULL);
     return 1;
 }
 
@@ -125,7 +125,7 @@ int js_setImageScaled(duk_context *ctx)
     int ret;
     char *cs;
     asprintf(&cs,"%s %s",name,file);
-    call("screen::setImageScaled",&ret,cs);
+    callWithString("screen::setImageScaled",&ret,cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -144,7 +144,7 @@ int js_setTextUTF8(duk_context *ctx)
     int ret;
     char *cs;
     asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
-    call("screen::setTextUTF8 ",&ret,cs);
+    callWithString("screen::setTextUTF8 ",&ret,cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -163,7 +163,7 @@ int js_setText(duk_context *ctx)
     int ret;
     char *cs;
     asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
-    call("screen::setText",&ret,cs);
+    callWithString("screen::setText",&ret,cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -255,7 +255,7 @@ int js_loadFont(duk_context *ctx)
     char *cs;
     int ret;
     asprintf(&cs,"%s %s %s",name,file,size);
-    call("screen::loadFont",&ret,cs);
+    callWithString("screen::loadFont",&ret,cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -272,7 +272,7 @@ int js_createColor(duk_context *ctx)
     char *cs;
     int ret;
     asprintf(&cs,"%s %s %s",name,RGB,A);
-    call("screen::createColor",&ret,cs);
+    callWithString("screen::createColor",&ret,cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -286,7 +286,7 @@ int js_destroyTexture(duk_context *ctx)
     char *cs;
     int ret;
     asprintf(&cs,"%s",name);
-    call("screen::destroyTexture",&ret,cs);
+    callWithString("screen::destroyTexture",&ret,cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -307,7 +307,7 @@ int js_createTexture(duk_context *ctx)
     char *cs;
     int ret;
     asprintf(&cs,"%s %s %s %s %s %s %s",name,prio,x,y,w,h,col);
-    call("screen::createTexture",&ret,cs);
+    callWithString("screen::createTexture",&ret,cs);
     // TODO : make copy of the string IN the function utilizing it
     //free(cs);
     return 1;
@@ -329,7 +329,7 @@ duk_ret_t js_exec(duk_context *ctx){
    assert(str != NULL);
    cmd = strsep(&str, " \t");
    slog(DEBUG,DEBUG,"call : %s(%s)", cmd,str);
-   call(cmd,&ret,str);
+   callWithString(cmd,&ret,str);
    free(tofree);
    return 0;
 }

@@ -7,6 +7,7 @@
 #define SDLWAITTIMEOUT 2000
 
 pluginHandler *ph;
+pthread_mutex_t callMutex=PTHREAD_MUTEX_INITIALIZER;
 //
 //  Paramtyp 0 : pointer
 //           1 : string
@@ -18,6 +19,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         slog(ERROR,ERROR,"Invalid function name");
         return false;
     }
+    pthread_mutex_lock(&callMutex);
     void *params = NULL;
     char *funcName = strdup(funcNameTmp);
     ph->callCount++;   
@@ -39,7 +41,6 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
             case CALL_TYPE_STR:
                 if(paramsTmp){
                     params = strdup(paramsTmp);
-                    params = paramsTmp;
                     slog(DEBUG,DEBUG,"call( %s(%s) )",funcName,params);
                     event.type = WALLY_CALL_STR;
                 } else {
@@ -48,7 +49,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 break;
             case CALL_TYPE_PS:
                 // TODO
-                // params = paramsTmp;
+                params = paramsTmp;
                 slog(DEBUG,DEBUG,"call( %s(<PS *>) )",funcName,paramsTmp);
                 event.type = WALLY_CALL_PS;
                 break;
@@ -60,7 +61,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 break;
             case CALL_TYPE_PSA:
                 // TODO
-                // params = paramsTmp;
+                params = paramsTmp;
                 slog(DEBUG,DEBUG,"call( %s(<PSA *>) )",funcName,paramsTmp);
                 event.type = WALLY_CALL_PSA;
                 break;
@@ -95,7 +96,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         ret = (*func)(params);
         // We give up the ownership of funcName + params here
     }
-    
+    pthread_mutex_unlock(&callMutex); 
     return ret;
 }
 bool callWithData(char *funcname, void *ret, void *params){
@@ -238,8 +239,12 @@ int pluginLoader(char *path){
 }
 
 pluginHandler *pluginsInit(void){
+
+    pthread_mutex_init (&callMutex,0);
+
     ph=malloc(sizeof(pluginHandler));
     memset(ph,sizeof(pluginHandler),0);
+
     if(!ph) {
         slog(ERROR,ERROR,"Could not allocate memory. Exit");
         exit(1);
