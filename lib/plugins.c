@@ -26,53 +26,53 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
     ph->callCount++;   
     void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
     if(thr_func){
-        SDL_Event event;
+        SDL_Event *event = malloc(sizeof(SDL_Event));
         SDL_zero(event);
         switch(paramType) {
             case CALL_TYPE_PTR:
                 if(paramsTmp) {
                     params = paramsTmp;
                     slog(DEBUG,DEBUG,"call( %s(<binary>) )",funcName);
-                    event.type = WALLY_CALL_PTR;
+                    event->type = WALLY_CALL_PTR;
                 } else { 
                     slog(DEBUG,DEBUG,"call( %s(NULL) )",funcName);
-                    event.type = WALLY_CALL_NULL;
+                    event->type = WALLY_CALL_NULL;
                 }
                 break;
             case CALL_TYPE_STR:
                 if(paramsTmp){
                     params = strdup(paramsTmp);
                     slog(DEBUG,DEBUG,"call( %s(%s) )",funcName,params);
-                    event.type = WALLY_CALL_STR;
+                    event->type = WALLY_CALL_STR;
                 } else {
-                    event.type = WALLY_CALL_NULL;
+                    event->type = WALLY_CALL_NULL;
                 }
                 break;
             case CALL_TYPE_PS:
                 // TODO
                 params = paramsTmp;
                 slog(DEBUG,DEBUG,"call( %s(<PS *>) )",funcName,paramsTmp);
-                event.type = WALLY_CALL_PS;
+                event->type = WALLY_CALL_PS;
                 break;
             case CALL_TYPE_CTX:
                 // TODO
                 params = paramsTmp;
-                event.type = WALLY_CALL_CTX;
+                event->type = WALLY_CALL_CTX;
                 slog(DEBUG,DEBUG,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
                 break;
             case CALL_TYPE_PSA:
                 // TODO
                 params = paramsTmp;
                 slog(DEBUG,DEBUG,"call( %s(<PSA *>) )",funcName,paramsTmp);
-                event.type = WALLY_CALL_PSA;
+                event->type = WALLY_CALL_PSA;
                 break;
  
             default:
                 break;
         }
         // The thread loop will free(funcName);
-        event.user.data1=funcName;
-        event.user.data2=params;
+        event->user.data1=funcName;
+        event->user.data2=params;
         // We give up the ownership of funcName + params here
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
@@ -137,7 +137,10 @@ bool exportSync(const char *name, void *f){
 
 // our own try
 void wally_put_function_list(pluginHandler *_ph, const function_list_entry *funcs) {
-    if(!ph) ph=_ph;
+    if(!ph){
+        slog(ERROR,ERROR,"PH got lost! Resetting it.");
+        ph=_ph;
+    }
     const function_list_entry *ent = funcs;
     if (ent != NULL) {
         while (ent->name != NULL) {

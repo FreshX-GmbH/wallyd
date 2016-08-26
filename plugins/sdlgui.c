@@ -2,7 +2,7 @@
 
 #define PLUGIN_SCOPE "gui"
 
-pluginHandler *ph;
+extern pluginHandler *ph;
 
 void drawLine(char *textureName, int x1, int y1, int x2, int y2, SDL_Color col);
 void drawGradient(char *textureName, SDL_Rect rect,const SDL_Color from, SDL_Color to, bool vertical,bool hollow);

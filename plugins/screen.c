@@ -11,7 +11,7 @@
 #define WALLY_screen
 
 duk_context *ctx = NULL;
-pluginHandler *ph;
+extern pluginHandler *ph;
 
 typedef struct screenPlugin
 {

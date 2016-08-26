@@ -981,6 +981,7 @@ static void stream_close(VideoState *is)
         sws_freeContext(is->img_convert_ctx);
 #endif
     av_free(is);
+    is=NULL;
 }
 
 #ifndef WALLY_PLUGIN

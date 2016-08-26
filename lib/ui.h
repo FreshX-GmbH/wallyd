@@ -51,10 +51,10 @@ typedef struct {
 #define LOGTEXTURE 3 
 #define TEMPTEXTURE MAXTEXTURES-1
 
-extern bool showTexture(char *textureNum);
-extern bool hideTexture(char *textureNum);
+extern int showTexture(char *textureNum);
+extern int hideTexture(char *textureNum);
 extern void renderActive(char *);
-extern void renderActiveEx(char *);
+extern int renderActiveEx(char *);
 extern void renderToTex(int textureNum);
 extern void render(SDL_Texture *texture, SDL_Rect *rect);
 extern int setTexture(texInfo *TI, SDL_Texture *texture, SDL_Rect *origRect);
@@ -62,19 +62,19 @@ extern int copyToTexture(texInfo *TI, SDL_Texture *texture, SDL_Rect *origRect);
 extern int scaleToTexture(texInfo *TI, SDL_Texture *texture, SDL_Rect *origRect);
 void renderActive();
 bool sdlInit(void);
-bool uiLoop(void *ph);
+bool uiLoop(void);
 void renderTexture(SDL_Texture *t, SDL_Rect *mr);
 void renderTexNum(int i);
-bool createTexture(char *);
-bool createVideoTexture(char *);
-bool destroyTexture(char *);
-int showTextureTestScreen(void *);
-bool loadFont(char *);
+int createTexture(char *);
+int createVideoTexture(char *);
+int destroyTexture(char *);
+int showTextureTestScreen(char *);
+int loadFont(char *);
 int addToTexture(texInfo *TI, SDL_Texture *src, SDL_Rect *origRect);
 void hexToColor(int color, Color *c);
 texInfo *getTexture(char *name);
 void **getTextureNamesByPrio(unsigned int *);
-void resetScreen(void);
+int resetScreen(char *);
 
 //static const Uint32
 //red       = 0xff0000ff,

@@ -15,7 +15,7 @@
 
 duk_context *ctx = NULL;
 
-pluginHandler *ph;
+extern pluginHandler *ph;
 
 extern int setDebug(int lvl);
 extern int showTextureTestScreen(char *);
@@ -334,7 +334,6 @@ duk_ret_t js_exec(duk_context *ctx){
    return 0;
 }
 
-
 duk_ret_t evalScript(char *str){
     duk_push_string(ctx, str);
     if (duk_peval(ctx) != 0) {
@@ -342,7 +341,7 @@ duk_ret_t evalScript(char *str){
     } else {
         slog(DEBUG,DEBUG,"result is: %s", duk_safe_to_string(ctx, -1));
     }
-    return 0;
+    return 1;
 }
 
 char *cleanupPlugin(void *p){

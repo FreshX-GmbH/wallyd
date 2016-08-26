@@ -20,16 +20,38 @@ texInfo *getTexture(char *name){
    return t;
 }
 
+int eventFilter(void *userdata, SDL_Event *event){
+    if(event->type < SDL_USEREVENT ){
+        slog(DEBUG,FULLDEBUG,"Ignoring event %d",event->type);
+        return 0; 
+    }
+    if(event->type == SDL_USEREVENT+2 ){
+        slog(DEBUG,DEBUG,"Caught a ff video quit event->");
+        return 0;
+    }
+    if(event->user.data1 == NULL){
+        slog(LVL_INFO,WARN,"Ignoring event, no function given");
+        return 0; 
+    }
+    if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
+        slog(LVL_INFO,WARN,"Intercepted an orphaned refresh timer event");
+        return 0; 
+    }
+    return 1;
+}
+
 // TODO : Allocate a SDL_Event Type dynamically
-bool uiLoop(void *p){
-    slog(DEBUG,DEBUG,"UI Loop started and waiting for events");
+bool uiLoop(void){
+    slog(DEBUG,DEBUG,"Setting up SDL event filter");
+    SDL_SetEventFilter(eventFilter,NULL);
     //int delay=0;
     char *funcName;
     const char *param;
-    SDL_Event event;
+    SDL_Event *event = malloc(sizeof(SDL_Event*));
+    slog(DEBUG,DEBUG,"UI Loop started and waiting for events (%p)",&event);
     for(;;) {
 #ifdef WAIT_EV
-        int ret = SDL_WaitEventTimeout(&event,3000);
+        int ret = SDL_WaitEventTimeout(event,3000);
         ph->uiAllCount++;
         if(ret == 0){
             slog(ERROR,ERROR,"Error while wating for events : %s",SDL_GetError());
@@ -38,10 +60,9 @@ bool uiLoop(void *p){
             continue;
         }
 #else
-        int ret = SDL_PollEvent(&event);
+        int ret = SDL_PollEvent(event);
         ph->uiAllCount++;
         if(ret == 0){
-            SDL_zero(event);
             SDL_Delay(ph->eventDelay);
             ph->uiEventTimeout++;
             if(ph->eventDelay < 100){
@@ -51,40 +72,28 @@ bool uiLoop(void *p){
         }
         ph->eventDelay=5;
 #endif
-        if(event.type < SDL_USEREVENT ){
-            slog(DEBUG,FULLDEBUG,"Ignoring event %d",event.type);
-            continue; 
-        }
-        if(event.type == SDL_USEREVENT+2 ){
-            slog(DEBUG,DEBUG,"Caught a ff video quit event.");
-            continue;
-        }
-        if(event.user.data1 == NULL){
-            slog(LVL_INFO,WARN,"Ignoring event, no function given");
-            continue; 
-        }
         ph->uiOwnCount++;
-        funcName = strdup(event.user.data1);
+        funcName = strdup(event->user.data1);
         // TODO : free this at the destination!!
-        //if(event.user.data1)
-        //   free(event.user.data1);
+        //if(event->user.data1)
+        //   free(event->user.data1);
 
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
         if(!thr_func){
-            slog(LVL_INFO,WARN,"Threaded function %s not defined (%d).",funcName,event.type);
+            slog(LVL_INFO,WARN,"Threaded function %s not defined (%d).",funcName,event->type);
             continue;
         } 
  
-        switch(event.type){
+        switch(event->type){
             case WALLY_CALL_PTR:
-                  //slog(DEBUG,DEBUG,"Threaded PTR call to %s(0x%x)", funcName, event.user.data2);
-                  thr_func(event.user.data2);
+                  slog(DEBUG,DEBUG,"Threaded PTR call to %s(0x%x)", funcName, event->user.data2);
+                  thr_func(event->user.data2);
                   break;
             case WALLY_CALL_STR:
-                  param = strdup(event.user.data2);
+                  param = strdup(event->user.data2);
                   slog(DEBUG,DEBUG,"Threaded STR call to %s(%s)", funcName, param);
                   // ??
-                  free(event.user.data2);
+                  free(event->user.data2);
                   thr_func(param);
                   break;
             case WALLY_CALL_NULL:
@@ -92,12 +101,12 @@ bool uiLoop(void *p){
                   thr_func(NULL);
                   break;
             case WALLY_CALL_PS:
-                  slog(DEBUG,DEBUG,"Threaded PS call to %s(0x%x)", funcName, event.user.data2);
-                  thr_func(event.user.data2);
+                  slog(DEBUG,DEBUG,"Threaded PS call to %s(0x%x)", funcName, event->user.data2);
+                  thr_func(event->user.data2);
                   break;
             case WALLY_CALL_CTX:
-                  slog(DEBUG,DEBUG,"Threaded CTX call to %s(0x%x)", funcName, event.user.data2);
-                  thr_func(event.user.data2);
+                  slog(DEBUG,DEBUG,"Threaded CTX call to %s(0x%x)", funcName, event->user.data2);
+                  thr_func(event->user.data2);
                   break;
             default:
                   slog(ERROR,ERROR,"Unknown threaded call event");
@@ -143,7 +152,7 @@ void **getTextureNamesByPrio(unsigned int *items){
 }
 
 // Displays all textures in different colors
-int showTextureTestScreen(void *p){
+int showTextureTestScreen(char *p){
 //   unsigned int i=0;
 //   int ret;
    texInfo *TI = ph->tempTexture;
@@ -197,7 +206,7 @@ int showTextureTestScreen(void *p){
    return true;
 }
 
-void renderActiveEx(char *startTex)
+int renderActiveEx(char *startTex)
 {
    unsigned int i=0;
    texInfo *TI,*TempTI;
@@ -364,15 +373,15 @@ int createTextureEx(char *strTmp,bool isVideo){
    return true;
 }
 
-bool createVideoTexture(char *a){
+int createVideoTexture(char *a){
    return createTextureEx(a,true);
 }
 
-bool createTexture(char *a){
+int createTexture(char *a){
    return createTextureEx(a,false);
 }
 
-bool setTextureActive(char *s,bool active){
+int setTextureActive(char *s,bool active){
    char *name = strtok(s," ");
    if(!name){
       slog(LVL_INFO,WARN,"Wrong parameters for hideTexture(name) : (%s)",s);
@@ -387,14 +396,14 @@ bool setTextureActive(char *s,bool active){
    return true;
 }
 
-bool hideTexture(char *a){
+int hideTexture(char *a){
    return setTextureActive(a,false);
 }
-bool showTexture(char *a){
+int showTexture(char *a){
    return setTextureActive(a,true);
 }
 
-bool destroyTexture(char *s){
+int destroyTexture(char *s){
    unsigned int items = 0;
    texInfo *TI;
    if(!s){
@@ -661,7 +670,7 @@ bool closeFont(char *name){
    return true;
 }
 
-bool loadFont(char *strTmp){
+int loadFont(char *strTmp){
    char *str=strdup(strTmp);
 
    char *name = strtok(str, " ");
@@ -698,7 +707,7 @@ void hexToColor(int color, Color *c)
 }
 
 // Create a new window and a new renderer and switch over
-void resetScreen(void){
+int resetScreen(char *p){
    int w=0,h=0;
    SDL_Window *window;
    if(ph->broadcomInit == true){
@@ -717,14 +726,14 @@ void resetScreen(void){
    }
    if ( window == NULL ){
 	 slog(ERROR,ERROR, "Failed to get/create window : %s ", SDL_GetError());
-	 return;
+	 return false;
    }
    SDL_GetWindowSize(window, &w, &h);
    slog(DEBUG,DEBUG,"Autodetermined new display resolution : %dx%d",w, h);
    SDL_Renderer *renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC );
    if ( renderer == NULL ){
 	 slog(ERROR,ERROR, "Failed to get/create renderer : %s ", SDL_GetError());
-	 return;
+	 return false;
    }
    SDL_Window *oldw = ph->window;
    SDL_Renderer *oldr = ph->renderer;

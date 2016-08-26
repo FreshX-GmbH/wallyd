@@ -2,7 +2,7 @@
 
 #define PLUGIN_SCOPE "gui"
 
-pluginHandler *ph;
+extern pluginHandler *ph;
 
 void drawLine(char *textureName, int x1, int y1, int x2, int y2, SDL_Color col) {
     SDL_SetRenderDrawColor(ph->renderer,col.r,col.g,col.b,0xff);

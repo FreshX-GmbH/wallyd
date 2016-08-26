@@ -15,6 +15,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "nanosvg/stb_image_write.h"
 
-pluginHandler *ph;
+extern pluginHandler *ph;
 
 #endif

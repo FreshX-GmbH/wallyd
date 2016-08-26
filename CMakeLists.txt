@@ -30,7 +30,6 @@ if(WITH_VIDEO STREQUAL on)
 	pkg_check_modules(LIBAVFORMAT libavformat)
 	pkg_check_modules(LIBSWSCALE libswscale)
 endif()
-pkg_check_modules(LIBCURL libcurl)
 
 if(WITH_SEADUK STREQUAL on)
         pkg_check_modules(LIBDUV seaduk)
@@ -77,6 +76,7 @@ add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(plugins)
 
+
 set(PROJECT_DESCRIPTION "Wally Daemon")
 
 
@@ -86,6 +86,5 @@ set(PREFSDIR ${SYSCONFDIR}/${CMAKE_PROJECT_NAME}/wallyd.d)
 configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/etc/wallyd.conf" "${CMAKE_CURRENT_SOURCE_DIR}/wallyd.conf")
 configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/lib/autoversion.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/lib/autoversion.h" )
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/wallyd.conf" DESTINATION ${SYSCONFDIR})
-#install(FILES etc/wallyd.startup.js DESTINATION ${SYSCONFDIR})
 install(DIRECTORY etc/wallyd.d DESTINATION ${SYSCONFDIR})
 

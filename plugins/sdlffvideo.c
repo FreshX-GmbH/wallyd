@@ -13,6 +13,7 @@ int finishCallback;
 const duk_function_list_entry videoMethods[];
 
 int video_refresh_timer(VideoState *is){
+    if(!is) return 0;
     video_refresh(is);
     is->refresh = 0;
     return 0;
@@ -137,13 +138,13 @@ char *cleanupPlugin(void *p){
    return NULL;
 }
 
-char *resetVideo(char *p){
+int resetVideo(char *p){
    cleanupPlugin(p);
    //if(initVariables() == false){
    //   slog(LVL_INFO,WARN,"Could not (re)init "PLUGIN_SCOPE);
    //  return NULL;
    //}
-   return "true";
+   return true;
 }
 
 int js_play(duk_context *ctx)

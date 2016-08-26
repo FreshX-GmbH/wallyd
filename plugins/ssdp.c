@@ -3,7 +3,7 @@
 
 #define PLUGIN_SCOPE "ssdp"
 
-pluginHandler *ph;
+extern pluginHandler *ph;
 int port = 1900;
 
 // Parse the buffer line by line, find the ID and the URL

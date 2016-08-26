@@ -110,17 +110,17 @@ struct function_list_entry {
         int nargs;
 };
 
-int pluginLoader(char *path);
+int pluginLoader(char *);
 bool exportSync(const char *, void *);
 bool exportThreaded(const char *, void *);
-bool callWithData(char *name, void *ret, void *params);
-bool callWithString(char *name, void *ret, char *paramString);
-bool call(char *name, void *ret, char *paramString);
-bool callNonBlocking(char *funcname, int *ret, void *params);
-int sendWallyCommand(char *cmd, char *log);
+bool callWithData(char *, void *, void *);
+bool callWithString(char *, void *, char *);
+bool call(char *, void *, char *);
+bool callNonBlocking(char *, int *, void *);
+int sendWallyCommand(char *, char *);
 int cleanupPlugins(void);
 bool callEx(char *, void *, void *,int ,bool );
-void export_function_list(char *scope, const function_list_entry *funcs);
-void wally_put_function_list(pluginHandler *ph, const function_list_entry *);
+void export_function_list(char *, const function_list_entry *);
+void wally_put_function_list(pluginHandler *, const function_list_entry *);
 
 #endif

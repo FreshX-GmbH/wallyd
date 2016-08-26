@@ -4,7 +4,7 @@
 #include "gpio.h"
 
 duk_context *ctx = NULL;
-pluginHandler *ph;
+extern pluginHandler *ph;
 
 typedef struct gpioPluginStructure
 {

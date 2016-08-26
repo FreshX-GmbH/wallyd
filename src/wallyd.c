@@ -13,6 +13,7 @@ pthread_t uv_thr;
 int gargc;
 char **gargv;
 const char *startupScript = WALLYD_CONFDIR"/wallyd.d";
+const char *pluginFolder  = INSTALL_PREFIX"/lib/wallyd";
 
 int main(int argc, char *argv[]) 
 {
@@ -24,8 +25,8 @@ int main(int argc, char *argv[])
     pluginsInit();
     utilInit(DEFAULT_LOG_LEVEL);
 
-    slog(LVL_INFO,INFO,"Wally Image Server R%u (Build %u) starting.",BUILD_NUMBER,BUILD_DATE);
-    slog(0,ERROR,"Current Thread : %p / PH : %p",pthread_self(),ph);
+    slog(INFO,INFO,"Wally Image Server R%u (Build %u) starting.",BUILD_NUMBER,BUILD_DATE);
+    slog(DEBUG,ERROR,"Current Thread : %p / PH : %p",pthread_self(),ph);
 
     // assing signal handlers for ctrl+c
     setupSignalHandler();
@@ -64,13 +65,9 @@ int main(int argc, char *argv[])
     if(ht_get_simple(ph->configMap,"plugins") != NULL) {
         callWithString("sys::loadPlugins",&ret,ht_get_simple(ph->configMap,"plugins"));
     } else {
-        char *pdir;
-        asprintf(&pdir,"%s/plugins",ph->basedir=ht_get_simple(ph->configMap,"basedir"));
-        callWithString("sys::loadPlugins",&ret,pdir);
-        free(pdir);
+        callWithString("sys::loadPlugins",&ret,pluginFolder);
     }
 
-    ht_dumpkeys(ph->configMap,"Config : ");
     ht_dumpkeys(ph->functions,"Exported sync commands : ");
     ht_dumpkeys(ph->thr_functions,"Exported async commands : ");
 
@@ -80,25 +77,25 @@ int main(int argc, char *argv[])
         slog(LVL_INFO,INFO,"Old FIFO found and removed.");
     }
 
-  slog(DEBUG,DEBUG,"Seaduk initializing, ctx is at 0x%x.",ph->ctx);
-  gargc = argc;
-  gargv = argv;
-  if(argc < 2){
+   slog(DEBUG,DEBUG,"Seaduk initializing, ctx is at 0x%x.",ph->ctx);
+   gargc = argc;
+   gargv = argv;
+   if(argc < 2){
       const char *nargv[2];
       nargv[0] = argv[0];
       nargv[1] = startupScript;
       argc++;
       gargv = (char **) nargv;
-  }
-  if(pthread_create(&uv_thr, NULL, &duvThread, ph->ctx) != 0){
-    slog(ERROR,ERROR,"Failed to create seaduk thread!");
-  }
+   }
+   if(pthread_create(&uv_thr, NULL, &duvThread, ph->ctx) != 0){
+      slog(ERROR,ERROR,"Failed to create seaduk thread!");
+   }
 
-  // Loop the SDL stuff in the main thread
-  uiLoop(NULL);
+   // Loop the SDL stuff in the main thread
+   uiLoop();
 
-  uv_loop_close(&loop);
-  duk_destroy_heap(ph->ctx);
+   uv_loop_close(&loop);
+   duk_destroy_heap(ph->ctx);
 }
 
 void allocBuffer(uv_handle_t* handle, size_t size, uv_buf_t* buf) {

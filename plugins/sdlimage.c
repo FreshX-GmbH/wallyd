@@ -4,7 +4,7 @@
 
 #define renderTex(i) setTexture(MAINTEXTURE,ph->textures[i],NULL);
 
-pluginHandler *ph;
+extern pluginHandler *ph;
 char *logFile=NULL;
 SDL_Color textColor = LOGFONT_COLOR;
 SDL_Color stampColor = STAMPFONT_COLOR;
@@ -149,12 +149,12 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
       case TEXT_UTF8:
          surf = RENDERUTF8( font, text, *c );
          break;
-      case TEXT_UNICODE:
-         surf = RENDERUNICODE( font, text, *c );
-         break;
-      case TEXT_GLYPH:
-         surf = RENDERGLYPH( font, text, *c );
-         break;
+//      case TEXT_UNICODE:
+//         surf = RENDERUNICODE( font, text, *c );
+//         break;
+//      case TEXT_GLYPH:
+//         surf = RENDERGLYPH( font, text, *c );
+//         break;
       default: 
          surf = RENDERTEXT( font, text, *c );
          break;

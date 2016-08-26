@@ -158,7 +158,7 @@ enum {
 /* Since we only have one decoding thread, the Big Struct can be global in case we need it. */
 VideoState *is;
 
-pluginHandler *ph;
+extern pluginHandler *ph;
 VideoState *is;
 bool pluginMode;
 static int global_readframe_cntout;
