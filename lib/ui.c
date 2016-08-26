@@ -26,7 +26,7 @@ int eventFilter(void *userdata, SDL_Event *event){
         return 0; 
     }
     if(event->type == SDL_USEREVENT+2 ){
-        slog(DEBUG,DEBUG,"Caught a ff video quit event->");
+        slog(DEBUG,DEBUG,"Caught a ff video quit event.");
         return 0;
     }
     if(event->user.data1 == NULL){
@@ -40,18 +40,18 @@ int eventFilter(void *userdata, SDL_Event *event){
     return 1;
 }
 
-// TODO : Allocate a SDL_Event Type dynamically
 bool uiLoop(void){
     slog(DEBUG,DEBUG,"Setting up SDL event filter");
     SDL_SetEventFilter(eventFilter,NULL);
     //int delay=0;
     char *funcName;
     const char *param;
-    SDL_Event *event = malloc(sizeof(SDL_Event*));
+    SDL_Event event = { 0 };
     slog(DEBUG,DEBUG,"UI Loop started and waiting for events (%p)",&event);
     for(;;) {
+	SDL_zero(event);
 #ifdef WAIT_EV
-        int ret = SDL_WaitEventTimeout(event,3000);
+        int ret = SDL_WaitEventTimeout(&event,3000);
         ph->uiAllCount++;
         if(ret == 0){
             slog(ERROR,ERROR,"Error while wating for events : %s",SDL_GetError());
@@ -60,7 +60,7 @@ bool uiLoop(void){
             continue;
         }
 #else
-        int ret = SDL_PollEvent(event);
+        int ret = SDL_PollEvent(&event);
         ph->uiAllCount++;
         if(ret == 0){
             SDL_Delay(ph->eventDelay);
@@ -73,27 +73,27 @@ bool uiLoop(void){
         ph->eventDelay=5;
 #endif
         ph->uiOwnCount++;
-        funcName = strdup(event->user.data1);
+        funcName = strdup(event.user.data1);
         // TODO : free this at the destination!!
-        //if(event->user.data1)
-        //   free(event->user.data1);
+        //if(event.user.data1)
+        //   free(event.user.data1);
 
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
         if(!thr_func){
-            slog(LVL_INFO,WARN,"Threaded function %s not defined (%d).",funcName,event->type);
+            slog(LVL_INFO,WARN,"Threaded function %s not defined (%d).",funcName,event.type);
             continue;
         } 
  
-        switch(event->type){
+        switch(event.type){
             case WALLY_CALL_PTR:
-                  slog(DEBUG,DEBUG,"Threaded PTR call to %s(0x%x)", funcName, event->user.data2);
-                  thr_func(event->user.data2);
+                  slog(DEBUG,DEBUG,"Threaded PTR call to %s(0x%x)", funcName, event.user.data2);
+                  thr_func(event.user.data2);
                   break;
             case WALLY_CALL_STR:
-                  param = strdup(event->user.data2);
+                  param = strdup(event.user.data2);
                   slog(DEBUG,DEBUG,"Threaded STR call to %s(%s)", funcName, param);
                   // ??
-                  free(event->user.data2);
+                  free(event.user.data2);
                   thr_func(param);
                   break;
             case WALLY_CALL_NULL:
@@ -101,12 +101,12 @@ bool uiLoop(void){
                   thr_func(NULL);
                   break;
             case WALLY_CALL_PS:
-                  slog(DEBUG,DEBUG,"Threaded PS call to %s(0x%x)", funcName, event->user.data2);
-                  thr_func(event->user.data2);
+                  slog(DEBUG,DEBUG,"Threaded PS call to %s(0x%x)", funcName, event.user.data2);
+                  thr_func(event.user.data2);
                   break;
             case WALLY_CALL_CTX:
-                  slog(DEBUG,DEBUG,"Threaded CTX call to %s(0x%x)", funcName, event->user.data2);
-                  thr_func(event->user.data2);
+                  slog(DEBUG,DEBUG,"Threaded CTX call to %s(0x%x)", funcName, event.user.data2);
+                  thr_func(event.user.data2);
                   break;
             default:
                   slog(ERROR,ERROR,"Unknown threaded call event");
