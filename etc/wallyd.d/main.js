@@ -30,7 +30,7 @@ context = {
         logo    : homedir+'/images/wally1920x1080.png',
         video   : homedir+'/images/WallyStart.mp4',
         testScreen: false,
-        startVideo : true,
+        startVideo : false,
     },
     p:p
 };
@@ -40,7 +40,7 @@ context = {
 
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
-  wally.evalFile('texapps/demo.js');
+  wally.evalFile(config.homedir+'/texapps/demo.js');
 //  screen.log('Initializing texApps ...');
 //  for (var t in textures) {
 //    log.info('Running texApp : ',t);

@@ -7,7 +7,7 @@ else()
 endif()
 
 string(REPLACE ";" " -l" TEMP_DUV_LIBS "${LIBDUV_LIBRARIES}")
-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -llibwallyd -L../lib -l${TEMP_DUV_LIBS}")
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -L../lib -l${TEMP_DUV_LIBS}")
 
 add_library(texture MODULE texture.c)
 add_library(sdlimage MODULE sdlimage.c)

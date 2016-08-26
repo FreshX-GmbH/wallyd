@@ -181,8 +181,4 @@ int our_get_buffer(struct AVCodecContext *c, AVFrame *pic);
 //int AudioResampling(AVCodecContext * audio_dec_ctx, AVFrame * pAudioDecodeFrame, int out_sample_fmt,
 //                    int out_channels, int out_sample_rate, uint8_t* out_buf);
 
-#ifdef DMALLOC
-#include "dmalloc.h"
-#endif
-
 #endif

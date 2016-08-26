@@ -198,7 +198,7 @@ int createColor(char *strTmp){
       slog(DEBUG,DEBUG,"Wrong parameter createColor(name FFFFFF FF) : %s",str);
       return false;
    }
-   Color *c=malloc(sizeof(Color *));
+   Color *c=malloc(sizeof(Color));
    hexToColor(col,c);
    c->a = alpha;
    slog(DEBUG,DEBUG,"Creating new color %s={%d,%d,%d} alpha = %d",name,c->r,c->g,c->b,c->a);

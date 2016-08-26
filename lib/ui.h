@@ -1,6 +1,9 @@
 #ifndef WALLY_UI_H
 #define WALLY_UI_H
 
+#define _GNU_SOURCE         /* See feature_test_macros(7) */
+#include <stdio.h>
+
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>

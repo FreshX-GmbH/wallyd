@@ -413,7 +413,7 @@ int destroyTexture(char *s){
    char *name = strtok(s, " ");
    TI = getTexture(name);
    if(!TI) {
-      slog(ERROR,ERROR,"Texture %s not found.",name);
+      slog(WARN,WARN,"Texture %s not found.",name);
       return false;
    }
    ht_remove_simple(ph->baseTextures, name);
