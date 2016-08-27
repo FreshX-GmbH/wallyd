@@ -316,7 +316,7 @@ void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
         switch(flag) 
         {
             case TRACE:
-                strncpy(color, CLR_NORMAL, sizeof(color));
+                strncpy(color, CLR_CYAN, sizeof(color));
                 strncpy(alarm, "TRACE", sizeof(alarm));
                 break;
             case DEBUG:

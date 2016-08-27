@@ -126,7 +126,7 @@ int renderLog(char *strTmp){
 
 bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fontName, char *colorName, int textType)
 {
-   texInfo *TI = getTexture(strtok(name, " "));
+   texInfo *TI = getTexture(name);
    if(!TI) { return false; }
 
    SDL_Color *c = ht_get_simple(ph->colors,colorName);
@@ -225,9 +225,9 @@ int clearTexture(char *str){
    slog(DEBUG,DEBUG,"Clearing texture %s.",str);
    return fillTexture(getTexture(strtok(str, " ")),true);
 }
-int clearTextureNoPaint(char *str){
-   slog(DEBUG,DEBUG,"Clearing texture %s.",str);
-   return fillTexture(getTexture(strtok(str, " ")),false);
+int clearTextureNoPaint(char *name){
+   slog(DEBUG,DEBUG,"Clearing texture %s.",name);
+   return fillTexture(getTexture(name),false);
 }
 
 int waitForTexture(char *str){

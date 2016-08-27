@@ -126,15 +126,15 @@ duk_ret_t js_sys_toString(duk_context *ctx)
    return 1;
 }
 
-duk_ret_t js_log(duk_context *ctx)
-{
+//duk_ret_t js_log(duk_context *ctx)
+//{
  //  int num = 0;
  //  char *elem=NULL;
-   slog(DEBUG,DEBUG,"Found %d log elements",duk_get_top(ctx));
-   for(int i = 0 ; i < duk_get_top(ctx); i++){
-   }
-    return 0;
-}
+//   slog(DEBUG,DEBUG,"Found %d log elements",duk_get_top(ctx));
+//   for(int i = 0 ; i < duk_get_top(ctx); i++){
+//   }
+//    return 0;
+//}
 
 
 duk_ret_t js_sys_info(duk_context *ctx)
@@ -149,7 +149,7 @@ duk_ret_t js_sys_info(duk_context *ctx)
 
 const duk_function_list_entry sysMethods[] = {
     { "info",       js_sys_info,      0   },
-    { "log",        js_log,  DUK_VARARGS  },
+//    { "log",        js_log,  DUK_VARARGS  },
     { "toString",   js_sys_toString,  0   },
     { NULL,    NULL,            0 }
 };

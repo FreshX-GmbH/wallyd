@@ -64,7 +64,6 @@ extern "C" {
 #define CLR_WHITE    "\x1B[37m"
 #define CLR_RESET    "\033[0m"
 
-
 /* Flags */
 typedef struct {
     const char* fname;

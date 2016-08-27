@@ -78,7 +78,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         SDL_PushEvent(&event);
         if(waitThread == true){
             // Enable the Mutex code for synced function calls
-            slog(DEBUG,DEBUG,"Wait %d ms until %s has finished.",SDLWAITTIMEOUT,funcName);
+            slog(TRACE,DEBUG,"Wait %d ms until %s has finished.",SDLWAITTIMEOUT,funcName);
             if(SDL_MUTEX_TIMEDOUT == 
                     SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,SDLWAITTIMEOUT))
                 {

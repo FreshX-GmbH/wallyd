@@ -150,6 +150,7 @@ function renderScreen(context, tree, screen, data)
   
     var end = new Date().getTime()-start;
     log.debug({'time': end /1000 });
+//    return end;
 //    log.debug('Wallaby Screen has max size '+maxWidth+'x'+maxHeight+' Scaling by '+xScale+'x'+yScale+' Relocating by '+rX+'/'+rY);
 }
 

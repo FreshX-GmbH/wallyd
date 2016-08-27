@@ -207,7 +207,7 @@ int js_drawText(duk_context *ctx){
     const int x1 = duk_require_int(ctx, 1);
     const int y1 = duk_require_int(ctx, 2);
     const char *font = duk_require_string(ctx, 3);
-    const char *color = itoa(duk_require_int(ctx, 4));
+    int color = duk_require_int(ctx, 4);
     const char *text = duk_require_string(ctx, 5);
     asprintf(&callStr, "%s %d %d %s %x %s",texName,x1,y1,font,color,text);
     callWithString("gui::drawText",&ret,callStr);

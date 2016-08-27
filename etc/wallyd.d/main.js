@@ -11,6 +11,7 @@ if(nucleus){
 	var uv    = nucleus.uv;
 	var extra = nucleus.dofile('modules/extra.js');
 	var fs    = nucleus.dofile('modules/fs.js');
+	var extra = nucleus.dofile('modules/extra.js');
 	log.info('Seaduk modules initialized');
         p(nucleus.envkeys());
 } else {
@@ -40,7 +41,11 @@ context = {
 
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
-  wally.evalFile(config.homedir+'/texapps/demo.js');
+  try {
+  	wally.evalFile(config.homedir+'/texapps/demo.js');
+  } catch(err) {
+	log.error('ERROR in demo.js : '+err);
+  }
 //  screen.log('Initializing texApps ...');
 //  for (var t in textures) {
 //    log.info('Running texApp : ',t);
@@ -53,7 +58,19 @@ context.onVideoFinished = function(){
   p(context);
 };
 
-context.setup = nucleus.dofile('defaults.js');
-//context.ssdp  = nucleus.dofile('ssdp.js');
-//context.exec  = nucleus.dofile('execserver.js');
+try{
+	context.setup = nucleus.dofile('defaults.js');
+} catch(e1) {
+	log.error('ERROR in defaults : '+e1);
+}
+try{
+	context.ssdp  = nucleus.dofile('ssdp.js');
+} catch(e2) {
+	log.error('ERROR in ssdp : '+e2);
+}
+try{
+	context.exec  = nucleus.dofile('execserver.js');
+} catch(e3) {
+	log.error('ERROR in execserver : '+e3);
+}
 p(context);

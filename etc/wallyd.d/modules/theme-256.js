@@ -24,8 +24,11 @@
   pointer:   "38;5;124", // red
 
   info:      "38;5;40",  // bright green
+  "info ":   "38;5;40",  // bright green
   warn:      "38;5;202", // orange
+  "warn ":   "38;5;202", // orange
   debug:     "38;5;27",  // blue
+  trace:     "38;5;69",  // teal
 
   error:     "38;5;196", // bright red
   success:   "38;5;120;48;5;22",  // bright green

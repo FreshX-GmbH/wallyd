@@ -48,6 +48,12 @@ static int js_setAutoRender(duk_context *ctx) {
    return 0;
 }
 
+static int js_getrss(duk_context *ctx) {
+	int rss=getCurrentRSS();
+	duk_push_int(ctx,rss);
+	return 1;
+}
+
 static int js_readfile(duk_context *ctx) {
 	const char *filename = duk_to_string(ctx, 0);
 	FILE *f = NULL;
@@ -173,13 +179,11 @@ int js_log(duk_context *ctx)
 {
     // screen::setText bauch stampColor stampfont 20 0 Wally TV Test Screen
     int n = duk_get_top(ctx);
-    const char *text = duk_to_string(ctx,0);
+    const char *text = strdup(duk_to_string(ctx,0));
     int ret;
-//    char *cs = strdup(text);
-///    asprintf(&cs,"%s",text);
     callWithString("screen::log",&ret,text);
-    // TODO : make copy of the string IN the function utilizing it, not here
- //   free(cs);
+    // TODO : free
+    //free(text);
     return 1;
 }
   
@@ -192,12 +196,15 @@ int js_log(duk_context *ctx)
 #define DUK_PUSH_PROP_DOUBLE(a,b) duk_push_number(ctx, b);duk_put_prop_string(ctx, obj_idx, a);
 duk_ret_t js_getConfig(duk_context *ctx)
 {
+   time_t t;
+   time(&t);
    duk_idx_t obj_idx = duk_push_object(ctx);
    DUK_PUSH_PROP_INT("release",BUILD_NUMBER);
    DUK_PUSH_PROP_STRING("builddate",BUILD_DATE);
    DUK_PUSH_PROP_INT("debug",ph->loglevel);
    DUK_PUSH_PROP_INT("width",ph->width);
    DUK_PUSH_PROP_INT("height",ph->height);
+   DUK_PUSH_PROP_INT("uptime",(int)t)
    DUK_PUSH_PROP_STRING("basedir",ph->basedir);
    DUK_PUSH_PROP_STRING("location",ph->location);
    DUK_PUSH_PROP_STRING("uuid",ph->uuid);
@@ -379,6 +386,7 @@ const duk_function_list_entry wallyMethods[] = {
     { "exec",                 js_exec, 1 },
     { "render",               js_render, 1 },
     { "setAutoRender",        js_setAutoRender, 1 },
+    { "getrss",		      js_getrss, 0},
     { NULL,                   NULL, 0 }
 };
 

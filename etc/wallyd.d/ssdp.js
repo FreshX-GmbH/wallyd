@@ -4,6 +4,7 @@ var createClient = require('modules/net').createClient;
 var httpCodec = require('modules/http-codec');
 var decoder = httpCodec.decoder;
 var uv = require('uv');
+var config = context.config;
 
 var discovery =true;
 
@@ -20,7 +21,7 @@ server.broadcast(true);
 server.send(broadcastAddress, broadcastPort, broadcastString , function (err) {
   if (err) {throw err;}
   context.screen.log('Scanning for next wallaby server ...');
-  print('SSDP Packet sent. Waiting for response');
+  log.info('SSDP Packet sent. Waiting for response');
   server.readStart(function (err, chunk) {
     if (err) {throw err;}
     var header = {};
@@ -33,7 +34,7 @@ server.send(broadcastAddress, broadcastPort, broadcastString , function (err) {
     }
     if(header.ST === searchST && header.LOCATION){
 	  location = header.LOCATION;
-	  print('Found location : '+location+', stopping SSDP discovery');
+	  log.debug('Found location : '+location+', stopping SSDP discovery');
 	  discovery = false;
 	  server.readStop();
     }
@@ -50,7 +51,7 @@ timer1.start(1000, 2000, function () {
   }
   server.send(broadcastAddress, broadcastPort, broadcastString , function (err) {
     if(err) {throw err;}
-    print('Sent ssdp package');
+    log.info('Sent ssdp package');
   });
 });
 
@@ -60,16 +61,17 @@ function registerClient(location){
   var port = parseInt(temp.split(/:/) ? temp.split(/:/)[1].replace(/\/.*|\&.*|\?.*/,'') : 80);
   var host = temp.replace(/:.*|\/.*|\&.*|\?.*/,'');
   var mac = '00:00:00:00:08:15';
+  var uuid= mac.replace(/:/g,'');
   var url = temp.replace(/^.*?\//,'/') + '?' +
-  'uuid=' + mac.replace(/:/g,'') +
-  '&arch='+config.arch  +
-  '&platform=OSE-SD-' + config.arch +
-  '&fw_version=' + config.release + 
+  'uuid=' + uuid +
+  '&arch='+config.wally.arch  +
+  '&platform=OSE-SD-' + config.wally.arch +
+  '&fw_version=' + config.wally.release + 
   '&mac=' + mac;
   // wifi
   // ip
-  print('Connecting to host : '+host+':'+port);
-  context.screen.log('Found wallaby server at : '+host+'. Starting registration process...');
+  log.debug('Connecting to host : '+host+':'+port);
+  screen.log('Found wallaby server at : '+host+'. Starting registration process...');
 
   var client = createClient({
     host: host,
@@ -107,28 +109,30 @@ function registerClient(location){
             try{
               response = JSON.parse(data);
             } catch(err){
-              context.screen.log('Registration failed : '+err);
+              screen.log('Registration failed : '+err);
             }
             p('Payload : ',response);
             var demo = 10;
+            config.conn = response;
+	    response.host = host;
+  	    response.url = location;
+  	    response.serverport = port;
+  	    response.uuid = uuid;
+            p('Config : ',config);
             if(response.configured === false){
-                context.config.ssdp = response;
-                context.screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in 60s.');
+                screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in 60s.');
                 var timer = new uv.Timer();
                 timer.start(0, 1000, function () {
                     demo = demo - 1;
                     if(demo < 0){
                       timer.stop();
                       timer.close();
-                      //p(nucleus.getenv());
-                      //nucleus.dofile('texApps/demo.js');
-                      //wally.eval('print("ja")');
                     } else {
-                      context.screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in '+demo+'s');
+                      screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in '+demo+'s');
                     }
                 });
             } else {
-                context.screen.log('Registered at '+host+'. Starting playlist');
+                screen.log('Registered at '+host+'. Starting playlist');
             }
             p(context);
             });
