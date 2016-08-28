@@ -239,6 +239,7 @@ int renderActiveEx(char *startTex)
    SDL_SetRenderTarget(ph->renderer, NULL);
    SDL_RenderCopy(ph->renderer, TempTI->texture, NULL, NULL);
    SDL_RenderPresent( ph->renderer );
+   return true;
 }
 
 void renderActive(char *startTex)
@@ -745,6 +746,7 @@ int resetScreen(char *p){
    renderActive(NULL);
    SDL_DestroyRenderer(oldr);
    SDL_DestroyWindow(oldw);
+   return true;
 }
 
 void cleanupSDL(void){

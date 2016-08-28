@@ -182,8 +182,8 @@ int js_initSysPlugin(duk_context *ctx){
 }
 
 const function_list_entry c_systemMethods[] = {
-   {  "quit"                        ,WFUNC_SYNC, cleanupWally, 0},
-   {  PLUGIN_SCOPE"::quit"          ,WFUNC_SYNC, cleanupWally, 0},
+   {  "quit"                        ,WFUNC_SYNC, c_cleanupWally, 0},
+   {  PLUGIN_SCOPE"::quit"          ,WFUNC_SYNC, c_cleanupWally, 0},
    {  PLUGIN_SCOPE"::setDebug"      ,WFUNC_SYNC, setDebug, 0},
    {  PLUGIN_SCOPE"::debug"         ,WFUNC_SYNC, dumpDebug, 0},
    {  PLUGIN_SCOPE"::sleep"         ,WFUNC_SYNC, wally_sleep, 0},

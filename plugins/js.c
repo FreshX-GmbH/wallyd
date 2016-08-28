@@ -225,8 +225,14 @@ duk_ret_t js_getConfig(duk_context *ctx)
 #ifdef __amd64__
    DUK_PUSH_PROP_STRING("arch" , "x86_64");
 #endif
-#ifdef __arm__
-   DUK_PUSH_PROP_STRING("arch" , "arm"__TARGET_ARCH_ARM);
+#ifdef __ARM_ARCH_6__
+      DUK_PUSH_PROP_STRING("arch" , "armv6");
+#endif
+#ifdef __ARM_ARCH_7__
+         DUK_PUSH_PROP_STRING("arch" , "armv7");
+#endif
+#ifdef __aarch64__
+	    DUK_PUSH_PROP_STRING("arch" , "arm64");
 #endif
    DUK_PUSH_PROP_BOOL("registered", ph->registered);
    DUK_PUSH_PROP_BOOL("ssdp", ph->ssdp);

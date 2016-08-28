@@ -10,6 +10,10 @@
 #include "hashtable.h"
 #include <duktape.h>
 
+#define WALLY_ASSERT_PH_VALID(ph) do { \
+                assert((ph) != NULL); \
+        } while (0)
+
 #define CALL_TYPE_PTR  0
 #define CALL_TYPE_STR  1
 #define CALL_TYPE_PS   2
@@ -105,8 +109,8 @@ typedef int (*wally_c_function)(char *parameter);
 typedef struct function_list_entry function_list_entry;
 struct function_list_entry {
         const char *name;
-        int threaded;
         wally_c_function value;
+        int threaded;
         int nargs;
 };
 

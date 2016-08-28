@@ -307,6 +307,10 @@ void cleanupWally(int s){
     exit(s);
 }
 
+int c_cleanupWally(char *s){
+   cleanupWally(atoi(s));
+}
+
 void debugWally(void){
    FILE *f = fopen("/tmp/wally.debug","w");
    long rss = getCurrentRSS();
