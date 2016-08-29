@@ -228,12 +228,12 @@ error:
 }
 
 // TODO : set correct number of args
-const function_list_entry c_SDLMethods[] = {
-   {  PLUGIN_SCOPE"::freeImage"  ,WFUNC_THRD, freeImage   ,0},
-   {  PLUGIN_SCOPE"::svgToTex"   ,WFUNC_THRD, svgToTex    ,7},
-   {  PLUGIN_SCOPE"::svgToPng"   ,WFUNC_THRD, svgToPng    ,2},
-   {  NULL, 0, NULL, 0}
-};
+//const function_list_entry c_SDLMethods[] = {
+//   {  PLUGIN_SCOPE"::freeImage"  ,WFUNC_THRD, freeImage   ,0},
+//   {  PLUGIN_SCOPE"::svgToTex"   ,WFUNC_THRD, svgToTex    ,7},
+//   {  PLUGIN_SCOPE"::svgToPng"   ,WFUNC_THRD, svgToPng    ,2},
+//   {  NULL, 0, NULL, 0}
+//};
 
 const duk_function_list_entry js_svgMethods[] = {
    {  "freeImage"  , js_freeImage   ,0},
@@ -261,7 +261,10 @@ duk_ret_t js_svg_ctor(duk_context *ctx)
 char *initPlugin(pluginHandler *_ph){
    ph=_ph;
    slog(DEBUG,DEBUG, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
-   wally_put_function_list(ph,c_SDLMethods);
+   //wally_put_function_list(ph,c_SDLMethods);
+   wally_put_function(PLUGIN_SCOPE"::freeImage"  ,WFUNC_THRD, freeImage   ,1);
+   wally_put_function(PLUGIN_SCOPE"::svgToTex"   ,WFUNC_THRD, svgToTex    ,7);
+   wally_put_function(PLUGIN_SCOPE"::svgToPng"   ,WFUNC_THRD, svgToPng    ,2);
 
    duk_push_c_function(ph->ctx, js_svg_ctor, 0 );
    duk_push_object(ph->ctx);

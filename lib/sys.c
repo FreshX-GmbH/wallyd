@@ -181,23 +181,30 @@ int js_initSysPlugin(duk_context *ctx){
    return 0;
 }
 
-const function_list_entry c_systemMethods[] = {
-   {  "quit"                        ,WFUNC_SYNC, c_cleanupWally, 0},
-   {  PLUGIN_SCOPE"::quit"          ,WFUNC_SYNC, c_cleanupWally, 0},
-   {  PLUGIN_SCOPE"::setDebug"      ,WFUNC_SYNC, setDebug, 0},
-   {  PLUGIN_SCOPE"::debug"         ,WFUNC_SYNC, dumpDebug, 0},
-   {  PLUGIN_SCOPE"::sleep"         ,WFUNC_SYNC, wally_sleep, 0},
-   {  PLUGIN_SCOPE"::loadPlugins"   ,WFUNC_SYNC, pluginLoader, 0},
-   {  PLUGIN_SCOPE"::callback"      ,WFUNC_SYNC, wally_registerCallback, 0},
-   {  PLUGIN_SCOPE"::info"          ,WFUNC_SYNC, sysInfo, 0},
-   {  NULL, 0, NULL, 0 }
-};
+//const function_list_entry c_systemMethods[] = {
+//   {  "quit"                        ,WFUNC_SYNC, c_cleanupWally, 0},
+//   {  PLUGIN_SCOPE"::quit"          ,WFUNC_SYNC, c_cleanupWally, 0},
+//   {  PLUGIN_SCOPE"::setDebug"      ,WFUNC_SYNC, setDebug, 0},
+//   {  PLUGIN_SCOPE"::debug"         ,WFUNC_SYNC, dumpDebug, 0},
+//   {  PLUGIN_SCOPE"::sleep"         ,WFUNC_SYNC, wally_sleep, 0},
+//   {  PLUGIN_SCOPE"::loadPlugins"   ,WFUNC_SYNC, pluginLoader, 0},
+//   {  PLUGIN_SCOPE"::callback"      ,WFUNC_SYNC, wally_registerCallback, 0},
+//   {  PLUGIN_SCOPE"::info"          ,WFUNC_SYNC, sysInfo, 0},
+//   {  NULL, 0, NULL, 0 }
+//};
  
 char *initSysPlugin(){
    slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
    ctx = ph->ctx;
 
-   wally_put_function_list(ph,c_systemMethods);
+   wally_put_function("quit"                        ,WFUNC_SYNC, c_cleanupWally, 0);
+   wally_put_function(PLUGIN_SCOPE"::quit"          ,WFUNC_SYNC, c_cleanupWally, 0);
+   wally_put_function(PLUGIN_SCOPE"::debug"         ,WFUNC_SYNC, dumpDebug, 0);
+   wally_put_function(PLUGIN_SCOPE"::sleep"         ,WFUNC_SYNC, wally_sleep, 0);
+   wally_put_function(PLUGIN_SCOPE"::loadPlugins"   ,WFUNC_SYNC, pluginLoader, 0);
+   wally_put_function(PLUGIN_SCOPE"::callback"      ,WFUNC_SYNC, wally_registerCallback, 0);
+   wally_put_function(PLUGIN_SCOPE"::info"          ,WFUNC_SYNC, sysInfo, 0);
+
    js_initSysPlugin(ctx);
 
   return PLUGIN_SCOPE;

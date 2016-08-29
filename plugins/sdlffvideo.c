@@ -244,20 +244,23 @@ const duk_function_list_entry videoMethods[] = {
     { NULL,           NULL,        0 }
 };
 
-const function_list_entry c_videoMethods[] = {
-    {  PLUGIN_SCOPE"::alloc_picture", WFUNC_THRD, alloc_picture, 0 },
-    {  PLUGIN_SCOPE"::refresh_timer", WFUNC_THRD, video_refresh_timer, 0 },
-    {  PLUGIN_SCOPE"::play"         , WFUNC_SYNC, renderVideo, 0  },
-    {  PLUGIN_SCOPE"::reset"        , WFUNC_SYNC, resetVideo,  0  },
-    {  NULL, 0, NULL, 0 }
-};
+//const function_list_entry c_videoMethods[] = {
+//    {  PLUGIN_SCOPE"::alloc_picture", WFUNC_THRD, alloc_picture, 0 },
+//    {  PLUGIN_SCOPE"::refresh_timer", WFUNC_THRD, video_refresh_timer, 0 },
+//    {  PLUGIN_SCOPE"::play"         , WFUNC_SYNC, renderVideo, 0  },
+//    {  PLUGIN_SCOPE"::reset"        , WFUNC_SYNC, resetVideo,  0  },
+//    {  NULL, 0, NULL, 0 }
+//};
  
 char *initPlugin(pluginHandler *_ph){
     ph = _ph;
     ph->disableVideoAfterFinish = true;
     duk_context *ctx = ph->ctx;
 
-    wally_put_function_list(ph,c_videoMethods);
+    wally_put_function(PLUGIN_SCOPE"::alloc_picture", WFUNC_THRD, alloc_picture, 0);
+    wally_put_function(PLUGIN_SCOPE"::refresh_timer", WFUNC_THRD, video_refresh_timer, 0);
+    wally_put_function(PLUGIN_SCOPE"::play"         , WFUNC_SYNC, renderVideo, 0);
+    wally_put_function(PLUGIN_SCOPE"::reset"        , WFUNC_SYNC, resetVideo,  0);
     js_video_init(ctx);
 
     slog(DEBUG,FULLDEBUG,"Plugin video initialized. PH is at 0x%x",ph);

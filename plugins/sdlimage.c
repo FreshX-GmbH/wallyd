@@ -456,42 +456,65 @@ char *cleanupPlugin(void *p){
 }
 
 // TODO : set correct number of args
-const function_list_entry c_SDLMethods[] = {
-   {  PLUGIN_SCOPE"::waitForTexture"    ,WFUNC_SYNC, waitForTexture     ,0},
-   {  PLUGIN_SCOPE"::createTexture"     ,WFUNC_THRD, createTexture      ,1},
-   {  PLUGIN_SCOPE"::createVideoTexture",WFUNC_THRD, createVideoTexture ,1},
-   {  PLUGIN_SCOPE"::destroyTexture"    ,WFUNC_THRD, destroyTexture     ,1},
-   {  PLUGIN_SCOPE"::render"            ,WFUNC_THRD, renderActiveEx     ,1},
-   {  PLUGIN_SCOPE"::resetScreen"       ,WFUNC_THRD, resetScreen        ,1},
-   {  PLUGIN_SCOPE"::setAutoRender"     ,WFUNC_THRD, setAutoRender      ,1},
-   {  PLUGIN_SCOPE"::clearTexture"      ,WFUNC_THRD, clearTexture       ,1},
-   {  PLUGIN_SCOPE"::setTextureColor"   ,WFUNC_THRD, setTextureColor    ,1},
-   {  PLUGIN_SCOPE"::setTextureAlpha"   ,WFUNC_THRD, setTextureAlpha    ,1},
-   {  PLUGIN_SCOPE"::setTexturePrio"    ,WFUNC_THRD, setTexturePrio     ,1},
-   {  PLUGIN_SCOPE"::setText"           ,WFUNC_THRD, setText            ,1},
-   {  PLUGIN_SCOPE"::setTextUTF8"       ,WFUNC_THRD, setTextUTF8        ,1},
-   {  PLUGIN_SCOPE"::log"               ,WFUNC_THRD, renderLog          ,1},
-   {  PLUGIN_SCOPE"::setImageScaled"    ,WFUNC_THRD, setImageScale      ,1},
-   {  PLUGIN_SCOPE"::setImageScaledSW"  ,WFUNC_THRD, setImageScaleSW    ,1},
-   {  PLUGIN_SCOPE"::setPngScaled"      ,WFUNC_THRD, setImageScale      ,1},
-   {  PLUGIN_SCOPE"::showTexture"       ,WFUNC_THRD, showTexture        ,1},
-   {  PLUGIN_SCOPE"::hideTexture"       ,WFUNC_THRD, hideTexture        ,1},
-   {  PLUGIN_SCOPE"::loadFont"          ,WFUNC_THRD, loadFont           ,1},
-   {  PLUGIN_SCOPE"::createColor"       ,WFUNC_THRD, createColor        ,1},
-   {  PLUGIN_SCOPE"::clearTextureNoPaint",WFUNC_THRD, clearTextureNoPaint,1},
-   {  PLUGIN_SCOPE"::showTextureTestScreen",WFUNC_THRD, showTextureTestScreen,1},
-//      PLUGIN_SCOPE"::setTextrotate",(*setTextRotate)
-//      PLUGIN_SCOPE"::setPng",(*setImage)
-//      PLUGIN_SCOPE"::setImage",(*setImage)
-   {  NULL, 0, NULL, 0}
-}; 
+//const function_list_entry c_SDLMethods[] = {
+//   {  PLUGIN_SCOPE"::waitForTexture"    ,WFUNC_SYNC, waitForTexture     ,0},
+//   {  PLUGIN_SCOPE"::createTexture"     ,WFUNC_THRD, createTexture      ,1},
+//   {  PLUGIN_SCOPE"::createVideoTexture",WFUNC_THRD, createVideoTexture ,1},
+//   {  PLUGIN_SCOPE"::destroyTexture"    ,WFUNC_THRD, destroyTexture     ,1},
+//   {  PLUGIN_SCOPE"::render"            ,WFUNC_THRD, renderActiveEx     ,1},
+//   {  PLUGIN_SCOPE"::resetScreen"       ,WFUNC_THRD, resetScreen        ,1},
+//   {  PLUGIN_SCOPE"::setAutoRender"     ,WFUNC_THRD, setAutoRender      ,1},
+//   {  PLUGIN_SCOPE"::clearTexture"      ,WFUNC_THRD, clearTexture       ,1},
+//   {  PLUGIN_SCOPE"::setTextureColor"   ,WFUNC_THRD, setTextureColor    ,1},
+//   {  PLUGIN_SCOPE"::setTextureAlpha"   ,WFUNC_THRD, setTextureAlpha    ,1},
+//   {  PLUGIN_SCOPE"::setTexturePrio"    ,WFUNC_THRD, setTexturePrio     ,1},
+//   {  PLUGIN_SCOPE"::setText"           ,WFUNC_THRD, setText            ,1},
+//   {  PLUGIN_SCOPE"::setTextUTF8"       ,WFUNC_THRD, setTextUTF8        ,1},
+//   {  PLUGIN_SCOPE"::log"               ,WFUNC_THRD, renderLog          ,1},
+//   {  PLUGIN_SCOPE"::setImageScaled"    ,WFUNC_THRD, setImageScale      ,1},
+//   {  PLUGIN_SCOPE"::setImageScaledSW"  ,WFUNC_THRD, setImageScaleSW    ,1},
+//   {  PLUGIN_SCOPE"::setPngScaled"      ,WFUNC_THRD, setImageScale      ,1},
+//   {  PLUGIN_SCOPE"::showTexture"       ,WFUNC_THRD, showTexture        ,1},
+//   {  PLUGIN_SCOPE"::hideTexture"       ,WFUNC_THRD, hideTexture        ,1},
+//   {  PLUGIN_SCOPE"::loadFont"          ,WFUNC_THRD, loadFont           ,1},
+//   {  PLUGIN_SCOPE"::createColor"       ,WFUNC_THRD, createColor        ,1},
+//   {  PLUGIN_SCOPE"::clearTextureNoPaint",WFUNC_THRD, clearTextureNoPaint,1},
+//   {  PLUGIN_SCOPE"::showTextureTestScreen",WFUNC_THRD, showTextureTestScreen,1},
+////      PLUGIN_SCOPE"::setTextrotate",(*setTextRotate)
+////      PLUGIN_SCOPE"::setPng",(*setImage)
+////      PLUGIN_SCOPE"::setImage",(*setImage)
+//   {  NULL, 0, NULL, 0}
+//}; 
 
 char *initPlugin(pluginHandler *_ph){
     ph=_ph;
     slog(DEBUG,FULLDEBUG,
         "Plugin SDL2 initializing, PH is at 0x%x, window at 0x%x, renderer at 0x%x, winRenderer at 0x%x",
         ph,ph->window, ph->renderer, SDL_GetRenderer(ph->window));
-    wally_put_function_list(ph,c_SDLMethods);
+   // wally_put_function_list(ph,c_SDLMethods);
+
+   wally_put_function(PLUGIN_SCOPE"::waitForTexture"    ,WFUNC_SYNC, waitForTexture     ,0);
+   wally_put_function(PLUGIN_SCOPE"::createTexture"     ,WFUNC_THRD, createTexture      ,1);
+   wally_put_function(PLUGIN_SCOPE"::createVideoTexture",WFUNC_THRD, createVideoTexture ,1);
+   wally_put_function(PLUGIN_SCOPE"::destroyTexture"    ,WFUNC_THRD, destroyTexture     ,1);
+   wally_put_function(PLUGIN_SCOPE"::render"            ,WFUNC_THRD, renderActiveEx     ,1);
+   wally_put_function(PLUGIN_SCOPE"::resetScreen"       ,WFUNC_THRD, resetScreen        ,1);
+   wally_put_function(PLUGIN_SCOPE"::setAutoRender"     ,WFUNC_THRD, setAutoRender      ,1);
+   wally_put_function(PLUGIN_SCOPE"::clearTexture"      ,WFUNC_THRD, clearTexture       ,1);
+   wally_put_function(PLUGIN_SCOPE"::setTextureColor"   ,WFUNC_THRD, setTextureColor    ,1);
+   wally_put_function(PLUGIN_SCOPE"::setTextureAlpha"   ,WFUNC_THRD, setTextureAlpha    ,1);
+   wally_put_function(PLUGIN_SCOPE"::setTexturePrio"    ,WFUNC_THRD, setTexturePrio     ,1);
+   wally_put_function(PLUGIN_SCOPE"::setText"           ,WFUNC_THRD, setText            ,1);
+   wally_put_function(PLUGIN_SCOPE"::setTextUTF8"       ,WFUNC_THRD, setTextUTF8        ,1);
+   wally_put_function(PLUGIN_SCOPE"::log"               ,WFUNC_THRD, renderLog          ,1);
+   wally_put_function(PLUGIN_SCOPE"::setImageScaled"    ,WFUNC_THRD, setImageScale      ,1);
+   wally_put_function(PLUGIN_SCOPE"::setImageScaledSW"  ,WFUNC_THRD, setImageScaleSW    ,1);
+   wally_put_function(PLUGIN_SCOPE"::setPngScaled"      ,WFUNC_THRD, setImageScale      ,1);
+   wally_put_function(PLUGIN_SCOPE"::showTexture"       ,WFUNC_THRD, showTexture        ,1);
+   wally_put_function(PLUGIN_SCOPE"::hideTexture"       ,WFUNC_THRD, hideTexture        ,1);
+   wally_put_function(PLUGIN_SCOPE"::loadFont"          ,WFUNC_THRD, loadFont           ,1);
+   wally_put_function(PLUGIN_SCOPE"::createColor"       ,WFUNC_THRD, createColor        ,1);
+   wally_put_function(PLUGIN_SCOPE"::clearTextureNoPaint",WFUNC_THRD, clearTextureNoPaint,1);
 
     slog(DEBUG,FULLDEBUG,"Plugin SDL2 initialized. PH is at 0x%x",ph);
     return PLUGIN_SCOPE;

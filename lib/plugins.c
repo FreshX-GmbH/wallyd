@@ -135,8 +135,17 @@ bool exportSync(const char *name, void *f){
     return false;
 }
 
+void wally_put_function(const char *name, int threaded, void *f, int args){
+    if(threaded == true){
+       exportThreaded(name,f);
+    } else {
+       slog(0,ERROR,"Function %s %p %p %p",name,f,ph,ph->functions);
+       slog(0,DEBUG,"FKT_SYNC : %s (%d args)",name,args);
+       exportSync(name,f);
+    }
+}
 // our own try
-void wally_put_function_list(pluginHandler *_ph, const function_list_entry *funcs) {
+void wally_put_function_list(pluginHandler *_ph, function_list_entry *funcs) {
     if(!ph){
         slog(ERROR,ERROR,"PH got lost! Resetting it.");
         ph=_ph;
@@ -144,18 +153,13 @@ void wally_put_function_list(pluginHandler *_ph, const function_list_entry *func
     const function_list_entry *ent = funcs;
     if (ent != NULL) {
         while (ent->name != NULL) {
-            if(ent->threaded == true){
-                slog(0,DEBUG,"FKT_THRD : %s (%d args)",ent->name,ent->nargs);
-                exportThreaded(ent->name,ent->value);
-            } else {
-                slog(0,ERROR,"Function %s %p %p %p",ent->name,ent->value,ph,ph->functions);
-                slog(0,DEBUG,"FKT_SYNC : %s (%d args)",ent->name,ent->nargs);
-                exportSync(ent->name,ent->value);
-            }
+            wally_put_function(ent->name, ent->threaded, ent->value, ent->nargs);
             ent++;
         }
     }
 }
+
+
 
 bool openPlugin(char *path, char* name)
 {

@@ -396,11 +396,11 @@ const duk_function_list_entry wallyMethods[] = {
     { NULL,                   NULL, 0 }
 };
 
-const function_list_entry c_JSMethods[] = {
-   {    PLUGIN_SCOPE"::eval"	 ,WFUNC_SYNC, evalScript, 0 },
-   { 	PLUGIN_SCOPE"::evalFile" ,WFUNC_SYNC, evalFile,   0 },
-   {	NULL, 0, NULL, 0 }
-};
+//const function_list_entry c_JSMethods[] = {
+//   {    PLUGIN_SCOPE"::eval"	 ,WFUNC_SYNC, evalScript, 0 },
+//   { 	PLUGIN_SCOPE"::evalFile" ,WFUNC_SYNC, evalFile,   0 },
+//   {	NULL, 0, NULL, 0 }
+//};
 
 char *initPlugin(pluginHandler *_ph){
    ph=_ph;
@@ -409,7 +409,8 @@ char *initPlugin(pluginHandler *_ph){
 
    slog(TRACE,DEBUG,"Constructing wally object");
 
-   wally_put_function_list(ph,c_JSMethods);
+   wally_put_function(PLUGIN_SCOPE"::evalFile" ,WFUNC_SYNC, evalFile,   0);
+   wally_put_function(PLUGIN_SCOPE"::eval"     ,WFUNC_SYNC, evalScript, 0);
    
    duk_push_c_function(ctx, js_wally_ctor, 0 );
    duk_push_object(ctx);

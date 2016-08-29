@@ -620,17 +620,17 @@ duk_ret_t js_gui_ctor(duk_context *ctx)
 }
 
 // TODO : set correct number of args
-const function_list_entry c_SDLMethods[] = {
-   {  PLUGIN_SCOPE"::drawText"       ,WFUNC_THRD, c_drawText  ,6},
-   {  PLUGIN_SCOPE"::drawBox"        ,WFUNC_THRD, c_drawBox   ,6},
-   {  PLUGIN_SCOPE"::drawFilledBox"  ,WFUNC_THRD, c_drawFilledBox   ,9},
-   {  PLUGIN_SCOPE"::drawLine"       ,WFUNC_THRD, c_drawLine  ,6},
-   {  PLUGIN_SCOPE"::drawGradient"   ,WFUNC_THRD, c_drawGradient ,10},
-   {  PLUGIN_SCOPE"::loadImageFile"  ,WFUNC_THRD, c_loadImageFile ,7},
-   {  PLUGIN_SCOPE"::setTargetTexture",WFUNC_THRD, setTargetTexture ,1},
-//   {  PLUGIN_SCOPE"::loadImageMemory",WFUNC_THRD, c_loadImageMemory ,7},
-   {  NULL, 0, NULL, 0}
-}; 
+//function_list_entry c_SDLMethods[] = {
+//   {  PLUGIN_SCOPE"::drawText"       ,WFUNC_THRD, c_drawText  ,6},
+//   {  PLUGIN_SCOPE"::drawBox"        ,WFUNC_THRD, c_drawBox   ,6},
+//   {  PLUGIN_SCOPE"::drawFilledBox"  ,WFUNC_THRD, c_drawFilledBox   ,9},
+//   {  PLUGIN_SCOPE"::drawLine"       ,WFUNC_THRD, c_drawLine  ,6},
+//   {  PLUGIN_SCOPE"::drawGradient"   ,WFUNC_THRD, c_drawGradient ,10},
+//   {  PLUGIN_SCOPE"::loadImageFile"  ,WFUNC_THRD, c_loadImageFile ,7},
+//   {  PLUGIN_SCOPE"::setTargetTexture",WFUNC_THRD, setTargetTexture ,1},
+////   {  PLUGIN_SCOPE"::loadImageMemory",WFUNC_THRD, c_loadImageMemory ,7},
+//   {  NULL, 0, NULL, 0}
+//}; 
 
 const duk_function_list_entry js_guiMethods[] = {
      //{  "drawBoxEx"       , js_drawBoxEx,7},
@@ -651,8 +651,14 @@ const duk_function_list_entry js_guiMethods[] = {
 char *initPlugin(pluginHandler *_ph){
    ph=_ph;
    slog(DEBUG,DEBUG, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
-   wally_put_function_list(ph,c_SDLMethods);
 
+   wally_put_function(PLUGIN_SCOPE"::drawText"       ,WFUNC_THRD, c_drawText  ,6);
+   wally_put_function(PLUGIN_SCOPE"::drawBox"        ,WFUNC_THRD, c_drawBox   ,6);
+   wally_put_function(PLUGIN_SCOPE"::drawFilledBox"  ,WFUNC_THRD, c_drawFilledBox   ,9);
+   wally_put_function(PLUGIN_SCOPE"::drawLine"       ,WFUNC_THRD, c_drawLine  ,6);
+   wally_put_function(PLUGIN_SCOPE"::drawGradient"   ,WFUNC_THRD, c_drawGradient ,10);
+   wally_put_function(PLUGIN_SCOPE"::loadImageFile"  ,WFUNC_THRD, c_loadImageFile ,7);
+   wally_put_function(PLUGIN_SCOPE"::setTargetTexture",WFUNC_THRD, setTargetTexture ,1);
    duk_push_c_function(ph->ctx, js_gui_ctor, 0 );
    duk_push_object(ph->ctx);
    duk_put_function_list(ph->ctx, -1, js_guiMethods);
