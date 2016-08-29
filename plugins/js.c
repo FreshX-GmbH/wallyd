@@ -409,8 +409,8 @@ char *initPlugin(pluginHandler *_ph){
 
    slog(TRACE,DEBUG,"Constructing wally object");
 
-   wally_put_function(PLUGIN_SCOPE"::evalFile" ,WFUNC_SYNC, evalFile,   0);
-   wally_put_function(PLUGIN_SCOPE"::eval"     ,WFUNC_SYNC, evalScript, 0);
+   wally_put_function(PLUGIN_SCOPE"::evalFile" ,WFUNC_SYNC, &evalFile,   0);
+   wally_put_function(PLUGIN_SCOPE"::eval"     ,WFUNC_SYNC, &evalScript, 0);
    
    duk_push_c_function(ctx, js_wally_ctor, 0 );
    duk_push_object(ctx);

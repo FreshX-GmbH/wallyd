@@ -136,15 +136,17 @@ bool exportSync(const char *name, void *f){
     return false;
 }
 
-void wally_put_function(const char *name, int threaded, void *f, int args){
+void wally_put_function(const char *name, int threaded, void *(*f), int args){
+    char *ncopy = strdup(name);
+    assert(ncopy);
     if(threaded == true){
        // TODO : free
-       exportThreaded(strdup(name),f);
+       exportThreaded(ncopy,f);
     } else {
-       slog(0,ERROR,"Function %s %p %p %p",name,f,ph,ph->functions);
-       slog(0,DEBUG,"FKT_SYNC : %s (%d args)",name,args);
+       slog(0,ERROR,"Function %s %p %p %p",ncopy,f,ph,ph->functions);
+       slog(0,DEBUG,"FKT_SYNC : %s (%d args)",ncopy,args);
        // TODO : free
-       exportSync(strdup(name),f);
+       exportSync(ncopy,f);
     }
 }
 // our own try
@@ -182,10 +184,10 @@ bool openPlugin(char *path, char* name)
     }
     initPlugin = dlsym(handle, "initPlugin");
     if ((error = dlerror()) != NULL)  {
-        slog(ERROR,ERROR,"initPlugin() failed or not found (Error : %s)",error);
+        slog(DEBUG,DEBUG,"initPlugin() failed or not found (Error : %s)",error);
         return false;
     } else {
-       slog(0,ERROR,"initPlugin() is now at 0x%x / handle at 0x%x",*initPlugin,handle);
+       slog(DEBUG,DEBUG,"initPlugin() is now at 0x%x / handle at 0x%x",*initPlugin,handle);
     }
     // Initialize Plugin
     // TODO : Save return + function into command map

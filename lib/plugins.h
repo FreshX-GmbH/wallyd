@@ -126,6 +126,6 @@ int cleanupPlugins(void);
 bool callEx(char *, void *, void *,int ,bool );
 void export_function_list(char *, const function_list_entry *);
 void wally_put_function_list(pluginHandler *, function_list_entry *);
-void wally_put_function(const char *name, int threaded, void *f, int args);
+void wally_put_function(const char *name, int threaded, void *(*f), int args);
 
 #endif
