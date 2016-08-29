@@ -5,6 +5,7 @@
 #include "nucly/env.h"
 #include "nucly/path.h"
 #include "wallyd.h"
+#include "util.h"
 
 extern int gargc;
 extern char **gargv;
@@ -402,95 +403,11 @@ void *duvThread(void *ctx){
   uv_tcp_init(&loop,&tcp);
   uv_setup_args(argc, argv);
 
-  // If we detect a zip file appended to self, use it.
-//  if (mz_zip_reader_init_file(&zip, argv[0], 0)) {
-//    base = argv[0];
-//    isZip = true;
-//  } else {
-//    int i;
-//    int linked = 0, ziponly = 0;
-//    int outIndex = 0;
-//    for (i = 1; i < argc; i++) {
-//      if (strcmp(argv[i], "--") == 0) {
-//        if (ziponly || linked || outIndex) {
-//          //print_usage(argv[0]);
-//          fprintf(stderr, "\nCannot pass app args while building app binary.\n");
-//          exit(1);
-//        }
-//        i++;
-//        if (!base && i < argc) {
-//          base = argv[i++];
-//        }
-//        break;
-//      }
-//      if (argv[i][0] == '-') {
-//        if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version")) {
-//        //  print_version();
-//          exit(1);
-//        }
-//        if (!strcmp(argv[i], "-l") || !strcmp(argv[i], "--linked")) {
-//          linked = 1;
-//          continue;
-//        }
-//        if (!strcmp(argv[i], "-z") || !strcmp(argv[i], "--ziponly")) {
-//          ziponly = 1;
-//          continue;
-//        }
-//        if (!strcmp(argv[i], "-o") || !strcmp(argv[i], "--output")) {
-//          outIndex = ++i;
-//          continue;
-//        }
-//        //print_usage(argv[0]);
-//        fprintf(stderr, "\nUnknown flag: %s\n", argv[i]);
-//        exit(1);
-//      }
-//      if (base) {
-//        //print_usage(argv[0]);
-//        fprintf(stderr, "\nUnexpected argument: %s\n", argv[i]);
-//        exit(1);
-//      }
-//      base = argv[i];
-//    }
-//    if (!base) {
-//      //print_usage(argv[0]);
-//      fprintf(stderr, "\nMissing path to app and no embedded zip detected\n");
-//      exit(1);
-//    }
-//    if (linked && ziponly) {
-//      //print_usage(argv[0]);
-//      fprintf(stderr, "\nCannoy specify both linked and zip-only\n");
-//      exit(1);
-//    }
-//    if ((linked || ziponly) && !outIndex) {
-//      //print_usage(argv[0]);
-//      fprintf(stderr, "\nLinked or zip-only option was specified, but not out path was given\n");
-//      exit(1);
-//    }
-//    if (outIndex) {
-//      if (!argv[outIndex]) {
-//      //  print_usage(argv[0]);
-//        fprintf(stderr, "\nMissing target path for --output option\n");
-//        exit(1);
-//      }
-//      build_zip(base, argv[outIndex],
-//        linked  ? BUILD_LINKED :
-//        ziponly ? BUILD_ZIP :
-//                  BUILD_EMBEDDED);
-//      exit(0);
-//    }
-//
-//    argstart = i;
-//
-//    if (mz_zip_reader_init_file(&zip, base, 0)) {
-//      isZip = true;
-//    }
-//  }
-
   base = argv[1];
   const char* originalBase = base;
   base = realpath(base, 0);
   if (!base) {
-    fprintf(stderr, "\nNo such file or directory: %s\n", originalBase);
+    slog(ERROR,ERROR, "No such file or directory: %s", originalBase);
     exit(1);
   }
   path_t path = path_cstr(base);
@@ -502,16 +419,8 @@ void *duvThread(void *ctx){
     base[path.len] = 0;
   }
 
-//  printf("zip : %d, base='%s', entry='%.*s'\n",isZip, base, entry.len, entry.data);
-
-//  if (isZip) {
-//    resource.read = read_from_zip;
-//    resource.scan = scan_from_zip;
-//  }
-//  else {
-    resource.read = read_from_disk;
-    resource.scan = scan_from_disk;
-//  }
+  resource.read = read_from_disk;
+  resource.scan = scan_from_disk;
 
   // Setup context with global.nucleus
 

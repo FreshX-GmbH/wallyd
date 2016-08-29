@@ -124,14 +124,14 @@ char *initPlugin(pluginHandler *_ph){
     ph=_ph;
     ctx = ph->ctx;
 
+    wally_put_function(PLUGIN_SCOPE"::info", WFUNC_SYNC, myPluginInfo, 0);
+
     duk_push_c_function(ctx, js_myPlugin_ctor, 1 );
     duk_push_object(ctx);
     duk_put_function_list(ctx, -1, myPluginMethods);
     duk_put_prop_string(ctx, -2, "prototype");
     duk_put_global_string(ctx, "myPlugin");  /* -> stack: [ ] */
 
-    //wally_put_function_list(ph,c_myPluginMethods);
-    wally_put_function(PLUGIN_SCOPE"::info", WFUNC_SYNC, myPluginInfo, 0);
     return PLUGIN_SCOPE;
 }
 

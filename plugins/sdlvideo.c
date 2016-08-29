@@ -353,21 +353,21 @@ const duk_function_list_entry videoMethods[] = {
     { NULL,           NULL,        0 }
 };
 
-const wally_function_list_entry c_videoMethods[] = {
-   { PLUGIN_SCOPE"::alloc_picture"      ,WFUNC_THRD,alloc_picture       ,1},
-   { PLUGIN_SCOPE"::video_refresh_timer",WFUNC_THRD,video_refresh_timer ,1},
-   { PLUGIN_SCOPE"::playScaled"         ,WFUNC_SYNC,renderVideoScaled,1},
-   { PLUGIN_SCOPE"::play"               ,WFUNC_SYNC,renderVideo     ,1},
-   { PLUGIN_SCOPE"::pause"              ,WFUNC_SYNC,pauseVideo      ,1},
-   { PLUGIN_SCOPE"::unpause"            ,WFUNC_SYNC,unpauseVideo    ,1},
-   { PLUGIN_SCOPE"::stop"               ,WFUNC_SYNC,stopVideo       ,1},
-   { PLUGIN_SCOPE"::reset"              ,WFUNC_SYNC,resetVideo      ,1},
-   { PLUGIN_SCOPE"::playFullscreen"     ,WFUNC_SYNC,renderVideoFullscreen,1},
-   { PLUGIN_SCOPE"::playScaledDirect"   ,WFUNC_SYNC,renderVideoScaledDirect,1},
-   { PLUGIN_SCOPE"::disableTextureAfterFinish",WFUNC_SYNC,disableTextureAfterFinish,1},
- //  PLUGIN_SCOPE"::setDestinationTexture",&setVideoTexture},
-   { NULL, 0, NULL, 0}
-};
+//const wally_function_list_entry c_videoMethods[] = {
+//   { PLUGIN_SCOPE"::alloc_picture"      ,WFUNC_THRD,alloc_picture       ,1},
+//   { PLUGIN_SCOPE"::video_refresh_timer",WFUNC_THRD,video_refresh_timer ,1},
+//   { PLUGIN_SCOPE"::playScaled"         ,WFUNC_SYNC,renderVideoScaled,1},
+//   { PLUGIN_SCOPE"::play"               ,WFUNC_SYNC,renderVideo     ,1},
+//   { PLUGIN_SCOPE"::pause"              ,WFUNC_SYNC,pauseVideo      ,1},
+//   { PLUGIN_SCOPE"::unpause"            ,WFUNC_SYNC,unpauseVideo    ,1},
+//   { PLUGIN_SCOPE"::stop"               ,WFUNC_SYNC,stopVideo       ,1},
+//   { PLUGIN_SCOPE"::reset"              ,WFUNC_SYNC,resetVideo      ,1},
+//   { PLUGIN_SCOPE"::playFullscreen"     ,WFUNC_SYNC,renderVideoFullscreen,1},
+//   { PLUGIN_SCOPE"::playScaledDirect"   ,WFUNC_SYNC,renderVideoScaledDirect,1},
+//   { PLUGIN_SCOPE"::disableTextureAfterFinish",WFUNC_SYNC,disableTextureAfterFinish,1},
+// //  PLUGIN_SCOPE"::setDestinationTexture",&setVideoTexture},
+//   { NULL, 0, NULL, 0}
+//};
  
 
 char *initPlugin(pluginHandler *_ph){
