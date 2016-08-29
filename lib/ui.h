@@ -30,7 +30,7 @@ typedef struct {
     SDL_Texture *texture;
     SDL_Rect *rect;
     char *name;
-    Color *c;
+    SDL_Color *c;
     bool video;
     bool active;
     int z;
@@ -56,8 +56,8 @@ typedef struct {
 
 extern int showTexture(char *textureNum);
 extern int hideTexture(char *textureNum);
-extern void renderActive(char *);
-extern int renderActiveEx(char *);
+extern void renderActive(const char *);
+extern int renderActiveEx(const char *);
 extern void renderToTex(int textureNum);
 extern void render(SDL_Texture *texture, SDL_Rect *rect);
 extern int setTexture(texInfo *TI, SDL_Texture *texture, SDL_Rect *origRect);
@@ -74,8 +74,8 @@ int destroyTexture(char *);
 int showTextureTestScreen(char *);
 int loadFont(char *);
 int addToTexture(texInfo *TI, SDL_Texture *src, SDL_Rect *origRect);
-void hexToColor(int color, Color *c);
-texInfo *getTexture(char *name);
+void hexToColor(int color, SDL_Color *c);
+texInfo *getTexture(const char *name);
 void **getTextureNamesByPrio(unsigned int *);
 int resetScreen(char *);
 

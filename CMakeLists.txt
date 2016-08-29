@@ -77,6 +77,7 @@ add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(plugins)
 
+add_dependencies(wallyd wally)
 
 set(PROJECT_DESCRIPTION "Wally Daemon")
 

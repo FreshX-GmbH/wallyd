@@ -4,10 +4,10 @@
 
 extern pluginHandler *ph;
 
-void drawLine(char *textureName, int x1, int y1, int x2, int y2, SDL_Color col);
-void drawGradient(char *textureName, SDL_Rect rect,const SDL_Color from, SDL_Color to, bool vertical,bool hollow);
-void drawBox(char *textureName, int x, int y, int w, int h, SDL_Color col);
-void drawFilledBox(char *textureName, SDL_Rect rect, int stroke, SDL_Color col, SDL_Color strokeCol, int alpha);
+void drawLine(const char *textureName, int x1, int y1, int x2, int y2, SDL_Color col);
+void drawGradient(const char *textureName, SDL_Rect rect,const SDL_Color from, SDL_Color to, bool vertical,bool hollow);
+void drawBox(const char *textureName, int x, int y, int w, int h, SDL_Color col);
+void drawFilledBox(const char *textureName, SDL_Rect rect, int stroke, SDL_Color col, SDL_Color strokeCol, int alpha);
 
 int js_setTargetTexture(duk_context *ctx){
     int ret;
@@ -383,7 +383,7 @@ bool c_drawText(char *str)
   int y=atoi(y1Str);
  
   texInfo *TI = getTexture(texName);
-  TTF_Font *font = ht_get_simple(ph->fonts,fontStr);
+  TTF_Font *font = ht_get_simple(ph->fonts,(void*)fontStr);
   if(!font){
      slog(LVL_QUIET,ERROR,"Font named '%s' not loaded",fontStr);
      return false;
@@ -411,7 +411,7 @@ bool c_drawText(char *str)
   return 1;
 }
 
-c_loadImageFile(char *str)
+int c_loadImageFile(char *str)
 {
    const char *texName= strsep(&str, " \t");
    const char *fileName= strsep(&str, " \t");
@@ -454,7 +454,7 @@ c_loadImageFile(char *str)
    return true;
 }
 
-void setTargetTexture(char *textureName){
+void setTargetTexture(const char *textureName){
     if(textureName){
       slog(DEBUG,DEBUG,"setTarget %s",textureName);
       texInfo *TI = getTexture(textureName);
@@ -466,7 +466,7 @@ void setTargetTexture(char *textureName){
     }
 }
 
-void drawLine(char *textureName, int x1, int y1, int x2, int y2, SDL_Color col) {
+void drawLine(const char *textureName, int x1, int y1, int x2, int y2, SDL_Color col) {
 //    slog(DEBUG,DEBUG,"drawLine %s",textureName);
 //    texInfo *TI = getTexture(textureName);
 //    if(!textureName || !TI){
@@ -480,7 +480,7 @@ void drawLine(char *textureName, int x1, int y1, int x2, int y2, SDL_Color col) 
 //    renderActive(textureName);
 }
 
-void drawBox(char *textureName, int x, int y, int w, int h, SDL_Color c) {
+void drawBox(const char *textureName, int x, int y, int w, int h, SDL_Color c) {
    slog(DEBUG,DEBUG,"drawBox %s",textureName);
 //   texInfo *TI = getTexture(textureName);
 //   SDL_SetRenderTarget(ph->renderer,TI->texture);
@@ -500,7 +500,7 @@ void vLine(char *textureName,int x, int y, int h, SDL_Color c)
 	drawLine(textureName, x, y, x, y+h, c);
 }
 
-void drawFilledBox(char *textureName, SDL_Rect rect, int stroke, SDL_Color col, SDL_Color strokeCol, int alpha) {
+void drawFilledBox(const char *textureName, SDL_Rect rect, int stroke, SDL_Color col, SDL_Color strokeCol, int alpha) {
     //SDL_SetRenderDrawColor(ph->renderer,strokeCol.r,strokeCol.g,strokeCol.b,0xff);
     slog(DEBUG,DEBUG,"drawFilledBox %s Alpha:%d",textureName,alpha);
 //    texInfo *TI = getTexture(textureName);
@@ -516,12 +516,12 @@ void drawFilledBox(char *textureName, SDL_Rect rect, int stroke, SDL_Color col, 
 //    renderActive(textureName);
 }
 
-void drawRect(char *textureName, SDL_Rect *rect, SDL_Color col) {
+void drawRect(const char *textureName, SDL_Rect *rect, SDL_Color col) {
     SDL_SetRenderDrawColor(ph->renderer,col.r,col.g,col.b,0xff);
     SDL_RenderDrawRect(ph->renderer,rect);
 }
 
-void fillRect(char * textureName, SDL_Rect *rect, SDL_Color col) {
+void fillRect(const char * textureName, SDL_Rect *rect, SDL_Color col) {
     SDL_SetRenderDrawColor(ph->renderer,col.r,col.g,col.b,0xff);
     SDL_RenderFillRect(ph->renderer,rect);
 }
@@ -549,7 +549,7 @@ void drawButton(char *textureName, SDL_Rect *rect, SDL_Color col) {
 }
 
 
-void drawGradient(char *textureName, SDL_Rect rect,const SDL_Color col1, SDL_Color col2,bool vertical,bool hollow) {
+void drawGradient(const char *textureName, SDL_Rect rect,const SDL_Color col1, SDL_Color col2,bool vertical,bool hollow) {
   SDL_Color col;
   SDL_Rect trect = {0,0,0,0};
   SDL_Color from = hollow ? col1 : col2;

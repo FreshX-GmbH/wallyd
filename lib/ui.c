@@ -14,7 +14,7 @@ bool sdlStatus(void *ptr){
    return true;
 }
 
-texInfo *getTexture(char *name){
+texInfo *getTexture(const char *name){
    texInfo *t = ht_get_simple(ph->baseTextures,name);
    slog(TRACE,FULLDEBUG,"Texture %s is at 0x%x",name,t);
    return t;
@@ -206,7 +206,7 @@ int showTextureTestScreen(char *p){
    return true;
 }
 
-int renderActiveEx(char *startTex)
+int renderActiveEx(const char *startTex)
 {
    unsigned int i=0;
    texInfo *TI,*TempTI;
@@ -242,7 +242,7 @@ int renderActiveEx(char *startTex)
    return true;
 }
 
-void renderActive(char *startTex)
+void renderActive(const char *startTex)
 {
    if(ph->autorender == false) 
          return;
@@ -698,7 +698,7 @@ int loadFont(char *strTmp){
    return true;
 }
 
-void hexToColor(int color, Color *c)
+void hexToColor(int color, SDL_Color *c)
 {
    c->r = (color >> 16) & 0xff;
    c->g = (color >> 8)  & 0xff;

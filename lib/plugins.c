@@ -114,10 +114,10 @@ bool callNonBlocking(char *funcname, int *ret, void *params){
 }
 
 bool exportThreaded(const char *name, void *f){
-    if(!ht_contains(ph->functions,name,strlen(name))){
-        ht_insert_simple(ph->thr_functions,name,f);
+    if(!ht_contains_simple(ph->functions,(void*)name)){
+        ht_insert_simple(ph->thr_functions,(void*)name,f);
         // Enable this code for synced function calls
-        ht_insert_simple(ph->functionWaitConditions, name, SDL_CreateCond());
+        ht_insert_simple(ph->functionWaitConditions, (void*)name, SDL_CreateCond());
         slog(DEBUG,FULLDEBUG,"Function %s registered (threaded)",name);
         return true;
     }
@@ -126,8 +126,9 @@ bool exportThreaded(const char *name, void *f){
 }
 
 bool exportSync(const char *name, void *f){
-    if(!ht_contains(ph->functions,name,strlen(name))){
-        ht_insert_simple(ph->functions,name,f);
+    //if(!ht_contains(ph->functions,name,strlen(name))){
+    if(!ht_contains_simple(ph->functions,(void*)name)){
+        ht_insert_simple(ph->functions,(void*)name,f);
         slog(DEBUG,FULLDEBUG,"Function %s registered",name);
         return true;
     }
@@ -137,11 +138,13 @@ bool exportSync(const char *name, void *f){
 
 void wally_put_function(const char *name, int threaded, void *f, int args){
     if(threaded == true){
-       exportThreaded(name,f);
+       // TODO : free
+       exportThreaded(strdup(name),f);
     } else {
        slog(0,ERROR,"Function %s %p %p %p",name,f,ph,ph->functions);
        slog(0,DEBUG,"FKT_SYNC : %s (%d args)",name,args);
-       exportSync(name,f);
+       // TODO : free
+       exportSync(strdup(name),f);
     }
 }
 // our own try

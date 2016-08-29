@@ -16,9 +16,17 @@ add_library(screen MODULE screen.c)
 add_library(js MODULE js.c)
 add_library(svg2image MODULE svg2image.c)
 
+add_dependencies(texture wally)
+add_dependencies(js wally)
+add_dependencies(sdlimage wally)
+add_dependencies(sdlgui wally)
+add_dependencies(screen wally)
+add_dependencies(svg2image wally)
+
 if(WITH_VIDEO STREQUAL on)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Iplugins/ffplay -I./ffplay/include -DWALLY_PLUGIN ${LIBSWSCALE_CFLAGS}")
 	add_library(sdlffvideo MODULE sdlffvideo.c ffplay/cmdutils.c ffplay/postprocess.c ffplay/ffplay.c)
+	add_dependencies(sdlffvideo wally)
 	target_link_libraries(sdlffvideo ${LIBSWSCALE_LIBRARIES} ${LIBSWRE_LIBRARIES} 
 	    ${LIBAVUTIL_LIBRARIES} ${LIBAVCODEC_LIBRARIES} ${LIBAVFORMAT_LIBRARIES} ${LIBSDL_LIBRARIES})
 	install(TARGETS sdlffvideo DESTINATION ${LIB_INSTALL_DIR}/wallyd)

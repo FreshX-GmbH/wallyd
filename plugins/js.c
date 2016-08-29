@@ -22,7 +22,7 @@ extern int showTextureTestScreen(char *);
 int registerFunctions(void);
 const duk_function_list_entry wallyMethods[];
 
-static int js_evalFile(duk_context *ctx) {
+int js_evalFile(duk_context *ctx) {
    const char *filename = duk_to_string(ctx, 0);
    slog(0,DEBUG,"Execute file : %s (Top : %d)", filename, (long) duk_get_top(ctx));
    duk_eval_file(ctx, filename);
@@ -30,14 +30,14 @@ static int js_evalFile(duk_context *ctx) {
    return 0;
 }
 
-static int js_render(duk_context *ctx) {
+int js_render(duk_context *ctx) {
    int ret;
    const char *texName = duk_to_string(ctx, 0);
    callWithString("screen::render",&ret,texName);
    return 0;
 }
 
-static int js_setAutoRender(duk_context *ctx) {
+int js_setAutoRender(duk_context *ctx) {
    int ret;
    const bool sar = duk_to_boolean(ctx, 0);
    if(sar == true){
@@ -347,7 +347,7 @@ duk_ret_t js_exec(duk_context *ctx){
    return 0;
 }
 
-duk_ret_t evalScript(char *str){
+int evalScript(char *str){
     duk_push_string(ctx, str);
     if (duk_peval(ctx) != 0) {
         slog(LVL_QUIET,ERROR,"JSError : %s", duk_safe_to_string(ctx, -1));
