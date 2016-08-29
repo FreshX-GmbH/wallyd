@@ -61,6 +61,7 @@ typedef struct{
     bool logfile;
     FILE *logfileHandle;
     void *logCat;
+    int sdldebug;
 
     // SSDP / cloud Client
     bool registered;
