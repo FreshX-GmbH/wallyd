@@ -113,10 +113,10 @@ const duk_function_list_entry myPluginMethods[] = {
     { NULL,    NULL,            0 }
 };
 
-const function_list_entry c_myPluginMethods[] = {
-    { PLUGIN_SCOPE"::info", WFUNC_SYNC, myPluginInfo, 0 },
-    { NULL, 0, NULL, 0 }
-};
+//const function_list_entry c_myPluginMethods[] = {
+//    { PLUGIN_SCOPE"::info", WFUNC_SYNC, myPluginInfo, 0 },
+//    { NULL, 0, NULL, 0 }
+//};
 
 
 char *initPlugin(pluginHandler *_ph){
@@ -130,7 +130,8 @@ char *initPlugin(pluginHandler *_ph){
     duk_put_prop_string(ctx, -2, "prototype");
     duk_put_global_string(ctx, "myPlugin");  /* -> stack: [ ] */
 
-    wally_put_function_list(ph,c_myPluginMethods);
+    //wally_put_function_list(ph,c_myPluginMethods);
+    wally_put_function(PLUGIN_SCOPE"::info", WFUNC_SYNC, myPluginInfo, 0);
     return PLUGIN_SCOPE;
 }
 

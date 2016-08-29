@@ -301,18 +301,20 @@ const duk_function_list_entry clientMethods[] = {
     { NULL,           NULL,        0 }
 };
 
-const function_list_entry c_clientMethods[] = {
-    { PLUGIN_SCOPE"::discovery", WFUNC_SYNC,  setDiscovery,  2   },
-    { PLUGIN_SCOPE"::register",  WFUNC_SYNC,  setRegister,   0   },
-    { NULL,    0,       NULL,        0 }
-};
+//const function_list_entry c_clientMethods[] = {
+//    { PLUGIN_SCOPE"::discovery", WFUNC_SYNC,  setDiscovery,  2   },
+//    { PLUGIN_SCOPE"::register",  WFUNC_SYNC,  setRegister,   0   },
+//    { NULL,    0,       NULL,        0 }
+//};
 
 
 char *initPlugin(pluginHandler *phptr){
     ph=phptr;
     ctx = ph->ctx;
     slog(DEBUG,FULLDEBUG,"Plugin client initialized. PH is at 0x%x",ph);
-    wally_put_function_list(ph,c_clientMethods);
+    //wally_put_function_list(ph,c_clientMethods);
+    wally_put_function(PLUGIN_SCOPE"::discovery", WFUNC_SYNC,  setDiscovery,  2);
+    wally_put_function(PLUGIN_SCOPE"::register",  WFUNC_SYNC,  setRegister,   0);
     js_client_init(ph->ctx);
     return PLUGIN_SCOPE;
 }

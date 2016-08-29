@@ -257,11 +257,11 @@ const duk_function_list_entry myGPIOMethods[] = {
     { "toString",       js_gpio_toString,  0   },
     { NULL,    NULL,            0 }
 };
-const function_list_entry c_myGPIOMethods[] = {
-    { PLUGIN_SCOPE"::info", WFUNC_SYNC, myGPIOInfo,  0 },
-    { PLUGIN_SCOPE"::test", WFUNC_SYNC, c_test,      0 },
-    { NULL, 0,   NULL,  0 }
-};
+//const function_list_entry c_myGPIOMethods[] = {
+//    { PLUGIN_SCOPE"::info", WFUNC_SYNC, myGPIOInfo,  0 },
+//    { PLUGIN_SCOPE"::test", WFUNC_SYNC, c_test,      0 },
+//    { NULL, 0,   NULL,  0 }
+//};
 
 
 char *initPlugin(pluginHandler *_ph){
@@ -269,7 +269,9 @@ char *initPlugin(pluginHandler *_ph){
     ph=_ph;
     ctx = ph->ctx;
 
-    wally_put_function_list(ph,c_myGPIOMethods);
+    //wally_put_function_list(ph,c_myGPIOMethods);
+    wally_put_function(PLUGIN_SCOPE"::info", WFUNC_SYNC, myGPIOInfo,  0);
+    wally_put_function(PLUGIN_SCOPE"::test", WFUNC_SYNC, c_test,      0);
 
     duk_push_c_function(ctx, js_gpio_ctor, 1 );
     duk_push_object(ctx);

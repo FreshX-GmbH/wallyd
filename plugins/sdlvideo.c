@@ -384,7 +384,18 @@ char *initPlugin(pluginHandler *_ph){
     // Create Video Object
     js_video_init(ctx);
 
-    wally_put_function_list(ph,c_videoMethods);
+    //wally_put_function_list(ph,c_videoMethods);
+
+    wally_put_function(PLUGIN_SCOPE"::alloc_picture"      ,WFUNC_THRD,alloc_picture       ,1   );
+    wally_put_function(PLUGIN_SCOPE"::video_refresh_timer",WFUNC_THRD,video_refresh_timer ,1   );
+    wally_put_function(PLUGIN_SCOPE"::playScaled"         ,WFUNC_SYNC,renderVideoScaled,1      );
+    wally_put_function(PLUGIN_SCOPE"::play"               ,WFUNC_SYNC,renderVideo     ,1       );
+    wally_put_function(PLUGIN_SCOPE"::pause"              ,WFUNC_SYNC,pauseVideo      ,1       );
+    wally_put_function(PLUGIN_SCOPE"::unpause"            ,WFUNC_SYNC,unpauseVideo    ,1       );
+    wally_put_function(PLUGIN_SCOPE"::stop"               ,WFUNC_SYNC,stopVideo       ,1       );
+    wally_put_function(PLUGIN_SCOPE"::reset"              ,WFUNC_SYNC,resetVideo      ,1       );
+    wally_put_function(PLUGIN_SCOPE"::playFullscreen"     ,WFUNC_SYNC,renderVideoFullscreen,  1);
+    wally_put_function(PLUGIN_SCOPE"::playScaledDirect"   ,WFUNC_SYNC,renderVideoScaledDirect,1);
 
     slog(DEBUG,DEBUG,"Plugin video initialized. PH is at 0x%x",ph);
 
