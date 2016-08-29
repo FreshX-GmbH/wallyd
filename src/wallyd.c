@@ -11,9 +11,9 @@ uv_loop_t loop;
 pthread_t uv_thr;
 
 int gargc;
-char **gargv;
-const char *startupScript = WALLYD_CONFDIR"/wallyd.d";
-const char *pluginFolder  = INSTALL_PREFIX"/lib/wallyd";
+char *gargv[2];
+static char *startupScript = WALLYD_CONFDIR"/wallyd.d";
+static char *pluginFolder  = INSTALL_PREFIX"/lib/wallyd";
 
 int main(int argc, char *argv[]) 
 {
@@ -79,14 +79,8 @@ int main(int argc, char *argv[])
 
    slog(DEBUG,DEBUG,"Seaduk initializing, ctx is at 0x%x.",ph->ctx);
    gargc = argc;
-   gargv = argv;
-   if(argc < 2){
-      const char *nargv[2];
-      nargv[0] = argv[0];
-      nargv[1] = startupScript;
-      argc++;
-      gargv = (char **) nargv;
-   }
+   gargv[0] = strdup(argv[0]);
+   gargv[1] = startupScript;
    if(pthread_create(&uv_thr, NULL, &duvThread, ph->ctx) != 0){
       slog(ERROR,ERROR,"Failed to create seaduk thread!");
    }

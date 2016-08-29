@@ -39,7 +39,7 @@ extern uv_loop_t loop;
 
 void *duvThread(void *ctx);
 
-extern const char *startupScript;
+static char *startupScript;
 
 void onNewConnection(uv_stream_t *server, int status);
 bool processCommand(char *cmd);

@@ -8,7 +8,7 @@
 #include "util.h"
 
 extern int gargc;
-extern char **gargv;
+extern char *gargv[];
 
 enum build_mode {
   BUILD_LINKED,
