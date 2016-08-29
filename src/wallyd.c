@@ -235,6 +235,12 @@ void initializeConfig(void){
     if(ht_contains_simple(ph->configMap,"threadDelay")) { 
       ph->threadDelay = atoi(ht_get_simple(ph->configFlagsMap,"threadDelay"));
     }
+    if(ht_contains_simple(ph->configMap,"sdldebug") && strncmp(ht_get_simple(ph->configMap,"sdldebug"),"true",4) == 0) { 
+	ph->sdldebug = true; 
+        slog(DEBUG,DEBUG,"SDL Debug Log enabled.");
+    } else {
+	ph->sdldebug = false; 
+    }
     if(ht_contains_simple(ph->configMap,"raspberry") && strncmp(ht_get_simple(ph->configMap,"raspberry"),"true",4) == 0) { 
 	ph->broadcomInit = true; 
         slog(DEBUG,DEBUG,"BCM Chip support enabled.");

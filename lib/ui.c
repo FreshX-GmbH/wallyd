@@ -532,12 +532,12 @@ bool sdlInit(void)
    ph->broadcomInit = false;
 #endif
 
-   //if(ph->loglevel > INFO){
-//   	slog(ERROR,INFO,"Setting SDL debug level to VERBOSE");
-//   	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
-   //} else {
-   //   SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
-   //}
+   if(ph->sdldebug){
+   	slog(ERROR,INFO,"Setting SDL debug level to VERBOSE");
+   	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+   } else {
+      SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
+   }
 
    if ( SDL_Init( SDL_INIT_EVERYTHING ) == -1 ) {
       slog(ERROR,ERROR, " Failed to initialize SDL : %s", SDL_GetError());
