@@ -60,9 +60,13 @@ function oninterval() {
 	var d2 = new Date();
         var start = d2.getTime();
         wallaby.renderScreen(context,context.privates,'main',dat);
+	if(typeof uv.uptime === 'function'){
+	    var d2.setTime(uv.uptime());	
+	} else {
+	    var passed = d2.getTime()-config.wally.uptime*1000;//-3600*1000;
+	}
 	var d3 = new Date();
-        var fin = d3.getTime();
-	var passed = d2.getTime()-config.wally.uptime*1000-3600*1000;
+	var fin = d3.getTime();
 	d2.setTime(passed);
 	var m = extra.pad(d2.getMinutes(),2);
 	var h = d2.getHours();

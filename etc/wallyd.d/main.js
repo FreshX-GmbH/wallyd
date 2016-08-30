@@ -1,6 +1,7 @@
 var wally = new Wally();
 var config = wally.getConfig();
 var homedir = config.basedir+'/etc/wallyd.d';
+var uv = nucleus.uv;
 
 if(nucleus){
 	var modules = homedir+'/modules';
@@ -13,10 +14,10 @@ if(nucleus){
 	var fs    = nucleus.dofile('modules/fs.js');
 	var extra = nucleus.dofile('modules/extra.js');
 	log.info('Seaduk modules initialized');
-        p(nucleus.envkeys());
-} else {
 	var modules = homedir+'/modules.duv';
 	var log = {info:print, error:print, debug:print};
+} else {
+
 }
 
 context = { 
@@ -35,6 +36,19 @@ context = {
     },
     p:p
 };
+
+context.config.env   = nucleus.envkeys();
+
+if(typeof uv.interface_addresses === 'function'){
+    context.config.network = uv.interface_addresses();
+    context.config.network.valid = false;
+    p(context.config.network);
+    context.config.hrstart = uv.hrtime();
+    context.config.cpuinfo = uv.cpu_info();
+    p(context.config.cpuinfo);
+} else {
+    log.error('Seaduk misc extension not found : ',typeof uv.interface_addresses);
+}
 
 // This is called after the startVideo 
 // or immediately if startVideo==false
@@ -64,7 +78,30 @@ try{
 	log.error('ERROR in defaults : '+e1);
 }
 try{
-	context.ssdp  = nucleus.dofile('ssdp.js');
+    if(context.config.network){
+      var networktimer = new uv.Timer();
+      networktimer.start(1000, 1000, function(){
+        var network = uv.interface_addresses();
+        //print(Object.keys(network));
+        Object.keys(network).forEach(function(ifname){
+          Object.keys(network[ifname]).forEach(function(addr){
+            if(network[ifname][addr].internal === true)  return;
+            if(network[ifname][addr].family === 'INET6') return;
+	    log.info('Found a valid IPv4 address : '+network[ifname][addr].ip);
+	    {
+		if(context.config.network.valid === false){
+		    context.config.network.valid = true;
+		    context.ssdp  = nucleus.dofile('ssdp.js');
+		    networktimer.stop();
+		    networktimer.close();
+		}
+	    }
+          });
+        });
+      });
+    } else {
+      context.ssdp  = nucleus.dofile('ssdp.js');
+    }
 } catch(e2) {
 	log.error('ERROR in ssdp : '+e2);
 }
