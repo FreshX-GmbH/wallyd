@@ -41,7 +41,7 @@ context.config.env   = nucleus.envkeys();
 
 if(typeof uv.interface_addresses === 'function'){
     context.config.network = uv.interface_addresses();
-    context.config.network.valid = false;
+    context.config.network.connected = false;
     p(context.config.network);
     context.config.hrstart = uv.hrtime();
     context.config.cpuinfo = uv.cpu_info();
@@ -89,8 +89,8 @@ try{
             if(network[ifname][addr].family === 'INET6') return;
 	    log.info('Found a valid IPv4 address : '+network[ifname][addr].ip);
 	    {
-		if(context.config.network.valid === false){
-		    context.config.network.valid = true;
+		if(context.config.network.connected === false){
+		    context.config.network.connected = true;
 		    context.ssdp  = nucleus.dofile('ssdp.js');
 		    networktimer.stop();
 		    networktimer.close();
