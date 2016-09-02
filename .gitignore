@@ -25,3 +25,5 @@ CMakeCache.txt
 install_manifest.txt
 autoversion.h
 */cmake_install.cmake
+src/wallyc
+src/sdldemo
