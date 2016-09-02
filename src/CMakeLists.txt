@@ -30,6 +30,7 @@ target_link_libraries(wallyc)
 set(SDLDEMO sdldemo.c)
 add_executable(sdldemo ${SDLDEMO})
 target_link_libraries(sdldemo ${LIBSDL_LIBRARIES} ${LIBSDLIMG_LIBRARIES})
+install(TARGETS sdldemo DESTINATION ${BIN_INSTALL_DIR})
 
 if(WITH_SEADUK STREQUAL on)
 	set(DWALLYD_SRC wallyd.c nucly/env.c nucly/path.c seaduk.c ../lib/miniz.c)
