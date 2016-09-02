@@ -1,7 +1,7 @@
 set(TEST_SRC drmtest.c)
 
 # On Linux build some KMS / DRM Test programms
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linuxx")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   pkg_check_modules(LIBDRM libdrm)
   pkg_check_modules(LIBDRI libdri)
   pkg_check_modules(LIBGLES2 libglesv2)
@@ -15,7 +15,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linuxx")
   target_link_libraries(kmscube EGL GLESv2 gbm m kms cairo drm ${LIBDRI_LIBRARIES} ${LIBGLES2_LIBRARIES} ${LIBGBM_LIBRARIES})
   target_link_libraries(modeset EGL GLESv2 gbm m kms cairo drm ${LIBDRI_LIBRARIES} ${LIBGLES2_LIBRARIES} ${LIBGBM_LIBRARIES})
   target_link_libraries(drmtest EGL GLESv2 gbm drm ${LIBDRI_LIBRARIES} ${LIBGLES2_LIBRARIES} ${LIBGBM_LIBRARIES})
-  include_directories(${LIBDRI_INCLUDE_DIRS} ${LIBGLES2_INCLUDE_DIRS} ${LIBGBM_INCLUDE_DIRS} ${LIBDRM_INCLUDE_DIRS})
+  target_link_libraries(fb2png ${LIBPNG_LIBRARIES})
+  include_directories(${LIBDRI_INCLUDE_DIRS} ${LIBGLES2_INCLUDE_DIRS} ${LIBGBM_INCLUDE_DIRS} ${LIBDRM_INCLUDE_DIRS} ${LIBPNG_INCLUDE_DIRS})
   install(TARGETS drmtest DESTINATION ${BIN_INSTALL_DIR})
   install(TARGETS kmscube DESTINATION ${BIN_INSTALL_DIR})
   install(TARGETS modeset DESTINATION ${BIN_INSTALL_DIR})
