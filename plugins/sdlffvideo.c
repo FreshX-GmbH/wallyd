@@ -16,6 +16,7 @@ int video_refresh_timer(VideoState *is){
     if(!is) return 0;
     video_refresh(is);
     is->refresh = 0;
+    is->videoRefreshTimer--;
     return 0;
 }
 
@@ -27,6 +28,7 @@ int video_open(VideoState *is, int force_set_video_mode)
 
     is->width  = is->video_st->codec->width;
     is->height = is->video_st->codec->height;
+    is->refresh = 0;
     loop = 100;
 
     return 0;
@@ -54,15 +56,16 @@ void *videoFinishCallback(VideoState *is){
 }
 
 void *createTextureCallback(VideoState *is){
-    slog(TRACE,DEBUG,"Creating Video texture with is : 0x%x",is);
+    slog(TRACE,ERROR,"Creating Video texture with is : 0x%x",is);
     
     texInfo *TI = is->TI;
-    if(TI->texture){
-        SDL_DestroyTexture(TI->texture);
-        ph->textureCount--;
-    }
-    slog(TRACE,DEBUG,"Creating video texture for %s, size %dx%d",TI->name, is->width, is->height);
+    //if(TI && TI->texture){
+    //    SDL_DestroyTexture(TI->texture);
+    //    ph->textureCount--;
+    //}
+    //slog(TRACE,ERROR,"Creating video texture for %s, size %dx%d",TI->name, is->width, is->height);
     TI->texture = SDL_CreateTexture( ph->renderer, SDL_PIXELFORMAT_YV12, SDL_TEXTUREACCESS_STREAMING, is->width, is->height );
+    is->TI = TI;
     ph->textureCount++;
     return TI->texture;
 }
@@ -96,7 +99,7 @@ int renderVideo(char *str)
       slog(LVL_QUIET,ERROR,"Taget texture %s not found.",screen);
       return -1;
     }
-    vo->TI = ht_get_simple(ph->baseTextures,screen);
+    //vo->TI = TI;
 
     ph->playVideo = true;
 
@@ -106,8 +109,8 @@ int renderVideo(char *str)
     setFinishCallback(videoFinishCallback);
 
     vo->is = renderFFVideo(file);
-    vo->is->TI = TI;
-    vo->is->VO = vo;
+    //vo->is->TI = TI;
+    //vo->is->VO = vo;
     slog(DEBUG,DEBUG, "FFVideo Object : 0x%x, is : 0x%x",vo,vo->is);
     return ret;
 }

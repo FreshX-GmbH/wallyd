@@ -209,6 +209,7 @@ typedef struct VideoState {
 
     SDL_cond *continue_read_thread;
 #ifdef WALLY_PLUGIN
+    int videoRefreshTimer;
     void *TI;
     void *VO;
 #endif

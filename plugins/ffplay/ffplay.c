@@ -213,8 +213,8 @@ typedef struct VideoState {
 #ifdef WALLY_PLUGIN
     void *TI;
     void *VO;
+    int refreshTimerCount;
 #endif
-
     SDL_cond *continue_read_thread;
 } VideoState;
 
@@ -1089,18 +1089,19 @@ static int refresh_thread(void *opaque)
 {
     VideoState *is= opaque;
     while (!is->abort_request) {
-#ifndef WALLY_PLUGIN
         SDL_Event event;
         event.type = FF_REFRESH_EVENT;
         event.user.data1 = opaque;
         if (!is->refresh && (!is->paused || is->force_refresh)) {
             is->refresh = 1;
+#ifndef WALLY_PLUGIN
             SDL_PushEvent(&event);
-        }
 #else
-        int ret;
-        callWithData("ffvideo::refresh_timer",&ret,is);
+            int ret;
+            is->refreshTimerCount++;
+            callWithData("ffvideo::refresh_timer",&ret,is);
 #endif
+        }
         //FIXME ideally we should wait the correct time but SDLs event passing is so slow it would be silly
         av_usleep(is->audio_st && is->show_mode != SHOW_MODE_VIDEO ? rdftspeed*1000 : 5000);
     }
@@ -1396,15 +1397,16 @@ display:
             av_diff = 0;
             if (is->audio_st && is->video_st)
                 av_diff = get_audio_clock(is) - get_video_clock(is);
-//            printf("%7.2f A-V:%7.3f fd=%4d aq=%5dKB vq=%5dKB sq=%5dB f=%"PRId64"/%"PRId64"   \r",
-//                   get_master_clock(is),
-//                   av_diff,
-//                   is->frame_drops_early + is->frame_drops_late,
-//                   aqsize / 1024,
-//                   vqsize / 1024,
-//                   sqsize,
-//                   is->video_st ? is->video_st->codec->pts_correction_num_faulty_dts : 0,
-//                   is->video_st ? is->video_st->codec->pts_correction_num_faulty_pts : 0);
+            printf("%d %7.2f A-V:%7.3f fd=%4d aq=%5dKB vq=%5dKB sq=%5dB f=%"PRId64"/%"PRId64"   \n",
+                   is->refreshTimerCount,
+                   get_master_clock(is),
+                   av_diff,
+                   is->frame_drops_early + is->frame_drops_late,
+                   aqsize / 1024,
+                   vqsize / 1024,
+                   sqsize,
+                   is->video_st ? is->video_st->codec->pts_correction_num_faulty_dts : 0,
+                   is->video_st ? is->video_st->codec->pts_correction_num_faulty_pts : 0);
             fflush(stdout);
             last_time = cur_time;
         }
@@ -2469,11 +2471,13 @@ static void stream_component_close(VideoState *is, int stream_index)
     default:
         break;
     }
+
     if(finishVideo != NULL){
-         stream_close(is);
-         finishVideo(is);
+        printf("=========== FF DONE, WALLY CALLBACK called ==========\n");
+        //finishVideo(is);
     }
-    printf("=========== FF DONE ==========\n");
+
+    stream_close(is);
 
 }
 
@@ -2765,10 +2769,7 @@ static VideoState *stream_open(const char *filename, AVInputFormat *iformat)
     is->ytop    = 0;
     is->xleft   = 0;
     is->texture = NULL;
-
-#ifdef WALLY_PLUGIN
-    printf("Creating FF player threads\n");
-#endif
+    is->refreshTimerCount = 0;
 
     /* start video display */
     is->pictq_mutex = SDL_CreateMutex();
@@ -3471,7 +3472,6 @@ VideoState *renderFFVideo(char *filename)
         av_log(NULL, AV_LOG_FATAL, "Failed to initialize VideoState!\n");
         return NULL;
     }
-
     return is;
 }
 

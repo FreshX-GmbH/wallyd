@@ -33,10 +33,10 @@ int eventFilter(void *userdata, SDL_Event *event){
         slog(LVL_INFO,WARN,"Ignoring event, no function given");
         return 0; 
     }
-    if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
-        slog(LVL_INFO,WARN,"Intercepted an orphaned refresh timer event");
-        return 0; 
-    }
+//    if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
+//        slog(LVL_INFO,WARN,"Intercepted an orphaned refresh timer event");
+//       return 0; 
+//   }
     return 1;
 }
 
@@ -50,6 +50,7 @@ bool uiLoop(void){
     slog(DEBUG,DEBUG,"UI Loop started and waiting for events (%p)",&event);
     for(;;) {
 	SDL_zero(event);
+        param = NULL;
 #ifdef WAIT_EV
         int ret = SDL_WaitEventTimeout(&event,3000);
         ph->uiAllCount++;
