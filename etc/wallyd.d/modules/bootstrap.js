@@ -10,4 +10,5 @@ Duktape.modSearch = function (id) {
     throw new Error("No such file in bundle: " + filename);
   }
   return js;
+
 };
