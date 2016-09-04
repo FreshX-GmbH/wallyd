@@ -24,6 +24,10 @@
 
 /* Based on a egl cube test app originally written by Arvin Schnell */
 
+#ifndef MESA_EGL_NO_X11_HEADERS
+#define MESA_EGL_NO_X11_HEADERS
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>

@@ -26,6 +26,11 @@
  * provided by some external library.
  */
 
+
+#ifndef MESA_EGL_NO_X11_HEADERS
+#define MESA_EGL_NO_X11_HEADERS
+#endif
+
 #define _GNU_SOURCE
 #include <errno.h>
 #include <fcntl.h>

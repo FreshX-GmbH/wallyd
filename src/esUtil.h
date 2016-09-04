@@ -17,6 +17,10 @@
 #ifndef ESUTIL_H
 #define ESUTIL_H
 
+#ifndef MESA_EGL_NO_X11_HEADERS
+#define MESA_EGL_NO_X11_HEADERS
+#endif
+
 ///
 //  Includes
 //
