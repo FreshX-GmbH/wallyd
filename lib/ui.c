@@ -589,7 +589,11 @@ bool sdlInit(void)
    	slog(LVL_QUIET,DEBUG,"Driver %d : %s",i,drinfo.name );
    }
 
+#ifdef WALLY_VSYNC
    ph->renderer = SDL_CreateRenderer( ph->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC );
+#else
+   ph->renderer = SDL_CreateRenderer( ph->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE );
+#endif
 
    if ( ph->renderer == NULL ) {
       slog(LVL_QUIET,ERROR,"Failed to create renderer %s ", SDL_GetError());
