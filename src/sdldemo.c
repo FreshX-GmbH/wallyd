@@ -96,7 +96,7 @@ bool loadSDL(bool mode2d)
     if(mode2d){
            screenSurface = SDL_GetWindowSurface( window );
     } else {
-       renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE);
+       renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC);
        if(renderer == NULL){
             printf( "Renderer could not initialize : %s\n", IMG_GetError() );
             return false;
