@@ -15,13 +15,15 @@ bool loadImage(char *name,bool mode);
 void closeSDL();
 bool dumpModes(void);
 
+#define VERSION "0.1"
+
 int main( int argc, char* args[] )
 {
     bool mode2d = false;
     int argadd = 0;
 
     if(argc < 2){
-        printf("Usage : %s [2] <imagefile> [degree]\n\t-2 for 2D surface mode only\n\tdegree to turn (only in 3D mode)\n",args[0]);
+        printf("Usage : %s (V"VERSION") [2] <imagefile> [degree]\n\t-2 for 2D surface mode only\n\tdegree to turn (only in 3D mode)\n",args[0]);
         exit(1);
     }
     if(argc > 2){
@@ -103,7 +105,7 @@ bool loadSDL(bool mode2d)
     if(mode2d){
            screenSurface = SDL_GetWindowSurface( window );
     } else {
-       renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE );
+       renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC );
        if(renderer == NULL){
             printf( "Renderer could not initialize : %s\n", IMG_GetError() );
             return false;
@@ -151,7 +153,11 @@ bool loadImage(char *name,bool mode2d)
 //       SDL_Rect mr = {0, 0, TI->rect->w, TI->rect->h};
    
 //       SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-       SDL_RenderCopyEx( renderer, text, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
+       if(rot == 0){
+       		SDL_RenderCopy( renderer, text, NULL, NULL);
+       } else {
+       		SDL_RenderCopyEx( renderer, text, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
+       }
        SDL_DestroyTexture(text);
        SDL_RenderPresent( renderer );
     }

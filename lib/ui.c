@@ -234,11 +234,11 @@ int renderActiveEx(const char *startTex)
 	       continue;
           }
           slog(TRACE,FULLDEBUG,"RenderActive(%s,{%d,%d,%d,%d});",name,mr->x, mr->y, mr->w, mr->h);
-          SDL_RenderCopy( ph->renderer, TI->texture, NULL, mr);
+          SDL_RenderCopyEx( ph->renderer, TI->texture, NULL, mr, 0, NULL, SDL_FLIP_NONE);
        }
    }
    SDL_SetRenderTarget(ph->renderer, NULL);
-   SDL_RenderCopy(ph->renderer, TempTI->texture, NULL, NULL);
+   SDL_RenderCopyEx(ph->renderer, TempTI->texture, NULL, NULL,0,NULL,SDL_FLIP_NONE);
    SDL_RenderPresent( ph->renderer );
    return true;
 }
