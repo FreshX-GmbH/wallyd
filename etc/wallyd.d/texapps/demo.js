@@ -72,11 +72,11 @@ function oninterval() {
 	d2.setTime(passed);
 	var m = extra.pad(d2.getMinutes(),2);
 	var h = d2.getHours();
-	var d = (passed/1000)/24/3600;
+	var d = ~~((passed/1000)/24/3600);
 	var uts = h+':'+m+'h';
 	var name = 'unknown';
 	var conn = 'no';
-	if(d > 0){
+	if(d < 1){
 	   uts = d+' days '+h+':'+m+'h';
 	}
 	if(typeof(config.conn) !== 'undefined' && typeof(config.conn.name) !== 'undefined' ){
