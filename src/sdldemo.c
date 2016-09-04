@@ -11,6 +11,7 @@ bool quit = false;
 bool loadSDL(void);
 bool loadImage(char *name);
 void closeSDL();
+bool dumpModes(void);
 
 int main( int argc, char* args[] )
 {
@@ -19,6 +20,9 @@ int main( int argc, char* args[] )
         exit(1);
     }
     if(!loadSDL()){
+        exit(1);
+    }
+    if(!dumpModes()){
         exit(1);
     }
     if(!loadImage(args[1])){
@@ -30,7 +34,7 @@ int main( int argc, char* args[] )
     {
         while(SDL_PollEvent(&event) != 0)
         {
-            if(event.type == SDL_KEYDOWN)
+            if(event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_APP_TERMINATING || event.type == SDL_KEYDOWN || event.type == SDL_QUIT)
             {
                 quit = true;
             }
@@ -42,6 +46,29 @@ int main( int argc, char* args[] )
     return 0;
 }
 
+bool dumpModes(void)
+{
+    SDL_DisplayMode mode;
+    SDL_Rect r;
+    int j,i,display_count;
+    Uint32 f;
+    if ((display_count = SDL_GetNumVideoDisplays()) < 1) {
+        printf("No VideoDisplays found.");
+        return false;
+    }
+    printf("VideoDisplays: %i\n", display_count);
+
+    for (j=0; j<display_count; j++){
+        SDL_GetDisplayBounds(j,&r);
+        printf("Display %d boundaries : %d x %d\n",j,r.w,r.h);
+        for (i=0; i<SDL_GetNumDisplayModes(j); i++){
+          SDL_GetDisplayMode(j,i,&mode);
+          f = mode.format;
+          printf("Display %d / Mode %d : %d x %d x %d bpp (%s) @ %d Hz\n", j, i, mode.w, mode.h, SDL_BITSPERPIXEL(f), SDL_GetPixelFormatName(f), mode.refresh_rate);
+        }
+    }
+    return true;
+}
 bool loadSDL()
 {
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0) {
