@@ -577,7 +577,7 @@ bool sdlInit(void)
       }
    }
 
-   ph->glcontext = SDL_GL_CreateContext(ph->window);
+   //ph->glcontext = SDL_GL_CreateContext(ph->window);
    // Show a cursor in Mouse driven OSes
    SDL_ShowCursor( 0 ); 
 
