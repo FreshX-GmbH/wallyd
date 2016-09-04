@@ -8,6 +8,7 @@ SDL_Renderer* renderer = NULL;
 SDL_Surface* screenSurface = NULL;
 SDL_Event event;
 bool quit = false;
+int rot = 0;
 
 bool loadSDL(bool);
 bool loadImage(char *name,bool mode);
@@ -17,17 +18,23 @@ bool dumpModes(void);
 int main( int argc, char* args[] )
 {
     bool mode2d = false;
-    int fileargnum = 1;
+    int argadd = 0;
 
     if(argc < 2){
-        printf("Usage : %s [-2] <imagefile>\n\t-2 for 2D surface mode only\n",args[0]);
+        printf("Usage : %s [2] <imagefile> [degree]\n\t-2 for 2D surface mode only\n\tdegree to turn (only in 3D mode)\n",args[0]);
         exit(1);
     }
     if(argc > 2){
-        if(args[1]=='2'){
+        if(args[1][0]=='2'){
             printf("Using 2D/Surface mode only\n");
             mode2d = true;
-            fileargnum=2;
+            argadd=1;
+        } else {
+            rot = strtol(args[2],NULL,10);
+            if(!rot) {
+                printf("Could not convert %s to a number\n",args[2]);
+                exit(1);
+            }
         }
     }
     if(!loadSDL(mode2d)){
@@ -36,7 +43,7 @@ int main( int argc, char* args[] )
     if(!dumpModes()){
         exit(1);
     }
-    if(!loadImage(args[fileargnum],mode2d)){
+    if(!loadImage(args[1+argadd],mode2d)){
         exit(1);
     }
 
@@ -96,7 +103,7 @@ bool loadSDL(bool mode2d)
     if(mode2d){
            screenSurface = SDL_GetWindowSurface( window );
     } else {
-       renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC);
+       renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE );
        if(renderer == NULL){
             printf( "Renderer could not initialize : %s\n", IMG_GetError() );
             return false;
@@ -144,7 +151,7 @@ bool loadImage(char *name,bool mode2d)
 //       SDL_Rect mr = {0, 0, TI->rect->w, TI->rect->h};
    
 //       SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-       SDL_RenderCopy( renderer, text, NULL, NULL);
+       SDL_RenderCopyEx( renderer, text, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
        SDL_DestroyTexture(text);
        SDL_RenderPresent( renderer );
     }
