@@ -150,11 +150,6 @@ bool loadImage(char *name,bool mode2d)
            printf("Error loading image : %s\n",IMG_GetError());
            return false;
        }
-//       SDL_QueryTexture( text, NULL, NULL, &rect.w, &rect.h );
-//       rect.x = 0;
-//       rect.y = 0;
-//       SDL_Rect mr = {0, 0, TI->rect->w, TI->rect->h};
-   
 //       SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
        if(rot == 0){
        		SDL_RenderCopy( renderer, text, NULL, NULL);
