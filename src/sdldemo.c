@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <time.h>
 
+#define VERSION "0.11"
+
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_Surface* screenSurface = NULL;
@@ -15,7 +17,6 @@ bool loadImage(char *name,bool mode);
 void closeSDL();
 bool dumpModes(void);
 
-#define VERSION "0.1"
 
 int main( int argc, char* args[] )
 {
@@ -26,6 +27,7 @@ int main( int argc, char* args[] )
         printf("Usage : %s (V"VERSION") [2] <imagefile> [degree]\n\t-2 for 2D surface mode only\n\tdegree to turn (only in 3D mode)\n",args[0]);
         exit(1);
     }
+    printf("%s (V"VERSION")" ,args[0]);
     if(argc > 2){
         if(args[1][0]=='2'){
             printf("Using 2D/Surface mode only\n");
@@ -105,7 +107,8 @@ bool loadSDL(bool mode2d)
     if(mode2d){
            screenSurface = SDL_GetWindowSurface( window );
     } else {
-       renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC );
+       //renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC );
+       renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE );
        if(renderer == NULL){
             printf( "Renderer could not initialize : %s\n", IMG_GetError() );
             return false;
