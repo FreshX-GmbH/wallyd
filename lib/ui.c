@@ -233,7 +233,7 @@ int renderActiveEx(const char *startTex)
 	       slog(LVL_INFO,INFO,"Refusing to place texture %s with invalid size.",name);
 	       continue;
           }
-          slog(TRACE,FULLDEBUG,"RenderActive(%s,{%d,%d,%d,%d});",name,mr->x, mr->y, mr->w, mr->h);
+          slog(DEBUG,ERROR,"RenderActive(%s,{%d,%d,%d,%d});",name,mr->x, mr->y, mr->w, mr->h);
           SDL_RenderCopyEx( ph->renderer, TI->texture, NULL, mr, 0, NULL, SDL_FLIP_NONE);
        }
    }
