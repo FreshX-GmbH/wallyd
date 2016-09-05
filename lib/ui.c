@@ -341,8 +341,10 @@ int createTextureEx(char *strTmp,bool isVideo){
 		 w, h);
       } else {
          slog(DEBUG,DEBUG,"Creating texture named %s at (%d,%d) size %dx%d prio %d, color(%d,%d,%d,%d)",textureName,x,y,w,h,TI->z,TI->c->r,TI->c->g,TI->c->b,TI->c->a);
+         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
          TI->texture = SDL_CreateTexture(ph->renderer, 
-	  	 SDL_PIXELFORMAT_RGBA8888,
+	  	 //SDL_PIXELFORMAT_RGBA8888,
+                 SDL_PIXELFORMAT_ARGB8888,
                  //SDL_TEXTUREACCESS_STREAMING | 
                  SDL_TEXTUREACCESS_TARGET, 
 		 w, h);
@@ -624,9 +626,9 @@ bool sdlInit(void)
 
    TI->active = true;
    TI->autorender = true;
-
+   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
    TI->texture = SDL_CreateTexture(ph->renderer, 
-	  	 SDL_PIXELFORMAT_RGBA8888,
+	  	 SDL_PIXELFORMAT_ARGB8888,
          //        SDL_TEXTUREACCESS_STREAMING | 
                  SDL_TEXTUREACCESS_TARGET, 
 	  	 w, h);
