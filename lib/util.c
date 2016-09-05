@@ -11,8 +11,9 @@ char *logFile;
 //struct map_t *configMap;
 pthread_mutex_t logMutex=PTHREAD_MUTEX_INITIALIZER;
 
-bool utilInit(int _loglevel){
+bool utilInit(int _loglevel, int _logmask, int _logfilemask){
    ph->loglevel = _loglevel;
+   ph->logmask = _logmask;
    ph->uiAllCount = 0;
    ph->uiOwnCount = 0;
    ph->uiEventTimeout = 0;
@@ -22,7 +23,7 @@ bool utilInit(int _loglevel){
    ph->conditionTimeout = 0;
    ph->logfileHandle = stderr;
    pthread_mutex_init (&logMutex,0);
-   slog_init(NULL, WALLYD_CONFDIR"/wallyd.conf", _loglevel, 0, 1);
+   slog_init(NULL, WALLYD_CONFDIR"/wallyd.conf", _loglevel, 0, _logmask, _logfilemask , true);
    return true;
 }
 
@@ -220,7 +221,7 @@ int getConfig(hash_table *map, const char *file)
    int count=0;
    FILE *fp = fopen(file,"r");
    if (fp == NULL){
-      slog(TRACE,DEBUG,"Can't open file %s.", file,count);
+      slog(TRACE,LOG_UTIL,"Can't open file %s.", file,count);
       return 0;
    } else {
       char *line = (char*)malloc(512);
@@ -258,7 +259,7 @@ int getConfig(hash_table *map, const char *file)
          }
          //slog(TRACE,FULLDEBUG,"Splitting cleaned line %s into key %s = %s",line,k,v);
          if(!k || !v){
-            slog(LVL_INFO,WARN,"Line %s is not valid. Ignored.");
+            slog(WARN,LOG_UTIL,"Line %s is not valid. Ignored.");
             continue;
          }
          ht_insert_simple(map,k,v);
@@ -266,14 +267,14 @@ int getConfig(hash_table *map, const char *file)
          line=(char*)malloc(512);
          count++;
          if(count+1 > MAXCONF){
-            slog(ERROR,ERROR,"MaxConf Count reached.");
+            slog(ERROR,LOG_UTIL,"MaxConf Count reached.");
             break;
          }
       }
    fclose ( fp );
    }
    configEntries = count;
-   slog(TRACE,DEBUG,"Config entries in %s : %d",file,count);
+   slog(TRACE,LOG_UTIL,"Config entries in %s : %d",file,count);
    return count;
 }
 
@@ -292,9 +293,9 @@ void cleanupUtil(void)
 
 void cleanupWally(int s){
     if(s != 0){
-      slog(LVL_INFO,INFO,"Caught signal %d", s);
+      slog(INFO,LOG_UTIL,"Caught signal %d", s);
     } else {
-      slog(LVL_INFO,INFO,"Cleanup wallyd");
+      slog(INFO,LOG_UTIL,"Cleanup wallyd");
     }
     signal(SIGINT, SIG_DFL);
 
@@ -356,7 +357,7 @@ void setupSignalHandler(void){
 }
 
 FILE *openLogfile(char *name){
-    slog(TRACE,DEBUG,"Opening Logfile and redirecting logs to %s",name);
+    slog(TRACE,LOG_UTIL,"Opening Logfile and redirecting logs to %s",name);
     FILE *stream = fopen(name, "a");
     setbuf(stream, NULL);
     setvbuf(stream, NULL, _IONBF, 0);
@@ -401,7 +402,7 @@ int getNumOrPercentEx(char *str, int relativeTo, int *value,int base){
    errno = 0;
    int err = 0;
    if(!str) {
-      slog(LVL_INFO,WARN,"getNumOrPercent() : string invalid");
+      slog(INFO,LOG_UTIL,"getNumOrPercent() : string invalid");
       return false;
    }
    unsigned long len = strlen(str);
@@ -411,16 +412,16 @@ int getNumOrPercentEx(char *str, int relativeTo, int *value,int base){
       //else errno = 1;
       str[len-1] = '%';
       if(errno) {
-         slog(LVL_INFO,WARN,"strtol(%s) conversion error %d",str,err);
+         slog(WARN,LOG_UTIL,"strtol(%s) conversion error %d",str,err);
          return false;
       }
       *value = relativeTo * x / 100;
-      slog(TRACE,FULLDEBUG,"it's percent : %s = %d",str,*value);
+      slog(TRACE,LOG_UTIL,"it's percent : %s = %d",str,*value);
       return true;
    }
    if(str) x = (int)strtol(str,NULL,base);
    if(errno) {
-         slog(LVL_INFO,WARN,"strtol(%s) conversion error %d",str,errno);
+         slog(WARN,LOG_UTIL,"strtol(%s) conversion error %d",str,errno);
          return false;
    }
    if(x < 0){

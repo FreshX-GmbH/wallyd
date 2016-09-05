@@ -95,7 +95,7 @@ void ht_init(hash_table *table, ht_flags flags, double max_load_factor
     table->array        = malloc(table->array_size * sizeof(*(table->array)));
 
     if(table->array == NULL) {
-        slog(LVL_QUIET,ERROR,"ht_init failed to allocate memory");
+        slog(ERROR,LOG_UTIL,"ht_init failed to allocate memory");
         return;
     }
 
@@ -120,9 +120,9 @@ void ht_dumpkeys(hash_table *table, char *prefix)
     void **keys = ht_keys(table,&items);
     for(int i = 0; i < items; i++ ){
         if(prefix != NULL){
-            slog(DEBUG,DEBUG,"%s%s", prefix, keys[i]);
+            slog(DEBUG,LOG_UTIL,"%s%s", prefix, keys[i]);
         } else {
-            slog(DEBUG,DEBUG,"Key : %s", prefix, keys[i]);
+            slog(DEBUG,LOG_UTIL,"Key : %s", prefix, keys[i]);
         }
     }
 }
@@ -133,7 +133,7 @@ void ht_destroy(hash_table *table)
     hash_entry *tmp;
 
     if(table->array == NULL) {
-        slog(LVL_QUIET,ERROR,"ht_destroy got a bad table\n");
+        slog(ERROR,LOG_UTIL,"ht_destroy got a bad table\n");
         return;
     }
 
@@ -160,27 +160,20 @@ void ht_destroy(hash_table *table)
 
 void ht_insert_simple(hash_table *table, char *key, void *value)
 {
-//    slog(DEBUG,DEBUG,"create : %s", key);
     hash_entry *entry = he_create(table->flags, key, strlen(key)+1, value, sizeof(void*));
-
-//    slog(DEBUG,DEBUG,"insert_he");
     ht_insert_he(table, entry);
 }
 
 void ht_remove_simple(hash_table *table, char *key)
 {
-//    slog(DEBUG,DEBUG,"remove : %s",key);
     ht_remove(table, key,strlen(key)+1);
 }
 
 void ht_insert(hash_table *table, void *key, size_t key_size, void *value,
         size_t value_size)
 {
-//    slog(DEBUG,DEBUG,"create : %s",key);
     hash_entry *entry = he_create(table->flags, key, key_size, value,
             value_size);
-
-//    slog(DEBUG,DEBUG,"insert_he");
     ht_insert_he(table, entry);
 }
 
@@ -277,7 +270,7 @@ void* ht_get_simple(hash_table *table, void *key){
     size_t size;
     void *val = ht_get(table,key,strlen(key)+1,&size);
     if(val == NULL){
-        slog(TRACE,FULLDEBUG,"Hashtable fail, key not found : %s",key);
+        slog(TRACE,LOG_UTIL,"Hashtable fail, key not found : %s",key);
         return NULL;
     }
     return val;
@@ -361,7 +354,7 @@ void** ht_keys(hash_table *table, unsigned int *key_count)
     // array of pointers to keys
     ret = malloc(table->key_count * sizeof(void *));
     if(ret == NULL) {
-        slog(LVL_QUIET,ERROR,"ht_keys failed to allocate memory\n");
+        slog(ERROR,LOG_UTIL,"ht_keys failed to allocate memory\n");
         return NULL;
     }
     *key_count = 0;
@@ -382,7 +375,7 @@ void** ht_keys(hash_table *table, unsigned int *key_count)
             tmp = tmp->next;
             // sanity check, should never actually happen
             if(*key_count > table->key_count) {
-                slog(DEBUG,DEBUG,"ht_keys: too many keys, expected %d, got %d\n",
+                slog(DEBUG,LOG_UTIL,"ht_keys: too many keys, expected %d, got %d\n",
                         table->key_count, *key_count);
             }
         }
@@ -416,7 +409,7 @@ void ht_resize(hash_table *table, unsigned int new_size)
 {
     hash_table new_table;
 
-    slog(DEBUG,DEBUG,"ht_resize(old=%d, new=%d)",table->array_size,new_size);
+    slog(DEBUG,LOG_UTIL,"ht_resize(old=%d, new=%d)",table->array_size,new_size);
     new_table.hashfunc_x86_32 = table->hashfunc_x86_32;
     new_table.hashfunc_x86_128 = table->hashfunc_x86_128;
     new_table.hashfunc_x64_128 = table->hashfunc_x64_128;
@@ -472,7 +465,7 @@ hash_entry *he_create(int flags, void *key, size_t key_size, void *value,
 {
     hash_entry *entry = malloc(sizeof(*entry));
     if(entry == NULL) {
-        slog(DEBUG,DEBUG,"Failed to create hash_entry\n");
+        slog(DEBUG,LOG_UTIL,"Failed to create hash_entry\n");
         return NULL;
     }
 
@@ -483,7 +476,7 @@ hash_entry *he_create(int flags, void *key, size_t key_size, void *value,
     else {
         entry->key = malloc(key_size);
         if(entry->key == NULL) {
-            slog(DEBUG,DEBUG,"Failed to create hash_entry\n");
+            slog(DEBUG,LOG_UTIL,"Failed to create hash_entry\n");
             free(entry);
             return NULL;
         }
@@ -497,7 +490,7 @@ hash_entry *he_create(int flags, void *key, size_t key_size, void *value,
     else {
         entry->value = malloc(value_size);
         if(entry->value == NULL) {
-            slog(DEBUG,DEBUG,"Failed to create hash_entry\n");
+            slog(DEBUG,LOG_UTIL,"Failed to create hash_entry\n");
             free(entry->key);
             free(entry);
             return NULL;
@@ -538,7 +531,7 @@ void he_set_value(int flags, hash_entry *entry, void *value, size_t value_size)
 
         entry->value = malloc(value_size);
         if(entry->value == NULL) {
-            slog(DEBUG,DEBUG,"Failed to set entry value\n");
+            slog(DEBUG,LOG_UTIL,"Failed to set entry value\n");
             return;
         }
         memcpy(entry->value, value, value_size);

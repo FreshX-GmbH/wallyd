@@ -32,17 +32,17 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
             case CALL_TYPE_PTR:
                 if(paramsTmp) {
                     params = paramsTmp;
-                    slog(INFO,DEBUG,"call( %s(<binary>) )",funcName);
+                    slog(INFO,LOG_PLUGIN,"call( %s(<binary>) )",funcName);
                     event.type = WALLY_CALL_PTR;
                 } else { 
-                    slog(INFO,DEBUG,"call( %s(NULL) )",funcName);
+                    slog(INFO,LOG_PLUGIN,"call( %s(NULL) )",funcName);
                     event.type = WALLY_CALL_NULL;
                 }
                 break;
             case CALL_TYPE_STR:
                 if(paramsTmp){
                     params = strdup(paramsTmp);
-                    slog(INFO,DEBUG,"call( %s(%s) )",funcName,params);
+                    slog(INFO,LOG_PLUGIN,"call( %s(%s) )",funcName,params);
                     event.type = WALLY_CALL_STR;
                 } else {
                     event.type = WALLY_CALL_NULL;
@@ -51,19 +51,19 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
             case CALL_TYPE_PS:
                 // TODO
                 params = paramsTmp;
-                slog(DEBUG,DEBUG,"call( %s(<PS *>) )",funcName,paramsTmp);
+                slog(DEBUG,LOG_PLUGIN,"call( %s(<PS *>) )",funcName,paramsTmp);
                 event.type = WALLY_CALL_PS;
                 break;
             case CALL_TYPE_CTX:
                 // TODO
                 params = paramsTmp;
                 event.type = WALLY_CALL_CTX;
-                slog(DEBUG,DEBUG,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
+                slog(DEBUG,LOG_PLUGIN,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
                 break;
             case CALL_TYPE_PSA:
                 // TODO
                 params = paramsTmp;
-                slog(DEBUG,DEBUG,"call( %s(<PSA *>) )",funcName,paramsTmp);
+                slog(DEBUG,LOG_PLUGIN,"call( %s(<PSA *>) )",funcName,paramsTmp);
                 event.type = WALLY_CALL_PSA;
                 break;
  
@@ -78,11 +78,11 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         SDL_PushEvent(&event);
         if(waitThread == true){
             // Enable the Mutex code for synced function calls
-            slog(TRACE,DEBUG,"Wait %d ms until %s has finished.",SDLWAITTIMEOUT,funcName);
+            slog(TRACE,LOG_PLUGIN,"Wait %d ms until %s has finished.",SDLWAITTIMEOUT,funcName);
             if(SDL_MUTEX_TIMEDOUT == 
                     SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,SDLWAITTIMEOUT))
                 {
-                    slog(ERROR,ERROR,"Wait condition for call %s timed out!",funcName);
+                    slog(ERROR,LOG_PLUGIN,"Wait condition for call %s timed out!",funcName);
                     ph->conditionTimeout++;
                 }
         }
@@ -90,7 +90,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
     } else {
         void *(*func)(void *) = ht_get_simple(ph->functions,funcName);
         if(func == NULL && thr_func == NULL) {
-           slog(ERROR,ERROR,"Function %s not registered!",funcName);
+           slog(ERROR,LOG_PLUGIN,"Function %s not registered!",funcName);
            return false;
         }
         params = paramsTmp;
@@ -118,7 +118,7 @@ bool exportThreaded(const char *name, void *f){
         ht_insert_simple(ph->thr_functions,(void*)name,f);
         // Enable this code for synced function calls
         ht_insert_simple(ph->functionWaitConditions, (void*)name, SDL_CreateCond());
-        slog(DEBUG,FULLDEBUG,"Function %s registered (threaded)",name);
+        slog(DEBUG,LOG_PLUGIN,"Function %s registered (threaded)",name);
         return true;
     }
     slog(ERROR,ERROR,"Function %s is already registered! Only one function allowed.",name);
@@ -129,10 +129,10 @@ bool exportSync(const char *name, void *f){
     //if(!ht_contains(ph->functions,name,strlen(name))){
     if(!ht_contains_simple(ph->functions,(void*)name)){
         ht_insert_simple(ph->functions,(void*)name,f);
-        slog(DEBUG,FULLDEBUG,"Function %s registered",name);
+        slog(DEBUG,LOG_PLUGIN,"Function %s registered",name);
         return true;
     }
-    slog(ERROR,ERROR,"Function %s is already registered! Only one function allowed.",name);
+    slog(ERROR,LOG_PLUGIN,"Function %s is already registered! Only one function allowed.",name);
     return false;
 }
 
@@ -143,8 +143,8 @@ void wally_put_function(const char *name, int threaded, void *(*f), int args){
        // TODO : free
        exportThreaded(ncopy,f);
     } else {
-       slog(0,ERROR,"Function %s %p %p %p",ncopy,f,ph,ph->functions);
-       slog(0,DEBUG,"FKT_SYNC : %s (%d args)",ncopy,args);
+       slog(ERROR,LOG_PLUGIN,"Function %s %p %p %p",ncopy,f,ph,ph->functions);
+       slog(DEBUG,LOG_PLUGIN,"FKT_SYNC : %s (%d args)",ncopy,args);
        // TODO : free
        exportSync(ncopy,f);
     }
@@ -152,7 +152,7 @@ void wally_put_function(const char *name, int threaded, void *(*f), int args){
 // our own try
 void wally_put_function_list(pluginHandler *_ph, function_list_entry *funcs) {
     if(!ph){
-        slog(ERROR,ERROR,"PH got lost! Resetting it.");
+        slog(ERROR,LOG_PLUGIN,"PH got lost! Resetting it.");
         ph=_ph;
     }
     const function_list_entry *ent = funcs;
@@ -177,22 +177,22 @@ bool openPlugin(char *path, char* name)
 //    slog(LVL_INFO,INFO,"Loading plugin : %s", nameCopy);
     // Save the DL Handle for later, it has to stay open as long as we need the functions
     ht_insert_simple(ph->plugins,nameCopy,handle);
-    slog(DEBUG,FULLDEBUG,"Saved plugin as %s in plugin map %p",name,ph);
+    slog(DEBUG,LOG_PLUGIN,"Saved plugin as %s in plugin map %p",name,ph);
     if (!handle) {
-        slog(ERROR,ERROR,"Could not load plugin %s : %s",path,dlerror());
+        slog(ERROR,LOG_PLUGIN,"Could not load plugin %s : %s",path,dlerror());
         return false;
     }
     initPlugin = dlsym(handle, "initPlugin");
     if ((error = dlerror()) != NULL)  {
-        slog(DEBUG,DEBUG,"initPlugin() failed or not found (Error : %s)",error);
+        slog(DEBUG,LOG_PLUGIN,"initPlugin() failed or not found (Error : %s)",error);
         return false;
     } else {
-       slog(DEBUG,DEBUG,"initPlugin() is now at 0x%x / handle at 0x%x",*initPlugin,handle);
+       slog(DEBUG,LOG_PLUGIN,"initPlugin() is now at 0x%x / handle at 0x%x",*initPlugin,handle);
     }
     // Initialize Plugin
     // TODO : Save return + function into command map
     char *r = (*initPlugin)(ph);
-    slog(0,DEBUG,"Plugin loaded : %s", r);
+    slog(INFO,LOG_PLUGIN,"Plugin loaded : %s", r);
     return true;
 }
 
@@ -206,12 +206,12 @@ int cleanupPlugins(void){
         void *handle = ht_get_simple(ph->plugins,name);
         char *error = NULL;
         if (!handle) {
-            slog(ERROR,ERROR,"Couldnt get plugin handle %s : %s",name,error);
+            slog(ERROR,LOG_PLUGIN,"Couldnt get plugin handle %s : %s",name,error);
             continue;
         }
         cleanupPlugin = dlsym(handle, "cleanupPlugin");
         if ((error = dlerror()) != NULL)  {
-            slog(ERROR,ERROR,"cleanupPlugin(0x%x) failed or not found (Error : %s)",handle,error);
+            slog(ERROR,LOG_PLUGIN,"cleanupPlugin(0x%x) failed or not found (Error : %s)",handle,error);
             continue;
         }
         (*cleanupPlugin)(NULL);
@@ -226,12 +226,12 @@ int pluginLoader(char *path){
     struct dirent *dir;
     int pcount=0;
     d = opendir(path);
-    slog(DEBUG,DEBUG,"Loading plugins from folder %s",path);
+    slog(DEBUG,LOG_PLUGIN,"Loading plugins from folder %s",path);
     if (d) {
        while ((dir = readdir(d)) != NULL) {
           unsigned long dlen = strlen(dir->d_name);
           if(dir->d_name[dlen-3] == '.' && dir->d_name[dlen-2] == 's' && dir->d_name[dlen-1] == 'o'){
-               slog(DEBUG,DEBUG,"Initializing plugin %s.", dir->d_name);
+               slog(DEBUG,LOG_PLUGIN,"Initializing plugin %s.", dir->d_name);
                char *p = NULL;
                asprintf(&p,"%s/%s",path,dir->d_name);
                if(openPlugin(p, dir->d_name)){
@@ -242,10 +242,10 @@ int pluginLoader(char *path){
        }
        closedir(d);
     } else {
-        slog(ERROR,ERROR,"Could not open plugin folder %s",path);
+        slog(ERROR,LOG_PLUGIN,"Could not open plugin folder %s",path);
         return -1;
     }
-    slog(LVL_INFO,INFO,"Loaded %d plugins",pcount);
+    slog(INFO,LOG_PLUGIN,"Loaded %d plugins",pcount);
     ph->pluginCount = pcount;
     ph->pluginLoaderDone = true;
     return 0;
@@ -258,7 +258,7 @@ pluginHandler *pluginsInit(void){
     pthread_mutex_init(&callMutex,0);
 
     if(!ph) {
-        slog(ERROR,ERROR,"Could not allocate memory. Exit");
+        slog(ERROR,LOG_PLUGIN,"Could not allocate memory. Exit");
         exit(1);
     }
     // TODO : Free

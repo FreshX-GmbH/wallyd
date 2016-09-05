@@ -383,11 +383,11 @@ void setupSocket(void *p){
     uv_ip4_addr(BIND_HOST, BIND_PORT,&addr);
     ret = uv_tcp_bind(&tcp, (const struct sockaddr*)&addr, SO_REUSEADDR | SO_LINGER);
     if(ret){
-        slog(LVL_QUIET,ERROR, "Bind error %s\n", uv_err_name(ret));
+        slog(ERROR, LOG_JS, "Bind error %s\n", uv_err_name(ret));
     }
     ret = uv_listen((uv_stream_t*) &tcp, UV_SOCKET_BUFFER_SIZE, onNewConnection);
     if(ret){
-        slog(LVL_QUIET,ERROR, "Listen error %s\n", uv_err_name(ret));
+        slog(ERROR, LOG_JS, "Listen error %s\n", uv_err_name(ret));
     }
 }
 
@@ -407,7 +407,7 @@ void *duvThread(void *ctx){
   const char* originalBase = base;
   base = realpath(base, 0);
   if (!base) {
-    slog(ERROR,ERROR, "No such file or directory: %s", originalBase);
+    slog(ERROR,LOG_JS, "No such file or directory: %s", originalBase);
     exit(1);
   }
   path_t path = path_cstr(base);
@@ -424,7 +424,7 @@ void *duvThread(void *ctx){
 
   // Setup context with global.nucleus
 
-  slog(0,DEBUG,"Setting up socket listener. : %p",ctx);
+  slog(DEBUG,LOG_JS,"Setting up socket listener. : %p",ctx);
   setupSocket(ctx);
   //printf("\nEntering UVRUN(0x%x) %s/%s (argv:%s, %s,argc:%d)\n\n",ctx,base,entry.data,argv[0],argv[1],argc);
   duk_put_nucleus(ctx, argc, argv, argc);
@@ -436,11 +436,11 @@ void *duvThread(void *ctx){
   if (duk_peval(ctx)) {
     duk_dump_context_stderr(ctx);
     duk_get_prop_string(ctx, -1, "stack");
-    fprintf(stderr, "Uncaught %s\n", duk_safe_to_string(ctx, -1));
+    slog(ERROR, LOG_JS, "Uncaught %s\n", duk_safe_to_string(ctx, -1));
     exit(1);
   }
   uv_run(&loop, UV_RUN_DEFAULT);
-  slog(LVL_QUIET,INFO,"Seaduk interpreter has finished.");
+  slog(INFO,LOG_JS,"Seaduk interpreter has finished.");
 //  duk_destroy_heap(ctx);
   return NULL;
 }

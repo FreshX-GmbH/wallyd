@@ -57,6 +57,7 @@ typedef struct{
 
     // The global configuration and flags
     int loglevel;
+    int logmask;
     bool daemonizing;
     bool logfile;
     FILE *logfileHandle;
@@ -102,6 +103,7 @@ typedef struct{
     int eventDelay;
     int uiEventTimeout;
     int conditionTimeout;
+    void *slg;
 
 } pluginHandler;
 

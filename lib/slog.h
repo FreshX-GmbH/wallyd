@@ -26,6 +26,38 @@
 #ifndef __SLOG_H__
 #define __SLOG_H__
 
+#ifndef    CLOCK_REALTIME
+#define    CLOCK_REALTIME    0x2d4e1588
+#endif
+#ifndef    CLOCK_MONOTONIC
+#define    CLOCK_MONOTONIC   0x0
+#endif
+
+typedef enum {
+  DUMMY,
+  TEXTURE,
+  JS,
+  CORE,
+  PLUGIN,
+  SDL,
+  VIDEO,
+  UTIL,
+  PI
+} slog_flag_t;
+
+typedef enum {
+  LOG_DUMMY    = 1 << DUMMY,
+  LOG_TEXTURE  = 1 << TEXTURE,
+  LOG_JS       = 1 << JS,
+  LOG_CORE     = 1 << CORE,
+  LOG_PLUGIN   = 1 << PLUGIN,
+  LOG_SDL      = 1 << SDL,
+  LOG_VIDEO    = 1 << VIDEO,
+  LOG_UTIL     = 1 << UTIL,
+  LOG_PI       = 1 << PI,
+  LOG_ALL      = 65535
+} slog_flag_mask_t;
+
 #define slog(...) eslog(__FILE__, __LINE__, __VA_ARGS__)
 
 /* For include header in CPP code */
@@ -68,11 +100,14 @@ extern "C" {
 typedef struct {
     const char* fname;
     short file_level;
+    short file_mask;
     short level;
+    short mask;
     short to_file;
     short pretty;
     short filestamp;
     short td_safe;
+    pthread_mutex_t slog_mutex;
 } SlogFlags;
 
 
@@ -129,7 +164,7 @@ void eslog(char *filename, int line, int level, int flag, const char *msg, ...);
  * where log will be saved and second argument conf is config file path
  * to be parsed and third argument lvl is log level for this message.
  */
-void slog_init(const char* fname, const char* conf, int lvl, int flvl, int t_safe);
+void slog_init(const char* fname, const char* conf, int lvl, int flvl, int mask, int filemask, int t_safe);
 
 
 /* For include header in CPP code */

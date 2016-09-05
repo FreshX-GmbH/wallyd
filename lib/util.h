@@ -58,12 +58,12 @@
 #define FULLDEBUG   LVL_TRACE
 #define LVL_QUIET   LVL_ERROR
 
-#define LVL_FATAL     0
-#define LVL_ERROR     1
-#define LVL_WARN      2
-#define LVL_INFO      3
-#define LVL_DEBUG     4
-#define LVL_TRACE     5
+#define LVL_FATAL     16384
+#define LVL_ERROR     16384+1
+#define LVL_WARN      16384+2
+#define LVL_INFO      16384+3
+#define LVL_DEBUG     16384+4
+#define LVL_TRACE     16384+5
 
 // Change to 0 or 1 in production
 //#ifndef __FULLDEBUG
@@ -83,7 +83,7 @@ void cleanupUtil(void);
 void cleanupWally(int);
 void setupSignalHandler(void);
 void log_print(int line, const char *filename, int level, char *fmt,...);
-bool utilInit(int);
+bool utilInit(int,int,int);
 int daemonize(bool);
 
 #define getNumOrPercent(a,b,c) getNumOrPercentEx(a,b,c,10)

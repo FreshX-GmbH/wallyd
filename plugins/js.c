@@ -24,7 +24,7 @@ const duk_function_list_entry wallyMethods[];
 
 int js_evalFile(duk_context *ctx) {
    const char *filename = duk_to_string(ctx, 0);
-   slog(0,DEBUG,"Execute file : %s (Top : %d)", filename, (long) duk_get_top(ctx));
+   slog(DEBUG,LOG_JS,"Execute file : %s (Top : %d)", filename, (long) duk_get_top(ctx));
    duk_eval_file(ctx, filename);
    duk_pop(ctx);
    return 0;
@@ -253,7 +253,7 @@ int js_setDebug(duk_context *ctx)
 {
     int n = duk_get_top(ctx);
     int lvl = duk_to_int(ctx,0);
-    slog(TRACE,INFO,"Set loglevel to : %d",lvl);
+    slog(TRACE,LOG_JS,"Set loglevel to : %d",lvl);
     ph->loglevel = lvl;
     return 1;
 }
@@ -328,9 +328,9 @@ int js_createTexture(duk_context *ctx)
 
 int evalFile(char *file){
     if (duk_peval_file(ctx,file) != 0) {
-        slog(LVL_QUIET,ERROR,"JSError in file %s : %s", file, duk_safe_to_string(ctx, -1));
+        slog(ERROR,LOG_JS,"JSError in file %s : %s", file, duk_safe_to_string(ctx, -1));
     } else {
-        slog(DEBUG,DEBUG,"result is: %s", duk_safe_to_string(ctx, -1));
+        slog(DEBUG,LOG_JS,"result is: %s", duk_safe_to_string(ctx, -1));
     }
     return 0;
 }
@@ -341,7 +341,7 @@ duk_ret_t js_exec(duk_context *ctx){
    char *tofree = str = strdup(duk_to_string(ctx,0));
    assert(str != NULL);
    cmd = strsep(&str, " \t");
-   slog(DEBUG,DEBUG,"call : %s(%s)", cmd,str);
+   slog(DEBUG,LOG_JS,"call : %s(%s)", cmd,str);
    callWithString(cmd,&ret,str);
    free(tofree);
    return 0;
@@ -350,22 +350,22 @@ duk_ret_t js_exec(duk_context *ctx){
 int evalScript(char *str){
     duk_push_string(ctx, str);
     if (duk_peval(ctx) != 0) {
-        slog(LVL_QUIET,ERROR,"JSError : %s", duk_safe_to_string(ctx, -1));
+        slog(ERROR,LOG_JS,"JSError : %s", duk_safe_to_string(ctx, -1));
     } else {
-        slog(DEBUG,DEBUG,"result is: %s", duk_safe_to_string(ctx, -1));
+        slog(DEBUG,LOG_JS,"result is: %s", duk_safe_to_string(ctx, -1));
     }
     return 1;
 }
 
 char *cleanupPlugin(void *p){
     // TO BE DONE somewhere else : duk_destroy_heap(ctx);
-    slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
+    slog(DEBUG,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" uninitialized");
     return NULL;
 }
 
 duk_ret_t js_wally_ctor(duk_context *ctx)
 {
-    slog(DEBUG,DEBUG, "Getting access to THE wally object.");
+    slog(DEBUG,LOG_JS, "Getting access to THE wally object.");
 
     duk_push_this(ctx);
     duk_dup(ctx, 0);  /* -> stack: [ name this name ] */
@@ -404,10 +404,10 @@ const duk_function_list_entry wallyMethods[] = {
 
 char *initPlugin(pluginHandler *_ph){
    ph=_ph;
-   slog(0,ERROR,"Plugin "PLUGIN_SCOPE" initializing (PH: %p)",ph);
+   slog(ERROR,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" initializing (PH: %p)",ph);
    ctx = ph->ctx;
 
-   slog(TRACE,DEBUG,"Constructing wally object");
+   slog(TRACE,LOG_JS,"Constructing wally object");
 
    wally_put_function(PLUGIN_SCOPE"::evalFile" ,WFUNC_SYNC, &evalFile,   0);
    wally_put_function(PLUGIN_SCOPE"::eval"     ,WFUNC_SYNC, &evalScript, 0);
@@ -418,7 +418,7 @@ char *initPlugin(pluginHandler *_ph){
    duk_put_prop_string(ctx, -2, "prototype");
    duk_put_global_string(ctx, "Wally");  /* -> stack: [ ] */
 
-    slog(TRACE,DEBUG,"Plugin initialized. PH is at 0x%x",ph);
+    slog(TRACE,LOG_PLUGIN,"Plugin initialized. PH is at 0x%x",ph);
     return PLUGIN_SCOPE;
 }
 

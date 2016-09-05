@@ -5,6 +5,7 @@
 #include "autoversion.h"
 #include "default.h"
 #include "util.h"
+#include "slog.h"
 #include "plugins.h"
 #include "hashtable.h"
 #include "ui.h"

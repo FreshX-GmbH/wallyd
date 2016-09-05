@@ -23,10 +23,10 @@ int main(int argc, char *argv[])
     readOptions(argc,argv);
     // init plugin system (do not load the plugins yet)
     pluginsInit();
-    utilInit(DEFAULT_LOG_LEVEL);
+    utilInit(DEFAULT_LOG_LEVEL, LOG_ALL ^ LOG_DUMMY ^ LOG_SDL ^ LOG_PLUGIN, 0);
 
-    slog(INFO,INFO,"Wally Image Server R%u (Build %u) starting.",BUILD_NUMBER,BUILD_DATE);
-    slog(DEBUG,ERROR,"Current Thread : %p / PH : %p",pthread_self(),ph);
+    slog(INFO,LOG_CORE,"Wally Image Server R%u (Build %u) starting.",BUILD_NUMBER,BUILD_DATE);
+    slog(DEBUG,LOG_CORE,"Current Thread : %p / PH : %p",pthread_self(),ph);
 
     // assing signal handlers for ctrl+c
     setupSignalHandler();
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     //ctx = duk_create_heap(NULL, NULL, NULL, &loop, (duk_fatal_function)my_duk_fatal);
     ph->ctx = duk_create_heap(NULL, NULL, NULL, &loop,NULL);
     if (!ph->ctx) {
-      fprintf(stderr, "Problem initiailizing duktape heap\n");
+      slog(ERROR,LOG_CORE, "Problem initiailizing duktape heap");
       return -1;
     }
 
@@ -74,15 +74,15 @@ int main(int argc, char *argv[])
    // remove old socket
     ret = unlink(FIFO);
     if(ret == 0){
-        slog(LVL_INFO,INFO,"Old FIFO found and removed.");
+        slog(LVL_INFO,LOG_CORE,"Old FIFO found and removed.");
     }
 
-   slog(DEBUG,DEBUG,"Seaduk initializing, ctx is at 0x%x.",ph->ctx);
+   slog(DEBUG,LOG_CORE,"Seaduk initializing, ctx is at 0x%x.",ph->ctx);
    gargc = argc;
    gargv[0] = strdup(argv[0]);
    gargv[1] = startupScript;
    if(pthread_create(&uv_thr, NULL, &duvThread, ph->ctx) != 0){
-      slog(ERROR,ERROR,"Failed to create seaduk thread!");
+      slog(ERROR,LOG_CORE,"Failed to create seaduk thread!");
    }
 
    // Loop the SDL stuff in the main thread
@@ -99,15 +99,15 @@ void allocBuffer(uv_handle_t* handle, size_t size, uv_buf_t* buf) {
 }
 
 void onClose(uv_handle_t* handle){
-    slog(DEBUG,FULLDEBUG,"Handle closed. Freeing up.");
+    slog(DEBUG,LOG_CORE,"Handle closed. Freeing up.");
     if(handle) { free(handle); }
 }
 
 void onNewConnection(uv_stream_t *server, int status)
 {
-    slog(LVL_QUIET,DEBUG,"New connection on socket "FIFO);
+    slog(DEBUG,LOG_CORE,"New connection on socket "FIFO);
     if (status == -1) {
-        slog(LVL_QUIET,ERROR,"New connection error on socket "FIFO);
+        slog(ERROR,LOG_CORE,"New connection error on socket "FIFO);
         return;
     }
     uv_tcp_t client; //= (uv_tcp_t*) malloc(sizeof(uv_tcp_t));
@@ -121,9 +121,9 @@ void onNewConnection(uv_stream_t *server, int status)
 }
 
 void onRead(uv_stream_t* _client, ssize_t nread, const uv_buf_t* buffer) {
-    slog(DEBUG,DEBUG,"onRead");
+    slog(DEBUG,LOG_CORE,"onRead");
     if (nread == -1) {
-        slog(DEBUG,DEBUG, "Reached EOF on command socket");
+        slog(DEBUG,LOG_CORE, "Reached EOF on command socket");
         uv_close((uv_handle_t *) _client, onClose);
         return;
     }
@@ -132,12 +132,12 @@ void onRead(uv_stream_t* _client, ssize_t nread, const uv_buf_t* buffer) {
         free(buffer->base);
         return;
     }
-    slog(DEBUG,DEBUG,"Read (%u/%u bytes) : %s",nread,strlen(buffer->base),buffer->base);
+    slog(DEBUG,LOG_CORE,"Read (%u/%u bytes) : %s",nread,strlen(buffer->base),buffer->base);
     if(nread > 1){
         processCommand(buffer->base);
     }
     free(buffer->base);
-    slog(DEBUG,DEBUG,"Closing handle");
+    slog(DEBUG,LOG_CORE,"Closing handle");
     uv_close((uv_handle_t*) _client, onClose);
 }
 
@@ -155,7 +155,7 @@ bool processCommand(char *buf)
         lineCopy = malloc(cmdLen+1);
         memset(lineCopy, 0, cmdLen+1);
         strncpy(lineCopy,cmd,cmdLen);
-        slog(DEBUG,FULLDEBUG,"Processing line (%d) : %s",cmdLen,lineCopy);
+        slog(DEBUG,LOG_CORE,"Processing line (%d) : %s",cmdLen,lineCopy);
         // NOTE : strtok changes strlen of cmd, so we save its length before
         if(cmd[0] != '#') {
             char *myCmd = strtok_r(lineCopy, " ", &spaceBreak);
@@ -163,28 +163,28 @@ bool processCommand(char *buf)
             if(cmdLen > strlen(myCmd)){
                 params = lineCopy+strlen(myCmd)+1;
             }
-            slog(DEBUG,DEBUG,"Command split into(%d) : %s(%s)",strlen(myCmd), myCmd, params);
+            slog(DEBUG,LOG_CORE,"Command split into(%d) : %s(%s)",strlen(myCmd), myCmd, params);
             if(callWithString(myCmd,&ret, params)){
                 validCmd++;
             }
         } else {
-            slog(DEBUG,FULLDEBUG,"Ignoring comment line");
+            slog(DEBUG,LOG_CORE,"Ignoring comment line");
         }
         cmd = strtok_r(NULL,"\n",&lineBreak);
         if(cmd == NULL) nextLine=false;
         free(lineCopy);
     }
-    slog(DEBUG,FULLDEBUG,"Command stack executed.");
+    slog(DEBUG,LOG_CORE,"Command stack executed.");
     return validCmd;
 }
 
 void initializeFlags(void){
-   slog(DEBUG,FULLDEBUG,"Initializing flags file");
+   slog(DEBUG,LOG_CORE,"Initializing flags file");
    // if /etc/wally.conf has h/w defined dont set DEFAULT_W/H
    if(getConfig(ph->configFlagsMap,ETC_FLAGS) == 0){
-      slog(DEBUG,DEBUG,"Trying to open "ETC_FLAGS);
+      slog(DEBUG,LOG_CORE,"Trying to open "ETC_FLAGS);
       if(getConfig(ph->configFlagsMap,ETC_FLAGS_BAK) == 0){
-        slog(LVL_INFO,WARN,"Configfile in "ETC_FLAGS" nor "ETC_FLAGS_BAK" not found! Using default values.");
+        slog(LVL_INFO,LOG_CORE,"Configfile in "ETC_FLAGS" nor "ETC_FLAGS_BAK" not found! Using default values.");
         ph->width =  DEFAULT_WINDOW_WIDTH;
         ph->height = DEFAULT_WINDOW_HEIGHT;
       }
@@ -201,18 +201,18 @@ void initializeFlags(void){
   } else {
       ph->height = ph->height ? ph->height : DEFAULT_WINDOW_HEIGHT;
   }
-  slog(DEBUG,DEBUG,"W = %d / H = %d",ph->width,ph->height);
+  slog(DEBUG,LOG_CORE,"W = %d / H = %d",ph->width,ph->height);
   if(!ht_contains_simple(ph->configFlagsMap,"W_MAC")){
-     slog(LVL_QUIET,ERROR,"No MAC address found in configs/flags. Can not determine uuid for this device");
+     slog(WARN,LOG_CORE,"No MAC address found in configs/flags. Can not determine uuid for this device");
      ht_insert_simple(ph->configFlagsMap,"W_MAC",DEFAULT_MAC);
-     slog(DEBUG,DEBUG,"Setting MAC to "DEFAULT_MAC);
+     slog(DEBUG,LOG_CORE,"Setting MAC to "DEFAULT_MAC);
      ph->uuid = DEFAULT_MAC;
   }
   ph->uuid = replace(ht_get_simple(ph->configFlagsMap,"W_MAC"),":","");
-  slog(DEBUG,DEBUG,"UUID is : %s",ph->uuid);
+  slog(DEBUG,LOG_CORE,"UUID is : %s",ph->uuid);
 
   if(ht_contains_simple(ph->configFlagsMap,"W_CONNECT")){
-      slog(DEBUG,DEBUG,"Connectivity type is : %s",ht_get_simple(ph->configFlagsMap,"W_CONNECT"));
+      slog(DEBUG,LOG_CORE,"Connectivity type is : %s",ht_get_simple(ph->configFlagsMap,"W_CONNECT"));
       if(strncmp(ht_get_simple(ph->configFlagsMap,"W_CONNECT"),"ssdp",4)){
         ph->ssdp = true; 
       }
@@ -221,7 +221,7 @@ void initializeFlags(void){
       }
       if(strncmp(ht_get_simple(ph->configFlagsMap,"W_CONNECT"),"manual",6)){
         if(!ht_contains_simple(ph->configFlagsMap,"W_SERVER")){
-          slog(LVL_QUIET,ERROR,"Connectivity type set to manual but no server defined");
+          slog(ERROR,LOG_CORE,"Connectivity type set to manual but no server defined");
         }
       }
   }
@@ -237,31 +237,31 @@ void initializeConfig(void){
     }
     if(ht_contains_simple(ph->configMap,"sdldebug") && strncmp(ht_get_simple(ph->configMap,"sdldebug"),"true",4) == 0) { 
 	ph->sdldebug = true; 
-        slog(DEBUG,DEBUG,"SDL Debug Log enabled.");
+        slog(DEBUG,LOG_SDL,"SDL Debug Log enabled.");
     } else {
 	ph->sdldebug = false; 
     }
     if(ht_contains_simple(ph->configMap,"raspberry") && strncmp(ht_get_simple(ph->configMap,"raspberry"),"true",4) == 0) { 
 	ph->broadcomInit = true; 
-        slog(DEBUG,DEBUG,"BCM Chip support enabled.");
+        slog(DEBUG,LOG_PI,"BCM Chip support enabled.");
     } else {
 	ph->broadcomInit = false; 
     }
     if(ht_contains_simple(ph->configMap,"disableAudio") && strncmp(ht_get_simple(ph->configMap,"disableAudio"),"true",4) == 0) { 
 	ph->disableAudio = true; 
-        slog(DEBUG,DEBUG,"Audio stream part of video playing disabled.");
+        slog(DEBUG,LOG_VIDEO,"Audio stream part of video playing disabled.");
     }
     if(ht_contains_simple(ph->configMap,"disableVideo") && strncmp(ht_get_simple(ph->configMap,"disableVideo"),"true",4) == 0) { 
 	ph->disableVideo = true; 
-        slog(DEBUG,DEBUG,"Video stream part of video playing disabled.");
+        slog(DEBUG,LOG_VIDEO,"Video stream part of video playing disabled.");
     }
     if(ht_contains_simple(ph->configMap,"disableVideoPQ") && strncmp(ht_get_simple(ph->configMap,"disableVideoPQ"),"true",4) == 0) { 
 	ph->disableVideoPQ = true; 
-        slog(DEBUG,DEBUG,"Video stream Queue of video playing disabled.");
+        slog(DEBUG,LOG_VIDEO,"Video stream Queue of video playing disabled.");
     }
     if(ht_contains_simple(ph->configMap,"disableVideoDisplay") && strncmp(ht_get_simple(ph->configMap,"disableVideoDisplay"),"true",4) == 0) { 
 	ph->disableVideoDisplay = true; 
-        slog(DEBUG,DEBUG,"Video stream display of video playing disabled.");
+        slog(DEBUG,LOG_VIDEO,"Video stream display of video playing disabled.");
     }
     if(ht_get_simple(ph->configMap,"foreground") != NULL && strncmp(ht_get_simple(ph->configMap,"foreground"),"true",4) == 0) { 
 	ph->daemonizing = false; 
@@ -274,18 +274,18 @@ void initializeConfig(void){
     }
     if(ht_get_simple(ph->configMap,"debug") != NULL) { 
         ph->loglevel = atoi(ht_get_simple(ph->configMap,"debug"));
-	slog(DEBUG,DEBUG,"Set loglevel to : %d",ph->loglevel);
+	slog(DEBUG,LOG_CORE,"Set loglevel to : %d",ph->loglevel);
     }
     if(ht_get_simple(ph->configMap,"width") != NULL) { 
         ph->width = atoi(ht_get_simple(ph->configMap,"width"));
-	slog(DEBUG,DEBUG,"Set Window width to : %d",ph->width);
+	slog(DEBUG,LOG_SDL,"Set Window width to : %d",ph->width);
     }
     if(ht_get_simple(ph->configMap,"height") != NULL) { 
         ph->height = atoi(ht_get_simple(ph->configMap,"height"));
-	slog(DEBUG,DEBUG,"Set Window height to : %d",ph->height);
+	slog(DEBUG,LOG_SDL,"Set Window height to : %d",ph->height);
     }
   } else {
-    slog(LVL_QUIET,ERROR,"Configfile "ETC_FLAGS" not found. Using defaults.");
+    slog(WARN,LOG_CORE,"Configfile "ETC_FLAGS" not found. Using defaults.");
   }
 }
 
@@ -303,16 +303,16 @@ void readOptions(int argc, char **argv){
                 exit(0);
                 break;
             case 'f':
-                slog(LVL_INFO,INFO,"Running in foreground");
+                slog(INFO,LOG_CORE,"Running in foreground");
                 ph->daemonizing = false;
                 break;
             case 's':
                 startupScript = optarg;
-                slog(LVL_INFO,INFO,"Using startscript %s",startupScript);
+                slog(INFO,LOG_CORE,"Using startscript %s",startupScript);
                 break;
             case 'c':
                 cvalue = optarg;
-                slog(LVL_INFO,INFO,"Using config %s",cvalue);
+                slog(INFO,LOG_CORE,"Using config %s",cvalue);
                 break;
             case '?':
               if (optopt == 'c')
@@ -330,13 +330,13 @@ void readOptions(int argc, char **argv){
 }
 
 void processStartupScript(char *file){
-  slog(DEBUG,DEBUG,"Reading wallyd.startup script : %s",file);
+  slog(DEBUG,LOG_CORE,"Reading wallyd.startup script : %s",file);
   long fsize=0;
   char *cmds=NULL;
 
   FILE *f = fopen(file, "rb");
   if(!f){
-      slog(DEBUG,DEBUG,"File not found. Not running any startup commands");
+      slog(DEBUG,LOG_CORE,"File not found. Not running any startup commands");
       return;
   }
 
@@ -349,13 +349,13 @@ void processStartupScript(char *file){
   fclose(f);
 
   cmds[fsize] = 0;
-  slog(DEBUG,DEBUG,"Processing %d bytes from startupScript",fsize);
+  slog(DEBUG,LOG_CORE,"Processing %d bytes from startupScript",fsize);
   processCommand(cmds);
   free(cmds);
 }
 
 static void my_duk_fatal(duk_context *ctx, int code, const char *msg){
-    slog(LVL_QUIET,ERROR,"JS encountered a fatal error %d : %s",code,msg);
-    slog(LVL_QUIET,ERROR,"We will continue but the JS core might be unstable");
+    slog(ERROR,LOG_JS,"JS encountered a fatal error %d : %s",code,msg);
+    slog(ERROR,LOG_JS,"We will continue but the JS core might be unstable");
 }
 

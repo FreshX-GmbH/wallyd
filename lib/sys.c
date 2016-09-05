@@ -28,9 +28,9 @@ void dumpDebug(void){
 void wally_sleep(char *time){
     int t = atoi(time);
     if(t > 0){
-       slog(DEBUG,FULLDEBUG,"Command processing sleeling for %d seconds",t);
+       slog(DEBUG,LOG_CORE,"Command processing sleeling for %d seconds",t);
        sleep(t);
-       slog(DEBUG,FULLDEBUG,"Command continues.");
+       slog(DEBUG,LOG_CORE,"Command continues.");
     }
 }
 
@@ -38,17 +38,17 @@ void wally_registerCallback(char *str){
    char *all = str;
    char *name = strtok(str," ");
    char *rest = all+strlen(name)+1;
-   slog(DEBUG,DEBUG,"Registering callback %s = %s",name,rest);
+   slog(DEBUG,LOG_CORE,"Registering callback %s = %s",name,rest);
    ht_insert_simple(ph->callbacks,name,rest);
 }
 
 void setDebug(char *str){
     getNum(strtok(str," "),&ph->loglevel);
-    slog(DEBUG,DEBUG,"Setting new debug level to : %d",ph->loglevel);
+    slog(DEBUG,LOG_CORE,"Setting new debug level to : %d",ph->loglevel);
 }
 
 char *cleanupPlugin(void *p){
-   slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
+   slog(DEBUG,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" uninitialized");
    return NULL;
 }
 
@@ -78,7 +78,7 @@ duk_ret_t js_sys_dtor(duk_context *ctx)
 // Constructor of the JS Object
 duk_ret_t js_sys_ctor(duk_context *ctx)
 {
-    slog(DEBUG,DEBUG, "Creating new object of "PLUGIN_SCOPE);
+    slog(DEBUG,LOG_JS, "Creating new object of "PLUGIN_SCOPE);
 
     sysStructure *mps = malloc(sizeof(sysStructure));
     mps->name = duk_require_string(ctx, 0);
@@ -107,11 +107,11 @@ duk_ret_t js_sys_ctor(duk_context *ctx)
 
 bool sysInfo(char *i){
    if(i) {
-      slog(DEBUG,DEBUG,"Info : %s", i);
+      slog(DEBUG,LOG_UTIL,"Info : %s", i);
       // TODO : Get structure from hashmap('name');
       return true;
    } else {
-      slog(DEBUG,DEBUG,"Wrong parameters calling "PLUGIN_SCOPE"::info <name>");
+      slog(DEBUG,LOG_UTIL,"Wrong parameters calling "PLUGIN_SCOPE"::info <name>");
       return false;
    }
 }
@@ -194,7 +194,7 @@ int js_initSysPlugin(duk_context *ctx){
 //};
  
 char *initSysPlugin(){
-   slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
+   slog(DEBUG,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" initializing.");
    ctx = ph->ctx;
 
    wally_put_function("quit"                        ,WFUNC_SYNC, c_cleanupWally, 0);

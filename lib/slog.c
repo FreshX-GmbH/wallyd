@@ -20,8 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE
- */
-
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -33,17 +32,14 @@
 #include <time.h>
 #include "slog.h"
 
-
 /* Max size of string */
 #define MAXMSG 8196
 
 /* Flags */
 static SlogFlags slg;
-static pthread_mutex_t slog_mutex;
-#ifdef DARWIN
-#define    CLOCK_REALTIME    0x2d4e1588
-#define    CLOCK_MONOTONIC   0x0
+//static pthread_mutex_t slog_mutex;
 
+#ifndef LINUX 
 static inline int clock_gettime(int clock_id, struct timespec *ts)
 {
     struct timeval tv;
@@ -270,6 +266,16 @@ char* slog_get_short(SlogDate *pDate, char *msg, ...)
     return output;
 }
 
+#define BYTE_TO_BINARY(byte)  \
+      (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0') 
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 /*
  * slog - Log exiting process. Function takes arguments and saves
  * log in file if LOGTOFILE flag is enabled from config. Otherwise
@@ -278,14 +284,26 @@ char* slog_get_short(SlogDate *pDate, char *msg, ...)
  */
 void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
 {
+    SlogFlags *slg = ph->slg;
+    // printf("%d %d / %d %d "BYTE_TO_BINARY_PATTERN"\n",level,slg->level,flag,slg->mask,BYTE_TO_BINARY(slg->mask));
+    if(slg->mask == 0) {
+        fprintf(stderr,"[ERR] : %s at %d has invalid mask. please fix.\n",srcfile,line);
+        return;
+    }
+    if(flag > 16383){
+        fprintf(stderr,"[NOTE] : %s at %d still using old slog signature. please fix\n",srcfile,line);
+    }
+    if((slg->mask & flag) != flag) return;
+
     /* Lock for safe */
-    if (slg.td_safe) 
+    if (slg->td_safe) 
     {
-        if (pthread_mutex_lock(&slog_mutex))
+        if (pthread_mutex_lock(&slg->slog_mutex))
         {
             printf("<%s:%d> %s: [ERROR] Can not lock mutex: %d\n", 
                 __FILE__, __LINE__, __FUNCTION__, errno);
-            exit(EXIT_FAILURE);
+            return;
+            //exit(EXIT_FAILURE);
         }
     }
 
@@ -309,11 +327,11 @@ void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
     va_end(args);
 
     /* Check logging levels */
-    //printf("DBG : %d < %d / %d\n",level,slg.level,flag);
-    if(!level || level <= slg.level || level <= slg.file_level)
+    //printf("DBG : %d < %d / %d\n",level,sl->.level,flag);
+    if(!level || level <= slg->level || level <= slg->file_level)
     {
         /* Handle flags */
-        switch(flag) 
+        switch(level) 
         {
             case TRACE:
                 strncpy(color, CLR_CYAN, sizeof(color));
@@ -346,9 +364,9 @@ void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
         }
 
         /* Print output */
-        if (level <= slg.level || slg.pretty)
+        if (level <= slg->level || slg->pretty)
         {
-          if (level <= slg.level) {
+          if (level <= slg->level) {
             if (level > INFO) {
               if (level > SLOG_INFO) {
                 sprintf(prints, "%s:%d] %s", srcfile, line, string);
@@ -368,9 +386,9 @@ void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
         }
 
         /* Save log in file */
-        if (slg.to_file && level <= slg.file_level)
+        if (slg->to_file && level <= slg->file_level)
         {
-            if (slg.pretty) output = slog_get(&mdate, "%s\n", prints);
+            if (slg->pretty) output = slog_get(&mdate, "%s\n", prints);
             else 
             {
                 if (flag != SLOG_NONE) sprintf(prints, "[%s] %s", alarm, string);
@@ -378,14 +396,14 @@ void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
             } 
 
             /* Add log line to file */
-            slog_to_file(output, slg.fname, &mdate);
+            slog_to_file(output, slg->fname, &mdate);
         }
     }
 
     /* Done, unlock mutex */
-    if (slg.td_safe) 
+    if (slg->td_safe) 
     {
-        if (pthread_mutex_unlock(&slog_mutex)) 
+        if (pthread_mutex_unlock(&slg->slog_mutex)) 
         {
             printf("<%s:%d> %s: [ERROR] Can not deinitialize mutex: %d\n", 
                 __FILE__, __LINE__, __FUNCTION__, errno);
@@ -401,13 +419,15 @@ void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
  * where log will be saved and second argument conf is config file path 
  * to be parsedand third argument lvl is log level for this message.
  */
-void slog_init(const char* fname, const char* conf, int lvl, int flvl, int t_safe)
+void slog_init(const char* fname, const char* conf, int lvl, int flvl, int mask, int filemask, int t_safe)
 {
     int status = 0;
 
     /* Set up default values */
     slg.level = lvl;
     slg.file_level = flvl;
+    slg.mask = mask;
+    slg.file_mask = filemask;
     slg.to_file = 0;
     slg.pretty = 0;
     slg.filestamp = 1;
@@ -420,7 +440,7 @@ void slog_init(const char* fname, const char* conf, int lvl, int flvl, int t_saf
         pthread_mutexattr_t m_attr;
         if (pthread_mutexattr_init(&m_attr) ||
             pthread_mutexattr_settype(&m_attr, PTHREAD_MUTEX_RECURSIVE) ||
-            pthread_mutex_init(&slog_mutex, &m_attr) ||
+            pthread_mutex_init(&slg.slog_mutex, &m_attr) ||
             pthread_mutexattr_destroy(&m_attr))
         {
             printf("<%s:%d> %s: [ERROR] Can not initialize mutex: %d\n", 
@@ -436,7 +456,11 @@ void slog_init(const char* fname, const char* conf, int lvl, int flvl, int t_saf
         status = parse_config(conf);
     }
 
+    // Save globally
+    ph->slg = &slg;
+
     /* Handle config parser status */
-    if (!status) slog(0, SLOG_INFO, "Initializing logger values without config");
-    else slog(0, SLOG_INFO, "Loading logger config from: %s", conf);
+    if (!status) slog(ERROR, LOG_UTIL, "Initializing logger values without config");
+    else slog(ERROR, LOG_UTIL, "Loading logger config from: %s", conf);
 }
+
