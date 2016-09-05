@@ -110,7 +110,7 @@ bool loadSDL(bool mode2d)
             printf( "Renderer could not initialize : %s\n", IMG_GetError() );
             return false;
        }
-       for(int i = 0; i <255;i++){
+       for(int i = 255; i > 0;i--){
             SDL_SetRenderDrawColor(renderer, i, i, i, 0xFF);
             SDL_RenderClear(renderer);
             SDL_RenderPresent( renderer );
