@@ -27,7 +27,7 @@ int main( int argc, char* args[] )
         printf("Usage : %s (V"VERSION") [2] <imagefile> [degree]\n\t-2 for 2D surface mode only\n\tdegree to turn (only in 3D mode)\n",args[0]);
         exit(1);
     }
-    printf("%s (V"VERSION")" ,args[0]);
+    printf("%s (V"VERSION")\n" ,args[0]);
     if(argc > 2){
         if(args[1][0]=='2'){
             printf("Using 2D/Surface mode only\n");
