@@ -30,11 +30,11 @@ int eventFilter(void *userdata, SDL_Event *event){
         return 0;
     }
     if(event->user.data1 == NULL){
-        slog(LVL_INFO,LOG_SDL,"Ignoring event, no function given");
+        slog(INFO,LOG_SDL,"Ignoring event, no function given");
         return 0; 
     }
 //   if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
-//        slog(LVL_INFO,WARN,"Intercepted an orphaned refresh timer event");
+//        slog(INFO,WARN,"Intercepted an orphaned refresh timer event");
 //       return 0; 
 //   }
     return 1;
@@ -84,7 +84,7 @@ bool uiLoop(void){
            wtx = event.user.data2;
            slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements", wtx->elements);
            for(int i = 0; i < wtx->elements; i++){
-                  slog(INFO,LOG_PLUGIN,"WTX Call%d : %s(%s)", i, wtx->name[i], wtx->param[i]);
+                  //slog(TRACE,LOG_PLUGIN,"WTX Call%d : %s(%s)", i, wtx->name[i], wtx->param[i]);
                   //thr_func(event.user.data2);
                   void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,wtx->name[i]);
                   if(!thr_func){
@@ -249,7 +249,7 @@ int renderActiveEx(const char *startTex)
       if(TI->active == true && TI->autorender == true){
           SDL_Rect *mr = TI->rect;
           if(mr == NULL || mr->w ==0 || mr->h == 0){
-	       slog(LVL_INFO,LOG_TEXTURE,"Refusing to place texture %s with invalid size.",name);
+	       slog(INFO,LOG_TEXTURE,"Refusing to place texture %s with invalid size.",name);
 	       continue;
           }
           slog(DEBUG,LOG_TEXTURE,"RenderActive(%s,{%d,%d,%d,%d});",name,mr->x, mr->y, mr->w, mr->h);
@@ -303,7 +303,7 @@ int createTextureEx(char *strTmp,bool isVideo){
 
    char *zS = strtok_r(NULL, " ",&r);
    if(!getNumOrPercent(zS, 0, &z)){
-      slog(LVL_INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
+      slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    } else {
       slog(DEBUG,LOG_TEXTURE,"Z-Value : %d",z,&r);
@@ -312,27 +312,27 @@ int createTextureEx(char *strTmp,bool isVideo){
 
    char *xS = strtok_r(NULL, " ",&r);
    if(!getNumOrPercent(xS, ph->width, &x)){
-      slog(LVL_INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
+      slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    }
    char *yS = strtok_r(NULL, " ",&r);
    if(!getNumOrPercent(yS, ph->height, &y)){
-      slog(LVL_INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
+      slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    }
    char *wS = strtok_r(NULL, " ",&r);
    if(!getNumOrPercent(wS, ph->width, &w)){
-      slog(LVL_INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
+      slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    }
    char *hS = strtok_r(NULL, " ",&r);
    if(!getNumOrPercent(hS, ph->height, &h)){
-      slog(LVL_INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
+      slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    }
    char *cS = strtok_r(NULL, " ",&r);
    if(!getNumHex(cS,&color)){
-      slog(LVL_INFO,LOG_TEXTURE,"Texture color not given, using black.");
+      slog(INFO,LOG_TEXTURE,"Texture color not given, using black.");
    }
 
    // No parameters == FULLSCREEN, BLACK
@@ -390,7 +390,7 @@ int createTextureEx(char *strTmp,bool isVideo){
       unsigned int items = 0;
       ph->texturePrio = getTextureNamesByPrio(&items);
    } else {
-      slog(LVL_INFO,LOG_TEXTURE,"Wrong parameters for createTexture(n,x,y,w,h) : (%s)",str);
+      slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(n,x,y,w,h) : (%s)",str);
       return false;
    }
    return true;
@@ -407,7 +407,7 @@ int createTexture(char *a){
 int setTextureActive(char *s,bool active){
    char *name = strtok(s," ");
    if(!name){
-      slog(LVL_INFO,LOG_TEXTURE,"Wrong parameters for hideTexture(name) : (%s)",s);
+      slog(INFO,LOG_TEXTURE,"Wrong parameters for hideTexture(name) : (%s)",s);
       return false;
    }
    texInfo *TI = getTexture(name);
@@ -430,7 +430,7 @@ int destroyTexture(char *s){
    unsigned int items = 0;
    texInfo *TI;
    if(!s){
-      slog(LVL_INFO,LOG_TEXTURE,"Wrong parameters for destroyTexture(name) : (%s)",s);
+      slog(INFO,LOG_TEXTURE,"Wrong parameters for destroyTexture(name) : (%s)",s);
       return false;
    }
    char *name = strtok(s, " ");
@@ -457,7 +457,7 @@ int destroyTexture(char *s){
 bool renderTexName(char *s){
    texInfo *TI;
    if(!s){
-      slog(LVL_INFO,LOG_TEXTURE,"Wrong parameters for destroyTexture(name) : (%s)",s);
+      slog(INFO,LOG_TEXTURE,"Wrong parameters for destroyTexture(name) : (%s)",s);
       return false;
    }
    char *name = strtok(s, " ");
@@ -548,7 +548,7 @@ bool sdlInit(void)
 #ifdef RASPBERRY
    if(ph->broadcomInit == true){
       bcm_host_init();
-      slog(LVL_INFO,LOG_TEXTURE,"Initializing broadcom hardware");
+      slog(INFO,LOG_TEXTURE,"Initializing broadcom hardware");
    }
 #else
    ph->broadcomInit = false;
@@ -776,7 +776,7 @@ int resetScreen(char *p){
 }
 
 void cleanupSDL(void){
-   slog(LVL_INFO,LOG_SDL,"Cleanup sdl");
+   slog(INFO,LOG_SDL,"Cleanup sdl");
    TTF_Font *f = ht_get_simple(ph->fonts,"font");
    if(f) TTF_CloseFont(f);
    f = ht_get_simple(ph->fonts,"stampfont");

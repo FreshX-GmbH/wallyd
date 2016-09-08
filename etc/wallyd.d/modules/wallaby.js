@@ -1,6 +1,5 @@
 'use strict';
 
-//var curl = require('curl');
 //var qr = require('modules/qr/qr');
 var uv = nucleus.uv;
 var gui = new GUI();
@@ -44,7 +43,8 @@ function renderScreen(context, tree, screen, data)
    var start = new Date().getTime();
 
    //log.info(data);
-	
+
+   wally.startTransaction();
    wally.setAutoRender(false);
    gui.setTargetTexture(screen);
 
@@ -87,9 +87,12 @@ function renderScreen(context, tree, screen, data)
         }
    
         if(obj.type === 'image'){
-            //curl.downloadFile(obj.path,'/tmp/test.png');
-            //gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
-	    log.debug('Download not yet implemented.');
+            //var res = curl.get(obj.path);
+            //if(res.body){
+               //wally.writeFileSync('/tmp/test.png',res.body);
+               //gui.loadImage(screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255);
+               gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
+            //}
             continue;
         }
         if(obj.type === 'line'){
@@ -147,6 +150,7 @@ function renderScreen(context, tree, screen, data)
     
     wally.render(screen);
     gui.clearTextureNoPaint(screen);
+    wally.commitTransaction();
   
     var end = new Date().getTime()-start;
     log.debug({'time': end /1000 });

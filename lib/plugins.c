@@ -40,7 +40,7 @@ bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     int idx = wtx->elements;
     wtx->name[idx]=strdup(fstr);
     if(params != NULL){
-        slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
+        //slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
         wtx->param[idx]=strdup(params);
     }
     // also possible access
@@ -97,7 +97,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
             case CALL_TYPE_STR:
                 if(paramsTmp){
                     params = strdup(paramsTmp);
-                    slog(INFO,LOG_PLUGIN,"call( %s(%s) )",funcName,params);
+                    slog(DEBUG,LOG_PLUGIN,"call( %s(%s) )",funcName,params);
                     event.type = WALLY_CALL_STR;
                 } else {
                     event.type = WALLY_CALL_NULL;

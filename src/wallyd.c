@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
    // remove old socket
     ret = unlink(FIFO);
     if(ret == 0){
-        slog(LVL_INFO,LOG_CORE,"Old FIFO found and removed.");
+        slog(INFO,LOG_CORE,"Old FIFO found and removed.");
     }
 
    slog(DEBUG,LOG_CORE,"Seaduk initializing, ctx is at 0x%x.",ph->ctx);
@@ -185,7 +185,7 @@ void initializeFlags(void){
    if(getConfig(ph->configFlagsMap,ETC_FLAGS) == 0){
       slog(DEBUG,LOG_CORE,"Trying to open "ETC_FLAGS);
       if(getConfig(ph->configFlagsMap,ETC_FLAGS_BAK) == 0){
-        slog(LVL_INFO,LOG_CORE,"Configfile in "ETC_FLAGS" nor "ETC_FLAGS_BAK" not found! Using default values.");
+        slog(INFO,LOG_CORE,"Configfile in "ETC_FLAGS" nor "ETC_FLAGS_BAK" not found! Using default values.");
         ph->width =  DEFAULT_WINDOW_WIDTH;
         ph->height = DEFAULT_WINDOW_HEIGHT;
       }

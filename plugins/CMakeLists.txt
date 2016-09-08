@@ -25,13 +25,19 @@ add_dependencies(svg2image wally)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 
+if(WITH_CURL STREQUAL on)
+    add_library(dukcurl MODULE dukcurl.c)
+    target_link_libraries(dukcurl ${LIBSDL_LIBRARIES} ${LIBDUV_LIBRARIES} ${LIBCURL_LIBRARIES})
+    install(TARGETS dukcurl DESTINATION ${LIB_INSTALL_DIR}/wallyd)
+endif()
+
 if(WITH_VIDEO STREQUAL on)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Iplugins/ffplay -I./ffplay/include -DWALLY_PLUGIN ${LIBSWSCALE_CFLAGS}")
-	add_library(sdlffvideo MODULE sdlffvideo.c ffplay/cmdutils.c ffplay/postprocess.c ffplay/ffplay.c)
-	add_dependencies(sdlffvideo wally)
-	target_link_libraries(sdlffvideo ${LIBSWSCALE_LIBRARIES} ${LIBSWRE_LIBRARIES} 
-	    ${LIBAVUTIL_LIBRARIES} ${LIBAVCODEC_LIBRARIES} ${LIBAVFORMAT_LIBRARIES} ${LIBSDL_LIBRARIES})
-	install(TARGETS sdlffvideo DESTINATION ${LIB_INSTALL_DIR}/wallyd)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Iplugins/ffplay -I./ffplay/include -DWALLY_PLUGIN ${LIBSWSCALE_CFLAGS}")
+    add_library(sdlffvideo MODULE sdlffvideo.c ffplay/cmdutils.c ffplay/postprocess.c ffplay/ffplay.c)
+    add_dependencies(sdlffvideo wally)
+    target_link_libraries(sdlffvideo ${LIBSWSCALE_LIBRARIES} ${LIBSWRE_LIBRARIES} 
+        ${LIBAVUTIL_LIBRARIES} ${LIBAVCODEC_LIBRARIES} ${LIBAVFORMAT_LIBRARIES} ${LIBSDL_LIBRARIES})
+    install(TARGETS sdlffvideo DESTINATION ${LIB_INSTALL_DIR}/wallyd)
 endif()
 
 target_link_libraries(sdlgui ${LIBSDL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDLIMG_LIBRARIES} ${LIBDUV_LIBRARIES})

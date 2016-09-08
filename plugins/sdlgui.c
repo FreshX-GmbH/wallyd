@@ -10,18 +10,16 @@ void drawBox(const char *textureName, int x, int y, int w, int h, SDL_Color col)
 void drawFilledBox(const char *textureName, SDL_Rect rect, int stroke, SDL_Color col, SDL_Color strokeCol, int alpha);
 
 int js_setTargetTexture(duk_context *ctx){
-    int ret;
     dschema_check(ctx, (const duv_schema_entry[]) {
       {"texture", duk_is_string},
       {0,0}});
     const char *texName  = duk_require_string(ctx, 0);
-    callWithString("gui::setTargetTexture",&ret,texName);
+    callWtx("gui::setTargetTexture",texName);
     return 0;
 }
 
 duk_ret_t *js_resetTargetTexture(duk_context *ctx){
-    int ret;
-    callWithString("gui::setTargetTexture",&ret,NULL);
+    callWtx("gui::setTargetTexture",NULL);
     return 0;
 }
 
@@ -41,7 +39,7 @@ duk_ret_t *js_clearTextureNoPaint(duk_context *ctx){
       {"texture", duk_is_string},
       {0,0} });
     const char *texName  = duk_require_string(ctx, 0);
-    callWithString("screen::clearTextureNoPaint",&ret,texName);
+    callWtx("screen::clearTextureNoPaint",texName);
     return 0;
 }
 
@@ -99,7 +97,7 @@ int js_loadImageFile(duk_context *ctx){
     const int alpha = duk_require_int(ctx, 6);
     SDL_Rect r = {x1,y1,x2,y2};
     asprintf(&callStr,"%s %s %d %d %d %d %d",texName,fileName, x1,y1,x2,y2,alpha);
-    callWithString("gui::loadImageFile",&ret,callStr);
+    callWtx("gui::loadImageFile",callStr);
     free(callStr);
     return 0;
 }
@@ -160,7 +158,7 @@ int js_drawGradient(duk_context *ctx){
     hexToColor(fromcolor, &from);
     hexToColor(tocolor, &to);
     asprintf(&callStr,"%s %d %d %d %d %x %x %d %d",texName,x1,y1,x2,y2,fromcolor,tocolor,horizontal, hollow);
-    callWithString("gui::drawGradient",&ret,callStr);
+    callWtx("gui::drawGradient",callStr);
     free(callStr);
     return 0;
 }
@@ -185,10 +183,8 @@ int js_drawLine(duk_context *ctx)
     const int y2 = duk_require_int(ctx, 4);
     const int color = duk_require_int(ctx, 5);
     asprintf(&callStr, "%s %d %d %d %d %x",texName,x1,y1,x2,y2,color);
-    slog(0,DEBUG,"gui::drawLine %s",callStr);
-    callWithString("gui::drawLine",&ret,callStr);
+    callWtx("gui::drawLine",callStr);
     free(callStr);
-    //drawLine(texName, x1,y1,x2,y2,c);
     return 0;
 }
 
@@ -210,7 +206,7 @@ int js_drawText(duk_context *ctx){
     int color = duk_require_int(ctx, 4);
     const char *text = duk_require_string(ctx, 5);
     asprintf(&callStr, "%s %d %d %s %x %s",texName,x1,y1,font,color,text);
-    callWithString("gui::drawText",&ret,callStr);
+    callWtx("gui::drawText",callStr);
     free(callStr);
     return 0;
 }
@@ -233,7 +229,7 @@ int js_drawBox(duk_context *ctx){
     const int h = duk_require_int(ctx, 4);
     const char *color = duk_require_int(ctx, 5);
     asprintf(&callStr, "%s %d %d %d %d %x",texName,x,y,w,h,color);
-    callWithString("gui::drawBox",&ret,callStr);
+    callWtx("gui::drawBox",callStr);
     free(callStr);
     return 0;
 }
@@ -262,7 +258,7 @@ int js_drawFilledBox(duk_context *ctx){
     const int strokeCol = duk_require_int(ctx, 7);
     const int alpha = duk_require_int(ctx, 8);
     asprintf(&callStr, "%s %d %d %d %d %d %x %x %d",texName,x,y,w,h,stroke,color, strokeCol, alpha);
-    callWithString("gui::drawFilledBox",&ret,callStr);
+    callWtx("gui::drawFilledBox",callStr);
     free(callStr);
     return 0;
 }
@@ -428,7 +424,7 @@ int c_loadImageFile(char *str)
  
    texInfo *TI = getTexture(texName);
    if(!TI) { return false; }
-   slog(DEBUG,FULLDEBUG,"File : %s",fileName);
+   slog(TRACE,LOG_SDL,"File : %s",fileName);
    if(fileName == NULL){
       slog(LVL_QUIET,ERROR,"Wrong parameters setImageScale(name,file) (%s,%s).",TI->name,fileName);
       return false;
@@ -439,7 +435,7 @@ int c_loadImageFile(char *str)
    SDL_Texture *text = IMG_LoadTexture(ph->renderer,fileName);
    ph->textureCount++;
    if(text == NULL){
-      slog(LVL_QUIET,ERROR, "Error loading image : %s",IMG_GetError());
+      slog(ERROR,LOG_SDL, "Error loading image : %s",IMG_GetError());
       return false;
    }
    SDL_QueryTexture( text, NULL, NULL, &srect.w, &srect.h );

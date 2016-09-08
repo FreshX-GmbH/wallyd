@@ -4,11 +4,12 @@ var wally = new Wally();
 var gui = new GUI();
 var date = new Date();
 var uv = nucleus.uv;
+var wallaby = require('./modules/wallaby');
 
 var file = config.wally.basedir+'/etc/wallyd.d/tests/wallybill.json';
 var valsfile = "/tmp/co2.js";
 
-var loopDelay = 1000;
+var loopDelay = 10;
 var memstartb = wally.getrss();
 var memstart = Math.round((memstartb/1024/1024)*100)/100+'mb';
 
@@ -22,18 +23,17 @@ context.privates.date = date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear(
 context.privates.time = date.getHours()+':'+date.getMinutes();
 
 var page=0;
-
+var data;
+try{
+    var json = wally.readFile(file);
+    data = JSON.parse(json);
+} catch(err) {
+    log.debug('Error loading and parsing screen file ',file,' : '+err);
+}
+ 
 function oninterval() {
-    var wallaby = require('./modules/wallaby');
-    log.debug('Render wallaby');
-    try{
-       var json = wally.readFile(file);
-       var data = JSON.parse(json);
-    } catch(err) {
-        log.debug('Error loading and parsing screen file ',file,' : '+err);
-        return;
-    }
-    if(context.privates.co2 > 800) {
+   log.debug('Render wallaby');
+   if(context.privates.co2 > 800) {
          for(var i = 0; i < data.objects.length; i++){
              var obj = data.objects[i];
              if(obj.value === "CO2" || obj.value === "$_.co2; ppm"){
@@ -61,12 +61,12 @@ function oninterval() {
         var start = d2.getTime();
 	var passed = 0;
         wallaby.renderScreen(context,context.privates,'main',dat);
-	if(typeof uv.uptime === 'function'){
-	    d2.setTime(uv.uptime());	
-	    passed = d2.getTime();
-	} else {
+	//if(typeof uv.uptime === 'function'){
+	//    d2.setTime(uv.uptime());	
+	//    passed = d2.getTime();
+	//} else {
 	    passed = d2.getTime()-config.wally.uptime*1000;//-3600*1000;
-	}
+	//}
 	var d3 = new Date();
 	var fin = d3.getTime();
 	d2.setTime(passed);
@@ -86,7 +86,7 @@ function oninterval() {
 		conn=config.conn.host;
 	}
 	var mymem = wally.getrss();
-	var grow = Math.ceil((memstartb-mymem)/passed);
+	var grow = Math.ceil((mymem-memstartb)/passed);
     	var stat = 'WallyTV  v'+config.wally.release/1000+
 		 '   ***   Res: '+config.wally.width+'x'+config.wally.height+
 		 '   ***   Name: '+name+
@@ -106,7 +106,7 @@ function oninterval() {
 
 try {
     var timer = new uv.Timer();
-    timer.start( 1000, loopDelay, oninterval);
+    timer.start( 0, loopDelay, oninterval);
 } catch(e) {
     log.error('Error in demo timer : '+e);
 }

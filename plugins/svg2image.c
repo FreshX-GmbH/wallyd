@@ -17,7 +17,7 @@ int js_svgToImage(duk_context *ctx){
     void *image = svgToImage(svg,&size);
     free(svg);
     if(image == NULL){
-      slog(LVL_QUIET,ERROR,"Failed to parse svg to IMG");
+      slog(ERROR,LOG_JS,"Failed to parse svg to IMG");
       return 0;
     } else {
       slog(DEBUG,DEBUG,"Parsed svg to IMG, size %d",size);
@@ -156,7 +156,7 @@ void *svgToImage(char *str,long *size)
     
     image = nsvgParse(str, "px", 96.0f);
     if (image == NULL) {
-    	slog(LVL_QUIET,ERROR,"Could not parse SVG image.");
+    	slog(ERROR,LOG_JS,"Could not parse SVG image.");
     	goto error;
     }
     w = (int)image->width;
@@ -164,18 +164,18 @@ void *svgToImage(char *str,long *size)
     
     rast = nsvgCreateRasterizer();
     if (rast == NULL) {
-    	slog(LVL_QUIET,ERROR,"Could not init rasterizer.");
+    	slog(ERROR,LOG_JS,"Could not init rasterizer.");
     	goto error;
     }
     
     img = malloc(w*h*4);
     if (img == NULL) {
-    	slog(LVL_QUIET,ERROR,"Could not alloc image buffer.");
+    	slog(ERROR,LOG_JS,"Could not alloc image buffer.");
     	goto error;
     }
     
     *size = w*h*4;
-    slog(LVL_QUIET,ERROR,"rasterizing image %d x %d", w, h);
+    slog(ERROR,LOG_JS,"rasterizing image %d x %d", w, h);
     nsvgRasterize(rast, image, 0,0,1, img, w, h, w*4);
     
 error:
@@ -192,10 +192,10 @@ int svgToPng(char *str)
     unsigned char* img = NULL;
     int w, h;
     
-    slog(DEBUG,DEBUG,"parsing %s", fileName);
+    slog(DEBUG,LOG_JS,"parsing %s", fileName);
     image = nsvgParseFromFile(fileName, "px", 96.0f);
     if (image == NULL) {
-    	slog(DEBUG,DEBUG,"Could not open SVG image.");
+    	slog(DEBUG,LOG_JS,"Could not open SVG image.");
     	goto error;
     }
     w = (int)image->width;
@@ -203,21 +203,21 @@ int svgToPng(char *str)
     
     rast = nsvgCreateRasterizer();
     if (rast == NULL) {
-    	slog(DEBUG,DEBUG,"Could not init rasterizer.");
+    	slog(DEBUG,LOG_JS,"Could not init rasterizer.");
     	goto error;
     }
     
     img = malloc(w*h*4);
     if (img == NULL) {
         nsvgDeleteRasterizer(rast);
-    	slog(DEBUG,DEBUG,"Could not alloc image buffer.");
+    	slog(DEBUG,LOG_JS,"Could not alloc image buffer.");
     	goto error;
     }
     
-    slog(DEBUG,DEBUG,"rasterizing image %d x %d", w, h);
+    slog(DEBUG,LOG_JS,"rasterizing image %d x %d", w, h);
     nsvgRasterize(rast, image, 0,0,1, img, w, h, w*4);
     
-    slog(DEBUG,DEBUG,"writing %s",pngName);
+    slog(DEBUG,LOG_JS,"writing %s",pngName);
     stbi_write_png(pngName, w, h, 4, img, w*4);
     
 error:
@@ -250,7 +250,7 @@ char *cleanupPlugin(void *p){
 
 duk_ret_t js_svg_ctor(duk_context *ctx)
 {
-    slog(DEBUG,DEBUG, "Getting access to SVG object.");
+    slog(DEBUG,LOG_SDL, "Getting access to SVG object.");
 
     duk_push_this(ctx);
     duk_dup(ctx, 0);  /* -> stack: [ name this name ] */
@@ -260,7 +260,7 @@ duk_ret_t js_svg_ctor(duk_context *ctx)
 
 char *initPlugin(pluginHandler *_ph){
    ph=_ph;
-   slog(DEBUG,DEBUG, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
+   slog(DEBUG,LOG_PLUGIN, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
    //wally_put_function_list(ph,c_SDLMethods);
    wally_put_function(PLUGIN_SCOPE"::freeImage"  ,WFUNC_THRD, freeImage   ,1);
    wally_put_function(PLUGIN_SCOPE"::svgToTex"   ,WFUNC_THRD, svgToTex    ,7);
@@ -272,7 +272,7 @@ char *initPlugin(pluginHandler *_ph){
    duk_put_prop_string(ph->ctx, -2, "prototype");
    duk_put_global_string(ph->ctx, "SVG");  /* -> stack: [ ] */
 
-   slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
+   slog(DEBUG,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
    return PLUGIN_SCOPE;
 }
 

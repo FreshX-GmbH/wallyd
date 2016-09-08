@@ -13,11 +13,10 @@ if(nucleus){
 	var extra = nucleus.dofile('modules/extra.js');
 	var fs    = nucleus.dofile('modules/fs.js');
 	var extra = nucleus.dofile('modules/extra.js');
+	var curl  = nucleus.dofile('modules/curl.js');
 	log.info('Seaduk modules initialized');
 	var modules = homedir+'/modules.duv';
 	var log = {info:print, error:print, debug:print};
-} else {
-
 }
 
 context = { 
@@ -80,7 +79,7 @@ try{
 try{
     if(context.config.network){
       var networktimer = new uv.Timer();
-      networktimer.start(1000, 1000, function(){
+      networktimer.start(0, 10, function(){
         var network = uv.interface_addresses();
         //print(Object.keys(network));
         Object.keys(network).forEach(function(ifname){

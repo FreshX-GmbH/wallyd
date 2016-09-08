@@ -3,6 +3,7 @@
 #include "autoversion.h"
 #include <duktape.h>
 #include "duktools.h"
+#include "dschema.h"
 #include <stdbool.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -21,6 +22,42 @@ extern int setDebug(int lvl);
 extern int showTextureTestScreen(char *);
 int registerFunctions(void);
 const duk_function_list_entry wallyMethods[];
+
+int js_writeFileSync(duk_context *ctx) {
+   long len;
+   void *buf = NULL;
+   char *filename;
+
+   dschema_check(ctx, (const duv_schema_entry[]){
+       {"file", duk_is_string},
+       {"data", dschema_is_data},
+       {NULL}
+   });
+
+   filename = duk_get_string(ctx, 0);
+
+   if (duk_is_string(ctx, 1)) {
+     buf = (char*) duk_get_lstring(ctx, 1, &len);
+   } else {
+     buf = duk_get_buffer(ctx, 1, &len);
+   }
+   slog(TRACE,LOG_JS,"Ready to write out %u bytes to %s",len,filename);
+   FILE * out = fopen(filename,"w");
+   // TODO : push back error msg into duktape
+   if(!out) {
+      slog(ERROR,LOG_JS,"Could not write to %s",filename);
+      return 1;
+   }
+   long written = fwrite(buf,1,len,out);
+   if(written != len)
+   {
+      slog(ERROR,LOG_JS,"Could only write %d of %d bytes to %s",written,len,filename);
+      return 1;
+   }
+   fclose(out);
+
+   return 0;
+}
 
 int js_evalFile(duk_context *ctx) {
    const char *filename = duk_to_string(ctx, 0);
@@ -409,6 +446,7 @@ const duk_function_list_entry wallyMethods[] = {
     { "getrss",		      js_getrss, 0},
     { "startTransaction",     js_startTransaction, 0},
     { "commitTransaction",    js_commitTransaction, 0},
+    { "writeFileSync",        js_writeFileSync, 2},
     { NULL,                   NULL, 0 }
 };
 
@@ -420,7 +458,7 @@ const duk_function_list_entry wallyMethods[] = {
 
 char *initPlugin(pluginHandler *_ph){
    ph=_ph;
-   slog(ERROR,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" initializing (PH: %p)",ph);
+   slog(DEBUG,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" initializing (PH: %p)",ph);
    ctx = ph->ctx;
 
    slog(TRACE,LOG_JS,"Constructing wally object");

@@ -32,15 +32,9 @@ add_executable(sdldemo ${SDLDEMO})
 target_link_libraries(sdldemo ${LIBSDL_LIBRARIES} ${LIBSDLIMG_LIBRARIES})
 install(TARGETS sdldemo DESTINATION ${BIN_INSTALL_DIR})
 
-if(WITH_SEADUK STREQUAL on)
-	set(DWALLYD_SRC wallyd.c nucly/env.c nucly/path.c seaduk.c ../lib/miniz.c)
-	add_executable(wallyd ${DWALLYD_SRC})
-	target_link_libraries(wallyd ${LIBUV_LIBRARIES} ${LIBSDL_LIBRARIES} wally seaduk)
-else()
-	set(DWALLYD_SRC wallyd.c duv.c schema.c dukcurl.c)
-	add_executable(wallyd ${DWALLYD_SRC})
-	target_link_libraries(wallyd ${LIBUV_LIBRARIES} ${LIBSDL_LIBRARIES} wally)
-endif()
+set(DWALLYD_SRC wallyd.c nucly/env.c nucly/path.c seaduk.c ../lib/miniz.c)
+add_executable(wallyd ${DWALLYD_SRC})
+target_link_libraries(wallyd ${LIBUV_LIBRARIES} ${LIBSDL_LIBRARIES} wally seaduk)
 
 install(TARGETS wallyd DESTINATION ${BIN_INSTALL_DIR})
 

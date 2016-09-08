@@ -52,7 +52,7 @@
 #define FATAL       LVL_FATAL
 #define ERROR       LVL_ERROR
 #define WARN        LVL_WARN
-#define INFO        LVL_INFO
+#define INFO        3
 #define DEBUG       LVL_DEBUG
 #define TRACE       LVL_TRACE
 #define FULLDEBUG   LVL_TRACE
@@ -61,7 +61,6 @@
 #define LVL_FATAL     16384
 #define LVL_ERROR     16384+1
 #define LVL_WARN      16384+2
-#define LVL_INFO      16384+3
 #define LVL_DEBUG     16384+4
 #define LVL_TRACE     16384+5
 
