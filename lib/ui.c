@@ -33,7 +33,7 @@ int eventFilter(void *userdata, SDL_Event *event){
         slog(LVL_INFO,LOG_SDL,"Ignoring event, no function given");
         return 0; 
     }
-//    if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
+//   if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
 //        slog(LVL_INFO,WARN,"Intercepted an orphaned refresh timer event");
 //       return 0; 
 //   }
@@ -46,6 +46,7 @@ bool uiLoop(void){
     //int delay=0;
     char *funcName;
     const char *param;
+    wally_call_ctx *wtx;
     SDL_Event event = { 0 };
     slog(DEBUG,LOG_SDL,"UI Loop started and waiting for events (%p)",&event);
     for(;;) {
@@ -79,9 +80,27 @@ bool uiLoop(void){
         //if(event.user.data1)
         //   free(event.user.data1);
 
+        if(event.type == WALLY_CALL_WTX){
+           wtx = event.user.data2;
+           slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements", wtx->elements);
+           for(int i = 0; i < wtx->elements; i++){
+                  slog(INFO,LOG_PLUGIN,"WTX Call%d : %s(%s)", i, wtx->name[i], wtx->param[i]);
+                  //thr_func(event.user.data2);
+                  void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,wtx->name[i]);
+                  if(!thr_func){
+                      slog(WARN,LOG_PLUGIN,"Threaded function %s not defined (%d).",wtx->name[i],event.type);
+                      continue;
+                  } 
+                  thr_func((void*)wtx->param[i]);
+           }
+           if(strcmp(funcName, "video::video_refresh_timer") != 0){
+                SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
+           }
+           continue;
+        }
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
         if(!thr_func){
-            slog(LVL_INFO,LOG_SDL,"Threaded function %s not defined (%d).",funcName,event.type);
+            slog(WARN,LOG_PLUGIN,"Threaded function %s not defined (%d).",funcName,event.type);
             continue;
         } 
  

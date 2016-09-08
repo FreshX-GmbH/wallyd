@@ -33,19 +33,19 @@ int setTextUTF8(char *strTmp){
     char *colorName = strtok(NULL, " ");
     char *fontName = strtok(NULL, " ");
     if(!getNumOrPercent(strtok(NULL, " "), TI->rect->w, &x)){
-        slog(LVL_QUIET,ERROR,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
+        slog(ERROR,LOG_SDL,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
         return false;
     }
     if(!getNumOrPercent(strtok(NULL, " "), TI->rect->h, &y)){
-        slog(LVL_QUIET,ERROR,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
+        slog(ERROR,LOG_SDL,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
         return false;
     }
     char *text = strtok(NULL, "");
     if(!text || !name || !colorName || !fontName){
-        slog(LVL_QUIET,ERROR,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
+        slog(ERROR,LOG_SDL,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
         return false;
     }
-    slog(DEBUG,DEBUG,"Set text to texture %s at (%d,%d) : %s",name, x, y, text);
+    slog(DEBUG,LOG_SDL,"Set text to texture %s at (%d,%d) : %s",name, x, y, text);
     setTextEx(name, x, y, 0, text, fontName, colorName, TEXT_UTF8);
     free(str);
     return true;
@@ -64,19 +64,19 @@ int setText(char *strTmp){
     char *colorName = strtok(NULL, " ");
     char *fontName = strtok(NULL, " ");
     if(!getNumOrPercent(strtok(NULL, " "), TI->rect->w, &x)){
-        slog(LVL_QUIET,ERROR,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
+        slog(ERROR,LOG_SDL,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
         return false;
     }
     if(!getNumOrPercent(strtok(NULL, " "), TI->rect->h, &y)){
-        slog(LVL_QUIET,ERROR,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
+        slog(ERROR,LOG_SDL,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
         return false;
     }
     char *text = strtok(NULL, "");
     if(!text || !name || !colorName || !fontName){
-        slog(LVL_QUIET,ERROR,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
+        slog(ERROR,LOG_SDL,"Wrong parameters for setText(n, col, font, x, y, text) : (%s)",str);
         return false;
     }
-    slog(DEBUG,DEBUG,"Set text to texture %s at (%d,%d) : %s",name, x, y, text);
+    slog(DEBUG,LOG_SDL,"Set text to texture %s at (%d,%d) : %s",name, x, y, text);
     setTextEx(name, x, y, 0, text, fontName, colorName, TEXT_ANSI);
     free(str);
     return true;
@@ -91,10 +91,10 @@ int setText(char *strTmp){
 //   int x=strtol(xS,NULL,10);
 //   int y=strtol(yS,NULL,10);
 //   int rot=strtol(rotS,NULL,10);
-//   slog(DEBUG,DEBUG,"Set text at (%d,%d) rot %d : %s",x,y,rot,text);
+//   slog(DEBUG,LOG_SDL,"Set text at (%d,%d) rot %d : %s",x,y,rot,text);
 //   TTF_Font *font = ht_get_simple(ph->fonts,"font");
 //   if(!font){
-//      slog(LVL_QUIET,ERROR,"Font named '%s' not loaded","font");
+//      slog(ERROR,LOG_SDL,"Font named '%s' not loaded","font");
 //      return false;
 //   }
 //   return setTextEx(name, x, y, rot, text, font, &stampColor );
@@ -103,16 +103,16 @@ int setText(char *strTmp){
 int setAutoRender(char *t){
    if(strncmp(t,"true",4) == 0){
       ph->autorender = true;
-      slog(DEBUG,DEBUG,"autorender is now on");
+      slog(DEBUG,LOG_SDL,"autorender is now on");
       return 0;
    }
    else if(strncmp(t,"false",5) == 0)
    {
-      slog(DEBUG,DEBUG,"autorender is now off");
+      slog(DEBUG,LOG_SDL,"autorender is now off");
       ph->autorender = false;
       return 0;
    }
-   slog(LVL_INFO,WARN,"Usage : setAutoRender(true|false)");
+   slog(WARN,LOG_SDL,"Usage : setAutoRender(true|false)");
    return 1;
 }
 int renderLog(char *strTmp){
@@ -131,20 +131,20 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
 
    SDL_Color *c = ht_get_simple(ph->colors,colorName);
    if(!c) { 
-      slog(LVL_QUIET,ERROR,"Color %s not defined",colorName);
+      slog(ERROR,LOG_SDL,"Color %s not defined",colorName);
       return false; 
    }
 
    TTF_Font *font = ht_get_simple(ph->fonts,fontName);
    if(!font){
-      slog(LVL_QUIET,ERROR,"Font named '%s' not loaded",fontName);
+      slog(ERROR,LOG_SDL,"Font named '%s' not loaded",fontName);
       return false;
    }
    SDL_Rect dest = {x,y,0,0};
    // TODO : Implement roto
    SDL_Surface *rsurf,*surf;
 
-   slog(DEBUG,DEBUG,"Rendering text into surface with rot %d",rotation);
+   slog(DEBUG,LOG_SDL,"Rendering text into surface with rot %d",rotation);
    switch(textType){
       case TEXT_UTF8:
          surf = RENDERUTF8( font, text, *c );
@@ -160,13 +160,13 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
          break;
    }
    if(!surf) {
-      slog(LVL_QUIET,ERROR,"Could not create FontSurface : %s",SDL_GetError());
+      slog(ERROR,LOG_SDL,"Could not create FontSurface : %s",SDL_GetError());
       return 1;
    }
    if(rotation != 0){
       rsurf = rotozoomSurface(surf, (double)rotation, 1.0, 1); 
       if(!rsurf) {
-	 slog(LVL_QUIET,ERROR,"Could not create rotated FontSurface : %s",SDL_GetError());
+	 slog(ERROR,LOG_SDL,"Could not create rotated FontSurface : %s",SDL_GetError());
 	 SDL_FreeSurface( surf );
 	 return 1;
       }
@@ -179,7 +179,7 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
 
    SDL_QueryTexture( texture, NULL, NULL, &dest.w, &dest.h );
 
-   slog(DEBUG,DEBUG,"setTexture(%s,{%d,%d,%d,%d)",name,x,y,dest.w,dest.h);
+   slog(DEBUG,LOG_SDL,"setTexture(%s,{%d,%d,%d,%d)",name,x,y,dest.w,dest.h);
    addToTexture(TI, texture, &dest);
    renderActive(NULL);
    SDL_FreeSurface( surf );
@@ -195,13 +195,13 @@ int createColor(char *strTmp){
    char *aS = strtok(NULL, " ");
    int col, alpha;
    if(!name || !getNumHex(cS,&col) || !getNumHex(aS,&alpha)){
-      slog(DEBUG,DEBUG,"Wrong parameter createColor(name FFFFFF FF) : %s",str);
+      slog(DEBUG,LOG_SDL,"Wrong parameter createColor(name FFFFFF FF) : %s",str);
       return false;
    }
    SDL_Color *c=malloc(sizeof(Color));
    hexToColor(col,c);
    c->a = alpha;
-   slog(DEBUG,DEBUG,"Creating new color %s={%d,%d,%d} alpha = %d",name,c->r,c->g,c->b,c->a);
+   slog(DEBUG,LOG_SDL,"Creating new color %s={%d,%d,%d} alpha = %d",name,c->r,c->g,c->b,c->a);
    ht_insert_simple(ph->colors,name,c);
    return true;
 }
@@ -222,31 +222,31 @@ int fillTexture(texInfo *TI, bool refresh)
 }
 
 int clearTexture(char *str){
-   slog(DEBUG,DEBUG,"Clearing texture %s.",str);
+   slog(DEBUG,LOG_SDL,"Clearing texture %s.",str);
    return fillTexture(getTexture(strtok(str, " ")),true);
 }
 int clearTextureNoPaint(char *name){
-   slog(DEBUG,DEBUG,"Clearing texture %s.",name);
+   slog(DEBUG,LOG_SDL,"Clearing texture %s.",name);
    return fillTexture(getTexture(name),false);
 }
 
 int waitForTexture(char *str){
-   slog(DEBUG,DEBUG,"Waiting for texture %s",str);
+   slog(DEBUG,LOG_SDL,"Waiting for texture %s",str);
    char *name = strtok(str, " ");
    int timeout;
    if(!name){
-      slog(LVL_QUIET,ERROR,"Usage : waitForTexture(name, [timeout | 60])");
+      slog(ERROR,LOG_SDL,"Usage : waitForTexture(name, [timeout | 60])");
       return false;
    }
    char *tS = strtok(NULL, " ");
    if(!tS || !getNumOrPercent(strtok(NULL, " "),0 ,&timeout)){
-      slog(LVL_INFO,WARN,"Usage : waitForTexture(name, [timeout | 60])");
+      slog(WARN,LOG_SDL,"Usage : waitForTexture(name, [timeout | 60])");
       timeout = 60;
    }
    while( timeout > 0 ){
       void *t = ht_get_simple(ph->baseTextures,name);
       if(t) break;
-      slog(DEBUG,DEBUG,"Waiting for texture %s another %d seconds",name,timeout);
+      slog(DEBUG,LOG_SDL,"Waiting for texture %s another %d seconds",name,timeout);
       timeout--;
       sleep(1);
    }
@@ -260,7 +260,7 @@ int setTexturePrio(char *str){
    if(!TI) { return false; }
    char *aS = strtok(NULL, " ");
    if(aS == NULL){
-      slog(LVL_QUIET,ERROR,"Wrong parameters setTextureAlpha(screen,hex) (%s).",str);
+      slog(ERROR,LOG_SDL,"Wrong parameters setTextureAlpha(screen,hex) (%s).",str);
       return false;
    }
    getNumHex(aS,&prio);
@@ -276,7 +276,7 @@ int setTextureAlpha(char *str){
    if(!TI) { return false; }
    char *aS = strtok(NULL, " ");
    if(aS == NULL){
-      slog(LVL_QUIET,ERROR,"Wrong parameters setTextureAlpha(screen,hex) (%s).",str);
+      slog(ERROR,LOG_SDL,"Wrong parameters setTextureAlpha(screen,hex) (%s).",str);
       return false;
    }
    getNumHex(aS,&alpha);
@@ -293,11 +293,11 @@ int setTextureColor(char *str){
    if(!TI) { return false; }
    char *color = strtok(NULL, " ");
    if(color == NULL){
-      slog(LVL_QUIET,ERROR,"Wrong parameters setTextureColor(screen,hex) (%s).",str);
+      slog(ERROR,LOG_SDL,"Wrong parameters setTextureColor(screen,hex) (%s).",str);
       return false;
    }
    if(!getNumOrPercent(color,0,&colInt)){
-      slog(LVL_QUIET,ERROR,"Wrong parameters setTextureColor(screen,hex) (%s).",str);
+      slog(ERROR,LOG_SDL,"Wrong parameters setTextureColor(screen,hex) (%s).",str);
       return false;
    }
    hexToColor(colInt,TI->c);
@@ -331,26 +331,26 @@ int setImageScaleSW(char *str)
       fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
       return false;
    }
-   slog(DEBUG,FULLDEBUG,"File : %s",file);
+   slog(TRACE,LOG_SDL,"File : %s",file);
    if(file == NULL){
-      slog(LVL_QUIET,ERROR,"Wrong parameters setImageScale(name,file) (%s,%s).",TI->name,file);
+      slog(ERROR,LOG_SDL,"Wrong parameters setImageScale(name,file) (%s,%s).",TI->name,file);
       return false;
    }
  
-   slog(DEBUG,DEBUG,"Loading image %s",file);
+   slog(DEBUG,LOG_SDL,"Loading image %s",file);
    SDL_Surface *src = IMG_Load(file);
    if(src == NULL){
-      slog(LVL_QUIET,ERROR, "Error loading image : %s",IMG_GetError()); 
+      slog(ERROR,LOG_SDL, "Error loading image : %s",IMG_GetError()); 
       return false;
    }
    SDL_QueryTexture( TI->texture, NULL, NULL, &rect.w, &rect.h );
    rect.x = 0;
    rect.y = 0;
    SDL_Rect srect={0,0,src->w,src->h};
-   slog(DEBUG,DEBUG,"Rescaling surface to Rect({%d,%d,%d,%d}), lock : %d )",rect.x,rect.y,rect.w,rect.h,src->locked);
+   slog(DEBUG,LOG_SDL,"Rescaling surface to Rect({%d,%d,%d,%d}), lock : %d )",rect.x,rect.y,rect.w,rect.h,src->locked);
    //SDL_UnlockSurface( src );
    if(SDL_BlitScaled(src, &srect, dst, &rect)){
-      slog(LVL_QUIET,ERROR, "Error blitting image : %s",SDL_GetError()); 
+      slog(ERROR,LOG_SDL, "Error blitting image : %s",SDL_GetError()); 
       return false;
    }
    text = SDL_CreateTextureFromSurface(ph->renderer, dst);
@@ -371,24 +371,24 @@ int setImageScale(char *str)
    if(!TI) { return false; }
    char *file = strtok(NULL, " ");
 
-   slog(DEBUG,FULLDEBUG,"File : %s",file);
+   slog(TRACE,LOG_SDL,"File : %s",file);
    if(file == NULL){
-      slog(LVL_QUIET,ERROR,"Wrong parameters setImageScale(name,file) (%s,%s).",TI->name,file);
+      slog(ERROR,LOG_SDL,"Wrong parameters setImageScale(name,file) (%s,%s).",TI->name,file);
       return false;
    }
  
    SDL_Rect rect={0,0,0,0};
-   slog(DEBUG,DEBUG,"Loading image %s",file);
+   slog(DEBUG,LOG_SDL,"Loading image %s",file);
    SDL_Texture *text = IMG_LoadTexture(ph->renderer,file);
    ph->textureCount++;
    if(text == NULL){
-      slog(LVL_QUIET,ERROR, "Error loading image : %s",IMG_GetError()); 
+      slog(ERROR,LOG_SDL, "Error loading image : %s",IMG_GetError()); 
       return false;
    }
    SDL_QueryTexture( text, NULL, NULL, &rect.w, &rect.h );
    rect.x = 0;
    rect.y = 0;
-   slog(DEBUG,DEBUG,"Calling scaleToTexture(%s,Rect({%d,%d,%d,%d}) )",TI->name,rect.x,rect.y,rect.w,rect.h);
+   slog(DEBUG,LOG_SDL,"Calling scaleToTexture(%s,Rect({%d,%d,%d,%d}) )",TI->name,rect.x,rect.y,rect.w,rect.h);
    scaleToTexture(TI,text,&rect);
    renderActive(TI->name);
    SDL_DestroyTexture(text);
@@ -402,24 +402,24 @@ int setImageScale(char *str)
 //   if(!TI) { return false; }
 //   char *file = strtok(NULL, " ");
 //
-//   slog(DEBUG,FULLDEBUG,"File : %s",file);
+//   slog(TRACE,LOG_SDL,"File : %s",file);
 //   if(file == NULL){
-//      slog(LVL_QUIET,ERROR,"Wrong parameters setImageStretch(name,file,x,y,w,h,alpha).",TI->name,file);
+//      slog(ERROR,LOG_SDL,"Wrong parameters setImageStretch(name,file,x,y,w,h,alpha).",TI->name,file);
 //      return false;
 //   }
 // 
 //   SDL_Rect rect={0,0,0,0};
-//   slog(DEBUG,DEBUG,"Loading image %s",file);
+//   slog(DEBUG,LOG_SDL,"Loading image %s",file);
 //   SDL_Texture *text = IMG_LoadTexture(ph->renderer,file);
 //   ph->textureCount++;
 //   if(text == NULL){
-//      slog(LVL_QUIET,ERROR, "Error loading image : %s",IMG_GetError()); 
+//      slog(ERROR,LOG_SDL, "Error loading image : %s",IMG_GetError()); 
 //      return false;
 //   }
 //   SDL_QueryTexture( text, NULL, NULL, &rect.w, &rect.h );
 //   rect.x = 0;
 //   rect.y = 0;
-//   slog(DEBUG,DEBUG,"Calling scaleToTexture(%s,Rect({%d,%d,%d,%d}) )",TI->name,rect.x,rect.y,rect.w,rect.h);
+//   slog(DEBUG,LOG_SDL,"Calling scaleToTexture(%s,Rect({%d,%d,%d,%d}) )",TI->name,rect.x,rect.y,rect.w,rect.h);
 //   scaleToTexture(TI,text,&rect);
 //   renderActive(TI->name);
 //   SDL_DestroyTexture(text);
@@ -428,7 +428,7 @@ int setImageScale(char *str)
 
 int setImage(char *name,int x, int y,const char *fileName){
    if(!name || !fileName){
-      slog(LVL_QUIET,ERROR,"Wrong parameters setImage(name,x,y,file).");
+      slog(ERROR,LOG_SDL,"Wrong parameters setImage(name,x,y,file).");
       return false;
    }
 
@@ -442,7 +442,7 @@ int setImage(char *name,int x, int y,const char *fileName){
    SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h );
    rect.x = x;
    rect.y = y;
-   slog(DEBUG,DEBUG,"Texture(%d,%d)",rect.w,rect.h);
+   slog(DEBUG,LOG_SDL,"Texture(%d,%d)",rect.w,rect.h);
    copyToTexture(TI,text,&rect);
    SDL_DestroyTexture(text);
    ph->textureCount--;
@@ -451,7 +451,7 @@ int setImage(char *name,int x, int y,const char *fileName){
 }
 
 char *cleanupPlugin(void *p){
-   slog(DEBUG,DEBUG,"Cleaning up plugin "PLUGIN_SCOPE);
+   slog(DEBUG,LOG_SDL,"Cleaning up plugin "PLUGIN_SCOPE);
    return NULL;
 }
 
@@ -488,7 +488,7 @@ char *cleanupPlugin(void *p){
 
 char *initPlugin(pluginHandler *_ph){
     ph=_ph;
-    slog(DEBUG,FULLDEBUG,
+    slog(DEBUG,LOG_SDL,
         "Plugin SDL2 initializing, PH is at 0x%x, window at 0x%x, renderer at 0x%x, winRenderer at 0x%x",
         ph,ph->window, ph->renderer, SDL_GetRenderer(ph->window));
    // wally_put_function_list(ph,c_SDLMethods);
@@ -516,6 +516,6 @@ char *initPlugin(pluginHandler *_ph){
    wally_put_function(PLUGIN_SCOPE"::createColor"       ,WFUNC_THRD, createColor        ,1);
    wally_put_function(PLUGIN_SCOPE"::clearTextureNoPaint",WFUNC_THRD, clearTextureNoPaint,1);
 
-    slog(DEBUG,FULLDEBUG,"Plugin SDL2 initialized. PH is at 0x%x",ph);
+    slog(TRACE,LOG_SDL,"Plugin SDL2 initialized. PH is at 0x%x",ph);
     return PLUGIN_SCOPE;
 }

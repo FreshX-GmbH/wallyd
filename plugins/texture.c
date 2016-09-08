@@ -22,16 +22,16 @@ typedef struct texturePlugin
 extern const duk_function_list_entry myMethods[];
 
 char *cleanupPlugin(void *p){
-    slog(DEBUG,DEBUG,"Plugin "PLUGIN_SCOPE" uninitialized");
+    slog(DEBUG,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" uninitialized");
     return NULL;
 }
 
 static duk_ret_t js_setter(duk_context *ctx) {
-    slog(LVL_INFO,INFO,"Setter called");
+    slog(INFO,LOG_JS,"Setter called");
     return 0;
 }
 static duk_ret_t js_getter(duk_context *ctx) {
-    slog(LVL_INFO,INFO,"Getter called");
+    slog(INFO,LOG_JS,"Getter called");
     return 0;
 }
 // the destructor
@@ -63,7 +63,7 @@ duk_ret_t js_texture_ctor(duk_context *ctx)
 {
     int ret = 0;
     printf("Creating new "PLUGIN_SCOPE" object");
-    slog(LVL_QUIET,INFO, "Creating new "PLUGIN_SCOPE" object");
+    slog(INFO, LOG_TEXTURE, "Creating new "PLUGIN_SCOPE" object");
 
 //    texturePlugin *TP = malloc(sizeof(texturePlugin));
 //    TP->rect = malloc(sizeof(SDL_Rect));
@@ -80,7 +80,7 @@ duk_ret_t js_texture_ctor(duk_context *ctx)
 //    //          so that it can be reached from JS and C
 //    asprintf(&cs,"%s %s %s %s %s %s %s",name, z, x, y, w, h, c);
 //    slog(LVL_INFO,INFO,"screen::createTexture(%s)",cs);
-//    callEx("screen::createTexture",&ret, cs, true, true);
+//    call("screen::createTexture",&ret, cs, true, true);
 ////    free(cs);
 //    TP->TI = getTexture(name); 
 //     // Push special this binding to the function being constructed
@@ -116,7 +116,7 @@ const duk_function_list_entry textureMethods[] = {
 };
 
 char *initPlugin(pluginHandler *_ph){
-    slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initializing.");
+    slog(TRACE,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" initializing.");
     ph=_ph;
     ctx = ph->ctx;
     duk_push_c_function(ctx, js_texture_ctor, 7 );

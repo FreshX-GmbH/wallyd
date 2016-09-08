@@ -3,6 +3,8 @@
 
 #define _GNU_SOURCE
 
+#define WTX_SIZE 512
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -18,17 +20,28 @@
 #define CALL_TYPE_STR  1
 #define CALL_TYPE_PS   2
 #define CALL_TYPE_CTX  3
-#define CALL_TYPE_NULL 4
-#define CALL_TYPE_PSA 4
+#define CALL_TYPE_WTX  4
+#define CALL_TYPE_NULL 5
 #define WALLY_EVENT (SDL_USEREVENT+5)
 #define WALLY_CALL_PTR  (WALLY_EVENT+CALL_TYPE_PTR)
 #define WALLY_CALL_STR  (WALLY_EVENT+CALL_TYPE_STR)
 #define WALLY_CALL_PS   (WALLY_EVENT+CALL_TYPE_PS)
-#define WALLY_CALL_PSA  (WALLY_EVENT+CALL_TYPE_PSA)
+#define WALLY_CALL_WTX  (WALLY_EVENT+CALL_TYPE_WTX)
 #define WALLY_CALL_CTX  (WALLY_EVENT+CALL_TYPE_CTX)
 #define WALLY_CALL_NULL (WALLY_EVENT+CALL_TYPE_NULL)
 #define WFUNC_THRD true
 #define WFUNC_SYNC false
+
+typedef struct wally_call_ctx{
+    char *name[WTX_SIZE];
+    char *param[WTX_SIZE];
+    void *data[WTX_SIZE];
+    int data_size[WTX_SIZE];
+    int ret[WTX_SIZE];
+    int type[WTX_SIZE];
+    int elements;
+    int transaction;
+}  wally_call_ctx;
 
 typedef struct{
     // SDL Image / Screen Stuff
@@ -105,10 +118,14 @@ typedef struct{
     int conditionTimeout;
     void *slg;
 
+    bool transaction;
+    wally_call_ctx *wtx;
+
 } pluginHandler;
 
 extern pluginHandler *ph;
 typedef int (*wally_c_function)(char *parameter);
+//typedef int (*wally_c_function)(wally_call_ctx *ctx);
 typedef struct function_list_entry function_list_entry;
 struct function_list_entry {
         const char *name;
@@ -129,6 +146,7 @@ int cleanupPlugins(void);
 bool callEx(char *, void *, void *,int ,bool );
 void export_function_list(char *, const function_list_entry *);
 void wally_put_function_list(pluginHandler *, function_list_entry *);
-void wally_put_function(const char *name, int threaded, void *(*f), int args);
+void wally_put_function(const char *name, int threaded, int (*f), int args);
+bool callWtx(char *fstr, char *params);
 
 #endif

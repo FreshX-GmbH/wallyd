@@ -290,7 +290,7 @@ void c_drawLine(char *str)
     int y2=atoi(y2Str);
     int color=strtol(cStr,0,16);
     hexToColor(color, &col);
-    slog(DEBUG,DEBUG, "c_drawLine %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,x2,y2,col.r, col.g,col.b);
+    slog(DEBUG,LOG_JS, "c_drawLine %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,x2,y2,col.r, col.g,col.b);
     drawLine(texName, x1, y1, x2, y2, col);
 }
 
@@ -309,7 +309,7 @@ void c_drawFilledBox(char *tmpStr)
     char *strColStr = strsep(&str, " \t");
     char *alphaStr  = strsep(&str, " \t");
     if(!texName || !x1Str || !y1Str || !wStr || !hStr || !strokeStr || !alphaStr){
-    	slog(DEBUG,DEBUG, "c_drawFilledBox parse error : %s",str);
+    	slog(DEBUG,LOG_JS, "c_drawFilledBox parse error : %s",str);
 	return;
     }
     int x1=atoi(x1Str);
@@ -321,7 +321,7 @@ void c_drawFilledBox(char *tmpStr)
     int a=atoi(alphaStr);
     hexToColor(strtol(colStr,NULL,16), &col);
     hexToColor(strtol(strColStr,NULL,16), &scol);
-    slog(DEBUG,DEBUG, "c_drawFilledBox %s {%d,%d,%d,%d} s:%d {%d,%d,%d} {%d,%d,%d} a:%d",texName,x1,y1,w,h,s,
+    slog(DEBUG,LOG_JS, "c_drawFilledBox %s {%d,%d,%d,%d} s:%d {%d,%d,%d} {%d,%d,%d} a:%d",texName,x1,y1,w,h,s,
 	col.r,col.g,col.b, scol.r,scol.g,scol.b, a);
     drawFilledBox(texName, r, s, col, scol, a);
 }
@@ -341,7 +341,7 @@ void c_drawBox(char *str)
     int w=atoi(wStr);
     int h=atoi(hStr);
     hexToColor(strtol(colStr,NULL,16), &col);
-    slog(DEBUG,DEBUG, "c_drawBox %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,w,h,col.r,col.g,col.b);
+    slog(DEBUG,LOG_JS, "c_drawBox %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,w,h,col.r,col.g,col.b);
     drawBox(texName, x1, y1, w, h, col);
 }
 
@@ -366,7 +366,7 @@ void c_drawGradient(char *str)
     int hol=atoi(holStr);
     hexToColor(strtol(fcolStr,NULL,16), &fromcol);
     hexToColor(strtol(tcolStr,NULL,16), &tocol);
-    slog(DEBUG,DEBUG, "c_drawGradient %s {%d,%d,%d,%d} {...}{...} %d %d",texName,x1,y1,x2,y2,!hor, hol);
+    slog(DEBUG,LOG_JS, "c_drawGradient %s {%d,%d,%d,%d} {...}{...} %d %d",texName,x1,y1,x2,y2,!hor, hol);
     drawGradient(texName, r, fromcol,tocol,!hor,hol);
     renderActive(texName);
 }
@@ -435,7 +435,7 @@ int c_loadImageFile(char *str)
    }
 
    SDL_Rect srect = { 0,0,0,0 };
-   slog(DEBUG,DEBUG,"Loading image %s",fileName);
+   slog(DEBUG,LOG_JS,"Loading image %s",fileName);
    SDL_Texture *text = IMG_LoadTexture(ph->renderer,fileName);
    ph->textureCount++;
    if(text == NULL){
@@ -456,18 +456,19 @@ int c_loadImageFile(char *str)
 
 void setTargetTexture(const char *textureName){
     if(textureName){
-      slog(DEBUG,DEBUG,"setTarget %s",textureName);
+      slog(DEBUG,LOG_JS,"setTarget %s",textureName);
       texInfo *TI = getTexture(textureName);
+      if(!TI) return;
       SDL_SetRenderTarget(ph->renderer,TI->texture);
       SDL_SetTextureBlendMode(TI->texture, SDL_BLENDMODE_BLEND);
     } else {
-      slog(DEBUG,DEBUG,"setTarget NULL");
+      slog(DEBUG,LOG_JS,"setTarget NULL");
       SDL_SetRenderTarget(ph->renderer,NULL);
     }
 }
 
 void drawLine(const char *textureName, int x1, int y1, int x2, int y2, SDL_Color col) {
-//    slog(DEBUG,DEBUG,"drawLine %s",textureName);
+//    slog(DEBUG,LOG_JS,"drawLine %s",textureName);
 //    texInfo *TI = getTexture(textureName);
 //    if(!textureName || !TI){
 //        slog(LVL_QUIET,ERROR,"Texture %s not found.",textureName);
@@ -481,7 +482,7 @@ void drawLine(const char *textureName, int x1, int y1, int x2, int y2, SDL_Color
 }
 
 void drawBox(const char *textureName, int x, int y, int w, int h, SDL_Color c) {
-   slog(DEBUG,DEBUG,"drawBox %s",textureName);
+   slog(DEBUG,LOG_JS,"drawBox %s",textureName);
 //   texInfo *TI = getTexture(textureName);
 //   SDL_SetRenderTarget(ph->renderer,TI->texture);
    SDL_Rect r= { x, y, w, h };
@@ -502,7 +503,7 @@ void vLine(char *textureName,int x, int y, int h, SDL_Color c)
 
 void drawFilledBox(const char *textureName, SDL_Rect rect, int stroke, SDL_Color col, SDL_Color strokeCol, int alpha) {
     //SDL_SetRenderDrawColor(ph->renderer,strokeCol.r,strokeCol.g,strokeCol.b,0xff);
-    slog(DEBUG,DEBUG,"drawFilledBox %s Alpha:%d",textureName,alpha);
+    slog(DEBUG,LOG_JS,"drawFilledBox %s Alpha:%d",textureName,alpha);
 //    texInfo *TI = getTexture(textureName);
 //    SDL_SetRenderTarget(ph->renderer,TI->texture);
     drawBox(textureName, rect.x,rect.y, rect.w, stroke, strokeCol); 		// top
@@ -605,13 +606,13 @@ void drawButtonTest(char *textureName){
 }
 
 char *cleanupPlugin(void *p){
-   slog(DEBUG,DEBUG,"Cleaning up plugin "PLUGIN_SCOPE);
+   slog(DEBUG,LOG_JS,"Cleaning up plugin "PLUGIN_SCOPE);
    return NULL;
 }
 
 duk_ret_t js_gui_ctor(duk_context *ctx)
 {
-    slog(DEBUG,DEBUG, "Getting access to gui object.");
+    slog(DEBUG,LOG_JS, "Getting access to gui object.");
 
     duk_push_this(ctx);
     duk_dup(ctx, 0);  /* -> stack: [ name this name ] */
@@ -650,7 +651,7 @@ const duk_function_list_entry js_guiMethods[] = {
 
 char *initPlugin(pluginHandler *_ph){
    ph=_ph;
-   slog(DEBUG,DEBUG, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
+   slog(DEBUG,LOG_JS, "Plugin "PLUGIN_SCOPE" initializing, ph is at 0x%x, renderer at 0x%x",ph, ph->renderer);
 
    wally_put_function(PLUGIN_SCOPE"::drawText"       ,WFUNC_THRD, c_drawText  ,6);
    wally_put_function(PLUGIN_SCOPE"::drawBox"        ,WFUNC_THRD, c_drawBox   ,6);
@@ -665,6 +666,6 @@ char *initPlugin(pluginHandler *_ph){
    duk_put_prop_string(ph->ctx, -2, "prototype");
    duk_put_global_string(ph->ctx, "GUI");  /* -> stack: [ ] */
 
-   slog(DEBUG,FULLDEBUG,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
+   slog(TRACE,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" initialized. PH is at 0x%x",ph);
    return PLUGIN_SCOPE;
 }

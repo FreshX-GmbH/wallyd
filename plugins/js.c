@@ -30,10 +30,27 @@ int js_evalFile(duk_context *ctx) {
    return 0;
 }
 
+int js_commitTransaction(duk_context *ctx) {
+   int ret;
+   slog(DEBUG,LOG_PLUGIN,"Commit a transaction.");
+   callWtx(NULL,NULL);
+   ph->transaction = false;
+   ph->wtx->elements=0;
+   return 0;
+}
+
+int js_startTransaction(duk_context *ctx) {
+   int ret;
+   slog(DEBUG,LOG_PLUGIN,"Started a new transaction. Clearing WTX.");
+   ph->transaction = true;
+   ph->wtx->elements=0;
+   return 0;
+}
+
 int js_render(duk_context *ctx) {
    int ret;
    const char *texName = duk_to_string(ctx, 0);
-   callWithString("screen::render",&ret,texName);
+   callWtx("screen::render",texName);
    return 0;
 }
 
@@ -131,7 +148,7 @@ int js_setImageScaled(duk_context *ctx)
     int ret;
     char *cs;
     asprintf(&cs,"%s %s",name,file);
-    callWithString("screen::setImageScaled",&ret,cs);
+    callWtx("screen::setImageScaled",cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -150,7 +167,7 @@ int js_setTextUTF8(duk_context *ctx)
     int ret;
     char *cs;
     asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
-    callWithString("screen::setTextUTF8 ",&ret,cs);
+    callWtx("screen::setTextUTF8 ",cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -169,7 +186,7 @@ int js_setText(duk_context *ctx)
     int ret;
     char *cs;
     asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
-    callWithString("screen::setText",&ret,cs);
+    callWtx("screen::setText",cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -181,7 +198,7 @@ int js_log(duk_context *ctx)
     int n = duk_get_top(ctx);
     const char *text = strdup(duk_to_string(ctx,0));
     int ret;
-    callWithString("screen::log",&ret,text);
+    callWtx("screen::log",text);
     // TODO : free
     //free(text);
     return 1;
@@ -268,7 +285,7 @@ int js_loadFont(duk_context *ctx)
     char *cs;
     int ret;
     asprintf(&cs,"%s %s %s",name,file,size);
-    callWithString("screen::loadFont",&ret,cs);
+    callWtx("screen::loadFont",cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -277,7 +294,7 @@ int js_loadFont(duk_context *ctx)
 
 int js_createColor(duk_context *ctx)
 {
-    // screen::createTexture name RGB alpha
+    // screen::createColor name RGB alpha
     int n = duk_get_top(ctx);  /* #args */
     const char *name = duk_to_string(ctx,0);
     const char *RGB = duk_to_string(ctx,1);
@@ -285,7 +302,7 @@ int js_createColor(duk_context *ctx)
     char *cs;
     int ret;
     asprintf(&cs,"%s %s %s",name,RGB,A);
-    callWithString("screen::createColor",&ret,cs);
+    callWtx("screen::createColor",cs);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -296,10 +313,7 @@ int js_destroyTexture(duk_context *ctx)
     // screen::destroyTexture name
     int n = duk_get_top(ctx);  /* #args */
     const char *name = duk_to_string(ctx,0);
-    char *cs;
-    int ret;
-    asprintf(&cs,"%s",name);
-    callWithString("screen::destroyTexture",&ret,cs);
+    callWtx("screen::destroyTexture",name);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -320,9 +334,9 @@ int js_createTexture(duk_context *ctx)
     char *cs;
     int ret;
     asprintf(&cs,"%s %s %s %s %s %s %s",name,prio,x,y,w,h,col);
-    callWithString("screen::createTexture",&ret,cs);
-    // TODO : make copy of the string IN the function utilizing it
-    //free(cs);
+    //newSimpleWtx(&wtx,"screen::createTexture",cs);
+    callWtx("screen::createTexture",cs);
+    free(cs);
     return 1;
 }
 
@@ -342,7 +356,7 @@ duk_ret_t js_exec(duk_context *ctx){
    assert(str != NULL);
    cmd = strsep(&str, " \t");
    slog(DEBUG,LOG_JS,"call : %s(%s)", cmd,str);
-   callWithString(cmd,&ret,str);
+   callWtx(cmd,str);
    free(tofree);
    return 0;
 }
@@ -393,6 +407,8 @@ const duk_function_list_entry wallyMethods[] = {
     { "render",               js_render, 1 },
     { "setAutoRender",        js_setAutoRender, 1 },
     { "getrss",		      js_getrss, 0},
+    { "startTransaction",     js_startTransaction, 0},
+    { "commitTransaction",    js_commitTransaction, 0},
     { NULL,                   NULL, 0 }
 };
 

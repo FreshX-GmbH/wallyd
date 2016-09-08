@@ -23,6 +23,8 @@ add_dependencies(sdlgui wally)
 add_dependencies(screen wally)
 add_dependencies(svg2image wally)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+
 if(WITH_VIDEO STREQUAL on)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Iplugins/ffplay -I./ffplay/include -DWALLY_PLUGIN ${LIBSWSCALE_CFLAGS}")
 	add_library(sdlffvideo MODULE sdlffvideo.c ffplay/cmdutils.c ffplay/postprocess.c ffplay/ffplay.c)

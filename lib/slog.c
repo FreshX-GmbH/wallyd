@@ -285,7 +285,7 @@ char* slog_get_short(SlogDate *pDate, char *msg, ...)
 void eslog(char *srcfile, int line, int level, int flag, const char *msg, ...)
 {
     SlogFlags *slg = ph->slg;
-    // printf("%d %d / %d %d "BYTE_TO_BINARY_PATTERN"\n",level,slg->level,flag,slg->mask,BYTE_TO_BINARY(slg->mask));
+    //printf("%d %d / %d %d "BYTE_TO_BINARY_PATTERN"\n",level,slg->level,flag,slg->mask,BYTE_TO_BINARY(slg->mask));
     if(slg->mask == 0) {
         fprintf(stderr,"[ERR] : %s at %d has invalid mask. please fix.\n",srcfile,line);
         return;

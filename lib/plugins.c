@@ -6,9 +6,63 @@
 #include <SDL_mutex.h>
 
 #define SDLWAITTIMEOUT 2000
+#define SDLWAITTIMEOUT_TRANSACTION 20000
 
 pluginHandler *ph;
 pthread_mutex_t callMutex=PTHREAD_MUTEX_INITIALIZER;
+
+bool initWtx(wally_call_ctx** xwtx){
+    *xwtx = malloc(sizeof(wally_call_ctx));
+    wally_call_ctx *wtx = *xwtx;
+    (*xwtx)->elements = 0;
+    wtx->transaction = false;
+    return true;
+}
+
+// make a simple context for function f
+bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
+    *xwtx = malloc(sizeof(wally_call_ctx));
+    wally_call_ctx *wtx = *xwtx;
+    wtx->name[0]=strdup(fstr);
+    if(params != NULL){
+        slog(TRACE,LOG_PLUGIN,"Creating simple wtx : %s %s",fstr,params);
+        wtx->param[0]=strdup(params);
+    }
+    // also possible access
+    (*xwtx)->elements = 1;
+    wtx->transaction = false;
+    wtx->type[0] = CALL_TYPE_STR;
+    return true;
+}
+
+bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
+    wally_call_ctx *wtx = *xwtx;
+    int idx = wtx->elements;
+    wtx->name[idx]=strdup(fstr);
+    if(params != NULL){
+        slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
+        wtx->param[idx]=strdup(params);
+    }
+    // also possible access
+    (*xwtx)->elements = idx + 1;
+    wtx->type[idx] = CALL_TYPE_STR;
+    return true;
+}
+
+bool callWtx(char *fstr, char *params){
+    // commit
+    if(fstr == NULL && params == NULL){
+        return callEx(ph->wtx->name[0],NULL,ph->wtx,CALL_TYPE_WTX,true);
+    }
+    if(ph->transaction == false) {
+        ph->wtx->elements=1;
+        ph->wtx->name[0]=fstr;
+        ph->wtx->param[0]=params;
+        callEx(fstr,NULL,ph->wtx,CALL_TYPE_WTX,true);
+    } else {
+        pushSimpleWtx(&ph->wtx, fstr, params);
+    }
+}
 
 //  Paramtyp 0 : pointer
 //           1 : string
@@ -22,6 +76,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
     }
     pthread_mutex_lock(&callMutex);
     void *params = NULL;
+    wally_call_ctx *wtx = NULL;
     char *funcName = strdup(funcNameTmp);
     ph->callCount++;   
     void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
@@ -60,13 +115,12 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 event.type = WALLY_CALL_CTX;
                 slog(DEBUG,LOG_PLUGIN,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
                 break;
-            case CALL_TYPE_PSA:
-                // TODO
+            case CALL_TYPE_WTX:
+                wtx = (wally_call_ctx*)paramsTmp;
+                slog(DEBUG,LOG_PLUGIN,"WTX call with %d commands",wtx->elements);
                 params = paramsTmp;
-                slog(DEBUG,LOG_PLUGIN,"call( %s(<PSA *>) )",funcName,paramsTmp);
-                event.type = WALLY_CALL_PSA;
+                event.type = WALLY_CALL_WTX;
                 break;
- 
             default:
                 break;
         }
@@ -78,7 +132,13 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         SDL_PushEvent(&event);
         if(waitThread == true){
             // Enable the Mutex code for synced function calls
-            slog(TRACE,LOG_PLUGIN,"Wait %d ms until %s has finished.",SDLWAITTIMEOUT,funcName);
+            int timeout;
+            if(ph->transaction == true){
+                timeout = SDLWAITTIMEOUT_TRANSACTION;
+            } else {
+                timeout = SDLWAITTIMEOUT_TRANSACTION;
+            }
+            slog(TRACE,LOG_PLUGIN,"Wait %d ms until %s has finished.",timeout,funcName);
             if(SDL_MUTEX_TIMEDOUT == 
                     SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,SDLWAITTIMEOUT))
                 {
@@ -100,6 +160,9 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
     pthread_mutex_unlock(&callMutex); 
     return ret;
 }
+//bool callCtx(wally_call_ctx *wtx){
+//    return callEx(wtx->name,NULL,wtx,CALL_TYPE_CTX,true);
+//}
 bool callWithData(char *funcname, void *ret, void *params){
     return callEx(funcname,ret,params,CALL_TYPE_PTR,true);
 }
@@ -136,14 +199,14 @@ bool exportSync(const char *name, void *f){
     return false;
 }
 
-void wally_put_function(const char *name, int threaded, void *(*f), int args){
+void wally_put_function(const char *name, int threaded, int (*f), int args){
     char *ncopy = strdup(name);
     assert(ncopy);
+    assert(ph);
     if(threaded == true){
        // TODO : free
        exportThreaded(ncopy,f);
     } else {
-       slog(ERROR,LOG_PLUGIN,"Function %s %p %p %p",ncopy,f,ph,ph->functions);
        slog(DEBUG,LOG_PLUGIN,"FKT_SYNC : %s (%d args)",ncopy,args);
        // TODO : free
        exportSync(ncopy,f);
@@ -252,7 +315,7 @@ int pluginLoader(char *path){
 }
 
 pluginHandler *pluginsInit(void){
-
+    
     ph=malloc(sizeof(pluginHandler));
     memset(ph,sizeof(pluginHandler),0);
     pthread_mutex_init(&callMutex,0);
@@ -276,6 +339,8 @@ pluginHandler *pluginsInit(void){
     ph->ssdp = false;
     ph->cloud = false;
     ph->location = NULL;
+    ph->transaction = false;
+    initWtx(&ph->wtx);
 
     ph->funcMutex = SDL_CreateMutex();
     ph->functionWaitConditions= malloc(sizeof(hash_table));

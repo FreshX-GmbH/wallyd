@@ -244,7 +244,7 @@ const duk_function_list_entry js_svgMethods[] = {
 };
 
 char *cleanupPlugin(void *p){
-   slog(DEBUG,DEBUG,"Cleaning up plugin "PLUGIN_SCOPE);
+   slog(DEBUG,LOG_PLUGIN,"Cleaning up plugin "PLUGIN_SCOPE);
    return NULL;
 }
 
