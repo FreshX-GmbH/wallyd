@@ -50,23 +50,26 @@ function oninterval() {
     context.privates.date = date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear();
     context.privates.time = extra.pad(date.getHours(),2)+':'+extra.pad(date.getMinutes(),2)+':'+extra.pad(date.getSeconds(),2);
     var dat = data.pages[page];
+    var dat2 = data.pages[page+1];
     if(data.pages.length > 1){
 	page++;	
 	if(page > data.pages.length-1) { page = 0;}
+	if(page > data.pages.length-2) { dat2 =  data.pages[0]; }
     }
     log.info("Presenting page : "+page+" of "+data.pages.length+" with "+dat.objects.length+" elements");
-    gui.clearTextureNoPaint('main');
     try {
 	var d2 = new Date();
         var start = d2.getTime();
 	var passed = 0;
+        wally.startTransaction();
+        gui.clearTextureNoPaint('main');
+        gui.clearTextureNoPaint('main2');
         wallaby.renderScreen(context,context.privates,'main',dat);
-	//if(typeof uv.uptime === 'function'){
-	//    d2.setTime(uv.uptime());	
-	//    passed = d2.getTime();
-	//} else {
+        wallaby.renderScreen(context,context.privates,'main2',dat2);
+        wally.render('main');
+        wally.render('main2');
+        wally.commitTransaction();
 	passed = d2.getTime()-config.wally.uptime*1000;//-3600*1000;
-	//}
 	var d3 = new Date();
 	var fin = d3.getTime();
 	d2.setTime(passed);
@@ -97,7 +100,7 @@ function oninterval() {
 		 '   ***   Mem grow: '+grow+'b/s'+
 		 '   ***   Up: '+uts+
 		 '   ***   Render time: '+(fin-start)/1000+'s';
-	log.debug(stat);
+	//log.debug(stat);
     	wally.log(stat);
     } catch(err) {
 	log.error('ERROR: Show status failed : '+err);

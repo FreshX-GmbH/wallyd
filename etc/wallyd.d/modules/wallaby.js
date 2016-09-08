@@ -44,7 +44,6 @@ function renderScreen(context, tree, screen, data)
 
    //log.info(data);
 
-   wally.startTransaction();
    wally.setAutoRender(false);
    gui.setTargetTexture(screen);
 
@@ -87,12 +86,12 @@ function renderScreen(context, tree, screen, data)
         }
    
         if(obj.type === 'image'){
-            //var res = curl.get(obj.path);
-            //if(res.body){
-               //wally.writeFileSync('/tmp/test.png',res.body);
+            var res = curl.get(obj.path);
+            if(res.body){
+               wally.writeFileSync('/tmp/test.png',res.body);
                //gui.loadImage(screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255);
-               gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
-            //}
+            }
+            gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
             continue;
         }
         if(obj.type === 'line'){
@@ -147,10 +146,6 @@ function renderScreen(context, tree, screen, data)
 	}
         log.debug('Dont know how to handle type '+obj.type+' yet.');
     }
-    
-    wally.render(screen);
-    gui.clearTextureNoPaint(screen);
-    wally.commitTransaction();
   
     var end = new Date().getTime()-start;
     log.debug({'time': end /1000 });
