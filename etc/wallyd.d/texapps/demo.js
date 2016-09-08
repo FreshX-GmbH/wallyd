@@ -65,7 +65,7 @@ function oninterval() {
 	//    d2.setTime(uv.uptime());	
 	//    passed = d2.getTime();
 	//} else {
-	    passed = d2.getTime()-config.wally.uptime*1000;//-3600*1000;
+	passed = d2.getTime()-config.wally.uptime*1000;//-3600*1000;
 	//}
 	var d3 = new Date();
 	var fin = d3.getTime();
@@ -76,7 +76,7 @@ function oninterval() {
 	var uts = h+':'+m+'h';
 	var name = 'unknown';
 	var conn = 'no';
-	if(d < 1){
+	if(d >= 1){
 	   uts = d+' days '+h+':'+m+'h';
 	}
 	if(typeof(config.conn) !== 'undefined' && typeof(config.conn.name) !== 'undefined' ){

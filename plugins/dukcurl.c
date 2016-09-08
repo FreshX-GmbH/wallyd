@@ -378,7 +378,7 @@ static duk_ret_t dcurl_easy_perform(duk_context *ctx) {
   return 0;
 }
 
-#define INFO(type, name, constant) \
+#define DCINFO(type, name, constant) \
   if (strcmp(str, name) == 0) {    \
     info = constant;               \
     goto process##type;            \
@@ -390,36 +390,36 @@ static duk_ret_t dcurl_easy_getinfo(duk_context *ctx) {
   const char *str = duk_require_string(ctx, 0);
   CURLINFO info;
 
-  INFO(char, "effective-url", CURLINFO_EFFECTIVE_URL)
-  INFO(long, "response-code", CURLINFO_RESPONSE_CODE)
-  INFO(long, "http-connectcode", CURLINFO_HTTP_CONNECTCODE)
-  INFO(long, "filetime", CURLINFO_FILETIME)
-  INFO(double, "total-time", CURLINFO_TOTAL_TIME)
-  INFO(double, "namelookup-time", CURLINFO_NAMELOOKUP_TIME)
-  INFO(double, "connect-time", CURLINFO_CONNECT_TIME)
-  INFO(double, "appconnect-time", CURLINFO_APPCONNECT_TIME)
-  INFO(double, "pretransfer-time", CURLINFO_PRETRANSFER_TIME)
-  INFO(double, "starttransfer-time", CURLINFO_STARTTRANSFER_TIME)
-  INFO(double, "redirect-time", CURLINFO_REDIRECT_TIME)
-  INFO(long, "redirect-count", CURLINFO_REDIRECT_COUNT)
-  INFO(char, "redirect-url", CURLINFO_REDIRECT_URL)
-  INFO(double, "size-upload", CURLINFO_SIZE_UPLOAD)
-  INFO(double, "size-download", CURLINFO_SIZE_DOWNLOAD)
-  INFO(double, "speed-download", CURLINFO_SPEED_DOWNLOAD)
-  INFO(double, "speed-upload", CURLINFO_SPEED_UPLOAD)
-  INFO(long, "header-size", CURLINFO_HEADER_SIZE)
-  INFO(long, "request-size", CURLINFO_REQUEST_SIZE)
-  INFO(long, "ssl-verifyresult", CURLINFO_SSL_VERIFYRESULT)
-  INFO(double, "content-length-download", CURLINFO_CONTENT_LENGTH_DOWNLOAD)
-  INFO(double, "content-length-upload", CURLINFO_CONTENT_LENGTH_UPLOAD)
-  INFO(char, "content-type", CURLINFO_CONTENT_TYPE)
-  INFO(char, "private", CURLINFO_PRIVATE)
-  INFO(long, "os-errno", CURLINFO_OS_ERRNO)
-  INFO(long, "num-connects", CURLINFO_NUM_CONNECTS)
-  INFO(char, "primary-ip", CURLINFO_PRIMARY_IP)
-  INFO(long, "primary-port", CURLINFO_PRIMARY_PORT)
-  INFO(char, "local-ip", CURLINFO_LOCAL_IP)
-  INFO(long, "local-port", CURLINFO_LOCAL_PORT)
+  DCINFO(char, "effective-url", CURLINFO_EFFECTIVE_URL)
+  DCINFO(long, "response-code", CURLINFO_RESPONSE_CODE)
+  DCINFO(long, "http-connectcode", CURLINFO_HTTP_CONNECTCODE)
+  DCINFO(long, "filetime", CURLINFO_FILETIME)
+  DCINFO(double, "total-time", CURLINFO_TOTAL_TIME)
+  DCINFO(double, "namelookup-time", CURLINFO_NAMELOOKUP_TIME)
+  DCINFO(double, "connect-time", CURLINFO_CONNECT_TIME)
+  DCINFO(double, "appconnect-time", CURLINFO_APPCONNECT_TIME)
+  DCINFO(double, "pretransfer-time", CURLINFO_PRETRANSFER_TIME)
+  DCINFO(double, "starttransfer-time", CURLINFO_STARTTRANSFER_TIME)
+  DCINFO(double, "redirect-time", CURLINFO_REDIRECT_TIME)
+  DCINFO(long, "redirect-count", CURLINFO_REDIRECT_COUNT)
+  DCINFO(char, "redirect-url", CURLINFO_REDIRECT_URL)
+  DCINFO(double, "size-upload", CURLINFO_SIZE_UPLOAD)
+  DCINFO(double, "size-download", CURLINFO_SIZE_DOWNLOAD)
+  DCINFO(double, "speed-download", CURLINFO_SPEED_DOWNLOAD)
+  DCINFO(double, "speed-upload", CURLINFO_SPEED_UPLOAD)
+  DCINFO(long, "header-size", CURLINFO_HEADER_SIZE)
+  DCINFO(long, "request-size", CURLINFO_REQUEST_SIZE)
+  DCINFO(long, "ssl-verifyresult", CURLINFO_SSL_VERIFYRESULT)
+  DCINFO(double, "content-length-download", CURLINFO_CONTENT_LENGTH_DOWNLOAD)
+  DCINFO(double, "content-length-upload", CURLINFO_CONTENT_LENGTH_UPLOAD)
+  DCINFO(char, "content-type", CURLINFO_CONTENT_TYPE)
+  DCINFO(char, "private", CURLINFO_PRIVATE)
+  DCINFO(long, "os-errno", CURLINFO_OS_ERRNO)
+  DCINFO(long, "num-connects", CURLINFO_NUM_CONNECTS)
+  DCINFO(char, "primary-ip", CURLINFO_PRIMARY_IP)
+  DCINFO(long, "primary-port", CURLINFO_PRIMARY_PORT)
+  DCINFO(char, "local-ip", CURLINFO_LOCAL_IP)
+  DCINFO(long, "local-port", CURLINFO_LOCAL_PORT)
 
   duk_error(ctx, DUK_ERR_REFERENCE_ERROR, "Unknown or unsupported curlinfo");
   return 0;
