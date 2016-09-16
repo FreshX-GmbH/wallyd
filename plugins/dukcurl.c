@@ -13,7 +13,7 @@ duk_context *ctx;
 #define DIPROP_CURL "\xff\xff" "curl"
 
 // Create a global array refs in the heap stash.
-void duv_ref_setup(duk_context *ctx) {
+void legacy_duv_ref_setup(duk_context *ctx) {
   duk_push_heap_stash(ctx);
 
   // Create a new array with one `0` at index `0`.
@@ -27,7 +27,7 @@ void duv_ref_setup(duk_context *ctx) {
 }
 
 // like luaL_ref, but assumes storage in "refs" property of heap stash
-int duv_ref(duk_context *ctx) {
+int legacy_duv_ref(duk_context *ctx) {
   int ref;
   if (duk_is_undefined(ctx, -1)) {
     duk_pop(ctx);
@@ -67,7 +67,7 @@ int duv_ref(duk_context *ctx) {
   return ref;
 }
 
-void duv_push_ref(duk_context *ctx, int ref) {
+void legacy_duv_push_ref(duk_context *ctx, int ref) {
   if (!ref) {
     duk_push_undefined(ctx);
     return;
@@ -82,7 +82,7 @@ void duv_push_ref(duk_context *ctx, int ref) {
   duk_remove(ctx, -2);
 }
 
-void duv_unref(duk_context *ctx, int ref) {
+void legacy_duv_unref(duk_context *ctx, int ref) {
 
   if (!ref) return;
 
@@ -171,11 +171,11 @@ static duk_ret_t dcurl_easy_init(duk_context *ctx) {
 // Finalizer that's called when a curl instance is garbage collected.
 static duk_ret_t dcurl_easy_cleanup(duk_context *ctx) {
   dcurl_t *container = dcurl_require_pointer(ctx, 0);
-  duv_unref(ctx, container->write_cb);
+  legacy_duv_unref(ctx, container->write_cb);
   container->write_cb = 0;
-  duv_unref(ctx, container->header_cb);
+  legacy_duv_unref(ctx, container->header_cb);
   container->header_cb = 0;
-  duv_unref(ctx, container->read_cb);
+  legacy_duv_unref(ctx, container->read_cb);
   container->read_cb = 0;
   curl_easy_cleanup(container->curl);
   free(container);
@@ -187,7 +187,7 @@ static size_t write_callback(const char *ptr, size_t size, size_t num, void *use
   dcurl_t *container = userdata;
   duk_context *ctx = container->ctx;
   size = size * num;
-  duv_push_ref(ctx, container->write_cb);
+  legacy_duv_push_ref(ctx, container->write_cb);
   buffer = duk_push_fixed_buffer(ctx, size);
   memcpy(buffer, ptr, size);
   duk_call(ctx, 1);
@@ -199,7 +199,7 @@ static size_t header_callback(const char *ptr, size_t size, size_t num, void *us
   dcurl_t *container = userdata;
   duk_context *ctx = container->ctx;
   size = size * num;
-  duv_push_ref(ctx, container->header_cb);
+  legacy_duv_push_ref(ctx, container->header_cb);
   buffer = duk_push_fixed_buffer(ctx, size);
   memcpy(buffer, ptr, size);
   duk_call(ctx, 1);
@@ -212,7 +212,7 @@ static size_t read_callback(char *buffer, size_t size, size_t num, void *userdat
   size = size * num;
   size_t outsize;
   const char *output;
-  duv_push_ref(ctx, container->read_cb);
+  legacy_duv_push_ref(ctx, container->read_cb);
   duk_push_int(ctx, size);
   duk_call(ctx, 1);
   if (duk_is_string(ctx, -1)) {
@@ -243,7 +243,7 @@ static size_t read_callback(char *buffer, size_t size, size_t num, void *userdat
     dcurl_verify(ctx, curl_easy_setopt(curl, constant1, type##_callback));     \
     dcurl_verify(ctx, curl_easy_setopt(curl, constant2, container));           \
     duk_dup(ctx, 1);                                                           \
-    container->type##_cb = duv_ref(ctx);                                       \
+    container->type##_cb = legacy_duv_ref(ctx);                                       \
     return 0;                                                                  \
   }
 
@@ -480,7 +480,7 @@ static const duk_function_list_entry dcurl_easy_methods[] = {
 
 duk_ret_t dukopen_curl(duk_context *ctx) {
   // Setup the ref system
-  duv_ref_setup(ctx);
+  legacy_duv_ref_setup(ctx);
 
   // Create the handle prototype as global CurlPrototype
   duk_push_object(ctx);
