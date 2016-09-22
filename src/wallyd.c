@@ -23,8 +23,9 @@ int main(int argc, char *argv[])
     readOptions(argc,argv);
     // init plugin system (do not load the plugins yet)
     pluginsInit();
+    utilInit(DEFAULT_LOG_LEVEL, LOG_ALL,0);
     //utilInit(DEFAULT_LOG_LEVEL, LOG_ALL ^ LOG_DUMMY ^ LOG_SDL ^ LOG_PLUGIN, 0);
-    utilInit(DEFAULT_LOG_LEVEL, LOG_PLUGIN, 0);
+    //utilInit(DEFAULT_LOG_LEVEL, LOG_PLUGIN, 0);
 
     slog(INFO,LOG_CORE,"Wally Image Server R%u (Build %u) starting.",BUILD_NUMBER,BUILD_DATE);
     slog(DEBUG,LOG_CORE,"Current Thread : %p / PH : %p",pthread_self(),ph);
