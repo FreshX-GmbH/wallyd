@@ -290,7 +290,6 @@ dcb_func displayTex=NULL;
 ccb_func createTex=NULL;
 ccb_func finishVideo=NULL;
 
-extern int callWithData(char *, int *, void*);
 void log_print(int line, const char *filename, int level, char *fmt,...);
 void setRenderer(SDL_Renderer *r){
     renderer = r;
@@ -304,8 +303,8 @@ void setCreateTextureCallback(void *f){
 void setFinishCallback(void *f){
     finishVideo=f;
 }
-
-#define wlog(...) slog(0,__VA_ARGS__ )
+#include <slog.h>
+//#define wlog(...) slog(0,__VA_ARGS__ )
 #endif
 
 /*
@@ -1416,11 +1415,13 @@ display:
 /* allocate a picture (needs to do that in main thread to avoid
    potential locking problems */
 #ifdef WALLY_PLUGIN
-void alloc_picture(VideoState *is)
+int alloc_picture(void *_is)
+{
+    VideoState *is = _is;
 #else
 static void alloc_picture(VideoState *is)
-#endif
 {
+#endif
     VideoPicture *vp;
 
     vp = &is->pictq[is->pictq_windex];
@@ -1463,6 +1464,9 @@ static void alloc_picture(VideoState *is)
     vp->allocated = 1;
     SDL_CondSignal(is->pictq_cond);
     SDL_UnlockMutex(is->pictq_mutex);
+#ifdef WALLY_PLUGIN
+    return 0;
+#endif
 }
 
 static int queue_picture(VideoState *is, AVFrame *src_frame, double pts1, int64_t pos)
@@ -1582,7 +1586,7 @@ static int queue_picture(VideoState *is, AVFrame *src_frame, double pts1, int64_
             fprintf(stderr, "Cannot initialize the conversion context\n");
             exit(1);
         }
-        sws_scale(is->img_convert_ctx, src_frame->data, src_frame->linesize,
+        sws_scale(is->img_convert_ctx, (const uint8_t *const *)src_frame->data, src_frame->linesize,
                   0, vp->height, pict->data, pict->linesize);
 #endif
         /* update the bitmap content */
@@ -2308,6 +2312,10 @@ static int stream_component_open(VideoState *is, int stream_index)
         case AVMEDIA_TYPE_AUDIO   : is->last_audio_stream    = stream_index; if(audio_codec_name   ) codec= avcodec_find_decoder_by_name(   audio_codec_name); break;
         case AVMEDIA_TYPE_SUBTITLE: is->last_subtitle_stream = stream_index; if(subtitle_codec_name) codec= avcodec_find_decoder_by_name(subtitle_codec_name); break;
         case AVMEDIA_TYPE_VIDEO   : is->last_video_stream    = stream_index; if(video_codec_name   ) codec= avcodec_find_decoder_by_name(   video_codec_name); break;
+        case AVMEDIA_TYPE_UNKNOWN: break;
+        case AVMEDIA_TYPE_DATA: break;
+        case AVMEDIA_TYPE_ATTACHMENT: break;
+        case AVMEDIA_TYPE_NB: break;
     }
     if (!codec)
         return -1;
@@ -2512,7 +2520,11 @@ static int read_thread(void *arg)
     ic->interrupt_callback.opaque = is;
     err = avformat_open_input(&ic, is->filename, is->iformat, &format_opts);
     if (err < 0) {
+#ifndef WALLY_PLUGIN
         print_error(is->filename, err);
+#else
+        slog(ERROR,LOG_VIDEO,"Error in file %s : %s",is->filename, err);
+#endif
         ret = -1;
         goto fail;
     }
@@ -2704,7 +2716,7 @@ static int read_thread(void *arg)
         }
         ret = av_read_frame(ic, pkt);
         if (ret < 0) {
-            if (ret == AVERROR_EOF || url_feof(ic->pb))
+            if (ret == AVERROR_EOF || ic->pb->eof_reached)
                 eof = 1;
             if (ic->pb && ic->pb->error)
                 break;
@@ -3195,6 +3207,7 @@ static const OptionDef options[] = {
     { NULL, },
 };
 
+#ifndef WALLY_PLUGIN
 static void show_usage(void)
 {
     av_log(NULL, AV_LOG_INFO, "Simple media player\n");
@@ -3231,7 +3244,7 @@ void show_help_default(const char *opt, const char *arg)
            "mouse click         seek to percentage in file corresponding to fraction of width\n"
            );
 }
-
+#endif
 static int lockmgr(void **mtx, enum AVLockOp op)
 {
    switch(op) {

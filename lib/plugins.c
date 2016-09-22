@@ -62,6 +62,7 @@ bool callWtx(char *fstr, char *params){
     } else {
         pushSimpleWtx(&ph->wtx, fstr, params);
     }
+    return true;
 }
 
 //  Paramtyp 0 : pointer
@@ -199,7 +200,7 @@ bool exportSync(const char *name, void *f){
     return false;
 }
 
-void wally_put_function(const char *name, int threaded, int (*f), int args){
+void wally_put_function(const char *name, int threaded, wally_c_function f, int args){
     char *ncopy = strdup(name);
     assert(ncopy);
     assert(ph);
@@ -284,7 +285,7 @@ int cleanupPlugins(void){
     return true;
 }
 
-int pluginLoader(char *path){
+int pluginLoader(void *path){
     DIR *d;
     struct dirent *dir;
     int pcount=0;

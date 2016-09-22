@@ -96,6 +96,6 @@ void *mz_zip_extract_archive_file_to_heap(const char *pZip_filename, const char 
 size_t getPeakRSS();
 size_t getCurrentRSS();
 void setupSignalHandler(void);
-int c_cleanupWally(char *s);
+int c_cleanupWally(void *s);
 
 #endif

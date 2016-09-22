@@ -61,6 +61,9 @@
 #include <sys/resource.h>
 #endif
 
+#ifdef WALLY_PLUGIN
+#include <slog.h>
+#endif
 static int init_report(const char *env);
 
 AVDictionary *sws_dict;
@@ -85,11 +88,11 @@ void uninit_opts(void)
     av_dict_free(&resample_opts);
 }
 
+#ifndef WALLY_PLUGIN
 void log_callback_help(void *ptr, int level, const char *fmt, va_list vl)
 {
     vfprintf(stdout, fmt, vl);
 }
-
 static void log_callback_report(void *ptr, int level, const char *fmt, va_list vl)
 {
     va_list vl2;
@@ -194,6 +197,7 @@ void show_help_children(const AVClass *class, int flags)
     while (child = av_opt_child_class_next(class, child))
         show_help_children(child, flags);
 }
+
 
 static const OptionDef *find_option(const OptionDef *po, const char *name)
 {
@@ -1933,6 +1937,7 @@ FILE *get_preset_file(char *filename, size_t filename_size,
     return f;
 }
 
+#endif //WALLY_PLUGIN
 int check_stream_specifier(AVFormatContext *s, AVStream *st, const char *spec)
 {
     int ret = avformat_match_stream_specifier(s, st, spec);
@@ -1940,6 +1945,7 @@ int check_stream_specifier(AVFormatContext *s, AVStream *st, const char *spec)
         av_log(s, AV_LOG_ERROR, "Invalid stream specifier: %s.\n", spec);
     return ret;
 }
+
 
 AVDictionary *filter_codec_opts(AVDictionary *opts, enum AVCodecID codec_id,
                                 AVFormatContext *s, AVStream *st, AVCodec *codec)
@@ -1968,9 +1974,14 @@ AVDictionary *filter_codec_opts(AVDictionary *opts, enum AVCodecID codec_id,
         prefix  = 's';
         flags  |= AV_OPT_FLAG_SUBTITLE_PARAM;
         break;
+    case    AVMEDIA_TYPE_UNKNOWN: break;
+    case    AVMEDIA_TYPE_DATA: break;
+    case    AVMEDIA_TYPE_ATTACHMENT: break;
+    case    AVMEDIA_TYPE_NB: break;                                 
     }
 
-    while (t = av_dict_get(opts, "", t, AV_DICT_IGNORE_SUFFIX)) {
+    t = av_dict_get(opts, "", t, AV_DICT_IGNORE_SUFFIX);
+    while (t){
         char *p = strchr(t->key, ':');
 
         /* check stream specification in opt name */
@@ -1978,7 +1989,11 @@ AVDictionary *filter_codec_opts(AVDictionary *opts, enum AVCodecID codec_id,
             switch (check_stream_specifier(s, st, p + 1)) {
             case  1: *p = 0; break;
             case  0:         continue;
+#ifndef WALLY_PLUGIN
             default:         exit_program(1);
+#else
+            default:         slog(ERROR,LOG_VIDEO,"Error in check stream specification");
+#endif
             }
 
         if (av_opt_find(&cc, t->key, NULL, flags, AV_OPT_SEARCH_FAKE_OBJ) ||
@@ -1994,10 +2009,12 @@ AVDictionary *filter_codec_opts(AVDictionary *opts, enum AVCodecID codec_id,
 
         if (p)
             *p = ':';
+        t = av_dict_get(opts, "", t, AV_DICT_IGNORE_SUFFIX);
     }
     return ret;
 }
 
+ 
 AVDictionary **setup_find_stream_info_opts(AVFormatContext *s,
                                            AVDictionary *codec_opts)
 {
@@ -2017,6 +2034,8 @@ AVDictionary **setup_find_stream_info_opts(AVFormatContext *s,
                                     s, s->streams[i], NULL);
     return opts;
 }
+
+#ifndef WALLY_PLUGIN
 
 void *grow_array(void *array, int elem_size, int *size, int new_size)
 {
@@ -2222,3 +2241,5 @@ int show_sinks(void *optctx, const char *opt, const char *arg)
 }
 
 #endif
+
+#endif // WALLY_PLUGIN

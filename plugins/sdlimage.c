@@ -21,7 +21,7 @@ SDL_Color backgroundColor = { 0, 0, 0, 255 }; // black
 #define RENDERGLYPH     TTF_RenderGlyph_Blended
 #define RENDERTEXT      TTF_RenderText_Blended
 
-int setTextUTF8(char *strTmp){
+int setTextUTF8(void *strTmp){
     char *str=strdup(strTmp);
 
     int x,y;
@@ -52,7 +52,7 @@ int setTextUTF8(char *strTmp){
 }
 
 
-int setText(char *strTmp){
+int setText(void *strTmp){
     char *str=strdup(strTmp);
 
     int x,y;
@@ -100,7 +100,7 @@ int setText(char *strTmp){
 //   return setTextEx(name, x, y, rot, text, font, &stampColor );
 //}
 
-int setAutoRender(char *t){
+int setAutoRender(void *t){
    if(strncmp(t,"true",4) == 0){
       ph->autorender = true;
       slog(DEBUG,LOG_SDL,"autorender is now on");
@@ -115,7 +115,7 @@ int setAutoRender(char *t){
    slog(WARN,LOG_SDL,"Usage : setAutoRender(true|false)");
    return 1;
 }
-int renderLog(char *strTmp){
+int renderLog(void *strTmp){
    char *str=strdup(strTmp);
    clearTextureNoPaint("log");
    setTextEx("log", 1, 0, 0, str, "logfont" ,"log", TEXT_ANSI);
@@ -188,7 +188,7 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
    return true;
 }
 
-int createColor(char *strTmp){
+int createColor(void *strTmp){
    char *str=strdup(strTmp);
    char *name = strtok(str, " ");
    char *cS = strtok(NULL, " ");
@@ -221,16 +221,16 @@ int fillTexture(texInfo *TI, bool refresh)
    return true;
 }
 
-int clearTexture(char *str){
+int clearTexture(void *str){
    slog(DEBUG,LOG_SDL,"Clearing texture %s.",str);
    return fillTexture(getTexture(strtok(str, " ")),true);
 }
-int clearTextureNoPaint(char *name){
+int clearTextureNoPaint(void *name){
    slog(DEBUG,LOG_SDL,"Clearing texture %s.",name);
    return fillTexture(getTexture(name),false);
 }
 
-int waitForTexture(char *str){
+int waitForTexture(void *str){
    slog(DEBUG,LOG_SDL,"Waiting for texture %s",str);
    char *name = strtok(str, " ");
    int timeout;
@@ -254,7 +254,7 @@ int waitForTexture(char *str){
    return true;
 }
 
-int setTexturePrio(char *str){
+int setTexturePrio(void *str){
    int prio;
    texInfo *TI = getTexture(strtok(str, " "));
    if(!TI) { return false; }
@@ -270,7 +270,7 @@ int setTexturePrio(char *str){
    return true;
 }
 
-int setTextureAlpha(char *str){
+int setTextureAlpha(void *str){
    int alpha;
    texInfo *TI = getTexture(strtok(str, " "));
    if(!TI) { return false; }
@@ -287,7 +287,7 @@ int setTextureAlpha(char *str){
 }
 
 
-int setTextureColor(char *str){
+int setTextureColor(void *str){
    int colInt;
    texInfo *TI = getTexture(strtok(str, " "));
    if(!TI) { return false; }
@@ -304,7 +304,7 @@ int setTextureColor(char *str){
    return fillTexture(TI,true);
 }
 
-int setImageScaleSW(char *str)
+int setImageScaleSW(void *str)
 {
    SDL_Texture *text;
    SDL_Rect rect={0,0,0,0};
@@ -365,7 +365,7 @@ int setImageScaleSW(char *str)
 }
 
 
-int setImageScale(char *str)
+int setImageScale(void *str)
 {
    texInfo *TI = getTexture(strtok(str, " "));
    if(!TI) { return false; }

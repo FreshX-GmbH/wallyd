@@ -23,7 +23,7 @@
 bool setTextEx(char *name,int x,int y,int rotation, const char *txt,char *fontName, char *colorName, int type);
 SDL_Surface *createLogText(const char *text);
 SDL_Texture* surfaceToTexture( SDL_Surface* );
-int clearTexture(char *);
-int clearTextureNoPaint(char *str);
+int clearTexture(void *);
+int clearTextureNoPaint(void *str);
 
 #endif

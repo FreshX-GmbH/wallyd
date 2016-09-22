@@ -12,7 +12,8 @@ int finishCallback;
 
 const duk_function_list_entry videoMethods[];
 
-int video_refresh_timer(VideoState *is){
+int video_refresh_timer(void *_is){
+    VideoState *is = _is;
     if(!is) return 0;
     video_refresh(is);
     is->refresh = 0;
@@ -80,7 +81,7 @@ void displayTextureCallback(VideoState *is, void *p){
     rendering = false;
 }
 
-int renderVideo(char *str)
+int renderVideo(void *str)
 {
     int ret = 0;
     char *brk;
@@ -115,7 +116,7 @@ int renderVideo(char *str)
     return ret;
 }
 
-int setVideoTexture(char *str)
+int setVideoTexture(void *str)
 {
    char *name = strtok(str, " ");
    if(!name){
@@ -141,7 +142,7 @@ char *cleanupPlugin(void *p){
    return NULL;
 }
 
-int resetVideo(char *p){
+int resetVideo(void *p){
    cleanupPlugin(p);
    //if(initVariables() == false){
    //   slog(LVL_INFO,WARN,"Could not (re)init "PLUGIN_SCOPE);

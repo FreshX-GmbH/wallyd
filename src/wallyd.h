@@ -53,7 +53,6 @@ void *openLogfile(char *);
 void initializeConfig(void);
 
 pluginHandler *pluginsInit(void);
-int pluginLoader(char *path);
 
 bool registerClient(char *);
 void url_init(void);

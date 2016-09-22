@@ -172,7 +172,7 @@ void **getTextureNamesByPrio(unsigned int *items){
 }
 
 // Displays all textures in different colors
-int showTextureTestScreen(char *p){
+int showTextureTestScreen(void *p){
 //   unsigned int i=0;
 //   int ret;
    texInfo *TI = ph->tempTexture;
@@ -226,7 +226,7 @@ int showTextureTestScreen(char *p){
    return true;
 }
 
-int renderActiveEx(const char *startTex)
+int renderActiveEx(void *startTex)
 {
    unsigned int i=0;
    texInfo *TI,*TempTI;
@@ -266,7 +266,7 @@ void renderActive(const char *startTex)
 {
    if(ph->autorender == false) 
          return;
-   renderActiveEx(startTex);
+   renderActiveEx((void*)startTex);
 }
 
 //   renders and displays a texture on the Main Renderer
@@ -281,7 +281,7 @@ void renderTexture(SDL_Texture *t, SDL_Rect *mr){
     }
 }
 
-int createTextureEx(char *strTmp,bool isVideo){
+int createTextureEx(void *strTmp,bool isVideo){
    char *str = strdup(strTmp);
    int z=-1,x=-1, y=-1, w=-1, h=-1;
    unsigned int color = 0;
@@ -396,15 +396,15 @@ int createTextureEx(char *strTmp,bool isVideo){
    return true;
 }
 
-int createVideoTexture(char *a){
+int createVideoTexture(void *a){
    return createTextureEx(a,true);
 }
 
-int createTexture(char *a){
+int createTexture(void *a){
    return createTextureEx(a,false);
 }
 
-int setTextureActive(char *s,bool active){
+int setTextureActive(void *s,bool active){
    char *name = strtok(s," ");
    if(!name){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for hideTexture(name) : (%s)",s);
@@ -419,14 +419,14 @@ int setTextureActive(char *s,bool active){
    return true;
 }
 
-int hideTexture(char *a){
+int hideTexture(void *a){
    return setTextureActive(a,false);
 }
-int showTexture(char *a){
+int showTexture(void *a){
    return setTextureActive(a,true);
 }
 
-int destroyTexture(char *s){
+int destroyTexture(void *s){
    unsigned int items = 0;
    texInfo *TI;
    if(!s){
@@ -454,7 +454,7 @@ int destroyTexture(char *s){
 }
 
 //   Simply renders texture[i] to the Main Renderer
-bool renderTexName(char *s){
+bool renderTexName(void *s){
    texInfo *TI;
    if(!s){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for destroyTexture(name) : (%s)",s);
@@ -677,7 +677,7 @@ bool sdlInit(void)
    return true;
 }
 
-texInfo *getTexInfo(char *name)
+texInfo *getTexInfo(void *name)
 {
    if(name == NULL){
       slog(ERROR,LOG_SDL,"Texture %s not found.",name);
@@ -691,13 +691,13 @@ texInfo *getTexInfo(char *name)
    return TI;
 }
 
-bool closeFont(char *name){
+bool closeFont(void *name){
    TTF_Font *f = ht_get_simple(ph->fonts,name);
    TTF_CloseFont(f);
    return true;
 }
 
-int loadFont(char *strTmp){
+int loadFont(void *strTmp){
    char *str=strdup(strTmp);
 
    char *name = strtok(str, " ");
@@ -734,7 +734,7 @@ void hexToColor(int color, SDL_Color *c)
 }
 
 // Create a new window and a new renderer and switch over
-int resetScreen(char *p){
+int resetScreen(void *p){
    int w=0,h=0;
    SDL_Window *window;
    if(ph->broadcomInit == true){

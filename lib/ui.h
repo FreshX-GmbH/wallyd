@@ -54,10 +54,10 @@ typedef struct {
 #define LOGTEXTURE 3 
 #define TEMPTEXTURE MAXTEXTURES-1
 
-extern int showTexture(char *textureNum);
-extern int hideTexture(char *textureNum);
+extern int showTexture(void *);
+extern int hideTexture(void *);
 extern void renderActive(const char *);
-extern int renderActiveEx(const char *);
+extern int renderActiveEx(void *);
 extern void renderToTex(int textureNum);
 extern void render(SDL_Texture *texture, SDL_Rect *rect);
 extern int setTexture(texInfo *TI, SDL_Texture *texture, SDL_Rect *origRect);
@@ -68,38 +68,15 @@ bool sdlInit(void);
 bool uiLoop(void);
 void renderTexture(SDL_Texture *t, SDL_Rect *mr);
 void renderTexNum(int i);
-int createTexture(char *);
-int createVideoTexture(char *);
-int destroyTexture(char *);
-int showTextureTestScreen(char *);
-int loadFont(char *);
+int createTexture(void *);
+int createVideoTexture(void *);
+int destroyTexture(void *);
+int showTextureTestScreen(void *);
+int loadFont(void *);
 int addToTexture(texInfo *TI, SDL_Texture *src, SDL_Rect *origRect);
 void hexToColor(int color, SDL_Color *c);
 texInfo *getTexture(const char *name);
 void **getTextureNamesByPrio(unsigned int *);
-int resetScreen(char *);
-
-//static const Uint32
-//red       = 0xff0000ff,
-//green     = 0x00ff00ff,
-//dark      = 0x303030ff,
-//grey0     = 0x606060ff,
-//grey1     = 0x707070ff,
-//grey2     = 0x909090ff,
-//grey3     = 0xa0a0a0ff,
-//grey4     = 0xb0b0b0ff,
-//grey8     = 0xe9e9e9ff,
-//white     = 0xffffffff;
-//
-//const SDL_Color
-//cGrey0       = sdl_color(grey0),
-//cGrey1       = sdl_color(0x808080ff),
-//cGrey2       = sdl_color(grey2),
-//cGrey3       = sdl_color(grey3),
-//cGrey4       = sdl_color(grey4),
-//cGrey5       = sdl_color(0xc0c0c0ff),
-//cGrey6       = sdl_color(0xd0d0d0ff),
-//cGrey7       = sdl_color(0xe0e0e0ff),
-//cGrey8       = sdl_color(grey8);
+int resetScreen(void *);
 
 #endif

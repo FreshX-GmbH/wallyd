@@ -164,7 +164,7 @@ bool pluginMode;
 static int global_readframe_cntout;
 uint64_t global_video_pkt_pts;
 
-void alloc_picture(void *userdata);
+int alloc_picture(void *userdata);
 void video_refresh_timer(void *userdata);
 int video_thread(void *arg);
 double get_master_clock(VideoState *is);

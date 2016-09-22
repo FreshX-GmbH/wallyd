@@ -19,14 +19,13 @@ duk_context *ctx = NULL;
 extern pluginHandler *ph;
 
 extern int setDebug(int lvl);
-extern int showTextureTestScreen(char *);
 int registerFunctions(void);
 const duk_function_list_entry wallyMethods[];
 
 int js_writeFileSync(duk_context *ctx) {
-   long len;
+   unsigned long len;
    void *buf = NULL;
-   char *filename;
+   const char *filename;
 
    dschema_check(ctx, (const duv_schema_entry[]){
        {"file", duk_is_string},
@@ -87,7 +86,7 @@ int js_startTransaction(duk_context *ctx) {
 int js_render(duk_context *ctx) {
    int ret;
    const char *texName = duk_to_string(ctx, 0);
-   callWtx("screen::render",texName);
+   callWtx("screen::render",(char *)texName);
    return 0;
 }
 
@@ -235,7 +234,7 @@ int js_log(duk_context *ctx)
     int n = duk_get_top(ctx);
     const char *text = strdup(duk_to_string(ctx,0));
     int ret;
-    callWtx("screen::log",text);
+    callWtx("screen::log",(char*)text);
     // TODO : free
     //free(text);
     return 1;
@@ -350,7 +349,7 @@ int js_destroyTexture(duk_context *ctx)
     // screen::destroyTexture name
     int n = duk_get_top(ctx);  /* #args */
     const char *name = duk_to_string(ctx,0);
-    callWtx("screen::destroyTexture",name);
+    callWtx("screen::destroyTexture",(char*)name);
     // TODO : make copy of the string IN the function utilizing it, not here
     //free(cs);
     return 1;
@@ -377,7 +376,7 @@ int js_createTexture(duk_context *ctx)
     return 1;
 }
 
-int evalFile(char *file){
+int evalFile(void *file){
     if (duk_peval_file(ctx,file) != 0) {
         slog(ERROR,LOG_JS,"JSError in file %s : %s", file, duk_safe_to_string(ctx, -1));
     } else {
@@ -398,7 +397,7 @@ duk_ret_t js_exec(duk_context *ctx){
    return 0;
 }
 
-int evalScript(char *str){
+int evalScript(void *str){
     duk_push_string(ctx, str);
     if (duk_peval(ctx) != 0) {
         slog(ERROR,LOG_JS,"JSError : %s", duk_safe_to_string(ctx, -1));

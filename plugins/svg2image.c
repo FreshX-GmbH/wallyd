@@ -65,7 +65,7 @@ int js_freeImage(duk_context *ctx){
     return 0;
 }
 
-int freeImage(char *empty){
+int freeImage(void *empty){
     if(image) {
         nsvgDelete(image);
     }
@@ -73,8 +73,9 @@ int freeImage(char *empty){
 }
 
 //  TODO : in memory images system
-int svgToTex(char *str)
+int svgToTex(void *_str)
 {
+    char *str = _str;
     char *imgPtr;
     char *texName= strsep(&str, " \t");
     const char *fileName= strsep(&str, " \t");
@@ -184,8 +185,9 @@ error:
 }
 
 
-int svgToPng(char *str)
+int svgToPng(void *_str)
 {
+    char *str = _str;
     const char *fileName= strsep(&str, " \t");
     const char *pngName= strsep(&str, " \t");
     

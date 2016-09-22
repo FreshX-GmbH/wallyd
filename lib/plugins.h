@@ -124,7 +124,7 @@ typedef struct{
 } pluginHandler;
 
 extern pluginHandler *ph;
-typedef int (*wally_c_function)(char *parameter);
+typedef int (*wally_c_function)(void *parameter);
 //typedef int (*wally_c_function)(wally_call_ctx *ctx);
 typedef struct function_list_entry function_list_entry;
 struct function_list_entry {
@@ -134,7 +134,7 @@ struct function_list_entry {
         int nargs;
 };
 
-int pluginLoader(char *);
+int pluginLoader(void *);
 bool exportSync(const char *, void *);
 bool exportThreaded(const char *, void *);
 bool callWithData(char *, void *, void *);
@@ -146,7 +146,7 @@ int cleanupPlugins(void);
 bool callEx(char *, void *, void *,int ,bool );
 void export_function_list(char *, const function_list_entry *);
 void wally_put_function_list(pluginHandler *, function_list_entry *);
-void wally_put_function(const char *name, int threaded, int (*f), int args);
+void wally_put_function(const char *name, int threaded, wally_c_function , int args);
 bool callWtx(char *fstr, char *params);
 
 #endif

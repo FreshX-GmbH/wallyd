@@ -223,9 +223,9 @@ typedef struct VideoObject
 
 
 VideoObject *getVideoObject(duk_context *);
-VideoState *renderFFVideo(char *);
-void alloc_picture(VideoState *);
-void video_refresh(VideoState *);
+VideoState *renderFFVideo(void *);
+int alloc_picture(void *);
+void video_refresh(void *);
 void setRenderer(SDL_Renderer *);
 void setDisplayTextureCallback(void *);
 void setCreateTextureCallback(void *);

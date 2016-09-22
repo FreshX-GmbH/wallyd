@@ -27,131 +27,16 @@ bool utilInit(int _loglevel, int _logmask, int _logfilemask){
    return true;
 }
 
-char* print_time()
-{
-    time_t t;
-    char *buf;
-
-    time(&t);
-    buf = (char*)malloc(150);
-    strftime(buf, 150, "%Y-%m-%d %H:%M:%S (%Z)", localtime(&t));
-    return buf;
-}
-
-//void log4c_log(int line, char *file,int level, char *fmt,...){
-//   va_list argp;
-////   printf("[%s:%d]",file,line);
-//   va_start(argp, fmt);
-//   log4c_category_vlog(ph->logCat, level, fmt, argp);
-//   va_end(argp);
+//char* print_time()
+//{
+//    time_t t;
+//    char *buf;
+//
+//    time(&t);
+//    buf = (char*)malloc(150);
+//    strftime(buf, 150, "%Y-%m-%d %H:%M:%S (%Z)", localtime(&t));
+//    return buf;
 //}
-
-void log_print(int line, const char *filename, int level, char *fmt,...)
-{
-    if(ph->loglevel < level){
-      return; 
-    }
-
-    va_list list;
-    char *p, *r;
-    int e;
-    char *lvlString = "???";
-
-    pthread_mutex_lock(&logMutex);
-
-    char *timeBuf = print_time();
-
-    if(level == TRACE)
-        lvlString = "hardcore";
-    if(level == FULLDEBUG)
-        lvlString = "fulldebug";
-    if(level == DEBUG)
-        lvlString = "debug";
-    if(level == INFO)
-        lvlString = "info";
-    if(level == ERROR)
-        lvlString = "error";
-    if(level == WARN)
-        lvlString = "warn";
-    if(ph->loglevel < DEBUG){ 
-      fprintf(ph->logfileHandle,"[%s] ",timeBuf);
-    } else {
-        if(ph->loglevel < FULLDEBUG){ 
-            fprintf(ph->logfileHandle,"[%s][%s in %s:%d] ",lvlString, timeBuf, filename, line);
-        } else {
-            fprintf(ph->logfileHandle,"[0x%x][%s][%s in %s:%d] ",(unsigned int)pthread_self(),lvlString, timeBuf, filename, line);
-        }
-    }
-    va_start( list, fmt );
- 
-    for ( p = fmt ; *p ; ++p )
-    {
-        if ( *p != '%' )//If simple string
-        {
-            fputc( *p,ph->logfileHandle );
-        }
-        else
-        {
-            switch ( *++p )
-            {
-                /* string */
-            case 's':
-            {
-                r = va_arg( list, char * );
-
-                if(r == NULL) {
-                  fprintf(ph->logfileHandle,"%s", "(null)");
-                } else {
-                  fprintf(ph->logfileHandle,"%s", r);
-                }
-                continue;
-            }
- 
-            case 'u':
-            {
-                e = va_arg( list, int );
-                fprintf(ph->logfileHandle,"%u", e);
-                continue;
-            }
-            // char
-            case 'c': {
-                e = va_arg( list, int );
-                fprintf(ph->logfileHandle,"%c", e);
-                continue;
-            }
-            /* float / double */
-            case 'f': {
-                double d = va_arg( list, double );
-                fprintf(ph->logfileHandle,"%f", d);
-                continue;
-            }
-            /* integer */
-            case 'd': {
-                e = va_arg( list, int );
-                fprintf(ph->logfileHandle,"%d", e);
-                continue;
-            }
-            case 'x': {
-                void *p = va_arg( list, void * );
-                fprintf(ph->logfileHandle,"%x", p);
-                continue;
-            }
-             case 'p': {
-                void *p = va_arg( list, void *);
-                fprintf(ph->logfileHandle,"%p", p);
-                continue;
-            }
- 
-            default:
-                fputc( *p, ph->logfileHandle );
-            }
-        }
-    }
-    va_end( list );
-    fputc( '\n', ph->logfileHandle );
-    free(timeBuf);
-    pthread_mutex_unlock(&logMutex);
-}
 
 char *replace(const char *src, const char *from, const char *to)
 {
@@ -308,11 +193,12 @@ void cleanupWally(int s){
     exit(s);
 }
 
-int c_cleanupWally(char *s){
+int c_cleanupWally(void *s){
    cleanupWally(atoi(s));
+   return 0;
 }
 
-void debugWally(void){
+void debugWally(int i){
    FILE *f = fopen("/tmp/wally.debug","w");
    long rss = getCurrentRSS();
    long rssPeak = getPeakRSS();

@@ -17,32 +17,31 @@ typedef struct sysStructure
 
 extern const duk_function_list_entry sysMethods[];
 
-void dumpDebug(void){
+int dumpDebug(void *p){
+  return 0;
+
 }
 
-// dummy function to bind libduv
-//void duv_ref_dummy(void){
-//   duv_push_ref(ctx, 0);
-//}
-
-void wally_sleep(char *time){
+int wally_sleep(void *time){
     int t = atoi(time);
     if(t > 0){
        slog(DEBUG,LOG_CORE,"Command processing sleeling for %d seconds",t);
        sleep(t);
        slog(DEBUG,LOG_CORE,"Command continues.");
     }
+    return 0;
 }
 
-void wally_registerCallback(char *str){
+int wally_registerCallback(void *str){
    char *all = str;
    char *name = strtok(str," ");
    char *rest = all+strlen(name)+1;
    slog(DEBUG,LOG_CORE,"Registering callback %s = %s",name,rest);
    ht_insert_simple(ph->callbacks,name,rest);
+   return 0;
 }
 
-void setDebug(char *str){
+void setDebug(void *str){
     getNum(strtok(str," "),&ph->loglevel);
     slog(DEBUG,LOG_CORE,"Setting new debug level to : %d",ph->loglevel);
 }
@@ -105,7 +104,7 @@ duk_ret_t js_sys_ctor(duk_context *ctx)
     return 0;
 }
 
-bool sysInfo(char *i){
+int sysInfo(void *i){
    if(i) {
       slog(DEBUG,LOG_UTIL,"Info : %s", i);
       // TODO : Get structure from hashmap('name');
