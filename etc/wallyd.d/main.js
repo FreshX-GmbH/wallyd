@@ -2,6 +2,7 @@ var wally = new Wally();
 var config = wally.getConfig();
 var homedir = config.basedir+'/etc/wallyd.d';
 var uv = nucleus.uv;
+var gui = new GUI();
 
 if(nucleus){
 	var modules = homedir+'/modules';
@@ -10,6 +11,7 @@ if(nucleus){
 	var p     = utils.prettyPrint;
 	var log   = nucleus.dofile('modules/log.js');
 	var uv    = nucleus.uv;
+	var gui   = gui;
 	var extra = nucleus.dofile('modules/extra.js');
 	var fs    = nucleus.dofile('modules/fs.js');
 	var extra = nucleus.dofile('modules/extra.js');
@@ -54,11 +56,11 @@ if(typeof uv.interface_addresses === 'function'){
 
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
-  try {
-  	wally.evalFile(config.homedir+'/texapps/demo.js');
-  } catch(err) {
-	log.error('ERROR in demo.js : '+err);
-  }
+//  try {
+//  	wally.evalFile(config.homedir+'/texapps/demo.js');
+//  } catch(err) {
+//	log.error('ERROR in demo.js : '+err);
+//  }
 //  screen.log('Initializing texApps ...');
 //  for (var t in textures) {
 //    log.info('Running texApp : ',t);
@@ -72,10 +74,18 @@ context.onVideoFinished = function(){
 };
 
 try{
-	context.setup = nucleus.dofile('defaults.js');
+    context.setup = nucleus.dofile('defaults.js');
 } catch(e1) {
-	log.error('ERROR in defaults : '+e1);
+    log.error('ERROR in defaults : '+e1);
 }
+
+var stat = 'R'+context.config.wally.release/1000+
+         ' *** Res: '+context.config.wally.width+'x'+context.config.wally.height+
+         ' *** Arch: '+context.config.wally.arch;
+wally.setText('version','black','logfont',0,0,stat);
+wally.log('***  Waiting for network');
+wally.render('version');
+
 try{
     if(context.config.network){
       var networktimer = new uv.Timer();
@@ -89,6 +99,8 @@ try{
 	    log.info('Found a valid IPv4 address : '+network[ifname][addr].ip);
 	    {
 		if(context.config.network.connected === false){
+		    stat = '   ***   Network initialized. Searching for wallaby server';
+		    wally.log(stat);
 		    context.config.network.connected = true;
 		    context.ssdp  = nucleus.dofile('ssdp.js');
 		    networktimer.stop();
@@ -104,6 +116,7 @@ try{
 } catch(e2) {
 	log.error('ERROR in ssdp : '+e2);
 }
+
 try{
 	context.exec  = nucleus.dofile('execserver.js');
 } catch(e3) {

@@ -8,7 +8,7 @@ var textures = {
     main      : { z: 10, x: 0,   y:    0,  w: '100%', h:-16, color : 'FFFFFF' },
 //    main2     : { z: 10, x: '50%', y:  0,  w: '50%', h:-16, color : 'FFFFFF' },
     log       : { z: 30, x: 0,   y: '-20', w: '100%', h: 20, color : 'FEFEFE' }, 
-    version   : { z: 40, x: -42, y: 0,     w: 42,     h: 16, color : 'FFFFFF' },
+    version   : { z: 40, x: -240, y: 0,     w: 240,     h: 16, color : 'FFFFFF' },
     network   : { z: 50, x: -20, y: -20,   w: 20,     h: 20, color : 'FFA500' }
 };
 
@@ -49,7 +49,7 @@ if(config.testScreen === true){
 } else {
     screen.log('WallyTV starting...');
     screen.setImageScaled('main',config.logo);
-    screen.setText('version','black','logfont',0,0,'R'+config.wally.release/1000);
+//    screen.setText('version','black','logfont',0,0,'R'+config.wally.release/1000);
 }
 
 screen.commitTransaction();

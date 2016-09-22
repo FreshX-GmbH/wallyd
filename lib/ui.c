@@ -555,7 +555,7 @@ bool sdlInit(void)
 #endif
 
    if(ph->sdldebug){
-   	slog(ERROR,LOG_SDL,"Setting SDL debug level to VERBOSE");
+   	slog(INFO,LOG_SDL,"Setting SDL debug level to VERBOSE");
    	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
    } else {
       SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
@@ -607,7 +607,7 @@ bool sdlInit(void)
    for(int i = 0; i < numdrivers; i++){
    	SDL_RendererInfo drinfo; 
    	SDL_GetRenderDriverInfo (i, &drinfo); 
-   	slog(LVL_QUIET,LOG_SDL,"Driver %d : %s",i,drinfo.name );
+   	slog(INFO,LOG_SDL,"Driver %d : %s",i,drinfo.name );
    }
 
 #ifdef WALLY_VSYNC
