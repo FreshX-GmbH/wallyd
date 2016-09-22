@@ -80,8 +80,8 @@ try{
 }
 
 var stat = 'R'+context.config.wally.release/1000+
-         '  ***  Res: '+context.config.wally.width+'x'+context.config.wally.height+
-         '  ***  Arch: '+context.config.wally.arch;
+         ' *** Res: '+context.config.wally.width+'x'+context.config.wally.height+
+         ' *** Arch: '+context.config.wally.arch;
 wally.setText('version','black','logfont',0,0,stat);
 wally.log('Waiting for network to get ready.');
 wally.render('version');
@@ -101,7 +101,7 @@ try{
 		if(context.config.network.connected === false){
 		    stat = 'Network initialized. Scanning for next wallaby server';
 		    wally.log(stat);
-		    wally.setText('ip','black','logfont',0,0,"IP:"+network[ifname][addr].ip);
+		    wally.setText('ip','black','logfont',0,1,"IP:"+network[ifname][addr].ip);
 		    wally.render('ip');
 		    context.config.network.connected = true;
 		    context.ssdp  = nucleus.dofile('ssdp.js');

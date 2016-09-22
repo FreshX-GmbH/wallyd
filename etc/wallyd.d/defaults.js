@@ -8,8 +8,8 @@ var textures = {
     main      : { z: 10, x: 0,   y:    0,  w: '100%', h:-16, color : 'FFFFFF' },
 //    main2     : { z: 10, x: '50%', y:  0,  w: '50%', h:-16, color : 'FFFFFF' },
     log       : { z: 30, x: 0,   y: '-20', w: '100%', h: 20, color : 'FEFEFE' }, 
-    version   : { z: 40, x: -240, y: 0,     w: 240,     h: 16, color : 'FFFFFF' },
-    ip        : { z: 50, x: -120, y: -20,   w: 100,     h: 20, color : 'FEFEFE' }
+    version   : { z: 40, x: -230, y: 0,     w: 230,     h: 16, color : 'FFFFFF' },
+    ip        : { z: 50, x: -120, y: -20,   w: 100,     h: 20, color : 'FEFEFE' },
     network   : { z: 50, x: -20, y: -20,   w: 20,     h: 20, color : 'FFA500' }
 };
 
