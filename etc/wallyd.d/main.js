@@ -89,8 +89,8 @@ try{
     if(context.config.network){
       var networktimer = new uv.Timer();
       var count = 0;
-      networktimer.start(0, 10, function(){
-	screen.log('Waiting for network to get ready ('+count+').');
+      networktimer.start(0, 100, function(){
+	screen.log('Waiting for network to get ready ('+count/10+').');
 	count++;
         var network = uv.interface_addresses();
         //print(Object.keys(network));
