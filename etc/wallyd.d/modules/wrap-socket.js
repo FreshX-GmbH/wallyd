@@ -122,7 +122,7 @@ function wrapSocket(socket, decode, encode) {
     }
     if (data && encode) data = encode(data);
 
-    p(data);
+    //p(data);
     // Normalize data to buffer or null
     if (data || typeof data === 'string') {
       return socket.write(data, callback);

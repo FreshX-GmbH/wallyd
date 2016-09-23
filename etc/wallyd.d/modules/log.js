@@ -7,8 +7,17 @@ function printlog()
 {
       var d = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate()+" "+date.getHours()+':'+date.getMinutes();
       var levels = [ 'error', 'warn ', 'info ', 'debug', 'trace' ];
-      var lvl = utils.colorize(levels[arguments[0]],levels[arguments[0]]);
-      print("["+lvl+"]["+d+"] "+Array.prototype.map.call(arguments[1], utils.dump).join(" "));
+      if(typeof(utils) !== 'undefined'){
+            var lvl = utils.colorize(levels[arguments[0]],levels[arguments[0]]);
+	    print("["+lvl+"]["+d+"] "+Array.prototype.map.call(arguments[1], utils.dump).join(" "));
+      } else if(typeof(context) !== 'undefined' && typeof(context.utils) != 'undefined'){
+            var lvl = context.utils.colorize(levels[arguments[0]],levels[arguments[0]]);
+	    print("["+lvl+"]["+d+"] "+Array.prototype.map.call(arguments[1], context.utils.dump).join(" "));
+      } else {
+	    var lvl = levels[arguments[0]];
+	    print("["+lvl+"]["+d+"] "+Array.prototype.map.call(arguments[1], JSON.stringify).join(" "));
+      }
+
 }
 
 function log_error(){

@@ -13,7 +13,7 @@ function createClient(options, onClient) {
 
   function onConnection(err) {
     if (err) {throw err;}
-    p('Connected to '+(options.host || '127.0.0.1')+':'+(options.port||80));
+    log.info('Connected to '+(options.host || '127.0.0.1')+':'+(options.port||80));
     var stream = wrapSocket(client, options.decode, options.encode);
     onClient(stream);
   }

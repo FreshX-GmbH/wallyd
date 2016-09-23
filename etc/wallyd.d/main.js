@@ -18,9 +18,9 @@ if(nucleus){
 	var curl  = nucleus.dofile('modules/curl.js');
 	log.info('Seaduk modules initialized');
 	var modules = homedir+'/modules.duv';
-} else {
+}
 
-context = { 
+var context = { 
     wally: wally,
     screen: wally,
     config: {
@@ -34,9 +34,9 @@ context = {
         testScreen: false,
         startVideo : false,
     },
+    uv:uv,
     p:p
 };
-
 context.config.env   = nucleus.envkeys();
 
 if(typeof uv.interface_addresses === 'function'){
@@ -81,14 +81,17 @@ try{
 var stat = 'R'+context.config.wally.release/1000+
          ' *** Res: '+context.config.wally.width+'x'+context.config.wally.height+
          ' *** Arch: '+context.config.wally.arch;
-wally.setText('version','black','logfont',0,0,stat);
-wally.log('Waiting for network to get ready.');
-wally.render('version');
+screen.setText('version','black','logfont',0,0,stat);
+screen.log('Waiting for network to get ready.');
+screen.render('version');
 
 try{
     if(context.config.network){
       var networktimer = new uv.Timer();
+      var count = 0;
       networktimer.start(0, 10, function(){
+	screen.log('Waiting for network to get ready ('+count+').');
+	count++;
         var network = uv.interface_addresses();
         //print(Object.keys(network));
         Object.keys(network).forEach(function(ifname){
@@ -103,7 +106,12 @@ try{
 		    wally.setText('ip','black','logfont',0,1,"IP:"+network[ifname][addr].ip);
 		    wally.render('ip');
 		    context.config.network.connected = true;
-		    context.ssdp  = nucleus.dofile('ssdp.js');
+		    log.info(stat);
+		    try {
+		      context.ssdp  = nucleus.dofile('ssdp.js').ssdp(context);
+		    } catch(e) {
+		      log.error('SSDP failed : ',e);
+		    }
 		    networktimer.stop();
 		    networktimer.close();
 		}
@@ -112,15 +120,14 @@ try{
         });
       });
     } else {
-      context.ssdp  = nucleus.dofile('ssdp.js');
+      context.ssdp  = nucleus.dofile('ssdp.js').ssdp(context);
     }
 } catch(e2) {
 	log.error('ERROR in ssdp : '+e2);
 }
 
-try{
-	context.exec  = nucleus.dofile('execserver.js');
-} catch(e3) {
-	log.error('ERROR in execserver : '+e3);
-}
-p(context);
+//try{
+//	context.exec  = nucleus.dofile('execserver.js');
+//} catch(e3) {
+//	log.error('ERROR in execserver : '+e3);
+//}
