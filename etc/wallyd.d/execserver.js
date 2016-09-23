@@ -22,15 +22,21 @@ function onConnection(err) {
   function onRead(err, chunk) {
     if (err) throw err;
     if (chunk) {
-      client.write(wally.eval(ctx,chunk));
+      try {
+        print(chunk);
+        //res = eval(chunk);
+        client.write("{ error : false, res : ",res,"}");
+      } catch(e) {
+        client.write("{ error : true, res : ",e,"}");
+      }
     }
-    else {
-      print("received EOF from client, shutting down...");
-      client.shutdown(function () {
-        client.close();
+    //else {
+    print("received EOF from client, shutting down...");
+    client.shutdown(function () {
+       client.close();
        // server.close();
-      });
-    }
+    });
+    //}
   }
 };
 })()

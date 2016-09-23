@@ -397,6 +397,16 @@ duk_ret_t js_exec(duk_context *ctx){
    return 0;
 }
 
+int js_evalScript(duk_context *ctx){
+    //duk_push_string(ctx, str);
+    if (duk_peval(ctx) != 0) {
+        slog(ERROR,LOG_JS,"JSEval : %s", duk_safe_to_string(ctx, -1));
+    } else {
+        slog(DEBUG,LOG_JS,"result is: %s", duk_safe_to_string(ctx, -1));
+    }
+    return 1;
+}
+
 int evalScript(void *str){
     duk_push_string(ctx, str);
     if (duk_peval(ctx) != 0) {
@@ -439,6 +449,7 @@ const duk_function_list_entry wallyMethods[] = {
     { "readFile",             js_readfile, 1 },
     { "readDir",              js_readdir, 1 },
     { "evalFile",             js_evalFile, 1 },
+    { "eval",                 js_evalScript, 1 },
     { "exec",                 js_exec, 1 },
     { "render",               js_render, 1 },
     { "setAutoRender",        js_setAutoRender, 1 },

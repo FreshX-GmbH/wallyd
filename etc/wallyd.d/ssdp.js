@@ -4,7 +4,8 @@ var createClient = require('modules/net').createClient;
 var httpCodec = require('modules/http-codec');
 var decoder = httpCodec.decoder;
 var uv = require('uv');
-var config = context.config;
+
+var context = nucleus.dofile('modules/compat.js');
 
 var discovery =true;
 
@@ -15,13 +16,14 @@ var broadcastString = 'M-SEARCH * HTTP/1.1\r\nHOST:'+broadcastAddress+':'+broadc
 
 var server = new uv.Udp();
 var location = '';
+
 server.bind('0.0.0.0',8080);
 server.broadcast(true);
 
 server.send(broadcastAddress, broadcastPort, broadcastString , function (err) {
   if (err) {throw err;}
   context.screen.log('Scanning for next wallaby server ...');
-  log.info('SSDP Packet sent. Waiting for response');
+  log.info('Initial SSDP Packet sent. Waiting for response');
   server.readStart(function (err, chunk) {
     if (err) {throw err;}
     var header = {};
@@ -51,7 +53,7 @@ timer1.start(1000, 2000, function () {
   }
   server.send(broadcastAddress, broadcastPort, broadcastString , function (err) {
     if(err) {throw err;}
-    log.info('Sent ssdp package');
+    log.info('Sent another ssdp package');
   });
 });
 
@@ -142,13 +144,7 @@ function registerClient(location){
 
 // for direct test in nucleus
 if(typeof(Wally) !== 'function'){
-  context = {};
-  config={ 
-    arch:'nucleus', 
-    release:123 
-  };
-  context.config = config;
-  context.screen = {};
-  context.screen.log = function(a) { print(a);}
+  var utils = nucleus.dofile('modules/utils.js')
+  log=context.log;
   uv.run();
 }

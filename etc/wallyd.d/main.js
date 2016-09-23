@@ -18,8 +18,7 @@ if(nucleus){
 	var curl  = nucleus.dofile('modules/curl.js');
 	log.info('Seaduk modules initialized');
 	var modules = homedir+'/modules.duv';
-	var log = {info:print, error:print, debug:print};
-}
+} else {
 
 context = { 
     wally: wally,
