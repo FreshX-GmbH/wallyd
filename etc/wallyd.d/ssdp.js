@@ -5,7 +5,6 @@
 if(typeof(Wally) === 'undefined')
 {
         var context = nucleus.dofile('modules/compat.js');
-        var screen = context.screen;
         ssdp(context);
         nucleus.uv.run();
 }
@@ -24,7 +23,8 @@ function ssdp(context)
     var broadcastPort = 1900;
     var broadcastAddress = '239.255.255.250';
     var broadcastString = 'M-SEARCH * HTTP/1.1\r\nHOST:'+broadcastAddress+':'+broadcastPort+'\r\nMAN:\'ssdp:discover\'\r\nST:ssdp:all\r\nNT:'+searchST+'\r\nMX:1\r\n\r\n';
-    var count = 0;    
+    var count = 0;
+    var screen = context.screen;
 
     start(context);
     var ssdpTimer = new uv.Timer();
@@ -32,7 +32,11 @@ function ssdp(context)
           if (discovery !== true) {
                ssdpTimer.stop();
                ssdpTimer.close();
-               registerClient(location);
+               try {
+                   registerClient(location);
+               } catch(e) {
+                   log.error('Registration failed : ',e);
+               }
                return;
           }
           log.info('Sending another ssdp package');
