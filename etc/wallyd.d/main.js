@@ -55,11 +55,11 @@ if(typeof uv.interface_addresses === 'function'){
 
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
-//  try {
-//  	wally.evalFile(config.homedir+'/texapps/demo.js');
-//  } catch(err) {
-//	log.error('ERROR in demo.js : '+err);
-//  }
+  try {
+  	wally.evalFile(config.homedir+'/texapps/demo.js');
+  } catch(err) {
+	log.error('ERROR in demo.js : '+err);
+  }
 //  screen.log('Initializing texApps ...');
 //  for (var t in textures) {
 //    log.info('Running texApp : ',t);

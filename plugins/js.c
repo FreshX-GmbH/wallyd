@@ -185,8 +185,7 @@ int js_setImageScaled(duk_context *ctx)
     char *cs;
     asprintf(&cs,"%s %s",name,file);
     callWtx("screen::setImageScaled",cs);
-    // TODO : make copy of the string IN the function utilizing it, not here
-    //free(cs);
+    free(cs);
     return 1;
 }
 
@@ -204,8 +203,7 @@ int js_setTextUTF8(duk_context *ctx)
     char *cs;
     asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
     callWtx("screen::setTextUTF8 ",cs);
-    // TODO : make copy of the string IN the function utilizing it, not here
-    //free(cs);
+    free(cs);
     return 1;
 }
  
@@ -223,8 +221,7 @@ int js_setText(duk_context *ctx)
     char *cs;
     asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
     callWtx("screen::setText",cs);
-    // TODO : make copy of the string IN the function utilizing it, not here
-    //free(cs);
+    free(cs);
     return 1;
 }
  
@@ -232,11 +229,9 @@ int js_log(duk_context *ctx)
 {
     // screen::setText bauch stampColor stampfont 20 0 Wally TV Test Screen
     int n = duk_get_top(ctx);
-    const char *text = strdup(duk_to_string(ctx,0));
+    const char *text = duk_to_string(ctx,0);
     int ret;
     callWtx("screen::log",(char*)text);
-    // TODO : free
-    //free(text);
     return 1;
 }
   
@@ -318,12 +313,14 @@ int js_loadFont(duk_context *ctx)
     const char *name = duk_to_string(ctx,0);
     const char *file = duk_to_string(ctx,1);
     const char *size = duk_to_string(ctx,2);
+    if(ht_contains_simple(ph->fonts,name)){
+        return true;
+    }
     char *cs;
     int ret;
     asprintf(&cs,"%s %s %s",name,file,size);
     callWtx("screen::loadFont",cs);
-    // TODO : make copy of the string IN the function utilizing it, not here
-    //free(cs);
+    free(cs);
     return 1;
 }
 
@@ -339,8 +336,7 @@ int js_createColor(duk_context *ctx)
     int ret;
     asprintf(&cs,"%s %s %s",name,RGB,A);
     callWtx("screen::createColor",cs);
-    // TODO : make copy of the string IN the function utilizing it, not here
-    //free(cs);
+    free(cs);
     return 1;
 }
 
@@ -349,9 +345,7 @@ int js_destroyTexture(duk_context *ctx)
     // screen::destroyTexture name
     int n = duk_get_top(ctx);  /* #args */
     const char *name = duk_to_string(ctx,0);
-    callWtx("screen::destroyTexture",(char*)name);
-    // TODO : make copy of the string IN the function utilizing it, not here
-    //free(cs);
+    callWtx("screen::destroyTexture",name);
     return 1;
 }
 
@@ -370,7 +364,6 @@ int js_createTexture(duk_context *ctx)
     char *cs;
     int ret;
     asprintf(&cs,"%s %s %s %s %s %s %s",name,prio,x,y,w,h,col);
-    //newSimpleWtx(&wtx,"screen::createTexture",cs);
     callWtx("screen::createTexture",cs);
     free(cs);
     return 1;

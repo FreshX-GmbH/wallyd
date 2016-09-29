@@ -148,5 +148,6 @@ void export_function_list(char *, const function_list_entry *);
 void wally_put_function_list(pluginHandler *, function_list_entry *);
 void wally_put_function(const char *name, int threaded, wally_c_function , int args);
 bool callWtx(char *fstr, char *params);
+void *freeWtx(wally_call_ctx** xwtx);
 
 #endif

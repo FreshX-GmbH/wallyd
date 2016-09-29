@@ -16,7 +16,7 @@ bool sdlStatus(void *ptr){
 
 texInfo *getTexture(const char *name){
    texInfo *t = ht_get_simple(ph->baseTextures,(void*)name);
-   slog(TRACE,LOG_TEXTURE,"Texture %s is at 0x%x",name,t);
+   //slog(TRACE,LOG_TEXTURE,"Texture %s is at 0x%x",name,t);
    return t;
 }
 
@@ -93,6 +93,7 @@ bool uiLoop(void){
                   } 
                   thr_func((void*)wtx->param[i]);
            }
+           //freeWtx(&wtx);
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
                 SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
            }
@@ -346,8 +347,8 @@ int createTextureEx(void *strTmp,bool isVideo){
    }
    if(x!=-1 && y!=-1 && w!=-1 && h!=-1 && w != 0 && h != 0){
 
-      TI->c = malloc(sizeof(Color));
-      memset(TI->c,255,sizeof(Color));
+      TI->c = malloc(sizeof(SDL_Color));
+      memset(TI->c,255,sizeof(SDL_Color));
       hexToColor(color, TI->c);
       TI->c->a=255;
 
@@ -639,10 +640,10 @@ bool sdlInit(void)
    //SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,"Info","Hallo Welt",ph->window);
 
    // Initialize Textures / Renderers
+   ph->tempTexture = malloc(sizeof(texInfo));
+   memset(ph->tempTexture,0,sizeof(texInfo));
    texInfo *TI = ph->tempTexture;
-   TI = malloc(sizeof(texInfo));
-   memset(TI,0,sizeof(texInfo));
-
+    
    TI->active = true;
    TI->autorender = true;
    //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");

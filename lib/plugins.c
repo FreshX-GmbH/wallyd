@@ -14,15 +14,40 @@ pthread_mutex_t callMutex=PTHREAD_MUTEX_INITIALIZER;
 bool initWtx(wally_call_ctx** xwtx){
     *xwtx = malloc(sizeof(wally_call_ctx));
     wally_call_ctx *wtx = *xwtx;
+    memset(wtx,0,sizeof(wally_call_ctx));
     (*xwtx)->elements = 0;
     wtx->transaction = false;
     return true;
+}
+
+// Free the WTX and ALL its elements
+void freeWtxElements(wally_call_ctx* wtx){
+//    wally_call_ctx *wtx = *xwtx;
+    slog(DEBUG,LOG_PLUGIN,"Free WTX with %d elements", wtx->elements);
+    for(int i = 0; i < wtx->elements; i++){
+//        slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", i,wtx->name[i],wtx->param[i]);
+        if(wtx->name[i]){
+            free(wtx->name[i]);
+            wtx->name[i] = NULL;
+        }
+        if(wtx->param[i]){
+            free(wtx->param[i]);
+            wtx->param[i] = NULL;
+        }
+    }
+}
+
+void * freeWtx(wally_call_ctx** xwtx){
+    freeWtxElements(*xwtx);
+    free(*xwtx);
+    return NULL;
 }
 
 // make a simple context for function f
 bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     *xwtx = malloc(sizeof(wally_call_ctx));
     wally_call_ctx *wtx = *xwtx;
+    memset(wtx,0,sizeof(wally_call_ctx));
     wtx->name[0]=strdup(fstr);
     if(params != NULL){
         slog(TRACE,LOG_PLUGIN,"Creating simple wtx : %s %s",fstr,params);
@@ -42,6 +67,8 @@ bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     if(params != NULL){
         //slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
         wtx->param[idx]=strdup(params);
+    } else {
+        wtx->param[idx]=NULL;
     }
     // also possible access
     (*xwtx)->elements = idx + 1;
@@ -55,9 +82,10 @@ bool callWtx(char *fstr, char *params){
         return callEx(ph->wtx->name[0],NULL,ph->wtx,CALL_TYPE_WTX,true);
     }
     if(ph->transaction == false) {
+        freeWtxElements(ph->wtx);
         ph->wtx->elements=1;
-        ph->wtx->name[0]=fstr;
-        ph->wtx->param[0]=params;
+        ph->wtx->name[0]=strdup(fstr);
+        ph->wtx->param[0]=strdup(params);
         callEx(fstr,NULL,ph->wtx,CALL_TYPE_WTX,true);
     } else {
         pushSimpleWtx(&ph->wtx, fstr, params);
@@ -69,6 +97,7 @@ bool callWtx(char *fstr, char *params){
 //           1 : string
 //           2 : PointerStruct *PS
 //           3 : DukContext *ctx
+//           4 : WallyContext *wtx
 
 bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool waitThread){
     if(!funcNameTmp){

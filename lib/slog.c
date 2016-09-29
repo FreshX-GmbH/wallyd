@@ -78,7 +78,7 @@ void slog_get_date(SlogDate *sdate)
 
     /* Get micro seconds */
     clock_gettime(CLOCK_MONOTONIC, &now);
-    sdate->usec = (int)now.tv_nsec / 10000000;
+    sdate->usec = (int)(now.tv_nsec/10000000);
 }
 
 /* 

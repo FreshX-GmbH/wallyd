@@ -86,13 +86,13 @@ function renderScreen(context, tree, screen, data)
         }
    
         if(obj.type === 'image'){
-            var res = curl.get(obj.path);
-            if(res.body){
-               wally.writeFileSync('/tmp/test.png',res.body);
-               //gui.loadImage(screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255);
-            }
-            gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
-            continue;
+            //var res = curl.get(obj.path);
+            //if(res.body){
+            //   wally.writeFileSync('/tmp/test.png',res.body);
+            //   //gui.loadImage(screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255);
+            //}
+            //gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
+            //continue;
         }
         if(obj.type === 'line'){
             gui.drawLine(screen,X, Y, X + W, Y, 0);

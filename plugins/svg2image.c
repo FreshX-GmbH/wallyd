@@ -41,8 +41,7 @@ int js_svgToTex(duk_context *ctx){
     const int alpha = duk_require_int(ctx, 6);
     SDL_Rect r = {x1,y1,x2,y2};
     asprintf(&callStr,"%s %s %d %d %d %d %d",texName,fileName, x1,y1,x2,y2,alpha);
-    call("svg::svgToTex",&ret,callStr);
-    free(callStr);
+    callWtx("svg::svgToTex",callStr);
     return 0;
 }
 
@@ -53,8 +52,7 @@ duk_ret_t js_svgToPng(duk_context *ctx){
     const char *fileName = duk_require_string(ctx, 0);
     const char *pngName  = duk_require_string(ctx, 1);
     asprintf(&callStr, "%s %s",fileName,pngName);
-    call("svg::svgToPng",&ret,callStr);
-    free(callStr);
+    callWtx("svg::svgToPng",callStr);
     return 0;
 }
 

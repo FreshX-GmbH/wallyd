@@ -173,8 +173,7 @@ int js_play(duk_context *ctx)
   duk_put_prop_string(ctx, -2, "\xffon-finish");
   duk_pop(ctx);
 
-  call("ffvideo::play",&ret,cs);
-  free(cs);
+  callWtx("ffvideo::play",cs);
   return 0;
 }
 
