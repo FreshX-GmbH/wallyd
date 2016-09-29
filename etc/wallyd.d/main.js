@@ -53,9 +53,11 @@ if(typeof uv.interface_addresses === 'function'){
 // This is called after the startVideo 
 // or immediately if startVideo==false
 
+
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
   try {
+        wally.evalFile(config.homedir+'/texapps/mem.js');
   	wally.evalFile(config.homedir+'/texapps/demo.js');
   } catch(err) {
 	log.error('ERROR in demo.js : '+err);
