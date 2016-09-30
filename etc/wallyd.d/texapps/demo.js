@@ -88,16 +88,16 @@ function oninterval() {
 	if(typeof(config.conn) !== 'undefined' && typeof(config.conn.host) !== 'undefined' ){
 		conn=config.conn.host;
 	}
-	var mymem = wally.getrss();
-	var grow = Math.ceil((mymem-memstartb)/passed);
+	//var mymem = wally.getrss();
+	//var grow = Math.ceil((mymem-memstartb)/passed);
     	var stat = 'WallyTV  v'+config.wally.release/1000+
 		 '   ***   Res: '+config.wally.width+'x'+config.wally.height+
 		 '   ***   Name: '+name+
 		 '   ***   Arch: '+config.wally.arch+
 		 '   ***   Connected: '+conn+
-		 '   ***   Mem start: '+memstart+
-		 '   ***   Mem curr: '+Math.ceil((mymem/(1024*1024))*100)/100+'mb'+
-		 '   ***   Mem grow: '+grow+'b/s'+
+//		 '   ***   Mem start: '+memstart+
+//		 '   ***   Mem curr: '+Math.ceil((mymem/(1024*1024))*100)/100+'mb'+
+//		 '   ***   Mem grow: '+grow+'b/s'+
 		 '   ***   Up: '+uts+
 		 '   ***   Render time: '+(fin-start)/1000+'s';
 	//log.debug(stat);
