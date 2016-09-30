@@ -93,10 +93,11 @@ bool uiLoop(void){
                   } 
                   thr_func((void*)wtx->param[i]);
            }
-           //freeWtx(&wtx);
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
                 SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
            }
+           free(funcName);
+           freeWtxElements(wtx);
            continue;
         }
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
@@ -235,6 +236,7 @@ int renderActiveEx(void *startTex)
    if(startTex == NULL){
       start = true;
    }
+   return 0;
    TempTI = ph->tempTexture;
    SDL_SetRenderTarget(ph->renderer,TempTI->texture);
 //   SDL_RenderClear( ph->renderer );
@@ -245,7 +247,7 @@ int renderActiveEx(void *startTex)
          start = true;
       }
       if(start == false) continue;
-      slog(DEBUG,LOG_TEXTURE,"Key %d : %s",i,name);
+      //slog(DEBUG,LOG_TEXTURE,"Key %d : %s",i,name);
       TI = getTexture( name);
       if(TI->active == true && TI->autorender == true){
           SDL_Rect *mr = TI->rect;
@@ -273,6 +275,8 @@ void renderActive(const char *startTex)
 //   renders and displays a texture on the Main Renderer
 void renderTexture(SDL_Texture *t, SDL_Rect *mr){
     slog(DEBUG,LOG_TEXTURE,"Display texture(0x%x,{%d,%d,%d,%d})",t, mr->x, mr->y, mr->w, mr->h);
+    // MEM DEBUG
+    return;
     if(mr == NULL || mr->w == 0 || mr->h == 0 || t == NULL){
        slog(DEBUG,LOG_TEXTURE,"Refusing to place invalid texture or texture has an invalid size.");
     } else {
@@ -731,7 +735,6 @@ void hexToColor(int color, SDL_Color *c)
    c->g = (color >> 8)  & 0xff;
    c->b = color & 0xff;
    c->a = 0;
-   slog(TRACE,LOG_SDL,"color : %x = (%d,%d,%d)",color,c->r,c->g,c->b);
 }
 
 // Create a new window and a new renderer and switch over

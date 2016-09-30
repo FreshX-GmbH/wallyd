@@ -69,7 +69,7 @@ function oninterval() {
         wally.render('main');
         //wally.render('main2');
         wally.commitTransaction();
-	passed = d2.getTime()-config.wally.uptime*1000;//-3600*1000;
+	passed = d2.getTime()-date.getTime();//-3600*1000;
 	var d3 = new Date();
 	var fin = d3.getTime();
 	d2.setTime(passed);
@@ -100,7 +100,7 @@ function oninterval() {
 		 '   ***   Mem grow: '+grow+'b/s'+
 		 '   ***   Up: '+uts+
 		 '   ***   Render time: '+(fin-start)/1000+'s';
-	//log.debug(stat);
+	log.error(stat);
     	wally.log(stat);
     } catch(err) {
 	log.error('ERROR: Show status failed : '+err);

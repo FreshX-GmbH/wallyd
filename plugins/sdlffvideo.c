@@ -174,6 +174,7 @@ int js_play(duk_context *ctx)
   duk_pop(ctx);
 
   callWtx("ffvideo::play",cs);
+  free(cs);
   return 0;
 }
 

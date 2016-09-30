@@ -135,6 +135,10 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
       return false; 
    }
 
+   // DEBUG memory leak
+   //if(strncmp(name,"log",3) != 0) 
+   return true;
+
    TTF_Font *font = ht_get_simple(ph->fonts,fontName);
    if(!font){
       slog(ERROR,LOG_SDL,"Font named '%s' not loaded",fontName);
@@ -143,6 +147,7 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
    SDL_Rect dest = {x,y,0,0};
    // TODO : Implement roto
    SDL_Surface *rsurf,*surf;
+
 
    slog(DEBUG,LOG_SDL,"Rendering text into surface with rot %d",rotation);
    switch(textType){
