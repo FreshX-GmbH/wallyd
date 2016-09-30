@@ -4,6 +4,7 @@ var wally = new Wally();
 var gui = new GUI();
 var date = new Date();
 var uv = nucleus.uv;
+var date = new Date();
 
 var memstartb = wally.getrss();
 var memstart = Math.round((memstartb/1024/1024)*100)/100+'mb';
@@ -12,12 +13,13 @@ var div = 1;
 
 function oninterval() {
     try {
+	var now = new Date();
 	var mymem = wally.getrss();
-	div = uv.hrtime()-start;
+	div = now.getTime()-config.wally.uptime*1000;
 	var grow = Math.ceil((mymem-memstartb)/div);
-    	var stat = 'MemSt: '+memstart+
-		 ' / Cur: '+Math.ceil((mymem/(1024*1024))*100)/100+'mb'+
-		 ' / Gr: '+grow+'b/s';
+    	var stat = 'Mem: '+memstart+
+		 ' / = '+Math.ceil((mymem/(1024*1024))*100)/100+'mb'+
+		 ' / + '+grow+'b/s';
 	wally.startTransaction();
         gui.clearTexture('memdbg');
 	wally.setText('memdbg','black','logfont',0,1,stat);
@@ -30,7 +32,7 @@ function oninterval() {
 
 try {
     var memtimer = new uv.Timer();
-    memtimer.start( 0, 100, oninterval);
+    memtimer.start( 0, 2000, oninterval);
 } catch(e) {
     //log.error('Error in memdbg timer : '+e);
 }

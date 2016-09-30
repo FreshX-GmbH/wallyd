@@ -247,9 +247,8 @@ int js_playDirect(duk_context *ctx)
     const char *h   = duk_to_string(ctx,4);
     const char *url = duk_to_string(ctx,5);
     asprintf(&cs,"%s %s %s %s %s %s",name,x,y,w,h,url);
-    call("video::playScaledDirect",&ret,cs);
-    // TODO : make copy of the string IN the function utilizing it, not here
-    //free(cs);
+    callWtx("video::playScaledDirect",cs);
+    free(cs);
     return 1;
 }
 
@@ -262,9 +261,8 @@ int js_play(duk_context *ctx)
     const char *name = duk_to_string(ctx,0);
     const char *url = duk_to_string(ctx,1);
     asprintf(&cs,"%s %s",name,url);
-    call("video::play",&ret,cs);
-    // TODO : make copy of the string IN the function utilizing it, not here
-    //free(cs);
+    callWtx("video::play",cs);
+    free(cs);
     return 1;
 }
 
@@ -281,9 +279,8 @@ int js_playScaled(duk_context *ctx)
     const char *h   = duk_to_string(ctx,4);
     const char *url = duk_to_string(ctx,5);
     asprintf(&cs,"%s %s %s %s %s %s",name,x,y,w,h,url);
-    call("video::playScaled",&ret,cs);
-    // TODO : make copy of the string IN the function utilizing it, not here
-    //free(cs);
+    callWtx("video::playScaled",cs);
+    free(cs);
     return 1;
 }
 

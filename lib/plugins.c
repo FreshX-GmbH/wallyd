@@ -29,12 +29,17 @@ void freeWtxElements(wally_call_ctx* wtx){
         if(wtx->name[i]){
             free(wtx->name[i]);
             wtx->name[i] = NULL;
+        } else {
+            slog(DEBUG,LOG_PLUGIN,"Element %d already freed!");
         }
         if(wtx->param[i]){
             free(wtx->param[i]);
             wtx->param[i] = NULL;
+        } else {
+            slog(DEBUG,LOG_PLUGIN,"Element parameter %d already freed!");
         }
     }
+    wtx->elements = 0;
 }
 
 void * freeWtx(wally_call_ctx** xwtx){
@@ -197,7 +202,9 @@ bool callWithData(char *funcname, void *ret, void *params){
     return callEx(funcname,ret,params,CALL_TYPE_PTR,true);
 }
 bool callWithString(char *funcname, void *ret, char *params){
-    return callEx(funcname,ret,params,CALL_TYPE_STR,true);
+    slog(ERROR,SDL_PLUGIN,"call(%s(%s)) no more supported",funcname,params);
+    return true;
+    //return callEx(funcname,ret,params,CALL_TYPE_STR,true);
 }
 bool call(char *funcname, void *ret, char *params){
     return callEx(funcname,ret,params,CALL_TYPE_STR,true);
