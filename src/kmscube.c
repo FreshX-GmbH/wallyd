@@ -79,7 +79,7 @@ static int init_drm(void)
 {
 	
 
-	static const char *modules[] = { "i915", "radeon", "nouveau", "nouveau_vieux", "vmwgfx", "omapdrm", "exynos", "msm", "tegra", "swrast" };
+	static const char *modules[] = { "i915", "radeon", "nouveau", "nouveau_vieux", "vmwgfx", "omapdrm", "exynos", "msm", "tegra", "swrast", "vc4" };
 	drmModeRes *resources = NULL;
 	drmModeConnector *connector = NULL;
 	drmModeEncoder *encoder = NULL;

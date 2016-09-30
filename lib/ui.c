@@ -566,11 +566,16 @@ bool sdlInit(void)
       SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
    }
 
-   if ( SDL_Init( SDL_INIT_EVERYTHING ) == -1 ) {
+   if ( SDL_Init( SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS ) == -1 ) {
       slog(ERROR,LOG_SDL, " Failed to initialize SDL : %s", SDL_GetError());
       return false;
    }
-
+   if(ph->disableAudio == false){
+	if(SDL_InitSubSystem(SDL_INIT_AUDIO)){
+            slog(ERROR,LOG_SDL, " Failed to initialize SDL Audio (set disableAudio=false in wallyd.conf) : %s", SDL_GetError());
+            return false;
+        }
+   }
 
    if(ph->broadcomInit == true || w==0 || h==0 ){
       slog(DEBUG,LOG_SDL,"Starting in full screen with current resolution : %d==%d / %d / %d",true,ph->broadcomInit, w, h);
