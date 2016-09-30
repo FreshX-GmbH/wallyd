@@ -18,6 +18,7 @@ static char *pluginFolder  = INSTALL_PREFIX"/lib/wallyd";
 int main(int argc, char *argv[]) 
 {
     int ret;
+    char *cs;
 
     // read startup parameters
     readOptions(argc,argv);
@@ -65,9 +66,11 @@ int main(int argc, char *argv[])
 
     // load plugins
     if(ht_get_simple(ph->configMap,"plugins") != NULL) {
-        callWithString("sys::loadPlugins",&ret,ht_get_simple(ph->configMap,"plugins"));
+        asprintf(&cs,"%s",ht_get_simple(ph->configMap,"plugins"));
+        callSync("sys::loadPlugins",&ret,cs);
+        free(cs);
     } else {
-        callWithString("sys::loadPlugins",&ret,pluginFolder);
+        callSync("sys::loadPlugins",&ret,pluginFolder);
     }
 
     ht_dumpkeys(ph->functions,"Exported sync commands : ");
@@ -166,7 +169,7 @@ bool processCommand(char *buf)
                 params = lineCopy+strlen(myCmd)+1;
             }
             slog(DEBUG,LOG_CORE,"Command split into(%d) : %s(%s)",strlen(myCmd), myCmd, params);
-            if(callWithString(myCmd,&ret, params)){
+            if(callSync(myCmd,&ret, params)){
                 validCmd++;
             }
         } else {

@@ -76,9 +76,6 @@ bool uiLoop(void){
 #endif
         ph->uiOwnCount++;
         funcName = strdup(event.user.data1);
-        // TODO : free this at the destination!!
-        //if(event.user.data1)
-        //   free(event.user.data1);
 
         if(event.type == WALLY_CALL_WTX){
            wtx = event.user.data2;
@@ -96,7 +93,6 @@ bool uiLoop(void){
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
                 SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
            }
-           free(funcName);
            freeWtxElements(wtx);
            continue;
         }
@@ -136,8 +132,7 @@ bool uiLoop(void){
         if(strcmp(funcName, "video::video_refresh_timer") != 0){
              SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
         }
-        // TODO : This needs to be freed somehow
-        //free(funcName);
+        free(funcName);
     }
     slog(DEBUG,LOG_SDL,"UI Loop finished and waiting for events");
     return true;

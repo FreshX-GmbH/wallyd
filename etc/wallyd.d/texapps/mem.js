@@ -11,6 +11,8 @@ var memstart = Math.round((memstartb/1024/1024)*100)/100+'mb';
 var start = uv.hrtime();
 var div = 1;
 
+log.error('MemDBG');
+
 function oninterval() {
     try {
 	var now = new Date();

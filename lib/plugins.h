@@ -138,7 +138,7 @@ int pluginLoader(void *);
 bool exportSync(const char *, void *);
 bool exportThreaded(const char *, void *);
 bool callWithData(char *, void *, void *);
-bool callWithString(char *, void *, char *);
+bool callSync(char *, void *, char *);
 bool call(char *, void *, char *);
 bool callNonBlocking(char *, int *, void *);
 int sendWallyCommand(char *, char *);

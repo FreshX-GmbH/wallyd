@@ -94,9 +94,9 @@ int js_setAutoRender(duk_context *ctx) {
    int ret;
    const bool sar = duk_to_boolean(ctx, 0);
    if(sar == true){
-      callWithString("screen::setAutoRender",&ret,"true");
+      callWtx("screen::setAutoRender","true");
    }else{
-      callWithString("screen::setAutoRender",&ret,"false");
+      callWtx("screen::setAutoRender","false");
    }
    return 0;
 }
@@ -171,7 +171,7 @@ duk_ret_t js_readdir(duk_context *ctx) {
 int js_showTextureTestScreen(duk_context *ctx)
 {
     int ret;
-    callWithString("screen::showTextureTestScreen",&ret,NULL);
+    callWtx("screen::showTextureTestScreen",NULL);
     return 1;
 }
 

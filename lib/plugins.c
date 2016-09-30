@@ -190,7 +190,6 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         }
         params = paramsTmp;
         ret = (*func)(params);
-        // We give up the ownership of funcName + params here
     }
     pthread_mutex_unlock(&callMutex); 
     return ret;
@@ -201,13 +200,13 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
 bool callWithData(char *funcname, void *ret, void *params){
     return callEx(funcname,ret,params,CALL_TYPE_PTR,true);
 }
-bool callWithString(char *funcname, void *ret, char *params){
-    slog(ERROR,SDL_PLUGIN,"call(%s(%s)) no more supported",funcname,params);
-    return true;
-    //return callEx(funcname,ret,params,CALL_TYPE_STR,true);
+bool callSync(char *funcname, void *ret, char *params){
+    return callEx(funcname,ret,params,CALL_TYPE_STR,true);
 }
 bool call(char *funcname, void *ret, char *params){
-    return callEx(funcname,ret,params,CALL_TYPE_STR,true);
+    slog(ERROR,LOG_PLUGIN,"call(%s(%s)) no more supported",funcname,params);
+    return false;
+    //return callEx(funcname,ret,params,CALL_TYPE_STR,true);
 }
 bool callNonBlocking(char *funcname, int *ret, void *params){
     return callEx(funcname,ret,params,CALL_TYPE_PTR,false);

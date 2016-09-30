@@ -40,7 +40,8 @@ static SlogFlags slg;
 //static pthread_mutex_t slog_mutex;
 
 #ifndef LINUX 
-static inline int clock_gettime(int clock_id, struct timespec *ts)
+#if defined(DARWIN) && DARWIN_MAJOR_VERSION < 16
+static inline int t_clock_gettime(int clock_id, struct timespec *ts)
 {
     struct timeval tv;
 
@@ -54,6 +55,7 @@ static inline int clock_gettime(int clock_id, struct timespec *ts)
     ts->tv_nsec = tv.tv_usec * 1000;
     return (0);
 }
+#endif
 #endif
 
 /*
