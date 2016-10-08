@@ -57,7 +57,8 @@ if(typeof uv.interface_addresses === 'function'){
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
   try {
-        wally.evalFile(config.homedir+'/texapps/mem.js');
+	log.error('Running texapps');
+	wally.evalFile(config.homedir+'/texapps/mem.js');
   	wally.evalFile(config.homedir+'/texapps/demo.js');
   } catch(err) {
 	log.error('ERROR in demo.js : '+err);

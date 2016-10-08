@@ -100,7 +100,7 @@ function oninterval() {
 	var mem = '   ***   Mem start: '+memstart+
 		 '   ***   Mem curr: '+Math.ceil((mymem/(1024*1024))*100)/100+'mb'+
 		 '   ***   Mem grow: '+grow+'b/s';
-	log.error(mem);
+	//log.error(mem);
     	wally.log(stat);
     } catch(err) {
 	log.error('ERROR: Show status failed : '+err);

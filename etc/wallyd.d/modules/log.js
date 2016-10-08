@@ -1,10 +1,10 @@
 (function(){
 "use strict";
 
-var date = new Date();
 
 function printlog()
 {
+      var date = new Date();
       var d = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate()+" "+date.getHours()+':'+date.getMinutes();
       var levels = [ 'error', 'warn ', 'info ', 'debug', 'trace' ];
       if(typeof(utils) !== 'undefined'){

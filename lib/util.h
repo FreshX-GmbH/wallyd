@@ -4,8 +4,8 @@
 #define _GNU_SOURCE
 
 #include "autoversion.h"
-#include "json.h"
-#include "miniz.h"
+//#include "json.h"
+//#include "miniz.h"
 #include "hashtable.h"
 #include "plugins.h"
 #include <errno.h>
@@ -92,7 +92,7 @@ int getNumOrPercentEx(char *str, int relativeTo, int *value,int base);
 
 void *getVFSFile(pluginHandler *ph,char *file, size_t *pSize);
 int openVFS(pluginHandler *ph, char *file);
-void *mz_zip_extract_archive_file_to_heap(const char *pZip_filename, const char *pArchive_name, size_t *pSize, mz_uint zip_flags);
+//void *mz_zip_extract_archive_file_to_heap(const char *pZip_filename, const char *pArchive_name, size_t *pSize, mz_uint zip_flags);
 size_t getPeakRSS();
 size_t getCurrentRSS();
 void setupSignalHandler(void);

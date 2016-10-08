@@ -7,7 +7,7 @@
 #include <sys/mman.h> 
 #include "util.h"
 #include "plugins.h"
-#include "miniz.h"
+//#include "miniz.h"
 
 int openVFS(pluginHandler *ph, char *file){
     int fd=open( file, O_RDONLY );

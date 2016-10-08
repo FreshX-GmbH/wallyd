@@ -76,24 +76,26 @@ bool uiLoop(void){
 #endif
         ph->uiOwnCount++;
         funcName = strdup(event.user.data1);
+	free(event.user.data1);
 
         if(event.type == WALLY_CALL_WTX){
            wtx = event.user.data2;
            slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements", wtx->elements);
            for(int i = 0; i < wtx->elements; i++){
-                  //slog(TRACE,LOG_PLUGIN,"WTX Call%d : %s(%s)", i, wtx->name[i], wtx->param[i]);
+                  slog(TRACE,LOG_PLUGIN,"WTX Call%d : %s(%s)", i, wtx->name[i], wtx->param[i]);
                   //thr_func(event.user.data2);
-                  void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,wtx->name[i]);
+                  void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,wtx->param[i]);
                   if(!thr_func){
                       slog(WARN,LOG_PLUGIN,"Threaded function %s not defined (%d).",wtx->name[i],event.type);
                       continue;
                   } 
-                  thr_func((void*)wtx->param[i]);
+                  //thr_func((void*)wtx->param[i]);
            }
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
                 SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
            }
            freeWtxElements(wtx);
+	   free(funcName);
            continue;
         }
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
@@ -112,19 +114,19 @@ bool uiLoop(void){
                   slog(DEBUG,LOG_SDL,"Threaded STR call to %s(%s)", funcName, param);
                   // ??
                   free(event.user.data2);
-                  thr_func((void*)param);
+                  //thr_func((void*)param);
                   break;
             case WALLY_CALL_NULL:
                   slog(DEBUG,LOG_SDL,"Threaded NULL call to %s()", funcName);
-                  thr_func(NULL);
+                  //thr_func(NULL);
                   break;
             case WALLY_CALL_PS:
                   slog(DEBUG,LOG_SDL,"Threaded PS call to %s(0x%x)", funcName, event.user.data2);
-                  thr_func(event.user.data2);
+                  //thr_func(event.user.data2);
                   break;
             case WALLY_CALL_CTX:
                   slog(DEBUG,LOG_SDL,"Threaded CTX call to %s(0x%x)", funcName, event.user.data2);
-                  thr_func(event.user.data2);
+                  //thr_func(event.user.data2);
                   break;
             default:
                   slog(ERROR,LOG_SDL,"Unknown threaded call event");
@@ -388,6 +390,9 @@ int createTextureEx(void *strTmp,bool isVideo){
       ht_insert_simple(ph->baseTextures,TI->name,TI);
 
       unsigned int items = 0;
+      if(ph->texturePrio) {
+  	  free(ph->texturePrio);
+      }
       ph->texturePrio = getTextureNamesByPrio(&items);
    } else {
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(n,x,y,w,h) : (%s)",str);
@@ -447,7 +452,7 @@ int destroyTexture(void *s){
    free(TI->c);
    // remove item and reorder prio list
    free(TI);
-   free(ph->texturePrio);
+   if(ph->texturePrio) free(ph->texturePrio);
    ph->texturePrio = getTextureNamesByPrio(&items);
    slog(DEBUG,LOG_TEXTURE,"Destroyed texture %s",s);
    return true;

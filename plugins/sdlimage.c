@@ -208,6 +208,7 @@ int createColor(void *strTmp){
    c->a = alpha;
    slog(DEBUG,LOG_SDL,"Creating new color %s={%d,%d,%d} alpha = %d",name,c->r,c->g,c->b,c->a);
    ht_insert_simple(ph->colors,name,c);
+   free(str);
    return true;
 }
 
@@ -227,12 +228,17 @@ int fillTexture(texInfo *TI, bool refresh)
 }
 
 int clearTexture(void *str){
-   slog(DEBUG,LOG_SDL,"Clearing texture %s.",str);
-   return fillTexture(getTexture(strtok(str, " ")),true);
+   // MEM DEBUG
+   return true;
+
+//   slog(DEBUG,LOG_SDL,"Clearing texture %s.",str);
+//   return fillTexture(getTexture(strtok(str, " ")),true);
 }
 int clearTextureNoPaint(void *name){
-   slog(DEBUG,LOG_SDL,"Clearing texture %s.",name);
-   return fillTexture(getTexture(name),false);
+   // MEM DEBUG
+   return true;
+//   slog(DEBUG,LOG_SDL,"Clearing texture %s.",name);
+//   return fillTexture(getTexture(name),false);
 }
 
 int waitForTexture(void *str){
@@ -271,6 +277,9 @@ int setTexturePrio(void *str){
    getNumHex(aS,&prio);
    TI->z = prio;
    unsigned int items = 0;
+   if(ph->texturePrio) {
+	free(ph->texturePrio);
+   }
    ph->texturePrio = getTextureNamesByPrio(&items);
    return true;
 }

@@ -125,6 +125,7 @@ void ht_dumpkeys(hash_table *table, char *prefix)
             slog(DEBUG,LOG_UTIL,"Key : %s", prefix, keys[i]);
         }
     }
+    free(keys);
 }
 void ht_destroy(hash_table *table)
 {

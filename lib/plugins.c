@@ -24,7 +24,7 @@ bool initWtx(wally_call_ctx** xwtx){
 void freeWtxElements(wally_call_ctx* wtx){
 //    wally_call_ctx *wtx = *xwtx;
     slog(DEBUG,LOG_PLUGIN,"Free WTX with %d elements", wtx->elements);
-    for(int i = 0; i < wtx->elements; i++){
+    for(int i = 0; i <= wtx->elements; i++){
 //        slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", i,wtx->name[i],wtx->param[i]);
         if(wtx->name[i]){
             free(wtx->name[i]);
@@ -68,8 +68,14 @@ bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
 bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     wally_call_ctx *wtx = *xwtx;
     int idx = wtx->elements;
+    if(wtx->name[idx] != NULL){
+	slog(DEBUG,LOG_PLUGIN,"WTX name not NULL!");
+    }
     wtx->name[idx]=strdup(fstr);
     if(params != NULL){
+    	if(wtx->param[idx] != NULL){
+		slog(DEBUG,LOG_PLUGIN,"WTX name not NULL!");
+    	}
         //slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
         wtx->param[idx]=strdup(params);
     } else {
@@ -194,9 +200,6 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
     pthread_mutex_unlock(&callMutex); 
     return ret;
 }
-//bool callCtx(wally_call_ctx *wtx){
-//    return callEx(wtx->name,NULL,wtx,CALL_TYPE_CTX,true);
-//}
 bool callWithData(char *funcname, void *ret, void *params){
     return callEx(funcname,ret,params,CALL_TYPE_PTR,true);
 }
@@ -317,6 +320,7 @@ int cleanupPlugins(void){
         // TODO : dlclose al handles in cleanup
         dlclose(handle);
     }
+    free(keys);
     return true;
 }
 
@@ -376,6 +380,7 @@ pluginHandler *pluginsInit(void){
     ph->cloud = false;
     ph->location = NULL;
     ph->transaction = false;
+    ph->texturePrio = NULL;
     initWtx(&ph->wtx);
 
     ph->funcMutex = SDL_CreateMutex();

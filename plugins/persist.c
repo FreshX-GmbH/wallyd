@@ -105,6 +105,7 @@ bool persistConfig(hash_table *configMap)
      }
      fprintf(fd,"\n");
      fclose(fd);
+     free(keys);
 
      FILE *output;
      output = popen (BIN_PERSIST, "r");
