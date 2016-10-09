@@ -27,10 +27,14 @@ function oninterval() {
 		 ' / loss '+Math.ceil((grow)/(1024*1024)*100)/100+'mb'+
 		 ' / gpm '+(mymem-lastmin)+
 		 ' / T '+div+'s';
-	wally.startTransaction();
+    	var tstat = ' Mem : '+Math.ceil((mymem/(1024*1024))*100)/100+'mb'+
+		 ' / L '+Math.ceil((grow)/(1024*1024)*100)/100+'mb'+
+		 ' / gpm '+(mymem-lastmin)+
+		 ' / T '+Math.ceil(div)+'s';
+	//wally.startTransaction();
         gui.clearTexture('memdbg');
-	wally.setText('memdbg','black','logfont',0,1,stat);
-	wally.commitTransaction();
+	wally.setText('memdbg','black','logfont',0,1,tstat);
+	//wally.commitTransaction();
 	log.error(stat);
     } catch(err) {
 	//log.error('Error in memdbg : '+err);

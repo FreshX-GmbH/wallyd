@@ -86,16 +86,19 @@ function renderScreen(context, tree, screen, data)
         }
    
         if(obj.type === 'image'){
-            //var res = curl.get(obj.path);
-            //if(res.body){
-            //   wally.writeFileSync('/tmp/test.png',res.body);
-            //   //gui.loadImage(screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255);
-            //}
-            //gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
-            //continue;
+	    if(!curl) {
+		continue;
+	    }
+            var res = curl.get(obj.path);
+            if(res.body){
+               wally.writeFileSync('/tmp/test.png',res.body);
+               //gui.loadImage(screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255);
+            }
+            gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
+            continue;
         }
         if(obj.type === 'line'){
-            //gui.drawLine(screen,X, Y, X + W, Y, 0);
+            gui.drawLine(screen,X, Y, X + W, Y, 0);
             continue;
 	}
 	// TODO
@@ -135,12 +138,12 @@ function renderScreen(context, tree, screen, data)
 	    //log.debug(obj);
             var fName = 'font'+H;
             var val = "";
-            //wally.loadFont(fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', H);
+            wally.loadFont(fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', H);
             if(value.match(/\$_./)){
                var destVal = parseString(value);
-              // gui.drawText(screen,X, Y, fName, color, destVal);
+               gui.drawText(screen,X, Y, fName, color, destVal);
             } else {
-              // gui.drawText(screen,X, Y, fName, color, value);
+               gui.drawText(screen,X, Y, fName, color, value);
             }
 	    continue;
 	}

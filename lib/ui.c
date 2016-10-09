@@ -118,11 +118,11 @@ bool uiLoop(void){
                   slog(DEBUG,LOG_SDL,"Threaded STR call to %s(%s)", funcName, param);
                   // ??
                   free(event.user.data2);
-                  //thr_func((void*)param);
+                  thr_func((void*)param);
                   break;
             case WALLY_CALL_NULL:
                   slog(DEBUG,LOG_SDL,"Threaded NULL call to %s()", funcName);
-                  //thr_func(NULL);
+                  thr_func(NULL);
                   break;
             case WALLY_CALL_PS:
                   slog(DEBUG,LOG_SDL,"Threaded PS call to %s(0x%x)", funcName, event.user.data2);
@@ -303,6 +303,7 @@ int createTextureEx(void *strTmp,bool isVideo){
 	slog(INFO,LOG_TEXTURE,"Texture %s already existing, replacing it");
 	destroyTexture(textureName);
    }
+   ht_dumpkeys(ph->baseTextures,"Textures : ");
 
    if(!getNumOrPercent(zS, 0, &z)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
@@ -623,6 +624,8 @@ bool sdlInit(void)
 	    SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
       SDL_GetWindowSize(ph->window, &w, &h);
       slog(DEBUG,LOG_SDL,"Redetermined display resolution : %dx%d",w, h);
+      ph->width=w;
+      ph->height=h;
       slog(DEBUG,LOG_SDL,"Window is at 0x%x.",ph->window);
       if ( ph->window == NULL || ph->window == 0x0 ) {
 	 slog(ERROR,LOG_SDL, "Failed to get/create window : %s ", SDL_GetError());
@@ -736,23 +739,52 @@ int loadFont(void *strTmp){
    char *file = strtok(NULL, " ");
    char *sStr = strtok(NULL, " ");
    int size;
-   // Already loaded
    if(ht_contains_simple(ph->fonts,name)){
-	return true;
+      slog(DEBUG,LOG_SDL,"Font %s already loaded",name);
+      free(str);
+      return true;
    }
    bool ret = getNumOrPercent(sStr,0,&size);
    if(!name || !file || !ret) {
       slog(ERROR,LOG_SDL,"Wrong parameters loadFont(name, file) : %s",str);
+      free(str);
       return false;
    }
    TTF_Font *f = TTF_OpenFont( file, size );
    if ( f == NULL ) {
       slog(ERROR, LOG_SDL, "Failed to load font : %s ",TTF_GetError());
+      free(str);
       return false;
    } else {
       slog(DEBUG, LOG_SDL, "Font: %s loaded",file);
       ht_insert_simple(ph->fonts, name, f);
+      free(str);
    }
+   return true;
+}
+
+int createColor(void *strTmp){
+   char *str = strdup(strTmp);
+   char *name = strtok(str, " ");
+   char *cS = strtok(NULL, " ");
+   char *aS = strtok(NULL, " ");
+   int col, alpha;
+   if(!name || !getNumHex(cS,&col) || !getNumHex(aS,&alpha)){
+      slog(DEBUG,LOG_SDL,"Wrong parameter createColor(name FFFFFF FF) : %s",str);
+      return false;
+   }
+   if(ht_contains_simple(ph->colors,name)){
+      slog(DEBUG,LOG_SDL,"Color %s already defined",name);
+      free(str);
+      return true;
+   }
+   SDL_Color *c=malloc(sizeof(Color));
+   hexToColor(col,c);
+   c->a = alpha;
+   ht_insert_simple(ph->colors,name,c);
+   ht_dumpkeys(ph->colors,NULL);
+   slog(DEBUG,LOG_SDL,"Created new color %s={%d,%d,%d} alpha = %d at 0x%x / PH : 0x%x",name,c->r,c->g,c->b,c->a,c,ph);
+   free(str);
    return true;
 }
 

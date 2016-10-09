@@ -128,9 +128,9 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
 {
    texInfo *TI = getTexture(name);
    if(!TI) { return false; }
-
+   errno = 0;
    SDL_Color *c = ht_get_simple(ph->colors,colorName);
-   if(!c) { 
+   if(!c && errno) { 
       slog(ERROR,LOG_SDL,"Color %s not defined",colorName);
       return false; 
    }
@@ -183,7 +183,7 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
 
    SDL_QueryTexture( texture, NULL, NULL, &dest.w, &dest.h );
 
-   slog(DEBUG,LOG_SDL,"setTexture(%s,{%d,%d,%d,%d)",name,x,y,dest.w,dest.h);
+   slog(TRACE,LOG_SDL,"setTexture(%s,{%d,%d,%d,%d)",name,x,y,dest.w,dest.h);
    addToTexture(TI, texture, &dest);
    renderActive(NULL);
    SDL_FreeSurface( surf );
@@ -191,26 +191,6 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
    ph->textureCount--;
    return true;
 }
-
-int createColor(void *strTmp){
-   char *str=strdup(strTmp);
-   char *name = strtok(str, " ");
-   char *cS = strtok(NULL, " ");
-   char *aS = strtok(NULL, " ");
-   int col, alpha;
-   if(!name || !getNumHex(cS,&col) || !getNumHex(aS,&alpha)){
-      slog(DEBUG,LOG_SDL,"Wrong parameter createColor(name FFFFFF FF) : %s",str);
-      return false;
-   }
-   SDL_Color *c=malloc(sizeof(Color));
-   hexToColor(col,c);
-   c->a = alpha;
-   slog(DEBUG,LOG_SDL,"Creating new color %s={%d,%d,%d} alpha = %d",name,c->r,c->g,c->b,c->a);
-   ht_insert_simple(ph->colors,name,c);
-   free(str);
-   return true;
-}
-
 
 int fillTexture(texInfo *TI, bool refresh)
 {
@@ -227,17 +207,13 @@ int fillTexture(texInfo *TI, bool refresh)
 }
 
 int clearTexture(void *str){
-   // MEM DEBUG
-   //return true;
-
-//   slog(DEBUG,LOG_SDL,"Clearing texture %s.",str);
-//   return fillTexture(getTexture(strtok(str, " ")),true);
+   slog(DEBUG,LOG_SDL,"Clearing texture %s.",str);
+   return fillTexture(getTexture(strtok(str, " ")),true);
 }
+
 int clearTextureNoPaint(void *name){
-   // MEM DEBUG
-   //return true;
-//   slog(DEBUG,LOG_SDL,"Clearing texture %s.",name);
-//   return fillTexture(getTexture(name),false);
+   slog(DEBUG,LOG_SDL,"Clearing texture %s.",name);
+   return fillTexture(getTexture(name),false);
 }
 
 int waitForTexture(void *str){
@@ -300,20 +276,26 @@ int setTextureAlpha(void *str){
 }
 
 
-int setTextureColor(void *str){
+int setTextureColor(void *strTmp){
+   char *str = strdup(strTmp);
    int colInt;
    texInfo *TI = getTexture(strtok(str, " "));
-   if(!TI) { return false; }
+   if(!TI) { free(str);
+	return false; 
+   }
    char *color = strtok(NULL, " ");
    if(color == NULL){
       slog(ERROR,LOG_SDL,"Wrong parameters setTextureColor(screen,hex) (%s).",str);
+      free(str);
       return false;
    }
    if(!getNumOrPercent(color,0,&colInt)){
       slog(ERROR,LOG_SDL,"Wrong parameters setTextureColor(screen,hex) (%s).",str);
+      free(str);
       return false;
    }
    hexToColor(colInt,TI->c);
+   free(str);
    return fillTexture(TI,true);
 }
 

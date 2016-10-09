@@ -40,6 +40,7 @@ bool utilInit(int _loglevel, int _logmask, int _logfilemask){
 
 char *replace(const char *src, const char *from, const char *to)
 {
+   if(!src || !from) return NULL;
    size_t size    = strlen(src) + 1;
    size_t fromlen = strlen(from);
    size_t tolen   = strlen(to);

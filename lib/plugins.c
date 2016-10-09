@@ -17,29 +17,34 @@ bool initWtx(wally_call_ctx** xwtx){
     memset(wtx,0,sizeof(wally_call_ctx));
     (*xwtx)->elements = 0;
     wtx->transaction = false;
+    pthread_mutex_init(&ph->wtxMutex,0);
     return true;
 }
 
 // Free the WTX and ALL its elements
 void freeWtxElements(wally_call_ctx* wtx){
+    int i=0;
 //    wally_call_ctx *wtx = *xwtx;
+    pthread_mutex_lock(&ph->wtxMutex);
     slog(DEBUG,LOG_PLUGIN,"Free WTX with %d elements", wtx->elements);
-    for(int i = 0; i < wtx->elements; i++){
+    for(i = 0; i < wtx->elements; i++){
         slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", i,wtx->name[i],wtx->param[i]);
         if(wtx->name[i]){
             free(wtx->name[i]);
             wtx->name[i] = NULL;
         } else {
-            slog(DEBUG,LOG_PLUGIN,"Element %d already freed!");
+            slog(DEBUG,LOG_PLUGIN,"Element %d already freed!",i);
         }
         if(wtx->param[i]){
             free(wtx->param[i]);
             wtx->param[i] = NULL;
         } else {
-            slog(DEBUG,LOG_PLUGIN,"Element parameter %d already freed!");
+            slog(DEBUG,LOG_PLUGIN,"Element parameter %d already freed!",i);
         }
     }
+    slog(DEBUG,LOG_PLUGIN,"Freed %d elements",i);
     wtx->elements = 0;
+    pthread_mutex_unlock(&ph->wtxMutex);
 }
 
 void * freeWtx(wally_call_ctx** xwtx){
@@ -67,15 +72,16 @@ bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
 
 bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     wally_call_ctx *wtx = *xwtx;
+    pthread_mutex_lock(&ph->wtxMutex);
     int idx = wtx->elements;
-    if(wtx->name[idx] != NULL){
-	slog(DEBUG,LOG_PLUGIN,"WTX name not NULL!");
-    }
+    //if(wtx->name[idx] != NULL){
+	//slog(DEBUG,LOG_PLUGIN,"WTX name not NULL!");
+    //}
     wtx->name[idx]=strdup(fstr);
     if(params != NULL){
-    	if(wtx->param[idx] != NULL){
-		slog(DEBUG,LOG_PLUGIN,"WTX param not NULL!");
-    	}
+    	//if(wtx->param[idx] != NULL){
+	//	slog(DEBUG,LOG_PLUGIN,"WTX param not NULL!");
+    	//}
         //slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
         wtx->param[idx]=strdup(params);
     } else {
@@ -84,6 +90,7 @@ bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     // also possible access
     (*xwtx)->elements = idx + 1;
     wtx->type[idx] = CALL_TYPE_STR;
+    pthread_mutex_unlock(&ph->wtxMutex);
     return true;
 }
 
@@ -93,11 +100,13 @@ bool callWtx(char *fstr, char *params){
         return callEx(ph->wtx->name[0],NULL,ph->wtx,CALL_TYPE_WTX,true);
     }
     if(ph->transaction == false) {
+        int ret;
+	slog(DEBUG,LOG_PLUGIN,"Single WTX Call, freeing old WTX");
         freeWtxElements(ph->wtx);
         ph->wtx->elements=1;
-        ph->wtx->name[0]=strdup(fstr);
-        ph->wtx->param[0]=strdup(params);
-        callEx(fstr,NULL,ph->wtx,CALL_TYPE_WTX,true);
+        ph->wtx->name[0] = strdup(fstr);
+        ph->wtx->param[0]= strdup(params);
+	callEx(fstr,NULL,ph->wtx,CALL_TYPE_WTX,true);
     } else {
         pushSimpleWtx(&ph->wtx, fstr, params);
     }
@@ -241,16 +250,16 @@ bool exportSync(const char *name, void *f){
 }
 
 void wally_put_function(const char *name, int threaded, wally_c_function f, int args){
-    char *ncopy = strdup(name);
-    assert(ncopy);
+    //char *ncopy = strdup(name);
+    //assert(ncopy);
     assert(ph);
     if(threaded == true){
        // TODO : free
-       exportThreaded(ncopy,f);
+       exportThreaded(name,f);
     } else {
-       slog(DEBUG,LOG_PLUGIN,"FKT_SYNC : %s (%d args)",ncopy,args);
+       slog(DEBUG,LOG_PLUGIN,"FKT_SYNC : %s (%d args)",name,args);
        // TODO : free
-       exportSync(ncopy,f);
+       exportSync(name,f);
     }
 }
 // our own try
@@ -402,8 +411,8 @@ pluginHandler *pluginsInit(void){
     ht_init(ph->functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->plugins, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->baseTextures, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->fonts, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->colors, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    ht_init(ph->fonts, HT_VALUE_CONST, 0.05);
+    ht_init(ph->colors, HT_VALUE_CONST, 0.05);
     ht_init(ph->configMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->configFlagsMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     return ph;

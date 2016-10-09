@@ -106,6 +106,7 @@ typedef struct{
     hash_table *configFlagsMap;
 
     void *funcMutex;
+    pthread_mutex_t wtxMutex;
     bool pluginLoaderDone;
     int pluginCount;
 

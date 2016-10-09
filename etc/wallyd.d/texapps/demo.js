@@ -63,11 +63,8 @@ function oninterval() {
 	var passed = 0;
         wally.startTransaction();
         gui.clearTextureNoPaint('main');
-        //gui.clearTextureNoPaint('main2');
         wallaby.renderScreen(context,context.privates,'main',dat);
-        //wallaby.renderScreen(context,context.privates,'main2',dat2);
         wally.render('main');
-        //wally.render('main2');
         wally.commitTransaction();
 	passed = d2.getTime()-date.getTime();//-3600*1000;
 	var d3 = new Date();
@@ -88,8 +85,6 @@ function oninterval() {
 	if(typeof(config.conn) !== 'undefined' && typeof(config.conn.host) !== 'undefined' ){
 		conn=config.conn.host;
 	}
-	var mymem = wally.getrss();
-	var grow = Math.ceil((mymem-memstartb)/passed);
     	var stat = 'WallyTV  v'+config.wally.release/1000+
 		 '   ***   Res: '+config.wally.width+'x'+config.wally.height+
 		 '   ***   Name: '+name+
@@ -97,10 +92,6 @@ function oninterval() {
 		 '   ***   Connected: '+conn+
 		 '   ***   Up: '+uts+
 		 '   ***   Render time: '+(fin-start)/1000+'s';
-	var mem = '   ***   Mem start: '+memstart+
-		 '   ***   Mem curr: '+Math.ceil((mymem/(1024*1024))*100)/100+'mb'+
-		 '   ***   Mem grow: '+grow+'b/s';
-	//log.error(mem);
     	wally.log(stat);
     } catch(err) {
 	log.error('ERROR: Show status failed : '+err);

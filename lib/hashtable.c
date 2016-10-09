@@ -123,7 +123,7 @@ void ht_dumpkeys(hash_table *table, char *prefix)
         if(prefix != NULL){
             slog(DEBUG,LOG_UTIL,"%s%s", prefix, keys[i]);
         } else {
-            slog(DEBUG,LOG_UTIL,"Key : %s", prefix, keys[i]);
+            slog(DEBUG,LOG_UTIL,"Key[%d] : %s (0x%x)",i, keys[i],keys[i]);
         }
     }
     free(keys);
@@ -272,7 +272,7 @@ void* ht_get_simple(hash_table *table, void *key){
     size_t size;
     void *val = ht_get(table,key,strlen(key)+1,&size);
     if(val == NULL){
-        slog(TRACE,LOG_UTIL,"Hashtable fail, key not found : %s",key);
+        slog(TRACE,LOG_UTIL,"Hashtable fail (errno = %d), key not found : %s",errno,key);
         return NULL;
     }
     return val;
@@ -467,7 +467,7 @@ hash_entry *he_create(int flags, void *key, size_t key_size, void *value,
 {
     hash_entry *entry = malloc(sizeof(*entry));
     if(entry == NULL) {
-        slog(DEBUG,LOG_UTIL,"Failed to create hash_entry\n");
+        slog(ERROR,LOG_UTIL,"Failed to create hash_entry");
         return NULL;
     }
 
@@ -478,7 +478,7 @@ hash_entry *he_create(int flags, void *key, size_t key_size, void *value,
     else {
         entry->key = malloc(key_size);
         if(entry->key == NULL) {
-            slog(DEBUG,LOG_UTIL,"Failed to create hash_entry\n");
+            slog(ERROR,LOG_UTIL,"Failed to create hash_entry");
             free(entry);
             return NULL;
         }
@@ -492,7 +492,7 @@ hash_entry *he_create(int flags, void *key, size_t key_size, void *value,
     else {
         entry->value = malloc(value_size);
         if(entry->value == NULL) {
-            slog(DEBUG,LOG_UTIL,"Failed to create hash_entry\n");
+            slog(ERROR,LOG_UTIL,"Failed to create hash_entry");
             free(entry->key);
             free(entry);
             return NULL;
@@ -501,6 +501,7 @@ hash_entry *he_create(int flags, void *key, size_t key_size, void *value,
     }
 
     entry->next = NULL;
+    //slog(TRACE,LOG_UTIL,"Added %s(0x%x) with 0x%x to hash",entry->key,entry->key,entry->value);
 
     return entry;
 }

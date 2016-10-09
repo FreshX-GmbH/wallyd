@@ -288,7 +288,7 @@ int c_drawLine(void *_str)
     int y2=atoi(y2Str);
     int color=strtol(cStr,0,16);
     hexToColor(color, &col);
-    slog(DEBUG,LOG_JS, "c_drawLine %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,x2,y2,col.r, col.g,col.b);
+    slog(TRACE,LOG_JS, "c_drawLine %s %d %d %d %d {%d,%d,%d}",texName,x1,y1,x2,y2,col.r, col.g,col.b);
     drawLine(texName, x1, y1, x2, y2, col);
     return 0;
 }
@@ -390,12 +390,10 @@ int c_drawText(void *_str)
   texInfo *TI = getTexture(texName);
   TTF_Font *font = ht_get_simple(ph->fonts,(void*)fontStr);
   if(!font){
-     slog(LVL_QUIET,ERROR,"Font named '%s' not loaded",fontStr);
+     slog(ERROR,LOG_SDL,"Font named '%s' not loaded",fontStr);
      return -1;
   }
   hexToColor(strtol(colStr,NULL,16), &col);
-  // MEM DEBUG
-  //return 0;
   SDL_Surface *surf = TTF_RenderUTF8_Blended( font, str, col );
   if(!surf) {
      slog(LVL_QUIET,ERROR,"Could not create FontSurface : %s",SDL_GetError());

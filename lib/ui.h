@@ -78,5 +78,6 @@ void hexToColor(int color, SDL_Color *c);
 texInfo *getTexture(const char *name);
 void **getTextureNamesByPrio(unsigned int *);
 int resetScreen(void *);
+int createColor(void *str);
 
 #endif

@@ -53,7 +53,6 @@ if(typeof uv.interface_addresses === 'function'){
 // This is called after the startVideo 
 // or immediately if startVideo==false
 
-
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
   try {
@@ -96,7 +95,6 @@ try{
 	screen.log('Waiting for network to get ready ('+count/10+').');
 	count++;
         var network = uv.interface_addresses();
-        //print(Object.keys(network));
         Object.keys(network).forEach(function(ifname){
           Object.keys(network[ifname]).forEach(function(addr){
             if(network[ifname][addr].internal === true)  return;
