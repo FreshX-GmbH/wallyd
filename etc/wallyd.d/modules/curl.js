@@ -1,6 +1,11 @@
 (function(){
 "use strict";
 
+if(typeof(CurlPrototype === "undefined")){
+	log.error("Curl plugin not available");
+	return undefined;
+}
+
 var curl = CurlPrototype.init();
 
 function request(url, body, headers) {
