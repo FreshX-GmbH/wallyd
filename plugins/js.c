@@ -77,6 +77,10 @@ int js_commitTransaction(duk_context *ctx) {
 
 int js_startTransaction(duk_context *ctx) {
    int ret;
+   if(ph->transaction == true){
+   	slog(ERROR,LOG_PLUGIN,"There is a transaction running. Could not start a new transaction.");
+	return 1;
+   }
    slog(DEBUG,LOG_PLUGIN,"Started a new transaction. Clearing WTX.");
    ph->transaction = true;
    ph->wtx->elements=0;

@@ -25,8 +25,8 @@ function oninterval() {
     	var stat = 'Mem Start: '+memstart+
 		 ' / curr '+Math.ceil((mymem/(1024*1024))*100)/100+'mb'+
 		 ' / loss '+Math.ceil((grow)/(1024*1024)*100)/100+'mb'+
-		 ' / grow/min '+(mymem-lastmin)+
-		 ' / Time '+div+'s';
+		 ' / gpm '+(mymem-lastmin)+
+		 ' / T '+div+'s';
 	wally.startTransaction();
         gui.clearTexture('memdbg');
 	wally.setText('memdbg','black','logfont',0,1,stat);
