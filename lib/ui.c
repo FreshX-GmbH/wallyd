@@ -62,6 +62,7 @@ bool uiLoop(void){
             continue;
         }
 #else
+	// agressive polling, increasing timeout up to 100 ms if not used
         int ret = SDL_PollEvent(&event);
         ph->uiAllCount++;
         if(ret == 0){
@@ -84,12 +85,15 @@ bool uiLoop(void){
            for(int i = 0; i < wtx->elements; i++){
                   slog(TRACE,LOG_PLUGIN,"WTX Call%d : %s(%s)", i, wtx->name[i], wtx->param[i]);
                   //thr_func(event.user.data2);
-                  void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,wtx->param[i]);
+                  void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,wtx->name[i]);
                   if(!thr_func){
-                      slog(WARN,LOG_PLUGIN,"Threaded function %s not defined (%d).",wtx->name[i],event.type);
-                      continue;
+                      void *(*thr_func)(void *) = ht_get_simple(ph->functions,wtx->name[i]);
+                      if(!thr_func){
+                      	  slog(WARN,LOG_PLUGIN,"Function %s not defined (%d).",wtx->name[i],event.type);
+                          continue;
+		      }
                   } 
-                  //thr_func((void*)wtx->param[i]);
+                  thr_func((void*)wtx->param[i]);
            }
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
                 SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
@@ -233,7 +237,6 @@ int renderActiveEx(void *startTex)
    if(startTex == NULL){
       start = true;
    }
-   return 0;
    TempTI = ph->tempTexture;
    SDL_SetRenderTarget(ph->renderer,TempTI->texture);
 //   SDL_RenderClear( ph->renderer );
@@ -245,7 +248,7 @@ int renderActiveEx(void *startTex)
       }
       if(start == false) continue;
       //slog(DEBUG,LOG_TEXTURE,"Key %d : %s",i,name);
-      TI = getTexture( name);
+      TI = getTexture( name );
       if(TI->active == true && TI->autorender == true){
           SDL_Rect *mr = TI->rect;
           if(mr == NULL || mr->w ==0 || mr->h == 0){
@@ -272,8 +275,6 @@ void renderActive(const char *startTex)
 //   renders and displays a texture on the Main Renderer
 void renderTexture(SDL_Texture *t, SDL_Rect *mr){
     slog(DEBUG,LOG_TEXTURE,"Display texture(0x%x,{%d,%d,%d,%d})",t, mr->x, mr->y, mr->w, mr->h);
-    // MEM DEBUG
-    return;
     if(mr == NULL || mr->w == 0 || mr->h == 0 || t == NULL){
        slog(DEBUG,LOG_TEXTURE,"Refusing to place invalid texture or texture has an invalid size.");
     } else {
@@ -288,51 +289,44 @@ int createTextureEx(void *strTmp,bool isVideo){
    int z=-1,x=-1, y=-1, w=-1, h=-1;
    unsigned int color = 0;
    char *r;
-
-   // TODO : Free!
-   texInfo *TI = malloc(sizeof(texInfo));
-   memset(TI,0,sizeof(texInfo));
-
-   if(isVideo == true){
-      TI->video = true;
-   }
-   TI->active = true;
-   TI->autorender = true;
+   texInfo *TI = NULL;
 
    char *textureName = strtok_r(str, " ",&r);
-   // Save a copy of the name into the TI
-   asprintf(&TI->name,"%s",textureName);
-
    char *zS = strtok_r(NULL, " ",&r);
+   char *xS = strtok_r(NULL, " ",&r);
+   char *yS = strtok_r(NULL, " ",&r);
+   char *wS = strtok_r(NULL, " ",&r);
+   char *hS = strtok_r(NULL, " ",&r);
+   char *cS = strtok_r(NULL, " ",&r);
+
+   if(getTexture(textureName) != NULL){
+	slog(INFO,LOG_TEXTURE,"Texture %s already existing, replacing it");
+	destroyTexture(textureName);
+   }
+
    if(!getNumOrPercent(zS, 0, &z)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    } else {
       slog(DEBUG,LOG_TEXTURE,"Z-Value : %d",z,&r);
    }
-   TI->z = z;
 
-   char *xS = strtok_r(NULL, " ",&r);
    if(!getNumOrPercent(xS, ph->width, &x)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    }
-   char *yS = strtok_r(NULL, " ",&r);
    if(!getNumOrPercent(yS, ph->height, &y)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    }
-   char *wS = strtok_r(NULL, " ",&r);
    if(!getNumOrPercent(wS, ph->width, &w)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    }
-   char *hS = strtok_r(NULL, " ",&r);
    if(!getNumOrPercent(hS, ph->height, &h)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
       return false;
    }
-   char *cS = strtok_r(NULL, " ",&r);
    if(!getNumHex(cS,&color)){
       slog(INFO,LOG_TEXTURE,"Texture color not given, using black.");
    }
@@ -344,8 +338,22 @@ int createTextureEx(void *strTmp,bool isVideo){
       h=ph->height;
    }
    if(w == 0 || h == 0){
-      slog(ERROR,LOG_TEXTURE,"Refusing to create texture %s with size %dx%d",TI->name,w,h);
+      slog(ERROR,LOG_TEXTURE,"Refusing to create texture %s with size %dx%d",textureName,w,h);
+      return false;
    }
+
+   // TODO : Free!
+   TI = malloc(sizeof(texInfo));
+   memset(TI,0,sizeof(texInfo));
+
+   if(isVideo == true){
+      TI->video = true;
+   }
+   TI->z = z;
+   TI->active = true;
+   TI->autorender = true;
+   TI->name = strdup(textureName);
+
    if(x!=-1 && y!=-1 && w!=-1 && h!=-1 && w != 0 && h != 0){
 
       TI->c = malloc(sizeof(SDL_Color));
@@ -427,8 +435,22 @@ int setTextureActive(void *s,bool active){
 int hideTexture(void *a){
    return setTextureActive(a,false);
 }
+
 int showTexture(void *a){
    return setTextureActive(a,true);
+}
+
+int replaceTexture(void *name,texInfo *_TI){
+   texInfo *TI; // = (texInfo *)_TI;
+   TI = getTexture(name);
+   if(!TI) {
+      slog(WARN,LOG_TEXTURE,"Texture %s not found.",name);
+      return false;
+   }
+   SDL_DestroyTexture(TI->texture);
+   TI->texture = _TI->texture;
+   slog(DEBUG,LOG_TEXTURE,"Destroyed texture %s",name);
+   return true;
 }
 
 int destroyTexture(void *s){

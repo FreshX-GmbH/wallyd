@@ -24,8 +24,8 @@ bool initWtx(wally_call_ctx** xwtx){
 void freeWtxElements(wally_call_ctx* wtx){
 //    wally_call_ctx *wtx = *xwtx;
     slog(DEBUG,LOG_PLUGIN,"Free WTX with %d elements", wtx->elements);
-    for(int i = 0; i <= wtx->elements; i++){
-//        slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", i,wtx->name[i],wtx->param[i]);
+    for(int i = 0; i < wtx->elements; i++){
+        slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", i,wtx->name[i],wtx->param[i]);
         if(wtx->name[i]){
             free(wtx->name[i]);
             wtx->name[i] = NULL;
@@ -74,7 +74,7 @@ bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     wtx->name[idx]=strdup(fstr);
     if(params != NULL){
     	if(wtx->param[idx] != NULL){
-		slog(DEBUG,LOG_PLUGIN,"WTX name not NULL!");
+		slog(DEBUG,LOG_PLUGIN,"WTX param not NULL!");
     	}
         //slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
         wtx->param[idx]=strdup(params);
@@ -88,7 +88,7 @@ bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
 }
 
 bool callWtx(char *fstr, char *params){
-    // commit
+    // a null call is a commit
     if(fstr == NULL && params == NULL){
         return callEx(ph->wtx->name[0],NULL,ph->wtx,CALL_TYPE_WTX,true);
     }
@@ -165,10 +165,10 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
             default:
                 break;
         }
-        // The thread loop will free(funcName);
+        // We give up the ownership of the funcName copy + and the params copy here
+        // The ui loop will free this later
         event.user.data1=funcName;
         event.user.data2=params;
-        // We give up the ownership of the funcName copy + and the params copy here
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
         if(waitThread == true){
@@ -177,6 +177,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
             if(ph->transaction == true){
                 timeout = SDLWAITTIMEOUT_TRANSACTION;
             } else {
+		// TODO : 
                 timeout = SDLWAITTIMEOUT_TRANSACTION;
             }
             slog(TRACE,LOG_PLUGIN,"Wait %d ms until %s has finished.",timeout,funcName);
@@ -196,6 +197,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         }
         params = paramsTmp;
         ret = (*func)(params);
+	free(funcName);
     }
     pthread_mutex_unlock(&callMutex); 
     return ret;

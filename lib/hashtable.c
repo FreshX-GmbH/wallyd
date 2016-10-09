@@ -271,7 +271,7 @@ void* ht_get_simple(hash_table *table, void *key){
     size_t size;
     void *val = ht_get(table,key,strlen(key)+1,&size);
     if(val == NULL){
-        //slog(TRACE,LOG_UTIL,"Hashtable fail, key not found : %s",key);
+        slog(TRACE,LOG_UTIL,"Hashtable fail, key not found : %s",key);
         return NULL;
     }
     return val;

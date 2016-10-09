@@ -137,7 +137,7 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
 
    // DEBUG memory leak
    //if(strncmp(name,"log",3) != 0) 
-   return true;
+   //return true;
 
    TTF_Font *font = ht_get_simple(ph->fonts,fontName);
    if(!font){
@@ -145,9 +145,8 @@ bool setTextEx(char *name, int x, int y,int rotation, const char *text, char *fo
       return false;
    }
    SDL_Rect dest = {x,y,0,0};
-   // TODO : Implement roto
+   // TODO : Implement roto globally
    SDL_Surface *rsurf,*surf;
-
 
    slog(DEBUG,LOG_SDL,"Rendering text into surface with rot %d",rotation);
    switch(textType){
@@ -229,14 +228,14 @@ int fillTexture(texInfo *TI, bool refresh)
 
 int clearTexture(void *str){
    // MEM DEBUG
-   return true;
+   //return true;
 
 //   slog(DEBUG,LOG_SDL,"Clearing texture %s.",str);
 //   return fillTexture(getTexture(strtok(str, " ")),true);
 }
 int clearTextureNoPaint(void *name){
    // MEM DEBUG
-   return true;
+   //return true;
 //   slog(DEBUG,LOG_SDL,"Clearing texture %s.",name);
 //   return fillTexture(getTexture(name),false);
 }

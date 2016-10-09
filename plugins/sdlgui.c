@@ -395,7 +395,7 @@ int c_drawText(void *_str)
   }
   hexToColor(strtol(colStr,NULL,16), &col);
   // MEM DEBUG
-  return 0;
+  //return 0;
   SDL_Surface *surf = TTF_RenderUTF8_Blended( font, str, col );
   if(!surf) {
      slog(LVL_QUIET,ERROR,"Could not create FontSurface : %s",SDL_GetError());
@@ -485,7 +485,7 @@ void drawLine(const char *textureName, int x1, int y1, int x2, int y2, SDL_Color
 //   }
 //    SDL_SetRenderTarget(ph->renderer,TI->texture);
     // MEM DEBUG
-    return;
+   // return;
     SDL_SetRenderDrawColor(ph->renderer,col.r,col.g,col.b,0xff);
     SDL_RenderDrawLine(ph->renderer, x1, y1, x2, y2 );
 //    SDL_SetRenderTarget(ph->renderer,NULL);
