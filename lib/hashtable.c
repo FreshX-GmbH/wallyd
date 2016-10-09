@@ -6,6 +6,7 @@
 #include "hashtable.h"
 #include "hashfunc.h"
 #include "util.h"
+#include <errno.h>
 
 #ifdef __WITH_MURMUR
 #include "murmur.h"
@@ -257,7 +258,7 @@ void* ht_get(hash_table *table, void *key, size_t key_size, size_t *value_size)
             entry = entry->next;
         }
     }
-
+    errno = 1;
     return NULL;
 }
 
