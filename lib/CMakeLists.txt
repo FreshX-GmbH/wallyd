@@ -4,6 +4,7 @@ set(LIB_SRC util.c
     plugins.c hashtable.c
     sys.c memfs.c murmur.c
     slog.c getrssmem.c ui.c
+    pqueue.c
 )
 
 add_library(wally SHARED ${LIB_SRC})
