@@ -78,6 +78,13 @@ bool uiLoop(void){
         ph->uiOwnCount++;
         funcName = strdup(event.user.data1);
 	free(event.user.data1);
+        Node *n = priqueue_pop(ph->queue);
+        if(n){
+         slog(DEBUG,LOG_PLUGIN,"Popped %s from queue with prio %d (num %d)",n->data->data, n->priority, n->index);
+         priqueue_node_free(ph->queue,n);
+        } else {
+         slog(ERROR,LOG_PLUGIN,"Popped nothing.");
+        }
 
         if(event.type == WALLY_CALL_WTX){
            wtx = event.user.data2;

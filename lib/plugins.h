@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include "default.h"
 #include "hashtable.h"
+#include "pqueue.h"
 #include <duktape.h>
 
 #define WALLY_ASSERT_PH_VALID(ph) do { \
@@ -31,6 +32,11 @@
 #define WALLY_CALL_NULL (WALLY_EVENT+CALL_TYPE_NULL)
 #define WFUNC_THRD true
 #define WFUNC_SYNC false
+
+#define URGENT_PRIO     2 
+#define HIGH_PRIO       5
+#define DEFAULT_PRIO    10
+#define LOW_PRIO        15
 
 typedef struct wally_call_ctx{
     char *name[WTX_SIZE];
@@ -65,6 +71,7 @@ typedef struct{
     bool disableVideoPQ;
     bool disableVideoDisplay;
     bool disableVideoAfterFinish;
+    Priqueue *queue;
 
     duk_context *ctx;
 

@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2015 Mike Taghavi (mitghi) <mitghi@me.com>
+Copyright (c) 2016 Mike Taghavi (mitghi) <mitghi@me.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+
+
 #ifndef MHEAP_H
 #define MHEAP_H
-#endif
+
+#include <stdbool.h>
 
 #define MHEAP_API
 typedef struct _data Data;
@@ -37,9 +40,10 @@ struct _data {
 };
 
 struct _node {
-  unsigned int priority;
+  uintptr_t priority;
   unsigned int index;
   struct _data *data;
+  struct _node *next;
 };
 
 struct _heap {
@@ -65,7 +69,10 @@ Priqueue *
 priqueue_initialize(int);
 
 void
-priqueue_insert(Priqueue *, Data *, int);
+priqueue_insert(Priqueue *, Data *, uintptr_t);
+
+void
+priqueue_insert_ptr(Priqueue *, void *, int, uintptr_t);
 
 Node *
 priqueue_pop(Priqueue *);
@@ -75,3 +82,11 @@ priqueue_free(Priqueue *);
 
 void
 priqueue_node_free(Priqueue *, Node *);
+
+Priqueue *
+priqueue_popall(Priqueue *);
+
+void
+priqueue_insertraw(Priqueue *, Node *);
+  
+#endif

@@ -178,6 +178,8 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         // The ui loop will free this later
         event.user.data1=funcName;
         event.user.data2=params;
+        slog(DEBUG,LOG_PLUGIN,"Added %s to the queue",funcName);
+        priqueue_insert_ptr(ph->queue,strdup(funcName),0, DEFAULT_PRIO);
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
         if(waitThread == true){
@@ -332,6 +334,7 @@ int cleanupPlugins(void){
         dlclose(handle);
     }
     free(keys);
+    free(ph->queue);
     return true;
 }
 
@@ -415,6 +418,7 @@ pluginHandler *pluginsInit(void){
     ht_init(ph->colors, HT_VALUE_CONST, 0.05);
     ht_init(ph->configMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->configFlagsMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    ph->queue = priqueue_initialize(512);
     return ph;
 }
 

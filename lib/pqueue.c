@@ -1,102 +1,143 @@
 /*
-The MIT License (MIT)
+  The MIT License (MIT)
 
-Copyright (c) 2015 Mike Taghavi (mitghi) <mitghi@me.com>
+  Copyright (c) 2016 Mike Taghavi (mitghi) <mitghi@me.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
 */
 
+
+#ifndef PQUEUE_H_
+#define PQUEUE_H_
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
 #include <assert.h>
-
+#include <stdint.h>
+#include <math.h>
 #include "pqueue.h"
 
 #define GAP 2
 
-#define MPANIC(x) ; assert(x != NULL)
+#define MPANIC(x)	; assert(x != NULL)
+#define PQLOCK(heap)	int mutex_status = pthread_mutex_lock(heap); if (mutex_status != 0) goto error
+#define PQUNLOCK(heap)	pthread_mutex_unlock(heap)
 
-static void insert_node(Priqueue *heap, Node* node);
-static Node* pop_node(Priqueue *heap);
-static void swap_node(Priqueue *heap, unsigned int a, unsigned int b);
+static void		insert_node(Priqueue *heap, Node* node);
+static Node*		pop_node(Priqueue *heap);
+static void		swap_node(Priqueue *heap, unsigned int a, unsigned int b);
+static Priqueue*	popall(Priqueue *heap);
+
 
 MHEAP_API Priqueue* priqueue_initialize(int initial_length){
-  unsigned int mutex_status;
+  int mutex_status;
   
-  Priqueue *heap = (Priqueue *) malloc(sizeof(Priqueue)) MPANIC(heap);  
-  const size_t hsize = initial_length * sizeof(*heap->array);
+  Priqueue	*heap  = malloc(sizeof(*heap)) MPANIC(heap);  
+  const size_t	 hsize = initial_length * sizeof(*heap->array);
 
   mutex_status = pthread_mutex_init(&(heap->lock), NULL);
   if (mutex_status != 0) goto error;
   
-  heap->head = NULL;
+  heap->head	  = NULL;
   heap->heap_size = initial_length;
-  heap->occupied = 0;
-  heap->current = 1;
-  heap->array = malloc(hsize) MPANIC(heap->array);
+  heap->occupied  = 1;
+  heap->current	  = 1;
+  heap->array	  = malloc(hsize) MPANIC(heap->array);
 
   memset(heap->array, 0x00, hsize);
 
   return heap;
-  
- error:
-  free(heap);
 
+error:
+  free(heap);
   return NULL;
 }
 
 static MHEAP_API MHEAPSTATUS realloc_heap(Priqueue *heap){
 
-  if (heap->occupied >= heap->heap_size){
+  if (heap->occupied == heap->heap_size){
     const size_t arrsize = sizeof(*heap->array);
     
-    void **resized_heap;
-    resized_heap = realloc(heap->array, (2 * heap->heap_size) * arrsize);
+    Node **resized_heap;
+    resized_heap = realloc(heap->array, ((2 * heap->heap_size)+1) * arrsize);
+
     if (resized_heap != NULL){
       heap->heap_size *= 2;
-      heap->array = (Node**) resized_heap;
-      memset( (heap->array + heap->occupied + 1) , 0x00, (heap->heap_size / GAP) * arrsize );
+      heap->array      = (Node**) resized_heap;
+
+      for(int i = heap->current+1; i < heap->heap_size; i++){
+	*(heap->array+i) = NULL;
+      }
+      
       return MHEAP_OK;
-    } else return MHEAP_REALLOCERROR;
+      
+    } else{
+      return MHEAP_REALLOCERROR;
+    }
   }
 
   return MHEAP_NOREALLOC;
 }
 
 
-MHEAP_API void priqueue_insert(Priqueue *heap, Data *data, int priority){
-
-  Node *node = (Node *) malloc(sizeof(Node)) MPANIC(node);
+MHEAP_API void priqueue_insert(Priqueue *heap, Data *data, uintptr_t priority){
+  Node	*node	 = malloc(sizeof(*node)) MPANIC(node);
   node->priority = priority;
-  node->data = data;
+  node->data	 = data;
 
-  pthread_mutex_lock(&(heap->lock));
-  insert_node(heap,node);
-  pthread_mutex_unlock(&(heap->lock));
+
+  PQLOCK(&(heap->lock));
+  insert_node(heap, node);
+  PQUNLOCK(&(heap->lock));
+    
+  return;
+  
+error:
+  node->data = NULL;
+  free(node);  
+}
+
+MHEAP_API void priqueue_insert_ptr(Priqueue *heap, void *data, int type, uintptr_t priority){
+  Data *d = malloc(sizeof(Data)) MPANIC(d);
+  d->data = data;
+  d->type = type;
+  priqueue_insert(heap, d, priority);
+}
+
+MHEAP_API void priqueue_insertraw(Priqueue *heap, Node *data){
+
+  PQLOCK(&(heap->lock));  
+  insert_node(heap, data);
+  PQUNLOCK(&(heap->lock));
+
+error:
+  return;
 }
 
 static void insert_node(Priqueue *heap, Node* node){
-
+  
   if (heap->current == 1 && heap->array[1] == NULL){
-    heap->head = node;
-    heap->array[1] = node;
+
+    heap->head		  = node;
+    heap->array[1]	  = node;
     heap->array[1]->index = heap->current;
     heap->occupied++;
     heap->current++;
@@ -104,30 +145,35 @@ static void insert_node(Priqueue *heap, Node* node){
     return;
   }
 
-  if(heap->occupied >= heap->heap_size) {
+  if(heap->occupied == heap->heap_size) {
+
     unsigned int realloc_status = realloc_heap(heap);
     assert(realloc_status == MHEAP_OK);
   }
   
   if(heap->occupied <= heap->heap_size){
-    node->index = heap->current;
+
+
+    node->index		       = heap->current;
     heap->array[heap->current] = node;
+    
+    int parent = heap->current / GAP;
 
-    int parent = (heap->current / GAP);
+    if (heap->array[parent] && heap->array[parent]->priority < node->priority){
 
-    if (heap->array[parent]->priority < node->priority){
       heap->occupied++;
       heap->current++;
-      int depth = heap->current / GAP;
+      
+      int depth	   = heap->current / GAP;
       int traverse = node->index;
       
       while(depth >= 1){
 	
 	if (traverse == 1) break;
-	unsigned int parent = (traverse / GAP);
+	unsigned int parent = traverse / GAP;
 	
         if(heap->array[parent]->priority < heap->array[traverse]->priority){
-	  swap_node(heap, parent , traverse);
+	  swap_node(heap, parent , traverse);	  
           traverse = heap->array[parent]->index;
         }
 	depth --;
@@ -138,54 +184,65 @@ static void insert_node(Priqueue *heap, Node* node){
       heap->current++;
     }
   }
+
 }
 
 void swap_node(Priqueue *heap, unsigned int parent, unsigned int child){
   Node *tmp = heap->array[parent];
 
-  heap->array[parent] = heap->array[child];
+  heap->array[parent]	     = heap->array[child];
   heap->array[parent]->index = tmp->index;
 
-  heap->array[child] = tmp;
+  heap->array[child]	    = tmp;
   heap->array[child]->index = child;
   
 }
 
 MHEAP_API Node *priqueue_pop(Priqueue *heap){
   Node *node = NULL;
-  
-  pthread_mutex_lock(&(heap->lock));
+
+  PQLOCK(&(heap->lock));
   node = pop_node(heap);
-  pthread_mutex_unlock(&(heap->lock));
+  PQUNLOCK(&(heap->lock));
 
   return node;
+
+error:
+  return NULL;
+  
 }
 
 static Node *pop_node(Priqueue *heap){
-  Node *node = NULL;
-  unsigned int i;
-  unsigned int depth;
+  Node		*node = NULL;
+  unsigned int	 i;
+  unsigned int	 depth;
 
   if (heap->current == 1) return node;
   
   else if (heap->current >= 2 ){
-    node = heap->array[1];
-    heap->array[1] = heap->array[heap->current - 1];
-    heap->current -= 1;
+    node			   = heap->array[1];
+    heap->array[1]		   = heap->array[heap->current - 1];
+    heap->array[heap->current - 1] = NULL;
+    
+    if (heap->array[1] != NULL) heap->array[1]->index = 1;
+    
+    heap->current  -= 1;
     heap->occupied -= 1;
     
     depth = (heap->current -1) / 2;
 
     for(i = 1; i<=depth; i++){
+      if (!(heap->array[i] && (heap->array[i * GAP] && heap->array[(i * GAP)+1]) )) continue;
       
       if (heap->array[i]->priority < heap->array[i * GAP]->priority ||
 	  heap->array[i]->priority < heap->array[(i * GAP)+1]->priority){
 	
-	unsigned int biggest = heap->array[i * GAP]->priority > heap->array[(i * GAP)+1]->priority ?
-	  heap->array[(i * GAP)]->index  :
+	unsigned int max = heap->array[i * GAP]->priority > heap->array[(i * GAP)+1]->priority ?
+	  heap->array[(i * GAP)]->index :
 	  heap->array[(i * GAP)+1]->index;
 
-	swap_node(heap,i,biggest);
+	swap_node(heap, i, max);
+	
       }
     }
   }
@@ -193,19 +250,53 @@ static Node *pop_node(Priqueue *heap){
   return node;
 }
 
-MHEAP_API void priqueue_free(Priqueue *heap){  
+MHEAP_API void priqueue_free(Priqueue *heap){
   if (heap->current >= 2 ) {
     unsigned int i;
-    for (i = 1; i <= heap->current; i++) priqueue_node_free(heap,heap->array[i]);
+    for (i = 1; i < heap->current; i++) priqueue_node_free(heap,heap->array[i]);
   }
-  
-  free(heap->head);
+
   free(*heap->array);
   free(heap->array);
   free(heap);
 }
 
-MHEAP_API void priqueue_node_free(Priqueue *heap,Node *node){
-  if (node != NULL) free(node->data->data);
-  free(node);  
+MHEAP_API void priqueue_node_free(Priqueue *heap, Node *node){
+  if (node != NULL) {
+    free(node->data->data);
+    free(node);
+  }
 }
+
+static Priqueue* popall(Priqueue *heap){
+  Priqueue *result = priqueue_initialize(heap->heap_size);
+
+  Node* item = priqueue_pop(heap);
+
+  while(item != NULL){
+    item = priqueue_pop(heap);
+    
+    if(item != NULL) {
+      priqueue_insertraw(result, item);
+    }    
+  }
+  
+  return result;  
+}
+
+MHEAP_API Priqueue* priqueue_popall(Priqueue *heap){
+  Priqueue *new_heap = NULL;  
+  
+  PQLOCK(&(heap->lock));
+  new_heap = popall(heap);
+  PQUNLOCK(&(heap->lock));
+
+  return new_heap;
+
+error:
+  return NULL;
+
+}
+
+
+#endif

@@ -16,6 +16,7 @@
 
 #include "plugins.h"
 #include "util.h"
+#include "pqueue.h"
 
 typedef struct Color
 {
