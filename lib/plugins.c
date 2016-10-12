@@ -26,7 +26,7 @@ void freeWtxElements(wally_call_ctx* wtx){
     int elements = wtx->elements, count = 0;
 //    wally_call_ctx *wtx = *xwtx;
     slog(DEBUG,LOG_PLUGIN,"Free WTX with %d elements", wtx->elements);
-    for(; elements > 0; elements--){
+    for(; elements >= 0; elements--){
         slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", elements,wtx->name[elements],wtx->param[elements]);
         if(wtx->name[elements]){
             count++;
@@ -387,6 +387,7 @@ pluginHandler *pluginsInit(void){
     ph->disableVideo = false;
     ph->disableAudio = false;
     ph->SDL = false;
+    ph->vsync = true;
     ph->playVideo = false;
     ph->broadcomInit = false;
     ph->daemonizing = true;

@@ -104,7 +104,7 @@ bool uiLoop(void){
            }
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
                 SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
-           }
+	   }
            freeWtxElements(wtx);
 	   free(funcName);
            continue;
@@ -652,11 +652,11 @@ bool sdlInit(void)
    	slog(INFO,LOG_SDL,"Driver %d : %s",i,drinfo.name );
    }
 
-#ifdef WALLY_VSYNC
-   ph->renderer = SDL_CreateRenderer( ph->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC );
-#else
-   ph->renderer = SDL_CreateRenderer( ph->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE );
-#endif
+   if(ph->vsync == true){
+       ph->renderer = SDL_CreateRenderer( ph->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC );
+   } else {
+       ph->renderer = SDL_CreateRenderer( ph->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE );
+   }
 
    if ( ph->renderer == NULL ) {
       slog(ERROR,LOG_SDL,"Failed to create renderer %s ", SDL_GetError());

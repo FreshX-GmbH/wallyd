@@ -66,6 +66,7 @@ function oninterval() {
         wallaby.renderScreen(context,context.privates,'main',dat);
         wally.render('main');
         wally.commitTransaction();
+
 	passed = d2.getTime()-date.getTime();//-3600*1000;
 	var d3 = new Date();
 	var fin = d3.getTime();

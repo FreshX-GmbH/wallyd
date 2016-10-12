@@ -71,6 +71,7 @@ typedef struct{
     bool disableVideoPQ;
     bool disableVideoDisplay;
     bool disableVideoAfterFinish;
+    bool vsync;
     Priqueue *queue;
 
     duk_context *ctx;

@@ -275,6 +275,9 @@ void initializeConfig(void){
     if(ht_get_simple(ph->configMap,"ssdp") != NULL && strncmp(ht_get_simple(ph->configMap,"ssdp"),"true",4) == 0) { 
 	ph->ssdp = true; 
     }
+    if(ht_get_simple(ph->configMap,"novsync") != NULL && strncmp(ht_get_simple(ph->configMap,"novsync"),"true",4) == 0) { 
+	ph->vsync = false; 
+    }
     if(ht_get_simple(ph->configMap,"logfile") != NULL) { 
         ph->logfileHandle = openLogfile(ht_get_simple(ph->configMap,"logfile"));
     }
