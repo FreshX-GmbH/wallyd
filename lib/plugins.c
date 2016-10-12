@@ -17,32 +17,32 @@ bool initWtx(wally_call_ctx** xwtx){
     memset(wtx,0,sizeof(wally_call_ctx));
     (*xwtx)->elements = 0;
     wtx->transaction = false;
-    pthread_mutex_init(&ph->wtxMutex,0);
     return true;
 }
 
 // Free the WTX and ALL its elements
 void freeWtxElements(wally_call_ctx* wtx){
-    int i=0;
-//    wally_call_ctx *wtx = *xwtx;
     pthread_mutex_lock(&ph->wtxMutex);
+    int elements = wtx->elements, count = 0;
+//    wally_call_ctx *wtx = *xwtx;
     slog(DEBUG,LOG_PLUGIN,"Free WTX with %d elements", wtx->elements);
-    for(i = 0; i < wtx->elements; i++){
-        slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", i,wtx->name[i],wtx->param[i]);
-        if(wtx->name[i]){
-            free(wtx->name[i]);
-            wtx->name[i] = NULL;
+    for(; elements > 0; elements--){
+        slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", elements,wtx->name[elements],wtx->param[elements]);
+        if(wtx->name[elements]){
+            count++;
+            free(wtx->name[elements]);
+            wtx->name[elements] = NULL;
         } else {
-            slog(DEBUG,LOG_PLUGIN,"Element %d already freed!",i);
+            slog(DEBUG,LOG_PLUGIN,"Element %d already freed!",elements);
         }
-        if(wtx->param[i]){
-            free(wtx->param[i]);
-            wtx->param[i] = NULL;
+        if(wtx->param[elements]){
+            free(wtx->param[elements]);
+            wtx->param[elements] = NULL;
         } else {
-            slog(DEBUG,LOG_PLUGIN,"Element parameter %d already freed!",i);
+            slog(DEBUG,LOG_PLUGIN,"Element parameter %d already freed!",elements);
         }
     }
-    slog(DEBUG,LOG_PLUGIN,"Freed %d elements",i);
+    slog(DEBUG,LOG_PLUGIN,"Freed %d elements",count);
     wtx->elements = 0;
     pthread_mutex_unlock(&ph->wtxMutex);
 }
@@ -179,7 +179,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         event.user.data1=funcName;
         event.user.data2=params;
         slog(DEBUG,LOG_PLUGIN,"Added %s to the queue",funcName);
-        priqueue_insert_ptr(ph->queue,strdup(funcName),0, DEFAULT_PRIO);
+        //priqueue_insert_ptr(ph->queue,strdup(funcName),0, DEFAULT_PRIO);
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
         if(waitThread == true){
@@ -396,6 +396,7 @@ pluginHandler *pluginsInit(void){
     ph->transaction = false;
     ph->texturePrio = NULL;
     initWtx(&ph->wtx);
+    pthread_mutex_init(&ph->wtxMutex,0);
 
     ph->funcMutex = SDL_CreateMutex();
     ph->functionWaitConditions= malloc(sizeof(hash_table));
