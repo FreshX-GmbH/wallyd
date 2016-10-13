@@ -33,6 +33,7 @@ function oninterval() {
 	//wally.startTransaction();
         gui.clearTexture('memdbg');
 	wally.setText('memdbg','black','logfont',0,0,tstat);
+	wally.render('memdbg');
 	//wally.commitTransaction();
 	log.error(stat);
     } catch(err) {

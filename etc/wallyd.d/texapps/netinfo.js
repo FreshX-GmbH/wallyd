@@ -24,6 +24,7 @@ function oninterval() {
 	var tstat = "IP: "+config.network.ip+" / Name : "+name+" / Server : "+server;
         gui.clearTexture('netinfo');
 	wally.setText('netinfo','black','logfont',0,1,tstat);
+	wally.render('netinfo');
 	log.error(config);
     } catch(err) {
 	log.error('Error in netinfo : '+err);

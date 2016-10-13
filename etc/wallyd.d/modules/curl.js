@@ -21,6 +21,10 @@ function request(url, body, headers) {
   curl.setopt("url", url);
   curl.setopt("followlocation", true);
 
+  // TODO : configurable
+  curl.setopt("ssl-verifypeer",false);
+  // curl.setopt("ssl-verifyhost",2L);
+
   curl.setopt("writefunction", function (chunk) {
     chunks.push(chunk);
     length += chunk.length;
@@ -116,7 +120,8 @@ function post(url, body, headers) {
 }
 
 function basicauth(user, password){
-	return [{BasicAuth: Duktape.enc('base64',user+":"+password)}];
+	return ["Authorization: Basic "+Duktape.enc('base64',user+":"+password)];
+	//return ["BasicAuth: "+Duktape.enc('base64',user+":"+password)];
 }
 
 return { 

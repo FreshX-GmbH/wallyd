@@ -1,10 +1,11 @@
 'use strict';
 
-var wally, wallaby, gui;
+var wally, wallaby, gui, data, header;
+
 // for direct test in nucleus
 if(typeof(Wally) === 'undefined')
 {
-        var context = nucleus.dofile('modules/compat.js');
+        context = nucleus.dofile('modules/compat.js');
 	gui = wally = context.wally;
         nucleus.uv.run();
 } else  {
@@ -20,53 +21,67 @@ var user="dashing";
 var password="icinga2ondashingr0xx";
 var host="monitor.int.freshx.de";
 var port=5665;
+var ukurl="https://"+host+":"+port+"/v1/objects/services?attrs=display_name&joins=host.address&filter=service.state==3";
 var errurl="https://"+host+":"+port+"/v1/objects/services?attrs=display_name&joins=host.address&filter=service.state==2";
 var warnurl="https://"+host+":"+port+"/v1/objects/services?attrs=display_name&joins=host.address&filter=service.state==1";
 var okurl="https://"+host+":"+port+"/v1/objects/services?attrs=display_name&joins=host.address&filter=service.state==0";
 var file = config.wally.basedir+'/etc/wallyd.d/tests/icinga.json';
 var loopDelay = 1000;
-var data,header;
+
+context.privates = {};
 
 function oninterval() {
    log.debug('Render wallaby');
-   var err  = curl.get(errurl,header);
-   var warn = curl.get(warnurl,header);
-   var ok   = curl.get(okurl,header);
-   if(err.body){
-	log.info(err.body);
+   var eObj,wObj,oObj,uObj;
+   try{
+        var e  = curl.get(ukurl ,header);
+        if(e.body){
+	   uObj = JSON.parse(e.body);
+	   log.info("Unknown Object parsed",uObj.results.length);
+	} 
+        context.privates.ukn = uObj.results.length;
+   }catch(e){
+	   log.error("Could not parse icinga err response : "+e);
    }
-   if(warn.body){
-	log.info(warn.body);
+   try{
+        var e  = curl.get(errurl ,header);
+        if(e.body){
+	   eObj = JSON.parse(e.body);
+	   log.info("Err Object parsed",eObj.results.length);
+	} 
+        context.privates.down = eObj.results.length;
+   }catch(e){
+	   log.error("Could not parse icinga err response : "+e);
    }
-   if(ok.body){
-	log.info(ok.body);
+   try{
+      var w = curl.get(warnurl,header);
+      if(w.body){
+	   wObj = JSON.parse(w.body);
+	   log.info("Warn Object parsed",wObj.results.length);
+      } else {
+	   log.error("No valid response from Server");
+      }
+      context.privates.warn = wObj.results.length;
+   } catch(e){
+	   log.error("Could not parse icinga warn response : "+e);
    }
-   //if(context.co2 > 800) {
-   //      for(var i = 0; i < data.objects.length; i++){
-   //          var obj = data.objects[i];
-   //          if(obj.value === "CO2" || obj.value === "$_.co2; ppm"){
-   //              if(obj.style.fontColor){
-   //                 if(context.privates.co2 > 1200) {
-   //                     obj.style.fontColor="#FF6666";
-   //                 } else {
-   //                     obj.style.fontColor="#FFF020";
-   //                 }
-   //              }
-   //          }
-   //      }
-   // }
-   var dat = data.pages[page];
-   var dat2 = data.pages[page+1];
-   if(data.pages.length > 1){
-	page++;	
-	if(page > data.pages.length-1) { page = 0;}
-	if(page > data.pages.length-2) { dat2 =  data.pages[0]; }
+   try{
+      var o = curl.get(okurl  ,header);
+      if(o.body){
+	   var oObj = JSON.parse(o.body);
+	   log.info("OK Object parsed : ",oObj.results.length);
+      } else {
+	   log.error("No valid response from Server");
+      }
+      context.privates.up = oObj.results.length;
+   } catch(e){
+	   log.error("Could not parse icinga ok response : "+e);
    }
-   log.info("Presenting page : "+page+" of "+data.pages.length+" with "+dat.objects.length+" elements");
    try {
         wally.startTransaction();
         gui.clearTextureNoPaint('main');
-        wallaby.renderScreen(context,context.privates,'main',dat);
+	log.info(data);
+        wallaby.renderScreen(context,context.privates,'main',data.pages[0]);
         wally.render('main');
         wally.commitTransaction();
     } catch(err) {

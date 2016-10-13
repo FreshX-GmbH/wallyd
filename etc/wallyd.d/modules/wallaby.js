@@ -8,6 +8,7 @@ var config = wally.getConfig();
 
 function parseString(str){
     if( str === undefined ) return "";
+    log.debug("Translating "+str);
     var matchTable={};
     var splitter = /\$_.[A-Za-z0-9_]*;/g;
     var match = str.match(splitter);
@@ -30,7 +31,24 @@ function parseString(str){
 //        log.debug(t);
         destVal = t;
     }
+    log.debug("Result "+destVal);
     return destVal;
+}
+
+function findMin(data){
+   var x = ~~(data.objects[0].options.geometry.x);
+   var y = ~~(data.objects[0].options.geometry.y);
+   for(var i = 1; i < data.objects.length; i++){
+        var obj = data.objects[i];
+	var opts = obj.options;
+	var value = obj.value;
+        var ox = ~~(opts.geometry.x);
+        var oy = ~~(opts.geometry.y);
+        if(x > ox) x = ox;
+        if(y > oy) y = oy;
+        log.info("Looping ",x,y,ox,oy);
+   }
+   return [-x,-y];
 }
 
 function renderScreen(context, tree, screen, data)
@@ -39,18 +57,26 @@ function renderScreen(context, tree, screen, data)
    var json;
    var maxWidth=0, maxHeight=0;
    var xScale=1.0, yScale=1.0;
-   var rX=0, rY=0;
+   var r = findMin(data);
+   var rX=r[0], rY=r[1];
    var start = new Date().getTime();
 
-   //log.info(data);
+   //config = context.config.wally;
 
    wally.setAutoRender(false);
    gui.setTargetTexture(screen);
 
    var width = data._options.width ? data._options.width : data._options.size[0];
    var height = data._options.height ? data._options.height : data._options.size[1];
-   xScale = (config.width-10)/width;
-   yScale = (config.height-30)/height;
+   log.info(config.width, config.height,width,height);
+   if(width === 0 || height === 0){
+      log.error("No valid dimensions found in screen");
+      return 0;
+   } else {
+      xScale = (config.width-10)/width;
+      yScale = (config.height-30)/height;
+      log.info("Dimensions in document : "+width+"x"+height+" / Scaling : "+xScale+"x"+yScale+" / Reloc "+ rX + "x" + rY);
+   }
     
    for(var i = 0; i < data.objects.length; i++){
         var obj = data.objects[i];
@@ -103,10 +129,14 @@ function renderScreen(context, tree, screen, data)
 	}
 	// TODO
         if(obj.type === 'rect'){
-	//    if(opts.edge && opts.edge > 0 ){
-	//    	log.error(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
-	//    	gui.drawFilledBox(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
-	//    }
+	    if(opts.edge && opts.edge > 0 ){
+	       log.error(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
+	       gui.drawFilledBox(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
+	    } else {
+	       log.error(screen, X, Y, W, H, 0, fillColor, color, alpha);
+	       gui.drawFilledBox(screen, X, Y, W, H, 0, fillColor, color, alpha);
+            
+            }
             continue;
 	}
         if(obj.type === 'qr'){
