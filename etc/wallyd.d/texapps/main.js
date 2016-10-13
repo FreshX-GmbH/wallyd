@@ -2,6 +2,8 @@
 
 var wally, wallaby, gui, data, header;
 
+var loopDelay = 10000;
+
 // for direct test in nucleus
 if(typeof(Wally) === 'undefined')
 {
@@ -26,7 +28,6 @@ var errurl="https://"+host+":"+port+"/v1/objects/services?attrs=display_name&joi
 var warnurl="https://"+host+":"+port+"/v1/objects/services?attrs=display_name&joins=host.address&filter=service.state==1";
 var okurl="https://"+host+":"+port+"/v1/objects/services?attrs=display_name&joins=host.address&filter=service.state==0";
 var file = config.wally.basedir+'/etc/wallyd.d/tests/icinga.json';
-var loopDelay = 1000;
 
 context.privates = {};
 
@@ -80,7 +81,6 @@ function oninterval() {
    try {
         wally.startTransaction();
         gui.clearTextureNoPaint('main');
-	log.info(data);
         wallaby.renderScreen(context,context.privates,'main',data.pages[0]);
         wally.render('main');
         wally.commitTransaction();
@@ -91,8 +91,6 @@ function oninterval() {
 
 if(curl){
 	header = curl.mkBasicAuth(user,password);
-	log.info(header);	
-
 	try{
 	    var json = wally.readFile(file);
 	    data = JSON.parse(json);

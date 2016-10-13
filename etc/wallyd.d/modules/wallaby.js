@@ -8,7 +8,6 @@ var config = wally.getConfig();
 
 function parseString(str){
     if( str === undefined ) return "";
-    log.debug("Translating "+str);
     var matchTable={};
     var splitter = /\$_.[A-Za-z0-9_]*;/g;
     var match = str.match(splitter);
@@ -16,7 +15,7 @@ function parseString(str){
     for (var j = 0; j<match.length; j++)
     {
         var smatch = match[j].replace(/\$_./,'').replace(/;$/,'');
-        log.debug(smatch);
+        //log.debug(smatch);
         if(context.privates && context.privates[smatch]){
              var val = context.privates[smatch].toString();
              matchTable[smatch] = val;
@@ -28,10 +27,8 @@ function parseString(str){
     for (var k in matchTable){
         var re=RegExp('._.'+k+';');
         var t = destVal.replace(re,matchTable[k]);
-//        log.debug(t);
         destVal = t;
     }
-    log.debug("Result "+destVal);
     return destVal;
 }
 
@@ -46,7 +43,6 @@ function findMin(data){
         var oy = ~~(opts.geometry.y);
         if(x > ox) x = ox;
         if(y > oy) y = oy;
-        log.info("Looping ",x,y,ox,oy);
    }
    return [-x,-y];
 }
@@ -68,7 +64,6 @@ function renderScreen(context, tree, screen, data)
 
    var width = data._options.width ? data._options.width : data._options.size[0];
    var height = data._options.height ? data._options.height : data._options.size[1];
-   log.info(config.width, config.height,width,height);
    if(width === 0 || height === 0){
       log.error("No valid dimensions found in screen");
       return 0;

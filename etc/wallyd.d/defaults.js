@@ -9,9 +9,9 @@ var textures = {
 //    main2     : { z: 10, x: '50%', y:  0,  w: '50%', h:-16, color : 'FFFFFF' },
     log       : { z: 30, x: 0,   y: '-20', w: '100%', h: 20, color : 'FEFEFE' }, 
     version   : { z: 40, x: -260, y: 0,     w: 260,     h: 16, color : 'FFFFFF' },
-    memdbg    : { z: 41, x: -262, y: 17,     w: 261,     h: 16, color : 'FFFFFF' },
-    netinfo   : { z: 42, x: -260, y: 33,     w: 260,     h: 16, color : 'FFFFFF' },
-    stat      : { z: 42, x: -260, y: 49,     w: 260,     h: 16, color : 'FFFFFF' },
+    memdbg    : { z: 41, x: -260, y: 16,     w: 260,     h: 16, color : 'FFFFFF' },
+    netinfo   : { z: 42, x: -260, y: 32,     w: 260,     h: 16, color : 'FFFFFF' },
+    stat      : { z: 43, x: -260, y: 48,     w: 260,     h: 16, color : 'FFFFFF' },
     up        : { z: 50, x: -120, y: -20,   w: 100,     h: 20, color : 'FEFEFE' },
     netcolor  : { z: 50, x: -20, y: -20,   w: 20,     h: 20, color : '2BFF00' }
 };

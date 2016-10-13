@@ -10,7 +10,6 @@ var memstart = Math.round((memstartb/1024/1024)*100)/100+'mb';
 var start = date.getTime();
 var div = 1;
 var lastmin = memstartb;
-//log.error('MemDBG');
 
 function oninterval() {
     try {
@@ -45,5 +44,5 @@ try {
     var memtimer = new uv.Timer();
     memtimer.start( 0, 2000, oninterval);
 } catch(e) {
-    //log.error('Error in memdbg timer : '+e);
+    log.error('Error in memdbg timer : '+e);
 }
