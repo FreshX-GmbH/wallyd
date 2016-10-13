@@ -498,7 +498,7 @@ char *initPlugin(pluginHandler *_ph){
    slog(DEBUG,LOG_PLUGIN,"Plugin "PLUGIN_SCOPE" initializing (PH: %p)",ph);
    ctx = ph->ctx;
 
-   slog(TRACE,LOG_JS,"Constructing dukcurl object");
+   slog(TRACE,LOG_JS,"Constructing CurlPrototype object");
    dukopen_curl(ctx);
 
    slog(TRACE,LOG_PLUGIN,"Plugin initialized. PH is at 0x%x",ph);

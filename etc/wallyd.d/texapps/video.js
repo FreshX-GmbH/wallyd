@@ -1,1 +1,3 @@
-p('VT : ',context);
+'use strict';
+
+log.info('Started video texapp');

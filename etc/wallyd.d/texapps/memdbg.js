@@ -4,7 +4,6 @@ var wally = new Wally();
 var gui = new GUI();
 var date = new Date();
 var uv = nucleus.uv;
-var date = new Date();
 
 var memstartb = wally.getrss();
 var memstart = Math.round((memstartb/1024/1024)*100)/100+'mb';
@@ -33,11 +32,11 @@ function oninterval() {
 		 ' / T '+Math.ceil(div)+'s';
 	//wally.startTransaction();
         gui.clearTexture('memdbg');
-	wally.setText('memdbg','black','logfont',0,1,tstat);
+	wally.setText('memdbg','black','logfont',0,0,tstat);
 	//wally.commitTransaction();
 	log.error(stat);
     } catch(err) {
-	//log.error('Error in memdbg : '+err);
+	log.error('Error in memdbg : '+err);
     }
 }
 

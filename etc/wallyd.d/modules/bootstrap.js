@@ -3,6 +3,11 @@
 Duktape.modLoaded.uv = {exports:nucleus.uv};
 Duktape.modLoaded.log = nucleus.dofile('modules/log.js');
 Duktape.modLoaded.utils = nucleus.dofile('modules/utils.js');
+
+if(typeof(CurlPrototype !== "undefined")){
+    Duktape.modLoaded.CurlPrototype=CurlPrototype;
+}
+
 // Bootstrap require by reusing Duktape's default behavior
 // It's mostly node.js like.
 Duktape.modSearch = function (id) {

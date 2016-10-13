@@ -1,9 +1,12 @@
 (function(){
 "use strict";
 
-if(typeof(CurlPrototype === "undefined")){
+var CurlPrototype;
+if(typeof(Duktape.modLoaded.CurlPrototype) === "undefined"){
 	log.error("Curl plugin not available");
 	return undefined;
+} else {
+	CurlPrototype = Duktape.modLoaded.CurlPrototype;
 }
 
 var curl = CurlPrototype.init();
@@ -77,30 +80,51 @@ function request(url, body, headers) {
 }
 
 function get(url, headers) {
-  curl.reset();
-  curl.setopt("httpget", true);
-  log.debug("HTTP GET : "+url);
-  return request(url, null, headers);
+  try {
+      curl.reset();
+      curl.setopt("httpget", true);
+      log.debug("HTTP GET : "+url);
+      log.debug("HTTP HEADER : ",headers);
+      return request(url, null, headers);
+  }catch(e){
+	log.error("Curl get failed : "+e);
+  }
 }
 
 function put(url, body, headers) {
-  curl.reset();
-  curl.setopt("put", true);
-  log.debug("HTTP PUT : "+url);
-  return request(url, body, headers);
+  try {
+      curl.reset();
+      curl.setopt("put", true);
+      log.debug("HTTP PUT : "+url);
+      log.debug("HTTP HEADER : "+headers);
+      return request(url, body, headers);
+  }catch(e){
+	log.error("Curl put failed : "+e);
+  }
 }
 
 function post(url, body, headers) {
-  curl.reset();
-  curl.setopt("post", true);
-  log.debug("HTTP POST : "+url);
-  return request(url, body, headers);
+  try {
+      curl.reset();
+      curl.setopt("post", true);
+      log.debug("HTTP POST : "+url);
+      log.debug("HTTP HEADER : "+headers);
+      return request(url, body, headers);
+  }catch(e){
+	log.error("Curl post failed : "+e);
+  }
 }
 
-return {
+function basicauth(user, password){
+	return [{BasicAuth: Duktape.enc('base64',user+":"+password)}];
+}
+
+return { 
            get: get,
            put: put,
-           post: post
+           post: post,
+	   mkBasicAuth:basicauth,
+	   CurlPrototype: CurlPrototype
 };
-
+//
 })();

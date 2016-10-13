@@ -4,25 +4,24 @@ var homedir = config.basedir+'/etc/wallyd.d';
 var uv = nucleus.uv;
 var gui = new GUI();
 
-if(nucleus){
-	var modules = homedir+'/modules';
-	nucleus.dofile('modules/bootstrap.js')
-	var utils = nucleus.dofile('modules/utils.js')
-	var p     = utils.prettyPrint;
-	var log   = nucleus.dofile('modules/log.js');
-	var uv    = nucleus.uv;
-	var gui   = gui;
-	var extra = nucleus.dofile('modules/extra.js');
-	var fs    = nucleus.dofile('modules/fs.js');
-	var extra = nucleus.dofile('modules/extra.js');
-	var curl  = nucleus.dofile('modules/curl.js');
-	log.info('Seaduk modules initialized');
-	var modules = homedir+'/modules.duv';
-}
+var modules = homedir+'/modules';
+nucleus.dofile('modules/bootstrap.js')
+var utils = nucleus.dofile('modules/utils.js')
+var p     = utils.prettyPrint;
+var log   = nucleus.dofile('modules/log.js');
+var uv    = nucleus.uv;
+var gui   = gui;
+var extra = nucleus.dofile('modules/extra.js');
+var fs    = nucleus.dofile('modules/fs.js');
+var extra = nucleus.dofile('modules/extra.js');
+log.info('Seaduk modules initialized');
+var modules = homedir+'/modules.duv';
+var curl  = nucleus.dofile('modules/curl.js');
 
 var context = { 
     wally: wally,
     screen: wally,
+    curl: curl,
     config: {
         debug   : config.debug,
         wally   : wally.getConfig(),
@@ -52,26 +51,18 @@ if(typeof uv.interface_addresses === 'function'){
 
 // This is called after the startVideo 
 // or immediately if startVideo==false
-
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
+  wally.setAutoRender(false);
   try {
-	log.error('Running texapps');
-	wally.evalFile(config.homedir+'/texapps/mem.js');
-  	wally.evalFile(config.homedir+'/texapps/demo.js');
+    for (var t in textures) {
+        var taName = '/texapps/'+t+'.js';
+	log.error('Running texapp '+taName);
+	wally.evalFile(config.homedir+taName);
+    }
   } catch(err) {
-	log.error('ERROR in demo.js : '+err);
+	log.error('ERROR in texapps : '+err);
   }
-//  screen.log('Initializing texApps ...');
-//  for (var t in textures) {
-//    log.info('Running texApp : ',t);
-//    screen.log('Initializing texApp : '+t);
-//    var taName = 'texapps/'+t+'.js';
-//    nucleus.dofile(taName);
-// //   var timer = new uv.Timer();
-// //   timer.start(0, 1, function(){ print(nucleus.dofile(taName));});
-//  }
-  p(context);
 };
 
 try{
@@ -79,13 +70,6 @@ try{
 } catch(e1) {
     log.error('ERROR in defaults : '+e1);
 }
-
-var stat = 'R'+context.config.wally.release/1000+
-         ' *** Res: '+context.config.wally.width+'x'+context.config.wally.height+
-         ' *** Arch: '+context.config.wally.arch;
-screen.setText('version','black','logfont',0,0,stat);
-screen.log('Waiting for network to get ready.');
-screen.render('version');
 
 try{
     if(context.config.network){
@@ -104,9 +88,8 @@ try{
 		if(context.config.network.connected === false){
 		    stat = 'Network initialized. Scanning for next wallaby server';
 		    wally.log(stat);
-		    wally.setText('ip','black','logfont',0,1,"IP:"+network[ifname][addr].ip);
-		    wally.render('ip');
 		    context.config.network.connected = true;
+		    context.config.network.ip = network[ifname][addr].ip;
 		    log.info(stat);
 		    try {
 		      context.ssdp  = nucleus.dofile('ssdp.js').ssdp(context);

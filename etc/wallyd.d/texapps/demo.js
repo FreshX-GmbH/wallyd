@@ -72,27 +72,14 @@ function oninterval() {
 	var fin = d3.getTime();
 	d2.setTime(passed);
 	var m = extra.pad(d2.getMinutes(),2);
-	var h = d2.getHours();
+	var h = d2.getHours()-1;
 	var d = ~~((passed/1000)/24/3600);
 	var uts = h+':'+m+'h';
-	var name = 'unknown';
-	var conn = 'no';
 	if(d >= 1){
 	   uts = d+' days '+h+':'+m+'h';
 	}
-	if(typeof(config.conn) !== 'undefined' && typeof(config.conn.name) !== 'undefined' ){
-		name=config.conn.name;
-	}
-	if(typeof(config.conn) !== 'undefined' && typeof(config.conn.host) !== 'undefined' ){
-		conn=config.conn.host;
-	}
-    	var stat = 'WallyTV  v'+config.wally.release/1000+
-		 '   ***   Res: '+config.wally.width+'x'+config.wally.height+
-		 '   ***   Name: '+name+
-		 '   ***   Arch: '+config.wally.arch+
-		 '   ***   Connected: '+conn+
-		 '   ***   Up: '+uts+
-		 '   ***   Render time: '+(fin-start)/1000+'s';
+    	var stat = '***   Up: '+uts+
+		 ' ***   Render time: '+(fin-start)/1000+'s';
     	wally.log(stat);
     } catch(err) {
 	log.error('ERROR: Show status failed : '+err);
