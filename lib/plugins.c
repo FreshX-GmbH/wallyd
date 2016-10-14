@@ -398,6 +398,7 @@ pluginHandler *pluginsInit(void){
     ph->texturePrio = NULL;
     initWtx(&ph->wtx);
     pthread_mutex_init(&ph->wtxMutex,0);
+    pthread_mutex_init(&ph->taMutex,0);
 
     ph->funcMutex = SDL_CreateMutex();
     ph->functionWaitConditions= malloc(sizeof(hash_table));
@@ -410,6 +411,7 @@ pluginHandler *pluginsInit(void){
     ph->colors = malloc(sizeof(hash_table));
     ph->configMap = malloc(sizeof(hash_table));
     ph->configFlagsMap = malloc(sizeof(hash_table));
+    ph->transactions = malloc(sizeof(hash_table));
     ht_init(ph->functionWaitConditions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->callbacks, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->thr_functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
@@ -420,6 +422,7 @@ pluginHandler *pluginsInit(void){
     ht_init(ph->colors, HT_VALUE_CONST, 0.05);
     ht_init(ph->configMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->configFlagsMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    ht_init(ph->transactions, HT_VALUE_CONST, 0.05);
     ph->queue = priqueue_initialize(512);
     return ph;
 }
