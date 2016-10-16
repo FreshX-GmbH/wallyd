@@ -17,13 +17,12 @@ var extra = nucleus.dofile('modules/extra.js');
 log.info('Seaduk modules initialized');
 var modules = homedir+'/modules.duv';
 var curl  = nucleus.dofile('modules/curl.js');
-var ta = nucleus.dofile('modules/transaction.js');
+nucleus.dofile('modules/transaction.js');
 
 var context = { 
     wally: wally,
     screen: wally,
     curl: curl,
-    ta: ta,
     config: {
         debug   : config.debug,
         wally   : wally.getConfig(),
@@ -51,10 +50,9 @@ if(typeof uv.interface_addresses === 'function'){
     log.error('Seaduk misc extension not found : ',typeof uv.interface_addresses);
 }
 
-log.error(ta);
-var myta = ta.start();
-ta.push(myta, wally.destroyTexture,"video");
-ta.commit(myta);
+var myta = new Transaction();
+myta.push( wally.destroyTexture.bind(null, "video2") );
+myta.commit();
 
 // This is called after the startVideo 
 // or immediately if startVideo==false

@@ -4,6 +4,7 @@
 #define _GNU_SOURCE
 
 #define WTX_SIZE 512
+#define MAX_WTX  262143
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -113,7 +114,8 @@ typedef struct{
     hash_table *colors;
     hash_table *configMap;
     hash_table *configFlagsMap;
-    hash_table *transactions;
+    void **transactions;
+    int transactionCount;
 
     void *funcMutex;
     pthread_mutex_t wtxMutex;
@@ -130,7 +132,7 @@ typedef struct{
     int conditionTimeout;
     void *slg;
 
-    bool transaction;
+    int transaction;
     wally_call_ctx *wtx;
 
 } pluginHandler;
@@ -160,8 +162,10 @@ void export_function_list(char *, const function_list_entry *);
 void wally_put_function_list(pluginHandler *, function_list_entry *);
 void wally_put_function(const char *name, int threaded, wally_c_function , int args);
 bool callWtx(char *fstr, char *params);
-void *freeWtx(wally_call_ctx** xwtx);
+void *freeWtx(int id);
 void freeWtxElements(wally_call_ctx* wtx);
 bool initWtx(wally_call_ctx** xwtx);
+bool newWtx(int id, wally_call_ctx** xwtx);
+bool pushSimpleWtx(int id, const char *fstr,const char *params);
 
 #endif

@@ -48,7 +48,7 @@ function findMin(data){
    return [-x,-y];
 }
 
-function renderScreen(context, tree, screen, data)
+function renderScreen(TA,context, tree, screen, data)
 {
    var svg = new SVG();
    var json;
@@ -60,8 +60,9 @@ function renderScreen(context, tree, screen, data)
 
    //config = context.config.wally;
 
-   wally.setAutoRender(false);
-   gui.setTargetTexture(screen);
+   log.info("Setup wallaby destination : "+screen)
+   TA.push(wally.setAutoRender.bind(null,false));
+   TA.push(gui.setTargetTexture.bind(null,screen));
 
    var width = data._options.width ? data._options.width : data._options.size[0];
    var height = data._options.height ? data._options.height : data._options.size[1];
@@ -111,26 +112,26 @@ function renderScreen(context, tree, screen, data)
 	    if(!curl) {
 		continue;
 	    }
-            var res = curl.get(obj.path);
+            var res = TA.push(curl.get.bind(null,obj.path));
             if(res.body){
-               wally.writeFileSync('/tmp/test.png',res.body);
+               TA.push(wally.writeFileSync.bind(null,'/tmp/test.png',res.body));
                //gui.loadImage(screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255);
             }
-            gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
+            TA.push(gui.loadImage.bind(null,screen,'/tmp/test.png',X, Y, W, H, 255));
             continue;
         }
         if(obj.type === 'line'){
-            gui.drawLine(screen,X, Y, X + W, Y, 0);
+            TA.push(gui.drawLine.bind(null,screen,X, Y, X + W, Y, 0));
             continue;
 	}
 	// TODO
         if(obj.type === 'rect'){
 	    if(opts.edge && opts.edge > 0 ){
 	       log.error(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
-	       gui.drawFilledBox(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
+	       TA.push(gui.drawFilledBox.bind(null,screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha));
 	    } else {
 	       log.error(screen, X, Y, W, H, 0, fillColor, color, alpha);
-	       gui.drawFilledBox(screen, X, Y, W, H, 0, fillColor, color, alpha);
+	       TA.push(gui.drawFilledBox.bind(null,screen, X, Y, W, H, 0, fillColor, color, alpha));
             
             }
             continue;
@@ -144,7 +145,7 @@ function renderScreen(context, tree, screen, data)
             //var res = qr.file(qrtext,'/tmp/qr.svg', { type: 'svg' });
             svg.svgToPng("/tmp/qr.svg","/tmp/qr.png");
             log.debug('Placing QR Code at : ',X,Y,W,H);
-            gui.loadImage(screen,'/tmp/qr.png',X,Y,W,H,255);
+            TA.push(gui.loadImage.bind(null,screen,'/tmp/qr.png',X,Y,W,H,255));
             //var ptr = svg.svgToImage(res.toString());
             //var preview = Array.prototype.slice.call(ptr, 0, ptr.length).map(function (byte) {
             //    return byte < 16 ? "0" + byte.toString(16) : byte.toString(16);
@@ -164,12 +165,12 @@ function renderScreen(context, tree, screen, data)
 	    //log.debug(obj);
             var fName = 'font'+H;
             var val = "";
-            wally.loadFont(fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', H);
+            TA.push(wally.loadFont.bind(null,fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', H));
             if(value.match(/\$_./)){
                var destVal = parseString(value);
-               gui.drawText(screen,X, Y, fName, color, destVal);
+               TA.push(gui.drawText.bind(null,screen,X, Y, fName, color, destVal));
             } else {
-               gui.drawText(screen,X, Y, fName, color, value);
+               TA.push(gui.drawText.bind(null,screen,X, Y, fName, color, value));
             }
 	    continue;
 	}

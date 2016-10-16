@@ -20,6 +20,14 @@ bool initWtx(wally_call_ctx** xwtx){
     return true;
 }
 
+bool newWtx(int id, wally_call_ctx** xwtx){
+    if(id > MAX_WTX){
+        slog(ERROR,LOG_PLUGIN,"MAX_WTX %d reached. Can not create more transactions!",MAX_WTX);
+        return false;
+    }
+    return initWtx(xwtx);
+}
+
 // Free the WTX and ALL its elements
 void freeWtxElements(wally_call_ctx* wtx){
     pthread_mutex_lock(&ph->wtxMutex);
@@ -42,14 +50,13 @@ void freeWtxElements(wally_call_ctx* wtx){
             slog(DEBUG,LOG_PLUGIN,"Element parameter %d already freed!",elements);
         }
     }
-    slog(DEBUG,LOG_PLUGIN,"Freed %d elements",count);
-    wtx->elements = 0;
+    slog(DEBUG,LOG_PLUGIN,"Freed %d elements",count); wtx->elements = 0;
     pthread_mutex_unlock(&ph->wtxMutex);
 }
 
-void * freeWtx(wally_call_ctx** xwtx){
-    freeWtxElements(*xwtx);
-    free(*xwtx);
+void * freeWtx(id){
+    freeWtxElements(ph->transactions[id]);
+    free(ph->transactions[id]);
     return NULL;
 }
 
@@ -70,8 +77,9 @@ bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     return true;
 }
 
-bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
-    wally_call_ctx *wtx = *xwtx;
+bool pushSimpleWtx(int id, const char *fstr,const char *params){
+    wally_call_ctx *wtx = ph->transactions[ph->transaction];
+    slog(DEBUG,LOG_PLUGIN,"WTX for cmd %s is at 0x%x",fstr,wtx);
     pthread_mutex_lock(&ph->wtxMutex);
     int idx = wtx->elements;
     //if(wtx->name[idx] != NULL){
@@ -82,16 +90,22 @@ bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     	//if(wtx->param[idx] != NULL){
 	//	slog(DEBUG,LOG_PLUGIN,"WTX param not NULL!");
     	//}
-        //slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
+        slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
         wtx->param[idx]=strdup(params);
     } else {
         wtx->param[idx]=NULL;
     }
     // also possible access
-    (*xwtx)->elements = idx + 1;
+    wtx->elements = idx + 1;
     wtx->type[idx] = CALL_TYPE_STR;
     pthread_mutex_unlock(&ph->wtxMutex);
     return true;
+}
+
+bool commitWtx(int id){
+    char *idstr=NULL;
+    asprintf(&idstr,"%d",id);
+    return callEx(strdup("commit"),NULL,idstr,CALL_TYPE_WTX,true);
 }
 
 bool callWtx(char *fstr, char *params){
@@ -99,7 +113,7 @@ bool callWtx(char *fstr, char *params){
     if(fstr == NULL && params == NULL){
         return callEx(ph->wtx->name[0],NULL,ph->wtx,CALL_TYPE_WTX,true);
     }
-    if(ph->transaction == false) {
+    if(ph->transaction == 0) {
         int ret;
 	slog(DEBUG,LOG_PLUGIN,"Single WTX Call, freeing old WTX");
         freeWtxElements(ph->wtx);
@@ -108,7 +122,7 @@ bool callWtx(char *fstr, char *params){
         ph->wtx->param[0]= strdup(params);
 	callEx(fstr,NULL,ph->wtx,CALL_TYPE_WTX,true);
     } else {
-        pushSimpleWtx(&ph->wtx, fstr, params);
+        pushSimpleWtx(ph->transaction, fstr, params);
     }
     return true;
 }
@@ -126,7 +140,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
     }
     pthread_mutex_lock(&callMutex);
     void *params = NULL;
-    wally_call_ctx *wtx = NULL;
+   // wally_call_ctx *wtx = NULL;
     char *funcName = strdup(funcNameTmp);
     ph->callCount++;   
     void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
@@ -166,8 +180,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 slog(DEBUG,LOG_PLUGIN,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
                 break;
             case CALL_TYPE_WTX:
-                wtx = (wally_call_ctx*)paramsTmp;
-                slog(DEBUG,LOG_PLUGIN,"WTX call with %d commands",wtx->elements);
+                slog(DEBUG,LOG_PLUGIN,"WTX call");
                 params = paramsTmp;
                 event.type = WALLY_CALL_WTX;
                 break;
@@ -185,7 +198,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         if(waitThread == true){
             // Enable the Mutex code for synced function calls
             int timeout;
-            if(ph->transaction == true){
+            if(ph->transaction != 0){
                 timeout = SDLWAITTIMEOUT_TRANSACTION;
             } else {
 		// TODO : 
@@ -389,9 +402,11 @@ pluginHandler *pluginsInit(void){
     ph->ssdp = false;
     ph->cloud = false;
     ph->location = NULL;
-    ph->transaction = false;
     ph->texturePrio = NULL;
+    ph->transaction = 0;
+    ph->transactionCount = 0;
     initWtx(&ph->wtx);
+    ph->transactions = malloc(sizeof(void*)*MAX_WTX);
     pthread_mutex_init(&ph->wtxMutex,0);
     pthread_mutex_init(&ph->taMutex,0);
 
@@ -417,7 +432,6 @@ pluginHandler *pluginsInit(void){
     ht_init(ph->colors, HT_VALUE_CONST, 0.05);
     ht_init(ph->configMap, HT_VALUE_CONST | HT_VALUE_FREE, 0.05);
     ht_init(ph->configFlagsMap, HT_VALUE_CONST | HT_VALUE_FREE, 0.05);
-    ht_init(ph->transactions, HT_VALUE_CONST, 0.05);
     ph->queue = priqueue_initialize(512);
     return ph;
 }

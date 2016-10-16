@@ -189,7 +189,8 @@ void cleanupWally(int s){
     fclose(ph->logfileHandle);
     unlink(FIFO);
     // after this call ph is no more available
-    if(pthread_join(ph->uv_thr,&pret) == 0){
+    slog(INFO,LOG_UTIL,"Waiting for child-threads to exit ...");
+    if(ph->uv_thr && pthread_join(ph->uv_thr,&pret) == 0){
        free(ph->uv_thr);
     }
     cleanupUtil();

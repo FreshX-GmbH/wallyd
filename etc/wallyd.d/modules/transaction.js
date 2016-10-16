@@ -1,45 +1,53 @@
-(function(){
-"use strict";
+//(function(){
+//'use strict';
 
-var currentTA=0;
-var ta = new Transaction();
-var taFunctions = {};
-
-function start()
-{
-    currentTA++;
-    taFunctions[currentTA] = [];
-    log.info(ta.name);
-    ta.newTransaction("TA-"+currentTA);
-    return currentTA;
+function Transaction() {
+  this.initialize();
 }
 
-function push(a,f,p){
-    log.error(f);
-    taFunctions[a].push([f,p]);
-}
+Transaction.prototype = {
 
-function abort(a){
-    delete taFunctions[a];
-}
+    ID:		0,
+    funcs:	[],
 
-function commit(a){
-    var commitTA = taFunctions[a];
-    ta.startTransaction("TA-"+a);
-    log.debug("Commiting transaction "+a+" with "+commitTA.length+" elements");
-    for(var i = 0; i < commitTA.length; i++){
- 	log.debug(commitTA[i][0]+"("+commitTA[i][1]+")");
-	log.debug("Ret : +",commitTA[i][0](commitTA[i][1]));
-    }
-    ta.commitTransaction("TA-"+a);
-}
+    initialize: function() {
+        this.name = 'Transaction';
+	if(typeof(CTransaction) === 'undefined'){
+	  this.ID = 15;
+	  this.ct = null;
+	} else {
+	  this.ct = new CTransaction();
+	  this.ID = this.ct.new();
+	}
+	this.funcs = [];
+	log.info("Transaction has "+this.funcs.length+" elements");
+    },
 
-return  {
-    start: start,
-    abort: abort,
-    commit: commit,
-    push: push
-};
+    toString:   function() {
+        return '{ size : '+this.funcs.length+' }';
+    },
 
-})()
+    push: function(f){
+	log.trace('Adding function '+f);
+	this.funcs.push(f);
+    },
 
+    abort: function(){
+	delete taFunctions;
+    },
+
+    commit: function(){
+    	log.debug('Commiting transaction with '+this.funcs.length+' elements');
+	if(!this.ct){
+	    log.warn('CTransactions not available.');
+	} else {
+	    this.ct.lock(this.ID);
+	}
+    	for(var i = 0; i < this.funcs.length; i++){
+    	    this.funcs[i]();
+    	}
+	if(this.ct){
+	    this.ct.commit(this.ID);
+	}
+    },
+}; 

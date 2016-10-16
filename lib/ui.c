@@ -44,6 +44,7 @@ bool uiLoop(void){
     slog(DEBUG,LOG_SDL,"Setting up SDL event filter");
     SDL_SetEventFilter(eventFilter,NULL);
     //int delay=0;
+    int id;
     char *funcName;
     const char *param;
     wally_call_ctx *wtx;
@@ -87,10 +88,18 @@ bool uiLoop(void){
         //}
 
         if(event.type == WALLY_CALL_WTX){
-           wtx = event.user.data2;
-           slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements", wtx->elements);
+           if(strncmp("commit",funcName,6)){
+               wtx = event.user.data2;
+               slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements. wtx at 0x%x", wtx->elements,wtx);
+           } else {
+               id = atoi(event.user.data2);
+               slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d / %s",id,event.user.data2);
+               //free(event.user.data2);
+               wtx = ph->transactions[id];
+               slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d and %d elements. wtx at 0x%x", id,wtx->elements,wtx);
+           }
            for(int i = 0; i < wtx->elements; i++){
-                  slog(TRACE,LOG_PLUGIN,"WTX Call%d : %s(%s)", i, wtx->name[i], wtx->param[i]);
+                  slog(TRACE,LOG_PLUGIN,"WTX(0x%x) Call%d : %s(%s)",wtx, i, wtx->name[i], wtx->param[i]);
                   //thr_func(event.user.data2);
                   void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,wtx->name[i]);
                   if(!thr_func){
@@ -105,8 +114,14 @@ bool uiLoop(void){
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
                 SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
 	   }
-           freeWtxElements(wtx);
+           if(ph->transaction){
+               freeWtx(id);
+               ph->transaction = 0;
+           } else {
+              freeWtxElements(wtx);
+           }
 	   free(funcName);
+           pthread_mutex_unlock(&ph->taMutex);
            continue;
         }
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
@@ -153,7 +168,7 @@ bool uiLoop(void){
 
 void **getTextureNamesByPrio(unsigned int *items){
    //ret = malloc(ph->baseTextures->key_count * sizeof(void *));
-   slog(DEBUG,LOG_TEXTURE,"Resorting texture names - entries : %d", ph->baseTextures->key_count);
+   slog(TRACE,LOG_TEXTURE,"Resorting texture names - entries : %d", ph->baseTextures->key_count);
    void **keys = ht_keys(ph->baseTextures,items);
    int i, j;
    // simple bubble sort
@@ -165,7 +180,7 @@ void **getTextureNamesByPrio(unsigned int *items){
             slog(ERROR,LOG_TEXTURE,"Unexpected error in sorting texture priority"); 
             continue; 
         }
-        slog(DEBUG,LOG_TEXTURE,"TI: 0x%x / 0x%x",TIa, TIb);
+        slog(TRACE,LOG_TEXTURE,"TI: 0x%x / 0x%x",TIa, TIb);
         if (TIa->z > TIb->z) {
               void *tmp = keys[j];
               keys[j] = keys[j + 1];
@@ -307,7 +322,7 @@ int createTextureEx(void *strTmp,bool isVideo){
    char *cS = strtok_r(NULL, " ",&r);
 
    if(getTexture(textureName) != NULL){
-	slog(INFO,LOG_TEXTURE,"Texture %s already existing, replacing it");
+	slog(INFO,LOG_TEXTURE,"Texture %s already existing, replacing it",textureName);
 	destroyTexture(textureName);
    }
    ht_dumpkeys(ph->baseTextures,"Textures : ");
