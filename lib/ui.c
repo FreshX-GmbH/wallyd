@@ -414,6 +414,7 @@ int createTextureEx(void *strTmp,bool isVideo){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(n,x,y,w,h) : (%s)",str);
       goto fail;
    }
+   free(str);
    return true;
 fail:
    free(str);
