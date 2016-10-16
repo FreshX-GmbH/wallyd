@@ -163,6 +163,7 @@ int getConfig(hash_table *map, const char *file)
 
 void cleanupUtil(void)
 {
+    priqueue_free(ph->queue);
     if(ph->functions) ht_destroy(ph->functions);
     if(ph->plugins) ht_destroy(ph->plugins);
     //if(ph->configMap) map_free(ph->configMap);
