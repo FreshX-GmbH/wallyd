@@ -396,7 +396,7 @@ int c_drawText(void *_str)
   hexToColor(strtol(colStr,NULL,16), &col);
   SDL_Surface *surf = TTF_RenderUTF8_Blended( font, str, col );
   if(!surf) {
-     slog(LVL_QUIET,ERROR,"Could not create FontSurface : %s",SDL_GetError());
+     slog(ERROR,LOG_SDL,"Could not create FontSurface : %s",SDL_GetError());
      return -1;
   }
   SDL_Texture *texture = SDL_CreateTextureFromSurface( ph->renderer, surf );
@@ -436,7 +436,7 @@ int c_loadImageFile(void *_str)
    if(!TI) { return false; }
    slog(TRACE,LOG_SDL,"File : %s",fileName);
    if(fileName == NULL){
-      slog(LVL_QUIET,ERROR,"Wrong parameters setImageScale(name,file) (%s,%s).",TI->name,fileName);
+      slog(ERROR,LOG_SDL,"Wrong parameters setImageScale(name,file) (%s,%s).",TI->name,fileName);
       return false;
    }
 

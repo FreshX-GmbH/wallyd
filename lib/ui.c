@@ -666,7 +666,7 @@ bool sdlInit(void)
       slog(ERROR,LOG_SDL,"Failed to create renderer %s ", SDL_GetError());
 	ph->renderer = SDL_CreateRenderer(ph->window, -1, SDL_RENDERER_SOFTWARE);
         if ( ph->renderer == NULL ) {
-      		slog(LVL_QUIET,LOG_SDL,"Failed to create SW renderer %s ", SDL_GetError());
+      		slog(ERROR,LOG_SDL,"Failed to create SW renderer %s ", SDL_GetError());
       		return false;
 	}
    }

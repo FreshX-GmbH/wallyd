@@ -49,26 +49,18 @@
 // Maximal json items to parse and store
 #define JSONMAXCONF 2048
 
-#define FATAL       LVL_FATAL
-#define ERROR       LVL_ERROR
-#define WARN        LVL_WARN
+#define FATAL       0
+#define ERROR       1
+#define WARN        2
 #define INFO        3
-#define DEBUG       LVL_DEBUG
-#define TRACE       LVL_TRACE
-#define FULLDEBUG   LVL_TRACE
-#define LVL_QUIET   LVL_ERROR
-
-#define LVL_FATAL     16384
-#define LVL_ERROR     16384+1
-#define LVL_WARN      16384+2
-#define LVL_DEBUG     16384+4
-#define LVL_TRACE     16384+5
+#define DEBUG       4
+#define TRACE       5
 
 // Change to 0 or 1 in production
 //#ifndef __FULLDEBUG
 //#define DEFAULT_LOG_LEVEL 3
 //#else
-#define DEFAULT_LOG_LEVEL 5
+#define DEFAULT_LOG_LEVEL 4
 //#endif
 //#define log(...) log_print(__LINE__, __FILE__, __VA_ARGS__ )
 //#define log(...) log4c_log(__LINE__,__FILE__,__VA_ARGS__)

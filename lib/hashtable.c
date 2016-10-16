@@ -121,9 +121,9 @@ void ht_dumpkeys(hash_table *table, char *prefix)
     void **keys = ht_keys(table,&items);
     for(int i = 0; i < items; i++ ){
         if(prefix != NULL){
-            slog(DEBUG,LOG_UTIL,"%s%s", prefix, keys[i]);
+            slog(INFO,LOG_UTIL,"%s%s", prefix, keys[i]);
         } else {
-            slog(DEBUG,LOG_UTIL,"Key[%d] : %s (0x%x)",i, keys[i],keys[i]);
+            slog(INFO,LOG_UTIL,"Key[%d] : %s (0x%x)",i, keys[i],keys[i]);
         }
     }
     free(keys);

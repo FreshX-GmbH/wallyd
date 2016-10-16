@@ -163,11 +163,11 @@ int getConfig(hash_table *map, const char *file)
 
 void cleanupUtil(void)
 {
-    priqueue_free(ph->queue);
+    if(ph->queue) priqueue_free(ph->queue);
     if(ph->functions) ht_destroy(ph->functions);
     if(ph->plugins) ht_destroy(ph->plugins);
-    //if(ph->configMap) map_free(ph->configMap);
-    //if(ph->configFlagsMap) map_free(ph->configFlagsMap);
+    if(ph->configMap) ht_destroy(ph->configMap);
+    if(ph->configFlagsMap) ht_destroy(ph->configFlagsMap);
     if(ph->logfile == true){
         fclose(ph->logfileHandle);
     }
@@ -184,10 +184,9 @@ void cleanupWally(int s){
     signal(SIGINT, SIG_DFL);
 
     cleanupPlugins();
-    //fclose(fifo);
     fclose(ph->logfileHandle);
     unlink(FIFO);
-    // after this ph is no more available
+    // after this call ph is no more available
     cleanupUtil();
     exit(s);
 }
