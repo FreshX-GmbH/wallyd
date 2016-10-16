@@ -501,7 +501,6 @@ hash_entry *he_create(int flags, void *key, size_t key_size, void *value,
     }
 
     entry->next = NULL;
-    //slog(TRACE,LOG_UTIL,"Added %s(0x%x) with 0x%x to hash",entry->key,entry->key,entry->value);
 
     return entry;
 }
@@ -510,7 +509,7 @@ void he_destroy(int flags, hash_entry *entry)
 {
     if (!(flags & HT_KEY_CONST))
         free(entry->key);
-    if (!(flags & HT_VALUE_CONST))
+    if (!(flags & HT_VALUE_CONST) || (flags & HT_VALUE_FREE))
         free(entry->value);
     free(entry);
 }

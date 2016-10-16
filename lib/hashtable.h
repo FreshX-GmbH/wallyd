@@ -72,7 +72,10 @@ typedef enum {
 
     /// Don't automatically resize hashtable when the load factor
     /// goes above the trigger value
-    HT_NO_AUTORESIZE = 4
+    HT_NO_AUTORESIZE = 4,
+
+    /// Free values on destroy if this flag is set
+    HT_VALUE_FREE = 8
 
 } ht_flags;
 

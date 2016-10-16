@@ -415,8 +415,8 @@ pluginHandler *pluginsInit(void){
     ht_init(ph->baseTextures, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->fonts, HT_VALUE_CONST, 0.05);
     ht_init(ph->colors, HT_VALUE_CONST, 0.05);
-    ht_init(ph->configMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->configFlagsMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    ht_init(ph->configMap, HT_VALUE_CONST | HT_VALUE_FREE, 0.05);
+    ht_init(ph->configFlagsMap, HT_VALUE_CONST | HT_VALUE_FREE, 0.05);
     ht_init(ph->transactions, HT_VALUE_CONST, 0.05);
     ph->queue = priqueue_initialize(512);
     return ph;

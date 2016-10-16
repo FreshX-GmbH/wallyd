@@ -146,7 +146,7 @@ int getConfig(hash_table *map, const char *file)
             slog(WARN,LOG_UTIL,"Line %s is not valid. Ignored.");
             continue;
          }
-         ht_insert_simple(map,strdup(k),strdup(v));
+         ht_insert_simple(map,k,strdup(v));
          count++;
          if(count+1 > MAXCONF){
             slog(ERROR,LOG_UTIL,"MaxConf Count reached.");
