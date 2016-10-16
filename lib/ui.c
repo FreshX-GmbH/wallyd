@@ -415,7 +415,7 @@ int createTextureEx(void *strTmp,bool isVideo){
       goto fail;
    }
    return true;
-:fail
+fail:
    free(str);
    return false;
 }
