@@ -281,18 +281,13 @@ void wally_put_function_list(pluginHandler *_ph, function_list_entry *funcs) {
 
 
 
-bool openPlugin(char *path, char* _name)
+bool openPlugin(char *path, char* name)
 {
     char *(*initPlugin)(void *)=NULL;
     void *handle;
     char *error = NULL;
-    //void *name = strdup(_name);
-    //asprintf((char**)&nameCopy,"%s",name);
     handle = dlopen (path, RTLD_LAZY);
-//    slog(LVL_INFO,INFO,"Loading plugin : %s", nameCopy);
-    // Save the DL Handle for later, it has to stay open as long as we need the functions
     ht_insert_simple(ph->plugins,name,handle);
-    //slog(DEBUG,LOG_PLUGIN,"Saved plugin as %s in plugin map %p",name,ph);
     if (!handle) {
         slog(ERROR,LOG_PLUGIN,"Could not load plugin %s : %s",path,dlerror());
         return false;
