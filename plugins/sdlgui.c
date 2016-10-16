@@ -491,7 +491,7 @@ void drawLine(const char *textureName, int x1, int y1, int x2, int y2, SDL_Color
 }
 
 void drawBox(const char *textureName, int x, int y, int w, int h, SDL_Color c) {
-   slog(DEBUG,LOG_JS,"drawBox %s",textureName);
+   slog(TRACE,LOG_JS,"drawBox %s",textureName);
 //   texInfo *TI = getTexture(textureName);
 //   SDL_SetRenderTarget(ph->renderer,TI->texture);
    SDL_Rect r= { x, y, w, h };

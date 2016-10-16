@@ -22,9 +22,11 @@ function oninterval() {
             server=config.conn.host;
 	}
 	var tstat = "IP: "+config.network.ip+" / Name : "+name+" / Server : "+server;
-        gui.clearTexture('netinfo');
-	wally.setText('netinfo','black','logfont',0,1,tstat);
-	wally.render('netinfo');
+	var TA = new Transaction();
+	TA.push(gui.clearTexture.bind(null,'netinfo'));
+	TA.push(wally.setText.bind(null,'netinfo','black','logfont',0,1,tstat));
+	TA.push(wally.render.bind(null,'netinfo'));
+	TA.commit();
     } catch(err) {
 	log.error('Error in netinfo : '+err);
     }

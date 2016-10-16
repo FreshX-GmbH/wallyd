@@ -20,7 +20,7 @@ Transaction.prototype = {
 	  this.ID = this.ct.new();
 	}
 	this.funcs = [];
-	log.info("Transaction has "+this.funcs.length+" elements");
+	//log.trace("Transaction has "+this.funcs.length+" elements");
     },
 
     toString:   function() {
@@ -28,7 +28,7 @@ Transaction.prototype = {
     },
 
     push: function(f){
-	log.trace('Adding function '+f);
+	//log.trace('Adding function '+f);
 	this.funcs.push(f);
     },
 

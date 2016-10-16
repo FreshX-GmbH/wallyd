@@ -35,19 +35,19 @@ void freeWtxElements(wally_call_ctx* wtx){
 //    wally_call_ctx *wtx = *xwtx;
     slog(DEBUG,LOG_PLUGIN,"Free WTX with %d elements", wtx->elements);
     for(; elements >= 0; elements--){
-        slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", elements,wtx->name[elements],wtx->param[elements]);
+        slog(TRACE,LOG_PLUGIN,"Free WTX element %d %s(%s)", elements,wtx->name[elements],wtx->param[elements]);
         if(wtx->name[elements]){
             count++;
             free(wtx->name[elements]);
             wtx->name[elements] = NULL;
         } else {
-            slog(DEBUG,LOG_PLUGIN,"Element %d already freed!",elements);
+            slog(TRACE,LOG_PLUGIN,"Element %d already freed!",elements);
         }
         if(wtx->param[elements]){
             free(wtx->param[elements]);
             wtx->param[elements] = NULL;
         } else {
-            slog(DEBUG,LOG_PLUGIN,"Element parameter %d already freed!",elements);
+            slog(TRACE,LOG_PLUGIN,"Element parameter %d already freed!",elements);
         }
     }
     slog(DEBUG,LOG_PLUGIN,"Freed %d elements",count); wtx->elements = 0;
@@ -82,20 +82,13 @@ bool pushSimpleWtx(int id, const char *fstr,const char *params){
     slog(DEBUG,LOG_PLUGIN,"WTX for cmd %s is at 0x%x",fstr,wtx);
     pthread_mutex_lock(&ph->wtxMutex);
     int idx = wtx->elements;
-    //if(wtx->name[idx] != NULL){
-	//slog(DEBUG,LOG_PLUGIN,"WTX name not NULL!");
-    //}
     wtx->name[idx]=strdup(fstr);
     if(params != NULL){
-    	//if(wtx->param[idx] != NULL){
-	//	slog(DEBUG,LOG_PLUGIN,"WTX param not NULL!");
-    	//}
         slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
         wtx->param[idx]=strdup(params);
     } else {
         wtx->param[idx]=NULL;
     }
-    // also possible access
     wtx->elements = idx + 1;
     wtx->type[idx] = CALL_TYPE_STR;
     pthread_mutex_unlock(&ph->wtxMutex);
@@ -116,7 +109,8 @@ bool callWtx(char *fstr, char *params){
     if(ph->transaction == 0) {
         int ret;
 	slog(DEBUG,LOG_PLUGIN,"Single WTX Call, freeing old WTX");
-        freeWtxElements(ph->wtx);
+        // TODO : free this in a safe way!
+        //freeWtxElements(ph->wtx);
         ph->wtx->elements=1;
         ph->wtx->name[0] = strdup(fstr);
         ph->wtx->param[0]= strdup(params);
