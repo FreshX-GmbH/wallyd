@@ -281,25 +281,25 @@ void wally_put_function_list(pluginHandler *_ph, function_list_entry *funcs) {
 
 
 
-bool openPlugin(char *path, char* name)
+bool openPlugin(char *path, char* _name)
 {
     char *(*initPlugin)(void *)=NULL;
     void *handle;
     char *error = NULL;
-    void *nameCopy = NULL;
-    asprintf((char**)&nameCopy,"%s",name);
+    //void *name = strdup(_name);
+    //asprintf((char**)&nameCopy,"%s",name);
     handle = dlopen (path, RTLD_LAZY);
 //    slog(LVL_INFO,INFO,"Loading plugin : %s", nameCopy);
     // Save the DL Handle for later, it has to stay open as long as we need the functions
-    ht_insert_simple(ph->plugins,nameCopy,handle);
-    slog(DEBUG,LOG_PLUGIN,"Saved plugin as %s in plugin map %p",name,ph);
+    ht_insert_simple(ph->plugins,name,handle);
+    //slog(DEBUG,LOG_PLUGIN,"Saved plugin as %s in plugin map %p",name,ph);
     if (!handle) {
         slog(ERROR,LOG_PLUGIN,"Could not load plugin %s : %s",path,dlerror());
         return false;
     }
     initPlugin = dlsym(handle, "initPlugin");
     if ((error = dlerror()) != NULL)  {
-        slog(DEBUG,LOG_PLUGIN,"initPlugin() failed or not found (Error : %s)",error);
+        slog(ERROR,LOG_PLUGIN,"initPlugin() failed or not found (Error : %s)",error);
         return false;
     } else {
        slog(DEBUG,LOG_PLUGIN,"initPlugin() is now at 0x%x / handle at 0x%x",*initPlugin,handle);
@@ -416,7 +416,7 @@ pluginHandler *pluginsInit(void){
     ht_init(ph->callbacks, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->thr_functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->plugins, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    ht_init(ph->plugins, HT_VALUE_CONST, 0.05);
     ht_init(ph->baseTextures, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->fonts, HT_VALUE_CONST, 0.05);
     ht_init(ph->colors, HT_VALUE_CONST, 0.05);
