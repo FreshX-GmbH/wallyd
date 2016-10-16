@@ -21,6 +21,7 @@ function parseString(str){
              matchTable[smatch] = val;
          } else {
             log.error("Key ",smatch," not found in context.privates");
+            return "undefined";
         }
     }
     var destVal = str;

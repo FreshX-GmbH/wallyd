@@ -189,10 +189,10 @@ void cleanupWally(int s){
     fclose(ph->logfileHandle);
     unlink(FIFO);
     // after this call ph is no more available
-    cleanupUtil();
     if(pthread_join(ph->uv_thr,&pret) == 0){
        free(ph->uv_thr);
     }
+    cleanupUtil();
     exit(s);
 }
 
