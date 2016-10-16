@@ -422,7 +422,7 @@ pluginHandler *pluginsInit(void){
     ph->configMap = malloc(sizeof(hash_table));
     ph->configFlagsMap = malloc(sizeof(hash_table));
     ph->transactions = malloc(sizeof(hash_table));
-    ht_init(ph->functionWaitConditions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    ht_init(ph->functionWaitConditions, HT_VALUE_CONST, 0.05);
     ht_init(ph->callbacks, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->thr_functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ht_init(ph->functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
