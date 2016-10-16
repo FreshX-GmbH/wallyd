@@ -141,22 +141,19 @@ int getConfig(hash_table *map, const char *file)
               memset(v,0,vlen);
               memcpy(v,vnew,vlen-2);
               free(vnew);
-              //slog(TRACE,FULLDEBUG,"Removed leading and trailing \" from value. its now : %s",v);
          }
-         //slog(TRACE,FULLDEBUG,"Splitting cleaned line %s into key %s = %s",line,k,v);
          if(!k || !v){
             slog(WARN,LOG_UTIL,"Line %s is not valid. Ignored.");
             continue;
          }
-         ht_insert_simple(map,k,v);
-         //map_set(map, k,v);
-         line=(char*)malloc(512);
+         ht_insert_simple(map,strdup(k),strdup(v));
          count++;
          if(count+1 > MAXCONF){
             slog(ERROR,LOG_UTIL,"MaxConf Count reached.");
             break;
          }
       }
+   free(line);
    fclose ( fp );
    }
    configEntries = count;
