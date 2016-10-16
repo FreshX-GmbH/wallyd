@@ -15,6 +15,10 @@ duk_context *ctx = NULL;
 
 extern pluginHandler *ph;
 
+int c_commit(void *p){
+   return NULL;
+}
+
 int js_lockTransaction(duk_context *ctx) {
    dschema_check(ctx, (const duv_schema_entry[]){
        {"id", duk_is_number},
@@ -95,6 +99,8 @@ char *initPlugin(pluginHandler *_ph){
    duk_put_prop_string(ctx, -2, "prototype");
    duk_put_global_string(ctx, "CTransaction");  /* -> stack: [ ] */
 
-    slog(TRACE,LOG_PLUGIN,"Plugin initialized. PH is at 0x%x",ph);
-    return PLUGIN_SCOPE;
+   wally_put_function("commit"                      ,WFUNC_THRD, c_commit, 0);
+
+   slog(TRACE,LOG_PLUGIN,"Plugin initialized. PH is at 0x%x",ph);
+   return PLUGIN_SCOPE;
 }

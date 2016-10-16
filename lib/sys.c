@@ -21,11 +21,6 @@ int dumpDebug(void *p){
   return 0;
 }
 
-// Dummy call
-int c_commit(void *p){
-  return 0;
-}
-
 int wally_sleep(void *time){
     int t = atoi(time);
     if(t > 0){
@@ -201,7 +196,6 @@ char *initSysPlugin(){
    ctx = ph->ctx;
 
    wally_put_function("quit"                        ,WFUNC_SYNC, c_cleanupWally, 0);
-   wally_put_function("commit"                      ,WFUNC_THRD, c_commit, 0);
    wally_put_function(PLUGIN_SCOPE"::quit"          ,WFUNC_SYNC, c_cleanupWally, 0);
    wally_put_function(PLUGIN_SCOPE"::debug"         ,WFUNC_SYNC, dumpDebug, 0);
    wally_put_function(PLUGIN_SCOPE"::sleep"         ,WFUNC_SYNC, wally_sleep, 0);
