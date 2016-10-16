@@ -314,26 +314,26 @@ int createTextureEx(void *strTmp,bool isVideo){
 
    if(!getNumOrPercent(zS, 0, &z)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
-      return false;
+      goto fail;
    } else {
       slog(DEBUG,LOG_TEXTURE,"Z-Value : %d",z,&r);
    }
 
    if(!getNumOrPercent(xS, ph->width, &x)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
-      return false;
+      goto fail;
    }
    if(!getNumOrPercent(yS, ph->height, &y)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
-      return false;
+      goto fail;
    }
    if(!getNumOrPercent(wS, ph->width, &w)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
-      return false;
+      goto fail;
    }
    if(!getNumOrPercent(hS, ph->height, &h)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
-      return false;
+      goto fail;
    }
    if(!getNumHex(cS,&color)){
       slog(INFO,LOG_TEXTURE,"Texture color not given, using black.");
@@ -347,7 +347,7 @@ int createTextureEx(void *strTmp,bool isVideo){
    }
    if(w == 0 || h == 0){
       slog(ERROR,LOG_TEXTURE,"Refusing to create texture %s with size %dx%d",textureName,w,h);
-      return false;
+      goto fail;
    }
 
    // TODO : Free!
@@ -388,7 +388,7 @@ int createTextureEx(void *strTmp,bool isVideo){
       }
       if(!TI->texture){
          slog(ERROR,LOG_TEXTURE,"Failed to create a texture : %s",SDL_GetError());
-         return false;
+         goto fail;
       }
       ph->textureCount++;
       // Clear the texture
@@ -412,9 +412,12 @@ int createTextureEx(void *strTmp,bool isVideo){
       ph->texturePrio = getTextureNamesByPrio(&items);
    } else {
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(n,x,y,w,h) : (%s)",str);
-      return false;
+      goto fail;
    }
    return true;
+:fail
+   free(str);
+   return false;
 }
 
 int createVideoTexture(void *a){
