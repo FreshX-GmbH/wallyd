@@ -97,6 +97,7 @@ typedef struct{
     int threadDelay;
     pthread_t wallyClientThread;
     pthread_t mainThread;
+    pthread_t uv_thr;
     
     bool VFSOpen;
     char *VFSName;

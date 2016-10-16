@@ -177,6 +177,7 @@ void cleanupUtil(void)
 }
 
 void cleanupWally(int s){
+    void *pret;
     if(s != 0){
       slog(INFO,LOG_UTIL,"Caught signal %d", s);
     } else {
@@ -189,6 +190,9 @@ void cleanupWally(int s){
     unlink(FIFO);
     // after this call ph is no more available
     cleanupUtil();
+    if(pthread_join(ph->uv_thr,&pret) == 0){
+       free(ph->uv_thr);
+    }
     exit(s);
 }
 

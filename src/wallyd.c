@@ -8,7 +8,6 @@ uv_fs_t closeReq;
 uv_pipe_t server;
 uv_tcp_t tcp;
 uv_loop_t loop;
-pthread_t uv_thr;
 
 int gargc;
 char *gargv[2];
@@ -89,7 +88,7 @@ int main(int argc, char *argv[])
    gargc = argc;
    gargv[0] = strdup(argv[0]);
    gargv[1] = startupScript;
-   if(pthread_create(&uv_thr, NULL, &duvThread, ph->ctx) != 0){
+   if(pthread_create(&ph->uv_thr, NULL, &duvThread, ph->ctx) != 0){
       slog(ERROR,LOG_CORE,"Failed to create seaduk thread!");
    }
 
@@ -99,8 +98,8 @@ int main(int argc, char *argv[])
    uv_loop_close(&loop);
    duk_destroy_heap(ph->ctx);
    void *pret;
-   if(pthread_join(uv_thr,&pret) == 0){
-      free(uv_thr);
+   if(pthread_join(ph->uv_thr,&pret) == 0){
+      free(ph->uv_thr);
    }
 }
 
