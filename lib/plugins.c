@@ -11,23 +11,22 @@
 pluginHandler *ph;
 pthread_mutex_t callMutex=PTHREAD_MUTEX_INITIALIZER;
 
-bool initWtx(wally_call_ctx** xwtx){
+bool initWtx(wally_call_ctx** xwtx,id){
     *xwtx = malloc(sizeof(wally_call_ctx));
     wally_call_ctx *wtx = *xwtx;
     memset(wtx,0,sizeof(wally_call_ctx));
     (*xwtx)->elements = 0;
     wtx->transaction = false;
-    wtx->transaction_id = 0;
+    wtx->transaction_id = id;
     return true;
 }
 
-bool newWtx(int id, wally_call_ctx** xwtx){
+bool newWtx(int id, wally_call_ctx** wtx){
     if(id > MAX_WTX){
         slog(ERROR,LOG_PLUGIN,"MAX_WTX %d reached. Can not create more transactions!",MAX_WTX);
         return false;
     }
-    if(!initWtx(xwtx)) return false;
-    wtx->transaction_id = id;
+    if(!initWtx(wtx,id)) return false;
 }
 
 // Free the WTX and ALL its elements
@@ -75,6 +74,7 @@ bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     // also possible access
     (*xwtx)->elements = 1;
     wtx->transaction = false;
+    wtx->transaction_id = 0;
     wtx->type[0] = CALL_TYPE_STR;
     return true;
 }
@@ -401,7 +401,7 @@ pluginHandler *pluginsInit(void){
     ph->texturePrio = NULL;
     ph->transaction = 0;
     ph->transactionCount = 0;
-    initWtx(&ph->wtx);
+    initWtx(&ph->wtx,0);
     ph->transactions = malloc(sizeof(void*)*MAX_WTX);
     pthread_mutex_init(&ph->wtxMutex,0);
     pthread_mutex_init(&ph->taMutex,0);

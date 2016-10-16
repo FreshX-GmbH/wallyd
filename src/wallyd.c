@@ -97,10 +97,11 @@ int main(int argc, char *argv[])
 
    uv_loop_close(&loop);
    duk_destroy_heap(ph->ctx);
-   void *pret;
-   if(pthread_join(ph->uv_thr,&pret) == 0){
-      free(ph->uv_thr);
-   }
+   // TODO : Free this
+   //void *pret;
+   //if(pthread_join(ph->uv_thr,&pret) == 0){
+   //   free(ph->uv_thr);
+   //}
 }
 
 void allocBuffer(uv_handle_t* handle, size_t size, uv_buf_t* buf) {
