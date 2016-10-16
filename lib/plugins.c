@@ -17,6 +17,7 @@ bool initWtx(wally_call_ctx** xwtx){
     memset(wtx,0,sizeof(wally_call_ctx));
     (*xwtx)->elements = 0;
     wtx->transaction = false;
+    wtx->transaction_id = 0;
     return true;
 }
 
@@ -25,7 +26,8 @@ bool newWtx(int id, wally_call_ctx** xwtx){
         slog(ERROR,LOG_PLUGIN,"MAX_WTX %d reached. Can not create more transactions!",MAX_WTX);
         return false;
     }
-    return initWtx(xwtx);
+    if(!initWtx(xwtx)) return false;
+    wtx->transaction_id = id;
 }
 
 // Free the WTX and ALL its elements
@@ -33,7 +35,7 @@ void freeWtxElements(wally_call_ctx* wtx){
     pthread_mutex_lock(&ph->wtxMutex);
     int elements = wtx->elements, count = 0;
 //    wally_call_ctx *wtx = *xwtx;
-    slog(DEBUG,LOG_PLUGIN,"Free WTX with %d elements", wtx->elements);
+    slog(DEBUG,LOG_PLUGIN,"Free WTX %d with %d elements", wtx->transaction_id, wtx->elements);
     for(; elements >= 0; elements--){
         slog(TRACE,LOG_PLUGIN,"Free WTX element %d %s(%s)", elements,wtx->name[elements],wtx->param[elements]);
         if(wtx->name[elements]){
@@ -54,7 +56,7 @@ void freeWtxElements(wally_call_ctx* wtx){
     pthread_mutex_unlock(&ph->wtxMutex);
 }
 
-void * freeWtx(id){
+void *freeWtx(id){
     freeWtxElements(ph->transactions[id]);
     free(ph->transactions[id]);
     return NULL;

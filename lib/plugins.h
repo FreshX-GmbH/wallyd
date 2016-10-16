@@ -48,6 +48,7 @@ typedef struct wally_call_ctx{
     int type[WTX_SIZE];
     int elements;
     int transaction;
+    int transaction_id;
 }  wally_call_ctx;
 
 typedef struct{
