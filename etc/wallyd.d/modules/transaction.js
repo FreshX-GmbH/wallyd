@@ -11,20 +11,20 @@ Transaction.prototype = {
     funcs:	[],
 
     initialize: function() {
-        this.name = 'Transaction';
+	this.funcs = [];
 	if(typeof(CTransaction) === 'undefined'){
+	  log.warn('CTransactions not available.');
 	  this.ID = 15;
 	  this.ct = null;
 	} else {
 	  this.ct = new CTransaction();
-	  this.ID = this.ct.new();
+	  this.ID = this.ct.newTransaction();
+	  //log.trace('Transaction '+this.ID+' has '+this.funcs.length+' elements');
 	}
-	this.funcs = [];
-	//log.trace("Transaction has "+this.funcs.length+" elements");
     },
 
     toString:   function() {
-        return '{ size : '+this.funcs.length+' }';
+        return '{ size : '+this.funcs.length+', id : '+this.ID+' }';
     },
 
     push: function(f){
@@ -37,10 +37,8 @@ Transaction.prototype = {
     },
 
     commit: function(){
-    	log.debug('Commiting transaction with '+this.funcs.length+' elements');
-	if(!this.ct){
-	    log.warn('CTransactions not available.');
-	} else {
+    	log.debug('Commiting transaction '+this.ID+' with '+this.funcs.length+' elements');
+	if(this.ct){
 	    this.ct.lock(this.ID);
 	}
     	for(var i = 0; i < this.funcs.length; i++){

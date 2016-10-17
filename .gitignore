@@ -1,6 +1,7 @@
 *.xcuserstate
 Plugins.xcscheme
 config/*
+etc/wallyd.d/settings.json
 CMakeFiles
 config.h*
 config.log

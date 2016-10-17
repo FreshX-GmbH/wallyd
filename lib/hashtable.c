@@ -104,7 +104,9 @@ void ht_init(hash_table *table, ht_flags flags, double max_load_factor
     table->collisions           = 0;
     table->flags                = flags;
     table->max_load_factor      = max_load_factor;
-    table->current_load_factor  = 0.0;
+    table->current_load_factor  = 0.0; 
+    pthread_mutex_init(&table->get_mutex,0);
+    pthread_mutex_init(&table->put_mutex,0);
 
     unsigned int i;
     for(i = 0; i < table->array_size; i++)
@@ -162,8 +164,10 @@ void ht_destroy(hash_table *table)
 
 void ht_insert_simple(hash_table *table, char *key, void *value)
 {
+    pthread_mutex_lock(&table->put_mutex);
     hash_entry *entry = he_create(table->flags, key, strlen(key)+1, value, sizeof(void*));
     ht_insert_he(table, entry);
+    pthread_mutex_unlock(&table->put_mutex);
 }
 
 void ht_remove_simple(hash_table *table, char *key)
@@ -174,9 +178,11 @@ void ht_remove_simple(hash_table *table, char *key)
 void ht_insert(hash_table *table, void *key, size_t key_size, void *value,
         size_t value_size)
 {
+    pthread_mutex_lock(&table->put_mutex);
     hash_entry *entry = he_create(table->flags, key, key_size, value,
             value_size);
     ht_insert_he(table, entry);
+    pthread_mutex_unlock(&table->put_mutex);
 }
 
 // this was separated out of the regular ht_insert
@@ -236,6 +242,7 @@ void ht_insert_he(hash_table *table, hash_entry *entry){
 
 void* ht_get(hash_table *table, void *key, size_t key_size, size_t *value_size)
 {
+    pthread_mutex_lock(&table->get_mutex);
     unsigned int index  = ht_index(table, key, key_size);
     hash_entry *entry   = table->array[index];
     hash_entry tmp;
@@ -251,6 +258,7 @@ void* ht_get(hash_table *table, void *key, size_t key_size, size_t *value_size)
             if(value_size != NULL)
                 *value_size = entry->value_size;
 
+    	    pthread_mutex_unlock(&table->get_mutex);
             return entry->value;
         }
         else
@@ -258,6 +266,7 @@ void* ht_get(hash_table *table, void *key, size_t key_size, size_t *value_size)
             entry = entry->next;
         }
     }
+    pthread_mutex_unlock(&table->get_mutex);
     errno = 1;
     return NULL;
 }
@@ -280,6 +289,7 @@ void* ht_get_simple(hash_table *table, void *key){
 
 void ht_remove(hash_table *table, void *key, size_t key_size)
 {
+    pthread_mutex_lock(&table->put_mutex);
     unsigned int index  = ht_index(table, key, key_size);
     hash_entry *entry   = table->array[index];
     hash_entry *prev    = NULL;
@@ -305,6 +315,7 @@ void ht_remove(hash_table *table, void *key, size_t key_size)
               table->collisions--;
 
             he_destroy(table->flags, entry);
+    	    pthread_mutex_unlock(&table->put_mutex);
             return;
         }
         else
@@ -313,6 +324,7 @@ void ht_remove(hash_table *table, void *key, size_t key_size)
             entry = entry->next;
         }
     }
+    pthread_mutex_unlock(&table->put_mutex);
 }
 
 int ht_contains(hash_table *table, void *key, size_t key_size)
@@ -409,6 +421,7 @@ unsigned int ht_index(hash_table *table, void *key, size_t key_size)
 // new_size can be smaller than current size (downsizing allowed)
 void ht_resize(hash_table *table, unsigned int new_size)
 {
+    pthread_mutex_lock(&table->put_mutex);
     hash_table new_table;
 
     slog(DEBUG,LOG_UTIL,"ht_resize(old=%d, new=%d)",table->array_size,new_size);
@@ -452,6 +465,7 @@ void ht_resize(hash_table *table, unsigned int new_size)
     table->key_count = new_table.key_count;
     table->collisions = new_table.collisions;
 
+    pthread_mutex_unlock(&table->put_mutex);
 }
 
 void ht_set_seed(uint32_t seed){

@@ -168,5 +168,6 @@ void freeWtxElements(wally_call_ctx* wtx);
 bool initWtx(wally_call_ctx** xwtx,int id);
 bool newWtx(int id, wally_call_ctx** xwtx);
 bool pushSimpleWtx(int id, const char *fstr,const char *params);
+bool commitWtx(int id);
 
 #endif

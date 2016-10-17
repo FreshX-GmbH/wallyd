@@ -11,7 +11,7 @@
 pluginHandler *ph;
 pthread_mutex_t callMutex=PTHREAD_MUTEX_INITIALIZER;
 
-bool initWtx(wally_call_ctx** xwtx,id){
+bool initWtx(wally_call_ctx** xwtx,int id){
     *xwtx = malloc(sizeof(wally_call_ctx));
     wally_call_ctx *wtx = *xwtx;
     memset(wtx,0,sizeof(wally_call_ctx));
@@ -26,7 +26,7 @@ bool newWtx(int id, wally_call_ctx** wtx){
         slog(ERROR,LOG_PLUGIN,"MAX_WTX %d reached. Can not create more transactions!",MAX_WTX);
         return false;
     }
-    if(!initWtx(wtx,id)) return false;
+    return initWtx(wtx,id);
 }
 
 // Free the WTX and ALL its elements
@@ -82,7 +82,6 @@ bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
 bool pushSimpleWtx(int id, const char *fstr,const char *params){
     wally_call_ctx *wtx = ph->transactions[ph->transaction];
     slog(DEBUG,LOG_PLUGIN,"WTX for cmd %s is at 0x%x",fstr,wtx);
-    pthread_mutex_lock(&ph->wtxMutex);
     int idx = wtx->elements;
     wtx->name[idx]=strdup(fstr);
     if(params != NULL){
@@ -93,7 +92,6 @@ bool pushSimpleWtx(int id, const char *fstr,const char *params){
     }
     wtx->elements = idx + 1;
     wtx->type[idx] = CALL_TYPE_STR;
-    pthread_mutex_unlock(&ph->wtxMutex);
     return true;
 }
 
@@ -104,13 +102,10 @@ bool commitWtx(int id){
 }
 
 bool callWtx(char *fstr, char *params){
-    // a null call is a commit
-    if(fstr == NULL && params == NULL){
-        return callEx(ph->wtx->name[0],NULL,ph->wtx,CALL_TYPE_WTX,true);
-    }
+    pthread_mutex_lock(&ph->wtxMutex);
     if(ph->transaction == 0) {
         int ret;
-	slog(DEBUG,LOG_PLUGIN,"Single WTX Call, freeing old WTX");
+	slog(DEBUG,LOG_PLUGIN,"Single WTX Call");
         // TODO : free this in a safe way!
         //freeWtxElements(ph->wtx);
         ph->wtx->elements=1;
@@ -120,6 +115,7 @@ bool callWtx(char *fstr, char *params){
     } else {
         pushSimpleWtx(ph->transaction, fstr, params);
     }
+    pthread_mutex_unlock(&ph->wtxMutex);
     return true;
 }
 
@@ -188,7 +184,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         event.user.data1=funcName;
         event.user.data2=params;
         slog(DEBUG,LOG_PLUGIN,"Added %s to the queue",funcName);
-        //priqueue_insert_ptr(ph->queue,strdup(funcName),0, DEFAULT_PRIO);
+        priqueue_insert_ptr(ph->queue,strdup(funcName),0, DEFAULT_PRIO);
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
         if(waitThread == true){
@@ -200,7 +196,8 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
 		// TODO : 
                 timeout = SDLWAITTIMEOUT_TRANSACTION;
             }
-            slog(TRACE,LOG_PLUGIN,"Wait %d ms until %s has finished.",timeout,funcName);
+            slog(DEBUG,LOG_PLUGIN,"Wait %d ms until %s has finished. Name/Map at 0x%x/0x%x",timeout,funcName,funcName,ph->functionWaitConditions);
+            slog(DEBUG,LOG_PLUGIN,"Condition at 0x%x",ht_get_simple(ph->functionWaitConditions,funcName));
             if(SDL_MUTEX_TIMEDOUT == 
                     SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,SDLWAITTIMEOUT))
                 {
@@ -242,7 +239,7 @@ bool exportThreaded(const char *name, void *f){
         ht_insert_simple(ph->thr_functions,(void*)name,f);
         // Enable this code for synced function calls
         ht_insert_simple(ph->functionWaitConditions, (void*)name, SDL_CreateCond());
-        slog(DEBUG,LOG_PLUGIN,"Function %s registered (threaded)",name);
+        slog(DEBUG,LOG_PLUGIN,"Function %s registered (threaded). Condition is at 0x%x",name,ht_get_simple(ph->functionWaitConditions,(void*)name));
         return true;
     }
     slog(ERROR,ERROR,"Function %s is already registered! Only one function allowed.",name);

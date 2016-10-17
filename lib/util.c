@@ -190,9 +190,10 @@ void cleanupWally(int s){
     unlink(FIFO);
     // after this call ph is no more available
     slog(INFO,LOG_UTIL,"Waiting for child-threads to exit ...");
-    if(ph->uv_thr && pthread_join(ph->uv_thr,&pret) == 0){
-       free(ph->uv_thr);
-    }
+    // TODO : verifiy if this is really a memory leak
+    //if(ph->uv_thr && pthread_join(ph->uv_thr,&pret) == 0){
+    //   free(ph->uv_thr);
+    //}
     cleanupUtil();
     exit(s);
 }

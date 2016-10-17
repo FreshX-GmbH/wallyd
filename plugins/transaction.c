@@ -16,7 +16,14 @@ duk_context *ctx = NULL;
 extern pluginHandler *ph;
 
 int c_commit(void *p){
-   return NULL;
+   return 0;
+}
+
+int lockTransaction(int id){
+   pthread_mutex_lock(&ph->taMutex);
+   ph->transaction = id;
+   slog(DEBUG,LOG_PLUGIN,"Locked transaction %d at 0x%x",id,ph->transactions[id]);
+   return id;
 }
 
 int js_lockTransaction(duk_context *ctx) {
@@ -25,9 +32,7 @@ int js_lockTransaction(duk_context *ctx) {
        {NULL}
    });
    int id = duk_get_int(ctx, 0);
-   ph->transaction = id;
-   slog(DEBUG,LOG_PLUGIN,"Locked transaction %d at 0x%x",id,ph->transactions[id]);
-   pthread_mutex_lock(&ph->taMutex);
+   lockTransaction(id);
    return 1;
 }
 
@@ -38,11 +43,11 @@ int js_commitTransaction(duk_context *ctx) {
        {NULL}
    });
    int id = duk_get_int(ctx, 0);
-   slog(DEBUG,LOG_PLUGIN,"Commiting and unlocking transaction %d at 0x%x",id,ph->transactions[id]);
+   slog(DEBUG,LOG_PLUGIN,"Commiting transaction %d at 0x%x",id,ph->transactions[id]);
    commitWtx(id);
    //freeWtx(id);
    //ph->transaction = 0;
-   //pthread_mutex_unlock(&ph->taMutex);
+   //pthread_mutex_unlock(&ph->wtxMutex);
    return 1;
 }
 
@@ -52,6 +57,7 @@ int js_newTransaction(duk_context *ctx) {
    int id = ph->transactionCount;
    char *idstr=NULL;
    if(!newWtx(id,&wtx)){
+      slog(ERROR,LOG_PLUGIN,"New transaction could not be created.");
       return 0; 
    }
    //asprintf(&idstr,"%d",id);
@@ -80,9 +86,9 @@ duk_ret_t transaction_ctor(duk_context *ctx)
 }
 
 const duk_function_list_entry taMethods[] = {
-    { "new",       js_newTransaction, 1},
-    { "lock",      js_lockTransaction, 1},
-    { "commit",    js_commitTransaction, 1},
+    { "newTransaction", js_newTransaction, 1},
+    { "lock",      	js_lockTransaction, 1},
+    { "commit",    	js_commitTransaction, 1},
     { NULL,                   NULL, 0 }
 };
 
@@ -99,7 +105,7 @@ char *initPlugin(pluginHandler *_ph){
    duk_put_prop_string(ctx, -2, "prototype");
    duk_put_global_string(ctx, "CTransaction");  /* -> stack: [ ] */
 
-   wally_put_function("commit"                      ,WFUNC_THRD, c_commit, 0);
+   wally_put_function("commit" ,WFUNC_THRD, c_commit, 0);
 
    slog(TRACE,LOG_PLUGIN,"Plugin initialized. PH is at 0x%x",ph);
    return PLUGIN_SCOPE;

@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <pthread.h>
 
 #include "hashfunc.h"
 
@@ -55,6 +56,10 @@ typedef struct hash_table {
 
     /// The current load factor.
     double current_load_factor;
+
+    /// Make thread safe
+    pthread_mutex_t put_mutex;
+    pthread_mutex_t get_mutex;
 
 } hash_table;
 

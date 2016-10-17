@@ -1,3 +1,4 @@
+var settings;
 var wally = new Wally();
 var config = wally.getConfig();
 var homedir = config.basedir+'/etc/wallyd.d';
@@ -19,10 +20,18 @@ var modules = homedir+'/modules.duv';
 var curl  = nucleus.dofile('modules/curl.js');
 nucleus.dofile('modules/transaction.js');
 
+try {
+	settings = JSON.parse(wally.readFile(homedir+'/settings.json'));
+}catch(e){
+	log.info('No valid settings.json found in '+homedir+'/settings.json, err : '+e);
+	settings = {};
+}
+
 var context = { 
     wally: wally,
     screen: wally,
     curl: curl,
+    settings: settings,
     config: {
         debug   : config.debug,
         wally   : wally.getConfig(),

@@ -4,6 +4,7 @@ var wally, wallaby, gui, data, header;
 
 var loopDelay = 10000;
 
+
 // for direct test in nucleus
 if(typeof(Wally) === 'undefined')
 {
@@ -19,10 +20,10 @@ if(typeof(Wally) === 'undefined')
 var date = new Date();
 var curl = nucleus.dofile('modules/curl.js');
 
-var user='dashing';
-var password='icinga2ondashingr0xx';
-var host='monitor.int.freshx.de';
-var port=5665;
+var user=context.settings.icinga.user;
+var password=context.settings.icinga.pass;
+var host=context.settings.icinga.host;
+var port=context.settings.icinga.port;
 var ukurl='https://'+host+':'+port+'/v1/objects/services?attrs=display_name&joins=host.address&filter=service.state==3';
 var errurl='https://'+host+':'+port+'/v1/objects/services?attrs=display_name&joins=host.address&filter=service.state==2';
 var warnurl='https://'+host+':'+port+'/v1/objects/services?attrs=display_name&joins=host.address&filter=service.state==1';
