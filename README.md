@@ -50,20 +50,17 @@ apt-get sdl2 sdl2_gfx sdl2_image sdl2_ttf curl ffmpeg
 # To build wallyd run
 
 ```
-sh autogen.sh
-./configure
+cmake .
 make && make install
 ```
 
 # To build in Linux or the firmware either
    
 * Install packages : SDL2 SDL2-devel SDL2_image SDL2_ttf SDL2_gfx
-* Required but included jsmn (Json parser from https://bitbucket.org/zserge/jsmn/wiki/Home)
-* Required but included jsmn-example from https://github.com/alisdair/jsmn-example
-* Required but included map_lib from https://github.com/jimlawless/map_lib
 * Required but included hashtable from https://github.com/larsendt/hashtable
+* Required but included priqueue from https://github.com/mitghi/priqueue
 * Required but included duktape from https://github.com/svaarala/duktape
-* Required but included dukluv from https://github.com/creationix/dukluv
+* Required but included seaduk from https://github.com/nucleus-js/seaduk
 * the sdl video plugin requires ffmpeg-devel
 
 # Commands
@@ -77,6 +74,7 @@ Built-In system commands :
    sys::loadPlugins
    sys::callback
    sys::info
+   quit
 ```
 Besides this, each of the plugins exports various commands into the wallyd namespace as well as into the ecmascript space
 See the plugins for more info
