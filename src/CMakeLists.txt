@@ -2,6 +2,7 @@ set(TEST_SRC drmtest.c)
 
 # On Linux build some KMS / DRM Test programms
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+ if(${WITH_KMS_DEMO} MATCHES "on")
   pkg_check_modules(LIBDRM libdrm)
   pkg_check_modules(LIBDRI libdri)
   pkg_check_modules(LIBGLES2 libglesv2)
@@ -20,6 +21,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   install(TARGETS kmscube DESTINATION ${BIN_INSTALL_DIR})
   install(TARGETS modeset DESTINATION ${BIN_INSTALL_DIR})
   install(TARGETS fb2png DESTINATION ${BIN_INSTALL_DIR})
+ endif()
 endif()
 
 #set(WALLYC_SRC wallyc.cpp tcp.cpp)

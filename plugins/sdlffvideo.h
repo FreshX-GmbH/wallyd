@@ -4,6 +4,9 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
+#define _GNU_SOURCE
+#include <stdio.h>
+
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavformat/avio.h>
