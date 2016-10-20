@@ -4,7 +4,7 @@ Duktape.modLoaded.uv = {exports:nucleus.uv};
 Duktape.modLoaded.log = nucleus.dofile('modules/log.js');
 Duktape.modLoaded.utils = nucleus.dofile('modules/utils.js');
 
-if(typeof(CurlPrototype !== "undefined")){
+if(typeof(CurlPrototype) !== "undefined"){
     Duktape.modLoaded.CurlPrototype=CurlPrototype;
 }
 
