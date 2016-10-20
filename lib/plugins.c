@@ -81,7 +81,7 @@ bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
 
 bool pushSimpleWtx(int id, const char *fstr,const char *params){
     wally_call_ctx *wtx = ph->transactions[ph->transaction];
-    slog(DEBUG,LOG_PLUGIN,"WTX for cmd %s is at 0x%x",fstr,wtx);
+    slog(TRACE,LOG_PLUGIN,"WTX for cmd %s is at 0x%x",fstr,wtx);
     int idx = wtx->elements;
     wtx->name[idx]=strdup(fstr);
     if(params != NULL){
@@ -172,7 +172,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 slog(DEBUG,LOG_PLUGIN,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
                 break;
             case CALL_TYPE_WTX:
-                slog(DEBUG,LOG_PLUGIN,"WTX call");
+                slog(TRACE,LOG_PLUGIN,"WTX call");
                 params = paramsTmp;
                 event.type = WALLY_CALL_WTX;
                 break;
@@ -197,7 +197,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 timeout = SDLWAITTIMEOUT_TRANSACTION;
             }
             slog(DEBUG,LOG_PLUGIN,"Wait %d ms until %s has finished. Name/Map at 0x%x/0x%x",timeout,funcName,funcName,ph->functionWaitConditions);
-            slog(DEBUG,LOG_PLUGIN,"Condition at 0x%x",ht_get_simple(ph->functionWaitConditions,funcName));
+            slog(TRACE,LOG_PLUGIN,"Condition at 0x%x",ht_get_simple(ph->functionWaitConditions,funcName));
             if(SDL_MUTEX_TIMEDOUT == 
                     SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,SDLWAITTIMEOUT))
                 {

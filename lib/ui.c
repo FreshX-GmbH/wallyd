@@ -93,7 +93,7 @@ bool uiLoop(void){
                slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements. wtx at 0x%x", wtx->elements,wtx);
            } else {
                id = atoi(event.user.data2);
-               slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d / %s",id,event.user.data2);
+               //slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d / %s",id,event.user.data2);
                //free(event.user.data2);
                wtx = ph->transactions[id];
                slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d and %d elements. wtx at 0x%x", id,wtx->elements,wtx);
@@ -275,7 +275,7 @@ int renderActiveEx(void *startTex)
          start = true;
       }
       if(start == false) continue;
-      slog(DEBUG,LOG_TEXTURE,"Key %d : %s",i,name);
+      slog(TRACE,LOG_TEXTURE,"Key %d : %s",i,name);
       TI = getTexture( name );
       if(TI->active == true && TI->autorender == true){
           SDL_Rect *mr = TI->rect;
@@ -283,7 +283,7 @@ int renderActiveEx(void *startTex)
 	       slog(INFO,LOG_TEXTURE,"Refusing to place texture %s with invalid size.",name);
 	       continue;
           }
-          slog(DEBUG,LOG_TEXTURE,"RenderActive(%s,{%d,%d,%d,%d});",name,mr->x, mr->y, mr->w, mr->h);
+          slog(TRACE,LOG_TEXTURE,"RenderActive(%s,{%d,%d,%d,%d});",name,mr->x, mr->y, mr->w, mr->h);
           SDL_RenderCopyEx( ph->renderer, TI->texture, NULL, mr, 0, NULL, SDL_FLIP_NONE);
        }
    }
