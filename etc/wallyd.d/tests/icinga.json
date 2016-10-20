@@ -8,42 +8,42 @@
       "objects": [
         {
           "type": "rect",
+          "value": "co2D",
           "options": {
             "id": "15",
-            "value": "",
             "style": {
               "whiteSpace": "wrap",
               "html": "1",
-              "fillColor": "#3399FF"
+              "fillColor": "#339933"
             },
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 1383.8400000000001,
-              "y": 835.2,
-              "width": 1382.3999999999999,
-              "height": 460.8,
+              "x": 1490,
+              "y": 800,
+              "width": 1490,
+              "height": 390,
               "as": null
             }
           }
         },
         {
           "type": "rect",
+          "value": "co2U",
           "options": {
             "id": "19",
-            "value": "",
             "style": {
               "whiteSpace": "wrap",
               "html": "1",
-              "fillColor": "#00FFFF"
+              "fillColor": "#339933"
             },
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 0.7200000000000273,
-              "y": 835.2,
-              "width": 1382.3999999999999,
-              "height": 465.12,
+              "x": 0,
+              "y": 800,
+              "width": 1490,
+              "height": 390,
               "as": null
             }
           }
@@ -62,10 +62,10 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 290.8800000000001,
+              "x": 2235,
               "y": 0,
-              "width": 691.1999999999999,
-              "height": 835.1999999999999,
+              "width": 745,
+              "height": 800,
               "as": null
             }
           }
@@ -83,10 +83,10 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 194.4000000000001,
+              "x": 1490,
               "y": 0,
-              "width": 691.1999999999999,
-              "height": 835.1999999999999,
+              "width": 746,
+              "height": 800,
               "as": null
             }
           }
@@ -104,10 +104,10 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 97.20000000000005,
+              "x": 745,
               "y": 0,
-              "width": 691.1999999999999,
-              "height": 835.1999999999999,
+              "width": 747,
+              "height": 800,
               "as": null
             }
           }
@@ -124,10 +124,10 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 0.7200000000000273,
+              "x": 0,
               "y": 0,
-              "width": 691.1999999999999,
-              "height": 835.1999999999999,
+              "width": 745,
+              "height": 800,
               "as": null
             }
           }
@@ -149,14 +149,14 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 180.0000000000001,
+              "x": 320,
               "y": 291.6,
               "width": 460.8,
               "height": 108,
               "as": null
             }
           },
-          "value": "$_.down;\n"
+          "value": "$_.down;"
         },
         {
           "type": "text",
@@ -175,7 +175,7 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 211.68000000000006,
+              "x": 1055,
               "y": 291.6,
               "width": 460.8,
               "height": 108,
@@ -201,7 +201,7 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 363.5999999999999,
+              "x": 1800,
               "y": 291.6,
               "width": 460.8,
               "height": 108,
@@ -222,15 +222,15 @@
               "whiteSpace": "wrap",
               "overflow": "hidden",
               "fontColor": "#FFCCCC",
-              "fontSize": "64"
+              "fontSize": "20"
             },
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 169.92000000000007,
+              "x": 190,
               "y": 521.28,
               "width": 352.8,
-              "height": 86.39999999999999,
+              "height": 50,
               "as": null
             }
           },
@@ -248,15 +248,15 @@
               "whiteSpace": "wrap",
               "overflow": "hidden",
               "fontColor": "#FFE6CC",
-              "fontSize": "64"
+              "fontSize": "20"
             },
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 850.32,
-              "y": 506.88,
+              "x": 910,
+              "y": 521.28,
               "width": 375.12,
-              "height": 86.39999999999999,
+              "height": 50,
               "as": null
             }
           },
@@ -274,15 +274,15 @@
               "whiteSpace": "wrap",
               "overflow": "hidden",
               "fontColor": "#CCFFCC",
-              "fontSize": "64"
+              "fontSize": "20"
             },
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 1553.04,
-              "y": 506.88,
+              "x": 1750,
+              "y": 521.28,
               "width": 352.8,
-              "height": 86.39999999999999,
+              "height": 50,
               "as": null
             }
           },
@@ -305,7 +305,7 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 406.0799999999999,
+              "x": 2510,
               "y": 291.6,
               "width": 460.8,
               "height": 108,
@@ -326,15 +326,15 @@
               "whiteSpace": "wrap",
               "overflow": "hidden",
               "fontColor": "#CCFFCC",
-              "fontSize": "64"
+              "fontSize": "20"
             },
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 2244.24,
+              "x": 2400,
               "y": 506.88,
               "width": 352.8,
-              "height": 86.39999999999999,
+              "height": 50,
               "as": null
             }
           },
@@ -344,7 +344,7 @@
           "type": "text",
           "options": {
             "id": "21",
-            "value": "$_.co2D; ppm - $_.tempD; C",
+            "value": "$_.co2D; ppm / $_.tempD;  ºC",
             "style": {
               "text": true,
               "align": "center",
@@ -357,20 +357,20 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 1713.6000000000001,
-              "y": 997.2,
+              "x": 1880,
+              "y": 860,
               "width": 1260,
               "height": 108,
               "as": null
             }
           },
-          "value": "$_.co2D; ppm - $_.tempD; C"
+          "value": "$_.co2D; ppm / $_.tempD; C"
         },
         {
           "type": "text",
           "options": {
             "id": "20",
-            "value": "$_.co2U; ppm - $_.tempU; C",
+            "value": "$_.co2U; ppm / $_.tempU;  ºC",
             "style": {
               "text": true,
               "align": "center",
@@ -383,9 +383,9 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 429.84000000000003,
-              "y": 997.2,
-              "width": 1353.6000000000001,
+              "x": 330,
+              "y": 860,
+              "width": 1353,
               "height": 108,
               "as": null
             }
@@ -396,7 +396,7 @@
           "type": "text",
           "options": {
             "id": "22",
-            "value": "CO2 temperature 1st floor",
+            "value": "CO2 / temperature 1st floor",
             "style": {
               "text": true,
               "align": "center",
@@ -404,19 +404,19 @@
               "whiteSpace": "wrap",
               "overflow": "hidden",
               "fontColor": "#FFE6CC",
-              "fontSize": "64"
+              "fontSize": "20"
             },
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 331.9200000000001,
-              "y": 1131.8400000000001,
+              "x": 430,
+              "y": 1050,
               "width": 720,
-              "height": 86.39999999999999,
+              "height": 40,
               "as": null
             }
           },
-          "value": "CO2 temperature 1st floor"
+          "value": "CO2 / temperature 1st floor"
         },
         {
           "type": "text",
@@ -430,45 +430,19 @@
               "whiteSpace": "wrap",
               "overflow": "hidden",
               "fontColor": "#FFE6CC",
-              "fontSize": "64"
+              "fontSize": "20"
             },
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 1784.8799999999999,
-              "y": 1131.8400000000001,
+              "x": 1980,
+              "y": 1050,
               "width": 581.04,
-              "height": 86.39999999999999,
+              "height": 40,
               "as": null
             }
           },
           "value": "CO2 temperature 2nd floor"
-        },
-        {
-          "type": "text",
-          "options": {
-            "id": "24",
-            "value": "$_.warn;",
-            "style": {
-              "text": true,
-              "align": "center",
-              "verticalAlign": "middle",
-              "whiteSpace": "wrap",
-              "overflow": "hidden",
-              "fontSize": "128",
-              "fontColor": "#FFFFFF"
-            },
-            "vertex": "1",
-            "parent": "1",
-            "geometry": {
-              "x": 558.72,
-              "y": 102.24000000000001,
-              "width": 460.8,
-              "height": 108,
-              "as": null
-            }
-          },
-          "value": "$_.warn;"
         }
       ]
     }

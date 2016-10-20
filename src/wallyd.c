@@ -8,7 +8,6 @@ uv_fs_t closeReq;
 uv_pipe_t server;
 uv_tcp_t tcp;
 uv_loop_t loop;
-pthread_t uv_thr;
 
 int gargc;
 char *gargv[2];
@@ -73,8 +72,10 @@ int main(int argc, char *argv[])
         callSync("sys::loadPlugins",&ret,pluginFolder);
     }
 
-    ht_dumpkeys(ph->functions,"Exported sync commands : ");
-    ht_dumpkeys(ph->thr_functions,"Exported async commands : ");
+    if(ph->loglevel > DEBUG){
+      hashtable_dumpkeys(ph->functions,"Exported sync commands : ");
+      hashtable_dumpkeys(ph->thr_functions,"Exported async commands : ");
+    }
 
    slog(ERROR,LOG_CORE,"PH Size : %d, WTX Size : %d",sizeof(pluginHandler), sizeof(wally_call_ctx));
    // remove old socket
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
    gargc = argc;
    gargv[0] = strdup(argv[0]);
    gargv[1] = startupScript;
-   if(pthread_create(&uv_thr, NULL, &duvThread, ph->ctx) != 0){
+   if(pthread_create(&ph->uv_thr, NULL, &duvThread, ph->ctx) != 0){
       slog(ERROR,LOG_CORE,"Failed to create seaduk thread!");
    }
 
@@ -96,6 +97,11 @@ int main(int argc, char *argv[])
 
    uv_loop_close(&loop);
    duk_destroy_heap(ph->ctx);
+   // TODO : Free this
+   //void *pret;
+   //if(pthread_join(ph->uv_thr,&pret) == 0){
+   //   free(ph->uv_thr);
+   //}
 }
 
 void allocBuffer(uv_handle_t* handle, size_t size, uv_buf_t* buf) {

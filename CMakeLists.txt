@@ -13,9 +13,12 @@ set(WITH_VIDEO on)
 set(WITH_CURL on)
 
 # We want to gently wait for events or poll agressivly (more performant)
+set(WITH_KMS_DEMO off)
+
+# We want to gently wait for events or poll agressivly (more performant)
 set(WAIT_EV off)
 
-set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -D__WITH_MURMUR -std=c99 -g")
+set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c99 -g")
 
 find_package(PkgConfig)
 pkg_check_modules(LIBUV libuv>=1.7)

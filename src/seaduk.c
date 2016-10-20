@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 
 //#include "miniz.h"
+#include <stdio.h>
 #include "duv.h"
 #include "nucly/env.h"
 #include "nucly/path.h"
@@ -441,6 +442,7 @@ void *duvThread(void *ctx){
   }
   uv_run(&loop, UV_RUN_DEFAULT);
   slog(INFO,LOG_JS,"Seaduk interpreter has finished.");
+  ph->uv_thr = NULL;
 //  duk_destroy_heap(ctx);
   return NULL;
 }

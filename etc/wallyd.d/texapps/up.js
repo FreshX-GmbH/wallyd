@@ -23,8 +23,10 @@ function oninterval() {
 	   uts = d+' days '+h+':'+m+'h';
 	}
     	var stat = '***   Up: '+uts;
-        gui.clearTexture('up');
-       	wally.setText('up','black','logfont',0,1,stat);
+	var TA=new Transaction();
+	TA.push( gui.clearTexture.bind(null,'up'));
+       	TA.push( wally.setText.bind(null,'up','black','logfont',0,1,stat));
+	TA.commit();
     } catch(err) {
 	log.error('ERROR: Show status failed : '+err);
     }

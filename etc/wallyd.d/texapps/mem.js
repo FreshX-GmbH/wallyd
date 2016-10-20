@@ -4,12 +4,14 @@ var wally = new Wally();
 var gui = new GUI();
 var date = new Date();
 var uv = nucleus.uv;
+var date = new Date();
 
 var memstartb = wally.getrss();
 var memstart = Math.round((memstartb/1024/1024)*100)/100+'mb';
 var start = date.getTime();
 var div = 1;
 var lastmin = memstartb;
+//log.error('MemDBG');
 
 function oninterval() {
     try {
@@ -29,14 +31,13 @@ function oninterval() {
 		 ' / L '+Math.ceil((grow)/(1024*1024)*100)/100+'mb'+
 		 ' / gpm '+(mymem-lastmin)+
 		 ' / T '+Math.ceil(div)+'s';
-	var TA = new Transaction();
-        TA.push(gui.clearTexture.bind(null,'memdbg'));
-	TA.push(wally.setText.bind(null,'memdbg','black','logfont',0,0,tstat));
-	TA.push(wally.render.bind(null,'memdbg'));
-	TA.commit();
+	//wally.startTransaction();
+        gui.clearTexture('memdbg');
+	wally.setText('memdbg','black','logfont',0,1,tstat);
+	//wally.commitTransaction();
 	log.info(stat);
     } catch(err) {
-	log.error('Error in memdbg : '+err);
+	//log.error('Error in memdbg : '+err);
     }
 }
 
@@ -44,5 +45,5 @@ try {
     var memtimer = new uv.Timer();
     memtimer.start( 0, 2000, oninterval);
 } catch(e) {
-    log.error('Error in memdbg timer : '+e);
+    //log.error('Error in memdbg timer : '+e);
 }

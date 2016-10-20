@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <pthread.h>
 
 #include "hashfunc.h"
 
@@ -56,6 +57,10 @@ typedef struct hash_table {
     /// The current load factor.
     double current_load_factor;
 
+    /// Make thread safe
+    pthread_mutex_t put_mutex;
+    pthread_mutex_t get_mutex;
+
 } hash_table;
 
 /// Hashtable initialization flags (passed to ht_init)
@@ -72,7 +77,10 @@ typedef enum {
 
     /// Don't automatically resize hashtable when the load factor
     /// goes above the trigger value
-    HT_NO_AUTORESIZE = 4
+    HT_NO_AUTORESIZE = 4,
+
+    /// Free values on destroy if this flag is set
+    HT_VALUE_FREE = 8
 
 } ht_flags;
 

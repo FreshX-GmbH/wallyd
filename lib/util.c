@@ -101,7 +101,7 @@ const char *getConfigEntry(const char *key){
    return NULL;
 }
 
-int getConfig(hash_table *map, const char *file)
+int getConfig(HashTable *map, const char *file)
 {
 //   slog(TRACE,FULLDEBUG,"Map : 0x%x, Filename : %s",map,file);
    int count=0;
@@ -141,22 +141,19 @@ int getConfig(hash_table *map, const char *file)
               memset(v,0,vlen);
               memcpy(v,vnew,vlen-2);
               free(vnew);
-              //slog(TRACE,FULLDEBUG,"Removed leading and trailing \" from value. its now : %s",v);
          }
-         //slog(TRACE,FULLDEBUG,"Splitting cleaned line %s into key %s = %s",line,k,v);
          if(!k || !v){
             slog(WARN,LOG_UTIL,"Line %s is not valid. Ignored.");
             continue;
          }
-         ht_insert_simple(map,k,v);
-         //map_set(map, k,v);
-         line=(char*)malloc(512);
+         ht_insert_simple(map,k,strdup(v));
          count++;
          if(count+1 > MAXCONF){
             slog(ERROR,LOG_UTIL,"MaxConf Count reached.");
             break;
          }
       }
+   free(line);
    fclose ( fp );
    }
    configEntries = count;
@@ -166,10 +163,12 @@ int getConfig(hash_table *map, const char *file)
 
 void cleanupUtil(void)
 {
-    if(ph->functions) ht_destroy(ph->functions);
-    if(ph->plugins) ht_destroy(ph->plugins);
-    //if(ph->configMap) map_free(ph->configMap);
-    //if(ph->configFlagsMap) map_free(ph->configFlagsMap);
+    if(ph->functions) hashtable_delete(ph->functions);
+    if(ph->plugins) hashtable_delete(ph->plugins);
+    if(ph->configMap) hashtable_delete(ph->configMap);
+    if(ph->configFlagsMap) hashtable_delete(ph->configFlagsMap);
+    // TODO : find proper free method
+    // if(ph->queue) priqueue_free(ph->queue);
     if(ph->logfile == true){
         fclose(ph->logfileHandle);
     }
@@ -178,6 +177,7 @@ void cleanupUtil(void)
 }
 
 void cleanupWally(int s){
+    void *pret;
     if(s != 0){
       slog(INFO,LOG_UTIL,"Caught signal %d", s);
     } else {
@@ -186,10 +186,14 @@ void cleanupWally(int s){
     signal(SIGINT, SIG_DFL);
 
     cleanupPlugins();
-    //fclose(fifo);
     fclose(ph->logfileHandle);
     unlink(FIFO);
-    // after this ph is no more available
+    // after this call ph is no more available
+    slog(INFO,LOG_UTIL,"Waiting for child-threads to exit ...");
+    // TODO : verifiy if this is really a memory leak
+    //if(ph->uv_thr && pthread_join(ph->uv_thr,&pret) == 0){
+    //   free(ph->uv_thr);
+    //}
     cleanupUtil();
     exit(s);
 }

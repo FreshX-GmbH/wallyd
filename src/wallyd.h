@@ -7,7 +7,7 @@
 #include "util.h"
 #include "slog.h"
 #include "plugins.h"
-#include "hashtable.h"
+#include "Hash_Table.h"
 #include "ui.h"
 #include <dlfcn.h>
 #include <signal.h>

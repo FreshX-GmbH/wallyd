@@ -1,3 +1,4 @@
+var settings;
 var wally = new Wally();
 var config = wally.getConfig();
 var homedir = config.basedir+'/etc/wallyd.d';
@@ -17,11 +18,20 @@ var extra = nucleus.dofile('modules/extra.js');
 log.info('Seaduk modules initialized');
 var modules = homedir+'/modules.duv';
 var curl  = nucleus.dofile('modules/curl.js');
+nucleus.dofile('modules/transaction.js');
+
+try {
+	settings = JSON.parse(wally.readFile(homedir+'/settings.json'));
+}catch(e){
+	log.info('No valid settings.json found in '+homedir+'/settings.json, err : '+e);
+	settings = {};
+}
 
 var context = { 
     wally: wally,
     screen: wally,
     curl: curl,
+    settings: settings,
     config: {
         debug   : config.debug,
         wally   : wally.getConfig(),
@@ -48,6 +58,10 @@ if(typeof uv.interface_addresses === 'function'){
 } else {
     log.error('Seaduk misc extension not found : ',typeof uv.interface_addresses);
 }
+
+var myta = new Transaction();
+myta.push( wally.destroyTexture.bind(null, "video2") );
+myta.commit();
 
 // This is called after the startVideo 
 // or immediately if startVideo==false
