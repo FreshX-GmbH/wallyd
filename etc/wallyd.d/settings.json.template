@@ -1,8 +1,18 @@
 {
-    "icinga": {
-	"host": "icinga.mycompany.org",
-	"port": 5665,
-	"user": "icinga",
-	"pass": "123secret321"
-    }
+  "co2":{
+      "U": "10.111.68.3",
+      "D": "10.111.66.8"
+  },
+  "couchdb":{
+      "host": "fxfs.int.freshx.de",
+      "port": 5984,
+      "user": "xxxxxx",
+      "password": "xxxxxx"
+  },
+  "icinga": {
+      "host": "monitor.company.com",
+      "port": 5665,
+      "user": "xxxxxx",
+      "password": "xxxxxx"
+  }
 }
