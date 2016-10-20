@@ -80,5 +80,6 @@ texInfo *getTexture(const char *name);
 void **getTextureNamesByPrio(unsigned int *);
 int resetScreen(void *);
 int createColor(void *str);
+bool updateTextureNamesByPrio(unsigned int *);
 
 #endif

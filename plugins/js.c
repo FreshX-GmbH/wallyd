@@ -317,7 +317,7 @@ int js_loadFont(duk_context *ctx)
     const char *name = duk_to_string(ctx,0);
     const char *file = duk_to_string(ctx,1);
     const char *size = duk_to_string(ctx,2);
-    if(ht_contains_simple(ph->fonts,name)){
+    if(ht_contains_simple(ph->fonts,(char *)name)){
         return true;
     }
     char *cs;
@@ -349,7 +349,7 @@ int js_destroyTexture(duk_context *ctx)
     // screen::destroyTexture name
     int n = duk_get_top(ctx);  /* #args */
     const char *name = duk_to_string(ctx,0);
-    callWtx("screen::destroyTexture",name);
+    callWtx("screen::destroyTexture",(char*)name);
     return 1;
 }
 

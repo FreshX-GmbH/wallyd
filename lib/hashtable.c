@@ -119,6 +119,7 @@ void ht_init(hash_table *table, ht_flags flags, double max_load_factor
 
 void ht_dumpkeys(hash_table *table, char *prefix)
 {
+    assert(table);
     unsigned int items = 0;
     void **keys = ht_keys(table,&items);
     for(int i = 0; i < items; i++ ){
@@ -164,6 +165,8 @@ void ht_destroy(hash_table *table)
 
 void ht_insert_simple(hash_table *table, char *key, void *value)
 {
+    assert(table);
+    assert(key);
     pthread_mutex_lock(&table->put_mutex);
     hash_entry *entry = he_create(table->flags, key, strlen(key)+1, value, sizeof(void*));
     ht_insert_he(table, entry);
@@ -278,6 +281,8 @@ int ht_compare(hash_table *table, char *key, char *value){
 }
 
 void* ht_get_simple(hash_table *table, void *key){
+    assert(table);
+    assert(key);
     size_t size;
     void *val = ht_get(table,key,strlen(key)+1,&size);
     if(val == NULL){

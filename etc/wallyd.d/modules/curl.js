@@ -22,8 +22,9 @@ function request(url, body, headers) {
   curl.setopt("followlocation", true);
 
   // TODO : configurable
+  log.debug('Disabling SSL peer verification');
   curl.setopt("ssl-verifypeer",false);
-  // curl.setopt("ssl-verifyhost",2L);
+  curl.setopt("ssl-verifyhost",0);
 
   curl.setopt("writefunction", function (chunk) {
     chunks.push(chunk);

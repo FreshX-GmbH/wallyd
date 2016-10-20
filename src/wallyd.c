@@ -73,8 +73,8 @@ int main(int argc, char *argv[])
     }
 
     if(ph->loglevel > DEBUG){
-      ht_dumpkeys(ph->functions,"Exported sync commands : ");
-      ht_dumpkeys(ph->thr_functions,"Exported async commands : ");
+      hashtable_dumpkeys(ph->functions,"Exported sync commands : ");
+      hashtable_dumpkeys(ph->thr_functions,"Exported async commands : ");
     }
 
    slog(ERROR,LOG_CORE,"PH Size : %d, WTX Size : %d",sizeof(pluginHandler), sizeof(wally_call_ctx));

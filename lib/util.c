@@ -101,7 +101,7 @@ const char *getConfigEntry(const char *key){
    return NULL;
 }
 
-int getConfig(hash_table *map, const char *file)
+int getConfig(HashTable *map, const char *file)
 {
 //   slog(TRACE,FULLDEBUG,"Map : 0x%x, Filename : %s",map,file);
    int count=0;
@@ -163,12 +163,12 @@ int getConfig(hash_table *map, const char *file)
 
 void cleanupUtil(void)
 {
+    if(ph->functions) hashtable_delete(ph->functions);
+    if(ph->plugins) hashtable_delete(ph->plugins);
+    if(ph->configMap) hashtable_delete(ph->configMap);
+    if(ph->configFlagsMap) hashtable_delete(ph->configFlagsMap);
     // TODO : find proper free method
     // if(ph->queue) priqueue_free(ph->queue);
-    if(ph->functions) ht_destroy(ph->functions);
-    if(ph->plugins) ht_destroy(ph->plugins);
-    if(ph->configMap) ht_destroy(ph->configMap);
-    if(ph->configFlagsMap) ht_destroy(ph->configFlagsMap);
     if(ph->logfile == true){
         fclose(ph->logfileHandle);
     }

@@ -9,6 +9,9 @@
 #include <GLES2/gl2.h>
 #endif
 
+#define _GNU_SOURCE
+#include <stdio.h>
+
 #include "../lib/plugins.h"
 #include "../lib/ui.h"
 #include "../lib/util.h"

@@ -81,7 +81,7 @@ bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
 
 bool pushSimpleWtx(int id, const char *fstr,const char *params){
     wally_call_ctx *wtx = ph->transactions[ph->transaction];
-    slog(DEBUG,LOG_PLUGIN,"WTX for cmd %s is at 0x%x",fstr,wtx);
+    slog(TRACE,LOG_PLUGIN,"WTX for cmd %s is at 0x%x",fstr,wtx);
     int idx = wtx->elements;
     wtx->name[idx]=strdup(fstr);
     if(params != NULL){
@@ -172,7 +172,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 slog(DEBUG,LOG_PLUGIN,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
                 break;
             case CALL_TYPE_WTX:
-                slog(DEBUG,LOG_PLUGIN,"WTX call");
+                slog(TRACE,LOG_PLUGIN,"WTX call");
                 params = paramsTmp;
                 event.type = WALLY_CALL_WTX;
                 break;
@@ -197,7 +197,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 timeout = SDLWAITTIMEOUT_TRANSACTION;
             }
             slog(DEBUG,LOG_PLUGIN,"Wait %d ms until %s has finished. Name/Map at 0x%x/0x%x",timeout,funcName,funcName,ph->functionWaitConditions);
-            slog(DEBUG,LOG_PLUGIN,"Condition at 0x%x",ht_get_simple(ph->functionWaitConditions,funcName));
+            slog(TRACE,LOG_PLUGIN,"Condition at 0x%x",ht_get_simple(ph->functionWaitConditions,funcName));
             if(SDL_MUTEX_TIMEDOUT == 
                     SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,SDLWAITTIMEOUT))
                 {
@@ -315,10 +315,12 @@ bool openPlugin(char *path, char* name)
 int cleanupPlugins(void){
     unsigned int key_count = 0;
     char *(*cleanupPlugin)(void *)=NULL;
-    void **keys = ht_keys(ph->plugins, &key_count);
+    void *keys;
+    key_count = ht_keys(ph->plugins, &keys);
 
     for(int i=0; i < key_count; i++){
-        char *name = keys[i];
+        // TODO : cleanup
+        char *name = NULL;//*keys+i*sizeof(void*);
         void *handle = ht_get_simple(ph->plugins,name);
         char *error = NULL;
         if (!handle) {
@@ -369,6 +371,18 @@ int pluginLoader(void *path){
     return 0;
 }
 
+int equal_string(void * a, void * b) {
+    char * str1 = (char *) a;
+    char * str2 = (char *) b;
+    int res = strcmp(str1, str2);
+    if (res == 0) {return 1;}
+    else {return 0;}
+}
+
+void nop(void * a) {
+    return;
+}
+
 pluginHandler *pluginsInit(void){
     
     ph=malloc(sizeof(pluginHandler));
@@ -404,27 +418,37 @@ pluginHandler *pluginsInit(void){
     pthread_mutex_init(&ph->taMutex,0);
 
     ph->funcMutex = SDL_CreateMutex();
-    ph->functionWaitConditions= malloc(sizeof(hash_table));
-    ph->callbacks= malloc(sizeof(hash_table));
-    ph->thr_functions = malloc(sizeof(hash_table));
-    ph->functions = malloc(sizeof(hash_table));
-    ph->plugins = malloc(sizeof(hash_table));
-    ph->baseTextures = malloc(sizeof(hash_table));
-    ph->fonts = malloc(sizeof(hash_table));
-    ph->colors = malloc(sizeof(hash_table));
-    ph->configMap = malloc(sizeof(hash_table));
-    ph->configFlagsMap = malloc(sizeof(hash_table));
-    ph->transactions = malloc(sizeof(hash_table));
-    ht_init(ph->functionWaitConditions, HT_VALUE_CONST, 0.05);
-    ht_init(ph->callbacks, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->thr_functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->plugins, HT_VALUE_CONST, 0.05);
-    ht_init(ph->baseTextures, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->fonts, HT_VALUE_CONST, 0.05);
-    ht_init(ph->colors, HT_VALUE_CONST, 0.05);
-    ht_init(ph->configMap, HT_VALUE_CONST | HT_VALUE_FREE, 0.05);
-    ht_init(ph->configFlagsMap, HT_VALUE_CONST | HT_VALUE_FREE, 0.05);
+    //ph->functionWaitConditions= malloc(sizeof(hash_table));
+    //ph->callbacks= malloc(sizeof(hash_table));
+    //ph->thr_functions = malloc(sizeof(hash_table));
+    //ph->functions = malloc(sizeof(hash_table));
+    //ph->plugins = malloc(sizeof(hash_table));
+    //ph->baseTextures = malloc(sizeof(hash_table));
+    //ph->fonts = malloc(sizeof(hash_table));
+    //ph->colors = malloc(sizeof(hash_table));
+    //ph->configMap = malloc(sizeof(hash_table));
+    //ph->configFlagsMap = malloc(sizeof(HashTable));
+
+    ph->functionWaitConditions = hashtable_new_default(equal_string, free, nop);
+    ph->callbacks              = hashtable_new_default(equal_string, free, nop);
+    ph->thr_functions          = hashtable_new_default(equal_string, free, nop);
+    ph->functions              = hashtable_new_default(equal_string, free, nop);
+    ph->plugins                = hashtable_new_default(equal_string, free, nop);
+    ph->baseTextures           = hashtable_new_default(equal_string, free, nop);
+    ph->fonts                  = hashtable_new_default(equal_string, free, nop);
+    ph->colors                 = hashtable_new_default(equal_string, free, nop);
+    ph->configMap              = hashtable_new_default(equal_string, free, nop);
+    ph->configFlagsMap         = hashtable_new_default(equal_string, free, nop);
+    //ht_init(ph->functionWaitConditions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->callbacks, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->thr_functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->plugins, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->baseTextures, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->fonts, HT_VALUE_CONST, 0.05);
+    //ht_init(ph->colors, HT_VALUE_CONST, 0.05);
+    //ht_init(ph->configMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->configFlagsMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ph->queue = priqueue_initialize(512);
     return ph;
 }
