@@ -12,7 +12,7 @@
 int openVFS(pluginHandler *ph, char *file){
     int fd=open( file, O_RDONLY );
     if(fd == -1) {
-        slog(LVL_QUIET,ERROR,"Could not open config data at : %s",file);
+        slog(ERROR,LOG_UTIL,"Could not open config data at : %s",file);
         return false;
     }
     ph->VFSSize = (long)lseek(fd,0,SEEK_END);

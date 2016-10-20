@@ -100,6 +100,7 @@ void hashtable_delete(HashTable * h_table) {
 void hashtable_put( HashTable * h_table, void * key, size_t key_len, void * value, size_t value_len, bool thr_safe) {
 	pthread_mutex_t* ht_mutex = NULL;
 	if(thr_safe){
+	    slog(DEBUG,LOG_UTIL,"Before mutex lock in put");
 	    ht_mutex = h_table->ht_mutex;
 	    //try to replace existing key's value if possible
 	    pthread_mutex_lock(ht_mutex);
@@ -131,6 +132,7 @@ void hashtable_put( HashTable * h_table, void * key, size_t key_len, void * valu
 	
 	if(thr_safe){
 	    pthread_mutex_unlock(ht_mutex);
+	    slog(DEBUG,LOG_UTIL,"After mutex unlock in put");
 	}
 }
 
@@ -255,6 +257,26 @@ void hashtable_iterate(HashTable * h_table, IteratorCallback callback) {
 	pthread_mutex_unlock(ht_mutex);
 }
 
+void hashtable_dumpkeys(HashTable * h_table, char *prefix) {
+	int size = h_table->size;
+	HNode ** table = h_table->table;
+	int i = 0;
+	for (i = 0; i < size; i++) {
+		HNode * curr = table[i];
+		while (curr != 0) {
+			// callback(curr->key, curr->key_len, curr->value, curr->value_len);
+			//printf("'%s' => %p,\n", (char *)curr->key, curr->value);
+			if(prefix == NULL){
+			    slog(INFO,LOG_UTIL,"Key %d : %s ", i, (char *)curr->key);
+			} else {
+			    slog(INFO,LOG_UTIL,"%s: %s", prefix, (char *)curr->key);
+			}
+			curr = curr->next;
+		}
+	}
+}
+
+
 void hashtable_print(HashTable * h_table, char *prefix) {
 	int size = h_table->size;
 	HNode ** table = h_table->table;
@@ -284,7 +306,7 @@ int ht_keys(HashTable *table, void **ret)
       return count;
     }
 
-    slog(ERROR,LOG_UTIL,"ht_keys at 0x%x",ret);
+    slog(DEBUG,LOG_UTIL,"ht_keys at 0x%x",ret);
     // array of pointers to keys
     //ret = malloc(table->count * sizeof(void *));
     if(ret == NULL) {

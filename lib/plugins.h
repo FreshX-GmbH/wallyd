@@ -4,6 +4,7 @@
 #define _GNU_SOURCE
 
 #define WTX_SIZE 512
+#define MAX_WTX  262143
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -47,6 +48,7 @@ typedef struct wally_call_ctx{
     int type[WTX_SIZE];
     int elements;
     int transaction;
+    int transaction_id;
 }  wally_call_ctx;
 
 typedef struct{
@@ -97,6 +99,7 @@ typedef struct{
     int threadDelay;
     pthread_t wallyClientThread;
     pthread_t mainThread;
+    pthread_t uv_thr;
     
     bool VFSOpen;
     char *VFSName;
@@ -112,9 +115,12 @@ typedef struct{
     HashTable *colors;
     HashTable *configMap;
     HashTable *configFlagsMap;
+    void **transactions;
+    int transactionCount;
 
     void *funcMutex;
     pthread_mutex_t wtxMutex;
+    pthread_mutex_t taMutex;
     bool pluginLoaderDone;
     int pluginCount;
 
@@ -127,7 +133,7 @@ typedef struct{
     int conditionTimeout;
     void *slg;
 
-    bool transaction;
+    int transaction;
     wally_call_ctx *wtx;
 
 } pluginHandler;
@@ -157,7 +163,11 @@ void export_function_list(char *, const function_list_entry *);
 void wally_put_function_list(pluginHandler *, function_list_entry *);
 void wally_put_function(const char *name, int threaded, wally_c_function , int args);
 bool callWtx(char *fstr, char *params);
-void *freeWtx(wally_call_ctx** xwtx);
+void *freeWtx(int id);
 void freeWtxElements(wally_call_ctx* wtx);
+bool initWtx(wally_call_ctx** xwtx,int id);
+bool newWtx(int id, wally_call_ctx** xwtx);
+bool pushSimpleWtx(int id, const char *fstr,const char *params);
+bool commitWtx(int id);
 
 #endif

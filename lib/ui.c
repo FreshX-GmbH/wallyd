@@ -44,6 +44,7 @@ bool uiLoop(void){
     slog(DEBUG,LOG_SDL,"Setting up SDL event filter");
     SDL_SetEventFilter(eventFilter,NULL);
     //int delay=0;
+    int id;
     char *funcName;
     const char *param;
     wally_call_ctx *wtx;
@@ -87,10 +88,18 @@ bool uiLoop(void){
         //}
 
         if(event.type == WALLY_CALL_WTX){
-           wtx = event.user.data2;
-           slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements", wtx->elements);
+           if(strncmp("commit",funcName,6)){
+               wtx = event.user.data2;
+               slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements. wtx at 0x%x", wtx->elements,wtx);
+           } else {
+               id = atoi(event.user.data2);
+               slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d / %s",id,event.user.data2);
+               //free(event.user.data2);
+               wtx = ph->transactions[id];
+               slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d and %d elements. wtx at 0x%x", id,wtx->elements,wtx);
+           }
            for(int i = 0; i < wtx->elements; i++){
-                  slog(TRACE,LOG_PLUGIN,"WTX Call%d : %s(%s)", i, wtx->name[i], wtx->param[i]);
+                  slog(TRACE,LOG_PLUGIN,"WTX(0x%x) Call%d : %s(%s)",wtx, i, wtx->name[i], wtx->param[i]);
                   //thr_func(event.user.data2);
                   void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,wtx->name[i]);
                   if(!thr_func){
@@ -105,8 +114,14 @@ bool uiLoop(void){
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
                 SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
 	   }
-           freeWtxElements(wtx);
+           if(ph->transaction){
+               freeWtx(id);
+               ph->transaction = 0;
+           } else {
+              freeWtxElements(wtx);
+           }
 	   free(funcName);
+           pthread_mutex_unlock(&ph->taMutex);
            continue;
         }
         void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
@@ -172,7 +187,7 @@ bool updateTextureNamesByPrio(unsigned int *items){
             slog(ERROR,LOG_TEXTURE,"Unexpected error in sorting texture priority"); 
             continue; 
         }
-        slog(DEBUG,LOG_TEXTURE,"TI: 0x%x / 0x%x",TIa, TIb);
+        slog(TRACE,LOG_TEXTURE,"TI: 0x%x / 0x%x",TIa, TIb);
         if (TIa->z > TIb->z) {
               void *tmp = keys[j];
               keys[j] = keys[j + 1];
@@ -313,33 +328,33 @@ int createTextureEx(void *strTmp,bool isVideo){
    char *cS = strtok_r(NULL, " ",&r);
 
    if(getTexture(textureName) != NULL){
-	slog(INFO,LOG_TEXTURE,"Texture %s already existing, replacing it");
+	slog(INFO,LOG_TEXTURE,"Texture %s already existing, replacing it",textureName);
 	destroyTexture(textureName);
    }
    hashtable_print(ph->baseTextures,"Textures : ");
 
    if(!getNumOrPercent(zS, 0, &z)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
-      return false;
+      goto fail;
    } else {
       slog(DEBUG,LOG_TEXTURE,"Z-Value : %d",z,&r);
    }
 
    if(!getNumOrPercent(xS, ph->width, &x)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
-      return false;
+      goto fail;
    }
    if(!getNumOrPercent(yS, ph->height, &y)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
-      return false;
+      goto fail;
    }
    if(!getNumOrPercent(wS, ph->width, &w)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
-      return false;
+      goto fail;
    }
    if(!getNumOrPercent(hS, ph->height, &h)){
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(name, Z, x, y, w, h [,color hex]) : (%s)",str);
-      return false;
+      goto fail;
    }
    if(!getNumHex(cS,&color)){
       slog(INFO,LOG_TEXTURE,"Texture color not given, using black.");
@@ -353,7 +368,7 @@ int createTextureEx(void *strTmp,bool isVideo){
    }
    if(w == 0 || h == 0){
       slog(ERROR,LOG_TEXTURE,"Refusing to create texture %s with size %dx%d",textureName,w,h);
-      return false;
+      goto fail;
    }
 
    // TODO : Free!
@@ -394,7 +409,7 @@ int createTextureEx(void *strTmp,bool isVideo){
       }
       if(!TI->texture){
          slog(ERROR,LOG_TEXTURE,"Failed to create a texture : %s",SDL_GetError());
-         return false;
+         goto fail;
       }
       ph->textureCount++;
       // Clear the texture
@@ -415,9 +430,13 @@ int createTextureEx(void *strTmp,bool isVideo){
       updateTextureNamesByPrio(&items);
    } else {
       slog(INFO,LOG_TEXTURE,"Wrong parameters for createTexture(n,x,y,w,h) : (%s)",str);
-      return false;
+      goto fail;
    }
+   free(str);
    return true;
+fail:
+   free(str);
+   return false;
 }
 
 int createVideoTexture(void *a){
@@ -664,7 +683,7 @@ bool sdlInit(void)
       slog(ERROR,LOG_SDL,"Failed to create renderer %s ", SDL_GetError());
 	ph->renderer = SDL_CreateRenderer(ph->window, -1, SDL_RENDERER_SOFTWARE);
         if ( ph->renderer == NULL ) {
-      		slog(LVL_QUIET,LOG_SDL,"Failed to create SW renderer %s ", SDL_GetError());
+      		slog(ERROR,LOG_SDL,"Failed to create SW renderer %s ", SDL_GetError());
       		return false;
 	}
    }

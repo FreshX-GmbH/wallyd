@@ -1,0 +1,8 @@
+{
+    "icinga": {
+	"host": "icinga.mycompany.org",
+	"port": 5665,
+	"user": "icinga",
+	"pass": "123secret321"
+    }
+}

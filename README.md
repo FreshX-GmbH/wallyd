@@ -6,7 +6,7 @@ The wally daemon is a small daemon used to control wally devices right after sta
 * control peripherie of the wally device (i.e. touch panel, inputs, rfid, gpio, sensors)
 * display generic data locally acquired by the device
 * render remote data (such as webpages) to the display
-* render remote data from a wallaby middleware
+* render remote data from a middleware to the display
 
 # Features
 
@@ -29,7 +29,7 @@ Projects Wally (TV,Cam,ID,Photobooth) are used in
 # Hardware supported
 
 * Raspberry Pi 1/2/3
-* Linux devices running DRM/KMS
+* Linux devices running DRM/KMS (ATI,Nvidia, Intel, VMWare)
 * Mac OS X
 * (Windows, not tested)
 
@@ -37,33 +37,30 @@ Projects Wally (TV,Cam,ID,Photobooth) are used in
 
 Mac : 
 ```
-brew install libtool libuv sdl2 sdl2_gfx sdl2_image sdl2_ttf autoconf automake ffmpeg
+brew install libtool libuv sdl2 sdl2_gfx sdl2_image sdl2_ttf cmake ffmpeg libcurl
 ```
 Linux:
 ```
 # Fedora : build SDL2 from source (for openGL/raspi support) and add the follwoing dependecies
-yum -y install autoconf automake ffmpeg-devel
+yum -y install cmake libcurl-devel ffmpeg-devel
 # Debian : (not tested)
-apt-get sdl2 sdl2_gfx sdl2_image sdl2_ttf autoconf automake ffmpeg
+apt-get sdl2 sdl2_gfx sdl2_image sdl2_ttf curl ffmpeg
 ```
 
 # To build wallyd run
 
 ```
-sh autogen.sh
-./configure
+cmake .
 make && make install
 ```
 
 # To build in Linux or the firmware either
    
 * Install packages : SDL2 SDL2-devel SDL2_image SDL2_ttf SDL2_gfx
-* Required but included jsmn (Json parser from https://bitbucket.org/zserge/jsmn/wiki/Home)
-* Required but included jsmn-example from https://github.com/alisdair/jsmn-example
-* Required but included map_lib from https://github.com/jimlawless/map_lib
 * Required but included hashtable from https://github.com/larsendt/hashtable
+* Required but included priqueue from https://github.com/mitghi/priqueue
 * Required but included duktape from https://github.com/svaarala/duktape
-* Required but included dukluv from https://github.com/creationix/dukluv
+* Required but included seaduk from https://github.com/nucleus-js/seaduk
 * the sdl video plugin requires ffmpeg-devel
 
 # Commands
@@ -77,6 +74,7 @@ Built-In system commands :
    sys::loadPlugins
    sys::callback
    sys::info
+   quit
 ```
 Besides this, each of the plugins exports various commands into the wallyd namespace as well as into the ecmascript space
 See the plugins for more info

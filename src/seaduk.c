@@ -441,6 +441,7 @@ void *duvThread(void *ctx){
   }
   uv_run(&loop, UV_RUN_DEFAULT);
   slog(INFO,LOG_JS,"Seaduk interpreter has finished.");
+  ph->uv_thr = NULL;
 //  duk_destroy_heap(ctx);
   return NULL;
 }

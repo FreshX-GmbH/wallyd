@@ -3,6 +3,7 @@ var wally = screen = context.screen = context.wally;
 var config  = context.config;
 var homedir = context.config.homedir;
 var fontsdir= context.config.fontsdir;
+var defTA = new Transaction();
 
 var textures = {
     main      : { z: 10, x: 0,   y:    0,  w: '100%', h:-16, color : 'FFFFFF' },
@@ -34,29 +35,27 @@ fonts = {
     hugefont : { file : fontsdir+'/Lato-Bol.ttf', size : 96}
 };
 
-screen.startTransaction();
-
 for (var c in colors){
-    screen.createColor(c,colors[c],'FF');
+    defTA.push( screen.createColor.bind(null, c,colors[c],'FF'));
 }
 for (var f in fonts) {
-    screen.loadFont(f,fonts[f].file, fonts[f].size);
+    defTA.push( screen.loadFont.bind(null, f,fonts[f].file, fonts[f].size));
 }
 for (var t in textures) {
-    screen.createTexture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h,textures[t].color);
+    defTA.push( screen.createTexture.bind(null, t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h,textures[t].color));
 }
 
 
 //   Display the test screen
 if(config.testScreen === true){
-    screen.showTextureTestScreen();
+    defTA.push(screen.showTextureTestScreen);
 } else {
-    screen.log('WallyTV starting...');
-    screen.setImageScaled('main',config.logo);
+    defTA.push(screen.log.bind(null,'WallyTV starting...'));
+    defTA.push(screen.setImageScaled.bind(null,'main',config.logo));
 //    screen.setText('version','black','logfont',0,0,'R'+config.wally.release/1000);
 }
 
-screen.commitTransaction();
+defTA.commit();
 
 if(config.startVideo === true){
     p(context.onVideoFinished);

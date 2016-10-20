@@ -22,9 +22,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   install(TARGETS fb2png DESTINATION ${BIN_INSTALL_DIR})
 endif()
 
-set(WALLYC_SRC wallyc.cpp tcp.cpp)
-add_executable(wallyc ${WALLYC_SRC})
-target_link_libraries(wallyc)
+#set(WALLYC_SRC wallyc.cpp tcp.cpp)
+#add_executable(wallyc ${WALLYC_SRC})
+#target_link_libraries(wallyc)
 
 set(SDLDEMO sdldemo.c)
 add_executable(sdldemo ${SDLDEMO})
