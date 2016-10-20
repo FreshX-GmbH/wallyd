@@ -15,7 +15,9 @@ add_library(sdlgui MODULE sdlgui.c)
 add_library(screen MODULE screen.c)
 add_library(js MODULE js.c)
 add_library(svg2image MODULE svg2image.c)
+add_library(transaction MODULE transaction.c)
 
+add_dependencies(transaction wally)
 add_dependencies(texture wally)
 add_dependencies(js wally)
 add_dependencies(sdlimage wally)
@@ -44,4 +46,4 @@ target_link_libraries(sdlgui ${LIBSDL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDL
 target_link_libraries(svg2image ${LIBSDL_LIBRARIES} ${LIBDUV_LIBRARIES})
 target_link_libraries(sdlimage ${LIBSDL_LIBRARIES} ${LIBSDLTTF_LIBRARIES} ${LIBSDLIMG_LIBRARIES} ${LIBDUV_LIBRARIES} SDL2_gfx)
 
-install(TARGETS texture sdlimage sdlgui screen js svg2image DESTINATION ${LIB_INSTALL_DIR}/wallyd)
+install(TARGETS transaction texture sdlimage sdlgui screen js svg2image DESTINATION ${LIB_INSTALL_DIR}/wallyd)

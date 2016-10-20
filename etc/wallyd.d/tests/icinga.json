@@ -1,0 +1,205 @@
+{
+  "pages": [
+    {
+      "_options": {
+        "width": 840,
+        "height": 600
+      },
+      "objects": [
+        {
+          "type": "rect",
+          "options": {
+            "id": "2",
+            "value": "",
+            "style": {
+              "whiteSpace": "wrap",
+              "html": "1",
+              "fillColor": "#FF0000"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 577.44,
+              "y": 704.88,
+              "width": 460.8,
+              "height": 345.59999999999997,
+              "as": null
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "options": {
+            "id": "6",
+            "value": "",
+            "style": {
+              "whiteSpace": "wrap",
+              "html": "1",
+              "fillColor": "#FF8000"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 1038.24,
+              "y": 704.88,
+              "width": 460.8,
+              "height": 345.59999999999997,
+              "as": null
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "options": {
+            "id": "7",
+            "value": "",
+            "style": {
+              "whiteSpace": "wrap",
+              "html": "1",
+              "fillColor": "#00CC00"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 904.3199999999999,
+              "y": 704.88,
+              "width": 460.8,
+              "height": 345.59999999999997,
+              "as": null
+            }
+          }
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "8",
+            "value": "$_.down;",
+            "style": {
+              "text": true,
+              "html": "1",
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontColor": "#FFFFFF",
+              "fontSize": "128"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 663.84,
+              "y": 834.48,
+              "width": 460.8,
+              "height": 108,
+              "as": null
+            }
+          },
+          "value": "$_.down;"
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "9",
+            "value": "$_.warn;",
+            "style": {
+              "text": true,
+              "html": "1",
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontSize": "128",
+              "fontColor": "#FFFFFF"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 1146.24,
+              "y": 834.48,
+              "width": 460.8,
+              "height": 108,
+              "as": null
+            }
+          },
+          "value": "$_.warn;"
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "10",
+            "value": "$_.up;",
+            "style": {
+              "text": true,
+              "html": "1",
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontColor": "#FFFFFF",
+              "fontSize": "128"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 990.72,
+              "y": 834.48,
+              "width": 460.8,
+              "height": 108,
+              "as": null
+            }
+          },
+          "value": "$_.up;"
+        },
+        {
+          "type": "rect",
+          "options": {
+            "id": "16",
+            "value": "",
+            "style": {
+              "whiteSpace": "wrap",
+              "html": "1",
+              "fillColor": "#9933FF",
+              "fontColor": "#9933FF"
+            },
+            "vertex": "1",
+            "parent": "1",
+            "geometry": {
+              "x": 770.4000000000001,
+              "y": 704.88,
+              "width": 460.8,
+              "height": 345.59999999999997,
+              "as": null
+            }
+          }
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "17",
+            "value": "$_.ukn;",
+            "style": {
+              "text": true,
+              "html": "1",
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontColor": "#FFFFFF",
+              "fontSize": "128"
+            },
+            "vertex": "1",
+            "parent": "1",
+            "geometry": {
+              "x": 856.8000000000002,
+              "y": 834.48,
+              "width": 460.8,
+              "height": 108,
+              "as": null
+            }
+          },
+          "value": "$_.ukn;"
+        }
+      ]
+    }
+  ]
+}

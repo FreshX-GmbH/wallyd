@@ -15,42 +15,65 @@ function parseString(str){
     for (var j = 0; j<match.length; j++)
     {
         var smatch = match[j].replace(/\$_./,'').replace(/;$/,'');
-        log.debug(smatch);
+        //log.debug(smatch);
         if(context.privates && context.privates[smatch]){
              var val = context.privates[smatch].toString();
              matchTable[smatch] = val;
          } else {
             log.error("Key ",smatch," not found in context.privates");
+            return "undefined";
         }
     }
     var destVal = str;
     for (var k in matchTable){
         var re=RegExp('._.'+k+';');
         var t = destVal.replace(re,matchTable[k]);
-//        log.debug(t);
         destVal = t;
     }
     return destVal;
 }
 
-function renderScreen(context, tree, screen, data)
+function findMin(data){
+   var x = ~~(data.objects[0].options.geometry.x);
+   var y = ~~(data.objects[0].options.geometry.y);
+   for(var i = 1; i < data.objects.length; i++){
+        var obj = data.objects[i];
+	var opts = obj.options;
+	var value = obj.value;
+        var ox = ~~(opts.geometry.x);
+        var oy = ~~(opts.geometry.y);
+        if(x > ox) x = ox;
+        if(y > oy) y = oy;
+   }
+   return [-x,-y];
+}
+
+function renderScreen(TA,context, tree, screen, data)
 {
    var svg = new SVG();
    var json;
    var maxWidth=0, maxHeight=0;
    var xScale=1.0, yScale=1.0;
-   var rX=0, rY=0;
+   var r = findMin(data);
+   var rX=r[0], rY=r[1];
    var start = new Date().getTime();
 
-   //log.info(data);
+   //config = context.config.wally;
 
-   wally.setAutoRender(false);
-   gui.setTargetTexture(screen);
+   log.info("Setup wallaby destination : "+screen)
+   TA.push(wally.setAutoRender.bind(null,false));
+   TA.push(gui.setTargetTexture.bind(null,screen));
 
    var width = data._options.width ? data._options.width : data._options.size[0];
    var height = data._options.height ? data._options.height : data._options.size[1];
-   xScale = (config.width-10)/width;
-   yScale = (config.height-30)/height;
+   if(width === 0 || height === 0){
+      log.error("No valid dimensions found in screen");
+      return 0;
+   } else {
+      xScale = (config.width-10)/width;
+      yScale = (config.height-30)/height;
+      log.info("Dimensions in document : "+width+"x"+height+" / Scaling : "+xScale+"x"+yScale+" / Reloc "+ rX + "x" + rY);
+   }
     
    for(var i = 0; i < data.objects.length; i++){
         var obj = data.objects[i];
@@ -89,24 +112,28 @@ function renderScreen(context, tree, screen, data)
 	    if(!curl) {
 		continue;
 	    }
-            var res = curl.get(obj.path);
+            var res = TA.push(curl.get.bind(null,obj.path));
             if(res.body){
-               wally.writeFileSync('/tmp/test.png',res.body);
+               TA.push(wally.writeFileSync.bind(null,'/tmp/test.png',res.body));
                //gui.loadImage(screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255);
             }
-            gui.loadImage(screen,'/tmp/test.png',X, Y, W, H, 255);
+            TA.push(gui.loadImage.bind(null,screen,'/tmp/test.png',X, Y, W, H, 255));
             continue;
         }
         if(obj.type === 'line'){
-            gui.drawLine(screen,X, Y, X + W, Y, 0);
+            TA.push(gui.drawLine.bind(null,screen,X, Y, X + W, Y, 0));
             continue;
 	}
 	// TODO
         if(obj.type === 'rect'){
-	//    if(opts.edge && opts.edge > 0 ){
-	//    	log.error(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
-	//    	gui.drawFilledBox(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
-	//    }
+	    if(opts.edge && opts.edge > 0 ){
+	       log.error(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
+	       TA.push(gui.drawFilledBox.bind(null,screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha));
+	    } else {
+	       log.error(screen, X, Y, W, H, 0, fillColor, color, alpha);
+	       TA.push(gui.drawFilledBox.bind(null,screen, X, Y, W, H, 0, fillColor, color, alpha));
+            
+            }
             continue;
 	}
         if(obj.type === 'qr'){
@@ -118,7 +145,7 @@ function renderScreen(context, tree, screen, data)
             //var res = qr.file(qrtext,'/tmp/qr.svg', { type: 'svg' });
             svg.svgToPng("/tmp/qr.svg","/tmp/qr.png");
             log.debug('Placing QR Code at : ',X,Y,W,H);
-            gui.loadImage(screen,'/tmp/qr.png',X,Y,W,H,255);
+            TA.push(gui.loadImage.bind(null,screen,'/tmp/qr.png',X,Y,W,H,255));
             //var ptr = svg.svgToImage(res.toString());
             //var preview = Array.prototype.slice.call(ptr, 0, ptr.length).map(function (byte) {
             //    return byte < 16 ? "0" + byte.toString(16) : byte.toString(16);
@@ -138,12 +165,12 @@ function renderScreen(context, tree, screen, data)
 	    //log.debug(obj);
             var fName = 'font'+H;
             var val = "";
-            wally.loadFont(fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', H);
+            TA.push(wally.loadFont.bind(null,fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', H));
             if(value.match(/\$_./)){
                var destVal = parseString(value);
-               gui.drawText(screen,X, Y, fName, color, destVal);
+               TA.push(gui.drawText.bind(null,screen,X, Y, fName, color, destVal));
             } else {
-               gui.drawText(screen,X, Y, fName, color, value);
+               TA.push(gui.drawText.bind(null,screen,X, Y, fName, color, value));
             }
 	    continue;
 	}

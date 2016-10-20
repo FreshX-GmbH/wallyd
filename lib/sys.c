@@ -19,7 +19,6 @@ extern const duk_function_list_entry sysMethods[];
 
 int dumpDebug(void *p){
   return 0;
-
 }
 
 int wally_sleep(void *time){
@@ -202,7 +201,6 @@ char *initSysPlugin(){
    wally_put_function(PLUGIN_SCOPE"::sleep"         ,WFUNC_SYNC, wally_sleep, 0);
    wally_put_function(PLUGIN_SCOPE"::loadPlugins"   ,WFUNC_SYNC, pluginLoader, 0);
    wally_put_function(PLUGIN_SCOPE"::callback"      ,WFUNC_SYNC, wally_registerCallback, 0);
-   wally_put_function(PLUGIN_SCOPE"::info"          ,WFUNC_SYNC, sysInfo, 0);
 
    js_initSysPlugin(ctx);
 

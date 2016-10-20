@@ -255,7 +255,7 @@ int setTexturePrio(void *str){
    if(ph->texturePrio) {
 	free(ph->texturePrio);
    }
-   ph->texturePrio = getTextureNamesByPrio(&items);
+   updateTextureNamesByPrio(&items);
    return true;
 }
 

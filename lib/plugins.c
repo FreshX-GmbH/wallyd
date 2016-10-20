@@ -11,13 +11,22 @@
 pluginHandler *ph;
 pthread_mutex_t callMutex=PTHREAD_MUTEX_INITIALIZER;
 
-bool initWtx(wally_call_ctx** xwtx){
+bool initWtx(wally_call_ctx** xwtx,int id){
     *xwtx = malloc(sizeof(wally_call_ctx));
     wally_call_ctx *wtx = *xwtx;
     memset(wtx,0,sizeof(wally_call_ctx));
     (*xwtx)->elements = 0;
     wtx->transaction = false;
+    wtx->transaction_id = id;
     return true;
+}
+
+bool newWtx(int id, wally_call_ctx** wtx){
+    if(id > MAX_WTX){
+        slog(ERROR,LOG_PLUGIN,"MAX_WTX %d reached. Can not create more transactions!",MAX_WTX);
+        return false;
+    }
+    return initWtx(wtx,id);
 }
 
 // Free the WTX and ALL its elements
@@ -25,31 +34,30 @@ void freeWtxElements(wally_call_ctx* wtx){
     pthread_mutex_lock(&ph->wtxMutex);
     int elements = wtx->elements, count = 0;
 //    wally_call_ctx *wtx = *xwtx;
-    slog(DEBUG,LOG_PLUGIN,"Free WTX with %d elements", wtx->elements);
+    slog(DEBUG,LOG_PLUGIN,"Free WTX %d with %d elements", wtx->transaction_id, wtx->elements);
     for(; elements >= 0; elements--){
-        slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", elements,wtx->name[elements],wtx->param[elements]);
+        slog(TRACE,LOG_PLUGIN,"Free WTX element %d %s(%s)", elements,wtx->name[elements],wtx->param[elements]);
         if(wtx->name[elements]){
             count++;
             free(wtx->name[elements]);
             wtx->name[elements] = NULL;
         } else {
-            slog(DEBUG,LOG_PLUGIN,"Element %d already freed!",elements);
+            slog(TRACE,LOG_PLUGIN,"Element %d already freed!",elements);
         }
         if(wtx->param[elements]){
             free(wtx->param[elements]);
             wtx->param[elements] = NULL;
         } else {
-            slog(DEBUG,LOG_PLUGIN,"Element parameter %d already freed!",elements);
+            slog(TRACE,LOG_PLUGIN,"Element parameter %d already freed!",elements);
         }
     }
-    slog(DEBUG,LOG_PLUGIN,"Freed %d elements",count);
-    wtx->elements = 0;
+    slog(DEBUG,LOG_PLUGIN,"Freed %d elements",count); wtx->elements = 0;
     pthread_mutex_unlock(&ph->wtxMutex);
 }
 
-void * freeWtx(wally_call_ctx** xwtx){
-    freeWtxElements(*xwtx);
-    free(*xwtx);
+void *freeWtx(id){
+    freeWtxElements(ph->transactions[id]);
+    free(ph->transactions[id]);
     return NULL;
 }
 
@@ -66,50 +74,48 @@ bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     // also possible access
     (*xwtx)->elements = 1;
     wtx->transaction = false;
+    wtx->transaction_id = 0;
     wtx->type[0] = CALL_TYPE_STR;
     return true;
 }
 
-bool pushSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
-    wally_call_ctx *wtx = *xwtx;
-    pthread_mutex_lock(&ph->wtxMutex);
+bool pushSimpleWtx(int id, const char *fstr,const char *params){
+    wally_call_ctx *wtx = ph->transactions[ph->transaction];
+    slog(DEBUG,LOG_PLUGIN,"WTX for cmd %s is at 0x%x",fstr,wtx);
     int idx = wtx->elements;
-    //if(wtx->name[idx] != NULL){
-	//slog(DEBUG,LOG_PLUGIN,"WTX name not NULL!");
-    //}
     wtx->name[idx]=strdup(fstr);
     if(params != NULL){
-    	//if(wtx->param[idx] != NULL){
-	//	slog(DEBUG,LOG_PLUGIN,"WTX param not NULL!");
-    	//}
-        //slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
+        slog(TRACE,LOG_PLUGIN,"Pushing simple wtx : %s %s",fstr,params);
         wtx->param[idx]=strdup(params);
     } else {
         wtx->param[idx]=NULL;
     }
-    // also possible access
-    (*xwtx)->elements = idx + 1;
+    wtx->elements = idx + 1;
     wtx->type[idx] = CALL_TYPE_STR;
-    pthread_mutex_unlock(&ph->wtxMutex);
     return true;
 }
 
+bool commitWtx(int id){
+    char *idstr=NULL;
+    asprintf(&idstr,"%d",id);
+    return callEx(strdup("commit"),NULL,idstr,CALL_TYPE_WTX,true);
+}
+
 bool callWtx(char *fstr, char *params){
-    // a null call is a commit
-    if(fstr == NULL && params == NULL){
-        return callEx(ph->wtx->name[0],NULL,ph->wtx,CALL_TYPE_WTX,true);
-    }
-    if(ph->transaction == false) {
+    pthread_mutex_lock(&ph->wtxMutex);
+    if(ph->transaction == 0) {
         int ret;
-	slog(DEBUG,LOG_PLUGIN,"Single WTX Call, freeing old WTX");
-        freeWtxElements(ph->wtx);
+	slog(DEBUG,LOG_PLUGIN,"Single WTX Call");
+        // TODO : free this in a safe way!
+        //freeWtxElements(ph->wtx);
         ph->wtx->elements=1;
         ph->wtx->name[0] = strdup(fstr);
         ph->wtx->param[0]= strdup(params);
 	callEx(fstr,NULL,ph->wtx,CALL_TYPE_WTX,true);
     } else {
-        pushSimpleWtx(&ph->wtx, fstr, params);
+        pushSimpleWtx(ph->transaction, fstr, params);
     }
+    pthread_mutex_unlock(&ph->wtxMutex);
     return true;
 }
 
@@ -126,7 +132,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
     }
     pthread_mutex_lock(&callMutex);
     void *params = NULL;
-    wally_call_ctx *wtx = NULL;
+   // wally_call_ctx *wtx = NULL;
     char *funcName = strdup(funcNameTmp);
     ph->callCount++;   
     void *(*thr_func)(void *) = ht_get_simple(ph->thr_functions,funcName);
@@ -166,8 +172,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 slog(DEBUG,LOG_PLUGIN,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
                 break;
             case CALL_TYPE_WTX:
-                wtx = (wally_call_ctx*)paramsTmp;
-                slog(DEBUG,LOG_PLUGIN,"WTX call with %d commands",wtx->elements);
+                slog(DEBUG,LOG_PLUGIN,"WTX call");
                 params = paramsTmp;
                 event.type = WALLY_CALL_WTX;
                 break;
@@ -179,19 +184,20 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         event.user.data1=funcName;
         event.user.data2=params;
         slog(DEBUG,LOG_PLUGIN,"Added %s to the queue",funcName);
-        //priqueue_insert_ptr(ph->queue,strdup(funcName),0, DEFAULT_PRIO);
+        priqueue_insert_ptr(ph->queue,strdup(funcName),0, DEFAULT_PRIO);
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
         if(waitThread == true){
             // Enable the Mutex code for synced function calls
             int timeout;
-            if(ph->transaction == true){
+            if(ph->transaction != 0){
                 timeout = SDLWAITTIMEOUT_TRANSACTION;
             } else {
 		// TODO : 
                 timeout = SDLWAITTIMEOUT_TRANSACTION;
             }
-            slog(TRACE,LOG_PLUGIN,"Wait %d ms until %s has finished.",timeout,funcName);
+            slog(DEBUG,LOG_PLUGIN,"Wait %d ms until %s has finished. Name/Map at 0x%x/0x%x",timeout,funcName,funcName,ph->functionWaitConditions);
+            slog(DEBUG,LOG_PLUGIN,"Condition at 0x%x",ht_get_simple(ph->functionWaitConditions,funcName));
             if(SDL_MUTEX_TIMEDOUT == 
                     SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,SDLWAITTIMEOUT))
                 {
@@ -233,7 +239,7 @@ bool exportThreaded(const char *name, void *f){
         ht_insert_simple(ph->thr_functions,(void*)name,f);
         // Enable this code for synced function calls
         ht_insert_simple(ph->functionWaitConditions, (void*)name, SDL_CreateCond());
-        slog(DEBUG,LOG_PLUGIN,"Function %s registered (threaded)",name);
+        slog(DEBUG,LOG_PLUGIN,"Function %s registered (threaded). Condition is at 0x%x",name,ht_get_simple(ph->functionWaitConditions,(void*)name));
         return true;
     }
     slog(ERROR,ERROR,"Function %s is already registered! Only one function allowed.",name);
@@ -286,20 +292,15 @@ bool openPlugin(char *path, char* name)
     char *(*initPlugin)(void *)=NULL;
     void *handle;
     char *error = NULL;
-    void *nameCopy = NULL;
-    asprintf((char**)&nameCopy,"%s",name);
     handle = dlopen (path, RTLD_LAZY);
-//    slog(LVL_INFO,INFO,"Loading plugin : %s", nameCopy);
-    // Save the DL Handle for later, it has to stay open as long as we need the functions
-    ht_insert_simple(ph->plugins,nameCopy,handle);
-    slog(DEBUG,LOG_PLUGIN,"Saved plugin as %s in plugin map %p",name,ph);
+    ht_insert_simple(ph->plugins,name,handle);
     if (!handle) {
         slog(ERROR,LOG_PLUGIN,"Could not load plugin %s : %s",path,dlerror());
         return false;
     }
     initPlugin = dlsym(handle, "initPlugin");
     if ((error = dlerror()) != NULL)  {
-        slog(DEBUG,LOG_PLUGIN,"initPlugin() failed or not found (Error : %s)",error);
+        slog(ERROR,LOG_PLUGIN,"initPlugin() failed or not found (Error : %s)",error);
         return false;
     } else {
        slog(DEBUG,LOG_PLUGIN,"initPlugin() is now at 0x%x / handle at 0x%x",*initPlugin,handle);
@@ -314,10 +315,12 @@ bool openPlugin(char *path, char* name)
 int cleanupPlugins(void){
     unsigned int key_count = 0;
     char *(*cleanupPlugin)(void *)=NULL;
-    void **keys = ht_keys(ph->plugins, &key_count);
+    void *keys;
+    key_count = ht_keys(ph->plugins, &keys);
 
     for(int i=0; i < key_count; i++){
-        char *name = keys[i];
+        // TODO : cleanup
+        char *name = NULL;//*keys+i*sizeof(void*);
         void *handle = ht_get_simple(ph->plugins,name);
         char *error = NULL;
         if (!handle) {
@@ -368,6 +371,18 @@ int pluginLoader(void *path){
     return 0;
 }
 
+int equal_string(void * a, void * b) {
+    char * str1 = (char *) a;
+    char * str2 = (char *) b;
+    int res = strcmp(str1, str2);
+    if (res == 0) {return 1;}
+    else {return 0;}
+}
+
+void nop(void * a) {
+    return;
+}
+
 pluginHandler *pluginsInit(void){
     
     ph=malloc(sizeof(pluginHandler));
@@ -394,32 +409,46 @@ pluginHandler *pluginsInit(void){
     ph->ssdp = false;
     ph->cloud = false;
     ph->location = NULL;
-    ph->transaction = false;
     ph->texturePrio = NULL;
-    initWtx(&ph->wtx);
+    ph->transaction = 0;
+    ph->transactionCount = 0;
+    initWtx(&ph->wtx,0);
+    ph->transactions = malloc(sizeof(void*)*MAX_WTX);
     pthread_mutex_init(&ph->wtxMutex,0);
+    pthread_mutex_init(&ph->taMutex,0);
 
     ph->funcMutex = SDL_CreateMutex();
-    ph->functionWaitConditions= malloc(sizeof(hash_table));
-    ph->callbacks= malloc(sizeof(hash_table));
-    ph->thr_functions = malloc(sizeof(hash_table));
-    ph->functions = malloc(sizeof(hash_table));
-    ph->plugins = malloc(sizeof(hash_table));
-    ph->baseTextures = malloc(sizeof(hash_table));
-    ph->fonts = malloc(sizeof(hash_table));
-    ph->colors = malloc(sizeof(hash_table));
-    ph->configMap = malloc(sizeof(hash_table));
-    ph->configFlagsMap = malloc(sizeof(hash_table));
-    ht_init(ph->functionWaitConditions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->callbacks, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->thr_functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->plugins, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->baseTextures, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->fonts, HT_VALUE_CONST, 0.05);
-    ht_init(ph->colors, HT_VALUE_CONST, 0.05);
-    ht_init(ph->configMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
-    ht_init(ph->configFlagsMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ph->functionWaitConditions= malloc(sizeof(hash_table));
+    //ph->callbacks= malloc(sizeof(hash_table));
+    //ph->thr_functions = malloc(sizeof(hash_table));
+    //ph->functions = malloc(sizeof(hash_table));
+    //ph->plugins = malloc(sizeof(hash_table));
+    //ph->baseTextures = malloc(sizeof(hash_table));
+    //ph->fonts = malloc(sizeof(hash_table));
+    //ph->colors = malloc(sizeof(hash_table));
+    //ph->configMap = malloc(sizeof(hash_table));
+    //ph->configFlagsMap = malloc(sizeof(HashTable));
+
+    ph->functionWaitConditions = hashtable_new_default(equal_string, free, nop);
+    ph->callbacks              = hashtable_new_default(equal_string, free, nop);
+    ph->thr_functions          = hashtable_new_default(equal_string, free, nop);
+    ph->functions              = hashtable_new_default(equal_string, free, nop);
+    ph->plugins                = hashtable_new_default(equal_string, free, nop);
+    ph->baseTextures           = hashtable_new_default(equal_string, free, nop);
+    ph->fonts                  = hashtable_new_default(equal_string, free, nop);
+    ph->colors                 = hashtable_new_default(equal_string, free, nop);
+    ph->configMap              = hashtable_new_default(equal_string, free, nop);
+    ph->configFlagsMap         = hashtable_new_default(equal_string, free, nop);
+    //ht_init(ph->functionWaitConditions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->callbacks, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->thr_functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->functions, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->plugins, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->baseTextures, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->fonts, HT_VALUE_CONST, 0.05);
+    //ht_init(ph->colors, HT_VALUE_CONST, 0.05);
+    //ht_init(ph->configMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
+    //ht_init(ph->configFlagsMap, HT_KEY_CONST | HT_VALUE_CONST, 0.05);
     ph->queue = priqueue_initialize(512);
     return ph;
 }
