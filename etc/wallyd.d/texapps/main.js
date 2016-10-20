@@ -41,8 +41,9 @@ function oninterval() {
 	   log.info("Unknown Object parsed",uObj.results.length);
 	} 
         context.privates.ukn = uObj.results.length;
-   }catch(e){
-	   log.error("Could not parse icinga err response : "+e);
+   }catch(err){
+	   log.error("Could not parse icinga err response : "+err);
+	   log.debug(e);
    }
    try{
         var e  = curl.get(errurl ,header);
@@ -51,8 +52,9 @@ function oninterval() {
 	   log.info("Err Object parsed",eObj.results.length);
 	} 
         context.privates.down = eObj.results.length;
-   }catch(e){
-	   log.error("Could not parse icinga err response : "+e);
+   }catch(err){
+	   log.error("Could not parse icinga err response : "+err);
+	   log.debug(e);
    }
    try{
       var w = curl.get(warnurl,header);
@@ -63,8 +65,9 @@ function oninterval() {
 	   log.error("No valid response from Server");
       }
       context.privates.warn = wObj.results.length;
-   } catch(e){
-	   log.error("Could not parse icinga warn response : "+e);
+   } catch(err){
+	   log.error("Could not parse icinga warn response : "+err);
+	   log.debug(e);
    }
    try{
       var o = curl.get(okurl  ,header);
@@ -75,8 +78,9 @@ function oninterval() {
 	   log.error("No valid response from Server");
       }
       context.privates.up = oObj.results.length;
-   } catch(e){
-	   log.error("Could not parse icinga ok response : "+e);
+   } catch(err){
+	   log.error("Could not parse icinga ok response : "+err);
+	   log.debug(e);
    }
    try {
         wally.startTransaction();

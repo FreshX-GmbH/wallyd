@@ -2,27 +2,27 @@
   "pages": [
     {
       "_options": {
-        "width": 840,
-        "height": 600
+        "width": 2980,
+        "height": 1160
       },
       "objects": [
         {
           "type": "rect",
           "options": {
-            "id": "2",
+            "id": "15",
             "value": "",
             "style": {
               "whiteSpace": "wrap",
               "html": "1",
-              "fillColor": "#FF0000"
+              "fillColor": "#3399FF"
             },
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 577.44,
-              "y": 704.88,
-              "width": 460.8,
-              "height": 345.59999999999997,
+              "x": 1383.8400000000001,
+              "y": 835.2,
+              "width": 1382.3999999999999,
+              "height": 460.8,
               "as": null
             }
           }
@@ -30,20 +30,42 @@
         {
           "type": "rect",
           "options": {
-            "id": "6",
+            "id": "19",
             "value": "",
             "style": {
               "whiteSpace": "wrap",
               "html": "1",
-              "fillColor": "#FF8000"
+              "fillColor": "#00FFFF"
             },
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 1038.24,
-              "y": 704.88,
-              "width": 460.8,
-              "height": 345.59999999999997,
+              "x": 0.7200000000000273,
+              "y": 835.2,
+              "width": 1382.3999999999999,
+              "height": 465.12,
+              "as": null
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "options": {
+            "id": "16",
+            "value": "",
+            "style": {
+              "whiteSpace": "wrap",
+              "html": "1",
+              "fillColor": "#9933FF",
+              "fontColor": "#9933FF"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 290.8800000000001,
+              "y": 0,
+              "width": 691.1999999999999,
+              "height": 835.1999999999999,
               "as": null
             }
           }
@@ -61,10 +83,51 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 904.3199999999999,
-              "y": 704.88,
-              "width": 460.8,
-              "height": 345.59999999999997,
+              "x": 194.4000000000001,
+              "y": 0,
+              "width": 691.1999999999999,
+              "height": 835.1999999999999,
+              "as": null
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "options": {
+            "id": "6",
+            "value": "",
+            "style": {
+              "whiteSpace": "wrap",
+              "html": "1",
+              "fillColor": "#FF8000"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 97.20000000000005,
+              "y": 0,
+              "width": 691.1999999999999,
+              "height": 835.1999999999999,
+              "as": null
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "options": {
+            "id": "2",
+            "value": "",
+            "style": {
+              "whiteSpace": "wrap",
+              "fillColor": "#FF0000"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 0.7200000000000273,
+              "y": 0,
+              "width": 691.1999999999999,
+              "height": 835.1999999999999,
               "as": null
             }
           }
@@ -73,10 +136,9 @@
           "type": "text",
           "options": {
             "id": "8",
-            "value": "$_.down;",
+            "value": "$_.down;\n",
             "style": {
               "text": true,
-              "html": "1",
               "align": "center",
               "verticalAlign": "middle",
               "whiteSpace": "wrap",
@@ -87,14 +149,14 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 663.84,
-              "y": 834.48,
+              "x": 180.0000000000001,
+              "y": 291.6,
               "width": 460.8,
               "height": 108,
               "as": null
             }
           },
-          "value": "$_.down;"
+          "value": "$_.down;\n"
         },
         {
           "type": "text",
@@ -103,7 +165,6 @@
             "value": "$_.warn;",
             "style": {
               "text": true,
-              "html": "1",
               "align": "center",
               "verticalAlign": "middle",
               "whiteSpace": "wrap",
@@ -114,8 +175,8 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 1146.24,
-              "y": 834.48,
+              "x": 211.68000000000006,
+              "y": 291.6,
               "width": 460.8,
               "height": 108,
               "as": null
@@ -130,7 +191,6 @@
             "value": "$_.up;",
             "style": {
               "text": true,
-              "html": "1",
               "align": "center",
               "verticalAlign": "middle",
               "whiteSpace": "wrap",
@@ -141,8 +201,8 @@
             "parent": "1",
             "vertex": "1",
             "geometry": {
-              "x": 990.72,
-              "y": 834.48,
+              "x": 363.5999999999999,
+              "y": 291.6,
               "width": 460.8,
               "height": 108,
               "as": null
@@ -151,26 +211,82 @@
           "value": "$_.up;"
         },
         {
-          "type": "rect",
+          "type": "text",
           "options": {
-            "id": "16",
-            "value": "",
+            "id": "12",
+            "value": "Services down",
             "style": {
+              "text": true,
+              "align": "center",
+              "verticalAlign": "middle",
               "whiteSpace": "wrap",
-              "html": "1",
-              "fillColor": "#9933FF",
-              "fontColor": "#9933FF"
+              "overflow": "hidden",
+              "fontColor": "#FFCCCC",
+              "fontSize": "64"
             },
-            "vertex": "1",
             "parent": "1",
+            "vertex": "1",
             "geometry": {
-              "x": 770.4000000000001,
-              "y": 704.88,
-              "width": 460.8,
-              "height": 345.59999999999997,
+              "x": 169.92000000000007,
+              "y": 521.28,
+              "width": 352.8,
+              "height": 86.39999999999999,
               "as": null
             }
-          }
+          },
+          "value": "Services down"
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "13",
+            "value": "Service warnings",
+            "style": {
+              "text": true,
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontColor": "#FFE6CC",
+              "fontSize": "64"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 850.32,
+              "y": 506.88,
+              "width": 375.12,
+              "height": 86.39999999999999,
+              "as": null
+            }
+          },
+          "value": "Service warnings"
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "14",
+            "value": "Services up",
+            "style": {
+              "text": true,
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontColor": "#CCFFCC",
+              "fontSize": "64"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 1553.04,
+              "y": 506.88,
+              "width": 352.8,
+              "height": 86.39999999999999,
+              "as": null
+            }
+          },
+          "value": "Services up"
         },
         {
           "type": "text",
@@ -179,7 +295,6 @@
             "value": "$_.ukn;",
             "style": {
               "text": true,
-              "html": "1",
               "align": "center",
               "verticalAlign": "middle",
               "whiteSpace": "wrap",
@@ -187,17 +302,173 @@
               "fontColor": "#FFFFFF",
               "fontSize": "128"
             },
-            "vertex": "1",
             "parent": "1",
+            "vertex": "1",
             "geometry": {
-              "x": 856.8000000000002,
-              "y": 834.48,
+              "x": 406.0799999999999,
+              "y": 291.6,
               "width": 460.8,
               "height": 108,
               "as": null
             }
           },
           "value": "$_.ukn;"
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "18",
+            "value": "Services unkown",
+            "style": {
+              "text": true,
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontColor": "#CCFFCC",
+              "fontSize": "64"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 2244.24,
+              "y": 506.88,
+              "width": 352.8,
+              "height": 86.39999999999999,
+              "as": null
+            }
+          },
+          "value": "Services unkown"
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "21",
+            "value": "$_.co2D; ppm - $_.tempD; C",
+            "style": {
+              "text": true,
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontColor": "#FFFFFF",
+              "fontSize": "128"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 1713.6000000000001,
+              "y": 997.2,
+              "width": 1260,
+              "height": 108,
+              "as": null
+            }
+          },
+          "value": "$_.co2D; ppm - $_.tempD; C"
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "20",
+            "value": "$_.co2U; ppm - $_.tempU; C",
+            "style": {
+              "text": true,
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontColor": "#FFFFFF",
+              "fontSize": "128"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 429.84000000000003,
+              "y": 997.2,
+              "width": 1353.6000000000001,
+              "height": 108,
+              "as": null
+            }
+          },
+          "value": "$_.co2U; ppm - $_.tempU; C"
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "22",
+            "value": "CO2 temperature 1st floor",
+            "style": {
+              "text": true,
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontColor": "#FFE6CC",
+              "fontSize": "64"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 331.9200000000001,
+              "y": 1131.8400000000001,
+              "width": 720,
+              "height": 86.39999999999999,
+              "as": null
+            }
+          },
+          "value": "CO2 temperature 1st floor"
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "23",
+            "value": "CO2 temperature 2nd floor",
+            "style": {
+              "text": true,
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontColor": "#FFE6CC",
+              "fontSize": "64"
+            },
+            "parent": "1",
+            "vertex": "1",
+            "geometry": {
+              "x": 1784.8799999999999,
+              "y": 1131.8400000000001,
+              "width": 581.04,
+              "height": 86.39999999999999,
+              "as": null
+            }
+          },
+          "value": "CO2 temperature 2nd floor"
+        },
+        {
+          "type": "text",
+          "options": {
+            "id": "24",
+            "value": "$_.warn;",
+            "style": {
+              "text": true,
+              "align": "center",
+              "verticalAlign": "middle",
+              "whiteSpace": "wrap",
+              "overflow": "hidden",
+              "fontSize": "128",
+              "fontColor": "#FFFFFF"
+            },
+            "vertex": "1",
+            "parent": "1",
+            "geometry": {
+              "x": 558.72,
+              "y": 102.24000000000001,
+              "width": 460.8,
+              "height": 108,
+              "as": null
+            }
+          },
+          "value": "$_.warn;"
         }
       ]
     }
