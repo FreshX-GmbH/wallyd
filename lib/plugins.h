@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include "default.h"
-#include "hashtable.h"
+#include "Hash_Table.h"
 #include "pqueue.h"
 #include <duktape.h>
 
@@ -57,7 +57,7 @@ typedef struct{
     void *glcontext;
     void *renderer;
     void **texturePrio;
-    hash_table *baseTextures;
+    HashTable *baseTextures;
     void *tempTexture;
     void *guiTexture;
     bool autorender;
@@ -103,15 +103,15 @@ typedef struct{
     long VFSSize;
 
     // Plugin system
-    hash_table *callbacks;
-    hash_table *thr_functions;
-    hash_table *functionWaitConditions;
-    hash_table *functions;
-    hash_table *plugins;
-    hash_table *fonts;
-    hash_table *colors;
-    hash_table *configMap;
-    hash_table *configFlagsMap;
+    HashTable *callbacks;
+    HashTable *thr_functions;
+    HashTable *functionWaitConditions;
+    HashTable *functions;
+    HashTable *plugins;
+    HashTable *fonts;
+    HashTable *colors;
+    HashTable *configMap;
+    HashTable *configFlagsMap;
 
     void *funcMutex;
     pthread_mutex_t wtxMutex;

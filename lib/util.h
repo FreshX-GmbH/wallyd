@@ -6,7 +6,7 @@
 #include "autoversion.h"
 //#include "json.h"
 //#include "miniz.h"
-#include "hashtable.h"
+#include "Hash_Table.h"
 #include "plugins.h"
 #include <errno.h>
 #include <stdio.h>
@@ -77,7 +77,7 @@
 // UTIL
 char *replace(const char *src, const char *from, const char *to);
 const char *getConfigEntry(const char *key);
-int getConfig(hash_table *, const char *);
+int getConfig(HashTable *, const char *);
 void cleanupUtil(void);
 void cleanupWally(int);
 void setupSignalHandler(void);
