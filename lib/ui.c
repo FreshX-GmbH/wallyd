@@ -47,10 +47,10 @@ int eventFilter(void *userdata, SDL_Event *event){
 //        slog(INFO,LOG_SDL,"Ignoring event, no function given");
 //        return 0; 
 //    }
-//   if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
-//        slog(INFO,WARN,"Intercepted an orphaned refresh timer event");
-//       return 0; 
-//   }
+    if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
+        slog(INFO,WARN,"Intercepted an orphaned refresh timer event");
+       return 0; 
+    }
     return 1;
 }
 
