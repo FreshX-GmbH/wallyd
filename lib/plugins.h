@@ -123,6 +123,7 @@ typedef struct{
     pthread_mutex_t taMutex;
     bool pluginLoaderDone;
     int pluginCount;
+    bool quit;
 
     int uiAllCount;
     int uiOwnCount;

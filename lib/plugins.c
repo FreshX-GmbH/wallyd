@@ -413,6 +413,7 @@ pluginHandler *pluginsInit(void){
     ph->texturePrio = NULL;
     ph->transaction = 0;
     ph->transactionCount = 0;
+    ph->quit = false;
     initWtx(&ph->wtx,0);
     ph->transactions = malloc(sizeof(void*)*MAX_WTX);
     pthread_mutex_init(&ph->wtxMutex,0);
