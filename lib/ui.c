@@ -21,6 +21,10 @@ texInfo *getTexture(const char *name){
 }
 
 int eventFilter(void *userdata, SDL_Event *event){
+    if(event->type == SDL_QUIT){
+        slog(DEBUG,LOG_SDL,"Received a quit event (%d)",event->type);
+        return 0; 
+    }
     if(event->type < SDL_USEREVENT ){
         slog(DEBUG,LOG_SDL,"Ignoring event %d",event->type);
         return 0; 
