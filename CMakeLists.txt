@@ -31,7 +31,7 @@ pkg_check_modules(LIBSDL sdl2>=2.0)
 pkg_check_modules(LIBSDLTTF SDL2_ttf>=2.0)
 pkg_check_modules(LIBSDLIMG SDL2_image>=2.0)
 pkg_check_modules(LIBDUV seaduk)
-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -L../lib -lwally")
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -L../lib -L./lib -lwally")
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=gnu99 -DWITH_SEADUK")
 
 string(REGEX REPLACE "^([0-9]+)\\.([0-9]+).*$" "\\1" DARWIN_MAJOR_VERSION "${CMAKE_SYSTEM_VERSION}")
