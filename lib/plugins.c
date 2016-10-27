@@ -314,9 +314,11 @@ bool openPlugin(char *path, char* name)
 
 int cleanupPlugins(void){
     unsigned int key_count = 0;
+    slog(INFO,LOG_PLUGIN,"Cleaning up loaded plugins");
     char *(*cleanupPlugin)(void *)=NULL;
-    void *keys;
-    key_count = ht_keys(ph->plugins, &keys);
+    int count =0;
+    void **keys = malloc(sizeof(void*)*ph->plugins->count);
+    count = ht_keys(ph->plugins, keys);
 
     for(int i=0; i < key_count; i++){
         // TODO : cleanup
