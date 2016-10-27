@@ -20,6 +20,11 @@ set(WAIT_EV off)
 
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c99 -g")
 
+IF(CMAKE_COMPILER_IS_GNUCC)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+ENDIF(CMAKE_COMPILER_IS_GNUCC)
+
 find_package(PkgConfig)
 pkg_check_modules(LIBUV libuv>=1.7)
 pkg_check_modules(LIBSDL sdl2>=2.0)

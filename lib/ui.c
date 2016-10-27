@@ -80,19 +80,23 @@ bool uiLoop(void){
         funcName = strdup(event.user.data1);
 	free(event.user.data1);
         Node *n = priqueue_pop(ph->queue);
+	void *param = n->data->data;
         if(n){
-            slog(DEBUG,LOG_PLUGIN,"Popped %s from queue with prio %d (num %d)",n->data->data, n->priority, n->index);
-            priqueue_node_free(ph->queue,n);
+            slog(DEBUG,LOG_PLUGIN,"Popped 0x%x from queue with prio %d (num %d, type %d)",n->data->data, n->priority, n->index, n->data->type);
+            free(n);
         } else {
             slog(ERROR,LOG_PLUGIN,"Nothing popped.");
         }
 
         if(event.type == WALLY_CALL_WTX){
            if(strncmp("commit",funcName,6)){
-               wtx = event.user.data2;
+//               wtx = event.user.data2;
+	       wtx = param;
                slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements. wtx at 0x%x", wtx->elements,wtx);
            } else {
-               id = atoi(event.user.data2);
+               id = atoi(param);
+	       free(param);
+               //id = atoi(event.user.data2);
                //slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d / %s",id,event.user.data2);
                //free(event.user.data2);
                wtx = ph->transactions[id];

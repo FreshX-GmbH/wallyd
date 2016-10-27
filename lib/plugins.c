@@ -98,7 +98,7 @@ bool pushSimpleWtx(int id, const char *fstr,const char *params){
 bool commitWtx(int id){
     char *idstr=NULL;
     asprintf(&idstr,"%d",id);
-    return callEx(strdup("commit"),NULL,idstr,CALL_TYPE_WTX,true);
+    return callEx("commit",NULL,idstr,CALL_TYPE_WTX,true);
 }
 
 bool callWtx(char *fstr, char *params){
@@ -148,6 +148,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                     slog(INFO,LOG_PLUGIN,"call( %s(NULL) )",funcName);
                     event.type = WALLY_CALL_NULL;
                 }
+        	event.user.data2=params;
                 break;
             case CALL_TYPE_STR:
                 if(paramsTmp){
@@ -157,23 +158,28 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 } else {
                     event.type = WALLY_CALL_NULL;
                 }
+        	event.user.data2=params;
                 break;
             case CALL_TYPE_PS:
                 // TODO
                 params = paramsTmp;
                 slog(DEBUG,LOG_PLUGIN,"call( %s(<PS *>) )",funcName,paramsTmp);
+        	event.user.data2=params;
                 event.type = WALLY_CALL_PS;
                 break;
             case CALL_TYPE_CTX:
                 // TODO
                 params = paramsTmp;
                 event.type = WALLY_CALL_CTX;
+        	event.user.data2=params;
                 slog(DEBUG,LOG_PLUGIN,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
                 break;
             case CALL_TYPE_WTX:
                 slog(TRACE,LOG_PLUGIN,"WTX call");
                 params = paramsTmp;
                 event.type = WALLY_CALL_WTX;
+		slog(DEBUG,LOG_PLUGIN,"Pushed 0x%x to the queue",params);
+        	priqueue_insert_ptr(ph->queue,params,0, DEFAULT_PRIO);
                 break;
             default:
                 break;
@@ -181,9 +187,6 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         // We give up the ownership of the funcName copy + and the params copy here
         // The ui loop will free this later
         event.user.data1=funcName;
-        event.user.data2=params;
-        slog(DEBUG,LOG_PLUGIN,"Added %s to the queue",funcName);
-        priqueue_insert_ptr(ph->queue,strdup(funcName),0, DEFAULT_PRIO);
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
         if(waitThread == true){
