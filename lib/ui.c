@@ -21,6 +21,20 @@ texInfo *getTexture(const char *name){
 }
 
 int eventFilter(void *userdata, SDL_Event *event){
+    if(event->type == SDL_QUIT){
+        slog(DEBUG,LOG_SDL,"Received a quit event (%d)",event->type);
+        ph->quit = true;
+        return 0; 
+    }
+    if(event->type == SDL_KEYDOWN){
+        if(event->key.keysym.sym == 27){
+            slog(DEBUG,LOG_SDL,"Received ESC event. Quit.");
+            ph->quit = true;
+        } else {
+           slog(DEBUG,LOG_SDL,"Received a keydown event (%d)",event->key.keysym.sym);
+        }
+        return 0; 
+    }
     if(event->type < SDL_USEREVENT ){
         slog(DEBUG,LOG_SDL,"Ignoring event %d",event->type);
         return 0; 
@@ -50,7 +64,7 @@ bool uiLoop(void){
     wally_call_ctx *wtx;
     SDL_Event event;
     slog(DEBUG,LOG_SDL,"UI Loop started and waiting for events (%p)",&event);
-    for(;;) {
+    while(!ph->quit) {
 	SDL_zero(event);
         param = NULL;
 #ifdef WAIT_EV
@@ -166,7 +180,7 @@ bool uiLoop(void){
         }
         free(funcName);
     }
-    slog(DEBUG,LOG_SDL,"UI Loop finished and waiting for events");
+    slog(DEBUG,LOG_SDL,"UI Loop quit. Waiting for threads to finish");
     return true;
 }
 

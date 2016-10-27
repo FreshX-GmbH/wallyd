@@ -56,8 +56,8 @@
             "style": {
               "whiteSpace": "wrap",
               "html": "1",
-              "fillColor": "#9933FF",
-              "fontColor": "#9933FF"
+              "fillColor": "#AA44FF",
+              "fontColor": "#AA44FF"
             },
             "parent": "1",
             "vertex": "1",
@@ -230,7 +230,7 @@
               "x": 190,
               "y": 521.28,
               "width": 352.8,
-              "height": 50,
+              "height": 42,
               "as": null
             }
           },
@@ -256,7 +256,7 @@
               "x": 910,
               "y": 521.28,
               "width": 375.12,
-              "height": 50,
+              "height": 42,
               "as": null
             }
           },
@@ -282,7 +282,7 @@
               "x": 1750,
               "y": 521.28,
               "width": 352.8,
-              "height": 50,
+              "height": 42,
               "as": null
             }
           },
@@ -334,7 +334,7 @@
               "x": 2400,
               "y": 506.88,
               "width": 352.8,
-              "height": 50,
+              "height": 42,
               "as": null
             }
           },
@@ -360,7 +360,7 @@
               "x": 1880,
               "y": 860,
               "width": 1260,
-              "height": 108,
+              "height": 70,
               "as": null
             }
           },
@@ -386,7 +386,7 @@
               "x": 330,
               "y": 860,
               "width": 1353,
-              "height": 108,
+              "height": 80,
               "as": null
             }
           },

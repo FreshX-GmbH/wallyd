@@ -100,7 +100,7 @@ void hashtable_delete(HashTable * h_table) {
 void hashtable_put( HashTable * h_table, void * key, size_t key_len, void * value, size_t value_len, bool thr_safe) {
 	pthread_mutex_t* ht_mutex = NULL;
 	if(thr_safe){
-	    slog(DEBUG,LOG_UTIL,"Before mutex lock in put");
+	    //slog(DEBUG,LOG_UTIL,"Before mutex lock in put");
 	    ht_mutex = h_table->ht_mutex;
 	    //try to replace existing key's value if possible
 	    pthread_mutex_lock(ht_mutex);
@@ -132,7 +132,7 @@ void hashtable_put( HashTable * h_table, void * key, size_t key_len, void * valu
 	
 	if(thr_safe){
 	    pthread_mutex_unlock(ht_mutex);
-	    slog(DEBUG,LOG_UTIL,"After mutex unlock in put");
+	    //slog(DEBUG,LOG_UTIL,"After mutex unlock in put");
 	}
 }
 
@@ -216,7 +216,7 @@ static void _hashtable_resize(HashTable * h_table) {
 	int new_size = (int)(h_table->size * h_table->resize_factor);
 	HNode ** new_table = calloc(sizeof(HNode *), new_size);
 	HNode ** old_table = h_table->table;
-	slog(INFO,LOG_UTIL,"Resizing table to %d", new_size);
+	//slog(INFO,LOG_UTIL,"Resizing table to %d", new_size);
 
 	h_table->table = new_table;
 	h_table->size = new_size;
@@ -306,7 +306,7 @@ int ht_keys(HashTable *table, void **ret)
       return count;
     }
 
-    slog(DEBUG,LOG_UTIL,"ht_keys at 0x%x",ret);
+    //slog(DEBUG,LOG_UTIL,"ht_keys at 0x%x",ret);
     // array of pointers to keys
     //ret = malloc(table->count * sizeof(void *));
     if(ret == NULL) {
@@ -335,7 +335,7 @@ int ht_keys(HashTable *table, void **ret)
             }
         }
     }
-    slog(DEBUG,LOG_UTIL,"ht_keys add : %s (0x%x / 0x%x)",ret[0],ret[0],ret);
+    //slog(DEBUG,LOG_UTIL,"ht_keys add : %s (0x%x / 0x%x)",ret[0],ret[0],ret);
     return count;
 }
 

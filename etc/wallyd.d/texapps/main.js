@@ -85,6 +85,7 @@ function oninterval() {
         var e  = curl.get(errurl ,icingaheader);
         if(e.body){
 	   eObj = JSON.parse(e.body);
+	   log.debug(JSON.stringify(eObj,0,2));
 	   log.info('Err Object parsed',eObj.results.length);
 	} 
         context.privates.down = eObj.results.length;
