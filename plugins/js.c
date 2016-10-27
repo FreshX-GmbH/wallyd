@@ -394,16 +394,6 @@ duk_ret_t js_exec(duk_context *ctx){
    return 0;
 }
 
-int js_evalScript(duk_context *ctx){
-    //duk_push_string(ctx, str);
-    if (duk_peval(ctx) != 0) {
-        slog(ERROR,LOG_JS,"JSEval : %s", duk_safe_to_string(ctx, -1));
-    } else {
-        slog(DEBUG,LOG_JS,"result is: %s", duk_safe_to_string(ctx, -1));
-    }
-    return 1;
-}
-
 int evalScript(void *str){
     duk_push_string(ctx, str);
     if (duk_peval(ctx) != 0) {
@@ -412,6 +402,12 @@ int evalScript(void *str){
         slog(DEBUG,LOG_JS,"result is: %s", duk_safe_to_string(ctx, -1));
     }
     return 1;
+}
+
+int js_evalScript(duk_context *ctx){
+    const char *str = duk_to_string(ctx,0);
+    slog(DEBUG,LOG_JS,"Evaluating the script : %s",str);
+    return evalScript(str);
 }
 
 char *cleanupPlugin(void *p){
