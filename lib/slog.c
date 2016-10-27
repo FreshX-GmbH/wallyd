@@ -461,7 +461,7 @@ void slog_init(const char* fname, const char* conf, int lvl, int flvl, int mask,
     ph->slg = &slg;
 
     /* Handle config parser status */
-    if (!status) slog(WARN, LOG_UTIL, "Initializing logger values without config");
-    else slog(INFO, LOG_UTIL, "Loading logger config from: %s", conf);
+    //if (!status) slog(WARN, LOG_UTIL, "Initializing logger values without config");
+    //else slog(INFO, LOG_UTIL, "Loading logger config from: %s", conf);
 }
 
