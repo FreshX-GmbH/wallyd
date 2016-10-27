@@ -20,13 +20,18 @@ set(WAIT_EV off)
 
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c99 -g")
 
+IF(CMAKE_COMPILER_IS_GNUCC)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+ENDIF(CMAKE_COMPILER_IS_GNUCC)
+
 find_package(PkgConfig)
 pkg_check_modules(LIBUV libuv>=1.7)
 pkg_check_modules(LIBSDL sdl2>=2.0)
 pkg_check_modules(LIBSDLTTF SDL2_ttf>=2.0)
 pkg_check_modules(LIBSDLIMG SDL2_image>=2.0)
 pkg_check_modules(LIBDUV seaduk)
-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -L../lib -lwally")
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -L../lib -L./lib -lwally")
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=gnu99 -DWITH_SEADUK")
 
 string(REGEX REPLACE "^([0-9]+)\\.([0-9]+).*$" "\\1" DARWIN_MAJOR_VERSION "${CMAKE_SYSTEM_VERSION}")
