@@ -55,7 +55,7 @@ void freeWtxElements(wally_call_ctx* wtx){
     pthread_mutex_unlock(&ph->wtxMutex);
 }
 
-void *freeWtx(id){
+void *freeWtx(int id){
     freeWtxElements(ph->transactions[id]);
     free(ph->transactions[id]);
     return NULL;
@@ -108,10 +108,9 @@ bool callWtx(char *fstr, char *params){
 	slog(DEBUG,LOG_PLUGIN,"Single WTX Call");
         // TODO : free this in a safe way!
         //freeWtxElements(ph->wtx);
-        ph->wtx->elements=1;
-        ph->wtx->name[0] = strdup(fstr);
-        ph->wtx->param[0]= strdup(params);
-	callEx(fstr,NULL,ph->wtx,CALL_TYPE_WTX,true);
+	wally_call_ctx *wtx;
+	newSimpleWtx(&wtx,fstr,params);
+	callEx(fstr,NULL,wtx,CALL_TYPE_WTX,true);
     } else {
         pushSimpleWtx(ph->transaction, fstr, params);
     }

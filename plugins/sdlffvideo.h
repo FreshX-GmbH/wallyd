@@ -1,10 +1,11 @@
 #ifndef WALLY_PLUGIN_VIDEO
 #define WALLY_PLUGIN_VIDEO
 
+#define _GNU_SOURCE
+
 #include <SDL.h>
 #include <SDL_thread.h>
 
-#define _GNU_SOURCE
 #include <stdio.h>
 
 #include <libavcodec/avcodec.h>

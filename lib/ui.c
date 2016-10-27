@@ -29,10 +29,10 @@ int eventFilter(void *userdata, SDL_Event *event){
         slog(DEBUG,LOG_SDL,"Caught a ff video quit event.");
         return 0;
     }
-    if(event->user.data1 == NULL){
-        slog(INFO,LOG_SDL,"Ignoring event, no function given");
-        return 0; 
-    }
+//    if(event->user.data1 == NULL){
+//        slog(INFO,LOG_SDL,"Ignoring event, no function given");
+//        return 0; 
+//    }
 //   if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
 //        slog(INFO,WARN,"Intercepted an orphaned refresh timer event");
 //       return 0; 
@@ -48,7 +48,7 @@ bool uiLoop(void){
     char *funcName;
     const char *param;
     wally_call_ctx *wtx;
-    SDL_Event event = { 0 };
+    SDL_Event event;
     slog(DEBUG,LOG_SDL,"UI Loop started and waiting for events (%p)",&event);
     for(;;) {
 	SDL_zero(event);
@@ -79,13 +79,13 @@ bool uiLoop(void){
         ph->uiOwnCount++;
         funcName = strdup(event.user.data1);
 	free(event.user.data1);
-        //Node *n = priqueue_pop(ph->queue);
-        //if(n){
-        // slog(DEBUG,LOG_PLUGIN,"Popped %s from queue with prio %d (num %d)",n->data->data, n->priority, n->index);
-        // priqueue_node_free(ph->queue,n);
-        //} else {
-        // slog(ERROR,LOG_PLUGIN,"Popped nothing.");
-        //}
+        Node *n = priqueue_pop(ph->queue);
+        if(n){
+            slog(DEBUG,LOG_PLUGIN,"Popped %s from queue with prio %d (num %d)",n->data->data, n->priority, n->index);
+            priqueue_node_free(ph->queue,n);
+        } else {
+            slog(ERROR,LOG_PLUGIN,"Nothing popped.");
+        }
 
         if(event.type == WALLY_CALL_WTX){
            if(strncmp("commit",funcName,6)){

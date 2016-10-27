@@ -1,6 +1,6 @@
+#include "sdlffvideo.h"
 #include <duktape.h>
 #include <duv.h>
-#include "sdlffvideo.h"
 
 #define PLUGIN_SCOPE "ffvideo"
 
