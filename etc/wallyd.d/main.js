@@ -124,8 +124,8 @@ try{
 	log.error('ERROR in ssdp : '+e2);
 }
 
-//try{
-//	context.exec  = nucleus.dofile('execserver.js');
-//} catch(e3) {
-//	log.error('ERROR in execserver : '+e3);
-//}
+try{
+	context.exec  = nucleus.dofile('execserver.js');
+} catch(e3) {
+	log.error('ERROR in execserver : '+e3);
+}
