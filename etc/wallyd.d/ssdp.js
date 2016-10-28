@@ -159,6 +159,7 @@ function ssdp(context)
                     timer.start(0, 1000, function () {
                         demo = demo - 1;
                         if(demo < 0){
+                          screen.log('Running icinga2 dashboard demo. Please configure this system on your server at '+host+'.');
                           var taName = '/texapps/demo.js';
                           log.error('Running texapp '+taName);
                           wally.evalFile(config.homedir+taName);

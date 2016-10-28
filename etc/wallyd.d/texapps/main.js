@@ -7,7 +7,7 @@ mainTA.push(screen.render.bind(null,'main'));
 
 try {
      var memtimer = new uv.Timer();
-     memtimer.start( 1000, 1000, function(){
+     memtimer.start( 1500, 1500, function(){
 	 mainTA.commit();
 	 memtimer.stop();
 	 memtimer.close();
