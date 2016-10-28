@@ -92,8 +92,8 @@ function ssdp(context)
       var temp = location.replace(/^http:\/\/|^https:\/\//,'').replace('/.*','');
       var port = parseInt(temp.split(/:/) ? temp.split(/:/)[1].replace(/\/.*|\&.*|\?.*/,'') : 80);
       var host = temp.replace(/:.*|\/.*|\&.*|\?.*/,'');
-      var mac = '00:00:00:00:08:15';
-      var uuid= mac.replace(/:/g,'');
+      var uuid = config.wally.uuid;
+      var mac= uuid.replace(/(.{2})/g,"$1:").replace(/:$/,"");
       var url = temp.replace(/^.*?\//,'/') + '?' +
       'uuid=' + uuid +
       '&arch='+config.wally.arch  +
