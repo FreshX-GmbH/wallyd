@@ -92,16 +92,21 @@ function ssdp(context)
       var temp = location.replace(/^http:\/\/|^https:\/\//,'').replace('/.*','');
       var port = parseInt(temp.split(/:/) ? temp.split(/:/)[1].replace(/\/.*|\&.*|\?.*/,'') : 80);
       var host = temp.replace(/:.*|\/.*|\&.*|\?.*/,'');
-      var uuid = config.wally.uuid;
+      var uuid =config.wally.uuid;
+      var wifi = config.env.W_WFI ? config.env.W_WFI : 'false';
       var mac= uuid.replace(/(.{2})/g,"$1:").replace(/:$/,"");
       var url = temp.replace(/^.*?\//,'/') + '?' +
       'uuid=' + uuid +
       '&arch='+config.wally.arch  +
-      '&platform=OSE-SD-' + config.wally.arch +
+      '&platform=WallyTV2-OSE-' + config.wally.arch +
       '&fw_version=' + config.wally.release + 
-      '&mac=' + mac;
+      '&mac=' + mac +
+      '&width=' + config.wally.width +
+      '&height=' + config.wally.height + 
+      '&ip=' + config.network.ip +
+      '&wifi=' + wifi;
+
       // wifi
-      // ip
       log.debug('Connecting to host : '+host+':'+port);
       screen.log('Found wallaby server at : '+host+'. Starting registration process...');
     
