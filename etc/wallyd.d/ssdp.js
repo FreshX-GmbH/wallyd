@@ -154,11 +154,14 @@ function ssdp(context)
       	    response.uuid = uuid;
                 p('Config : ',config);
                 if(response.configured === false){
-                    screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in 60s.');
+                    screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in 10s.');
                     var timer = new uv.Timer();
                     timer.start(0, 1000, function () {
                         demo = demo - 1;
                         if(demo < 0){
+                          var taName = '/texapps/demo.js';
+                          log.error('Running texapp '+taName);
+                          wally.evalFile(config.homedir+taName);
                           timer.stop();
                           timer.close();
                         } else {
