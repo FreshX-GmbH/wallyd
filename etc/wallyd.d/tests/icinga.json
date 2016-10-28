@@ -390,7 +390,7 @@
               "as": null
             }
           },
-          "value": "$_.co2U; ppm - $_.tempU; C"
+          "value": "$_.co2U; ppm / $_.tempU; C"
         },
         {
           "type": "text",
