@@ -101,7 +101,6 @@ add_dependencies(wallyd wally)
 
 set(PROJECT_DESCRIPTION "Wally Daemon")
 
-
 set(SYSCONFDIR "${CMAKE_INSTALL_PREFIX}/etc" CACHE PATH "System configuration directory")
 set(PREFSDIR ${SYSCONFDIR}/${CMAKE_PROJECT_NAME}/wallyd.d)
 
