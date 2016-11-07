@@ -133,6 +133,17 @@ function oninterval() {
               }
            }
        }
+       if(obj.value === "co2D"){
+           if(obj.options.style.fillColor){
+              if(context.privates.co2D > 1200) {
+                  obj.options.style.fillColor="#FF0000";
+              } else if (context.privates.co2D < 800) {
+                  obj.options.style.fillColor="#339933";
+	      } else {
+                  obj.options.style.fillColor="#FF8000";
+              }
+           }
+       }
    }
 
    try {
