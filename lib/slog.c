@@ -282,19 +282,24 @@ char* slog_get_short(SlogDate *pDate, char *msg, ...)
  * it just prints log without saveing in file. Argument level is
  * logging level and flag is slog flags defined in slog.h header.
  */
-void eslog(char *_srcfile, int line, int level, int flag, const char *msg, ...)
+void eslog(const char *_srcfile, int line, int level, int flag, const char *msg, ...)
 {
     SlogFlags *slg = ph->slg;
-    char *srcfile = strrchr(_srcfile,'/') + 1;
+    char *file = strdup(_srcfile);
+    char *srcfile = strrchr(file,'/') + 1;
     //printf("%d %d / %d %d "BYTE_TO_BINARY_PATTERN"\n",level,slg->level,flag,slg->mask,BYTE_TO_BINARY(slg->mask));
     if(slg->mask == 0) {
         fprintf(stderr,"[ERR] : %s at %d has invalid mask. please fix.\n",srcfile,line);
+        free(file);
         return;
     }
     if(flag > 16383){
         fprintf(stderr,"[NOTE] : %s at %d still using old slog signature. please fix\n",srcfile,line);
     }
-    if((slg->mask & flag) != flag) return;
+    if((slg->mask & flag) != flag) {
+        free(file);
+        return;
+    }
 
     /* Lock for safe */
     if (slg->td_safe) 
@@ -302,7 +307,8 @@ void eslog(char *_srcfile, int line, int level, int flag, const char *msg, ...)
         if (pthread_mutex_lock(&slg->slog_mutex))
         {
             printf("<%s:%d> %s: [ERROR] Can not lock mutex: %d\n", 
-                __FILE__, __LINE__, __FUNCTION__, errno);
+                file, __LINE__, __FUNCTION__, errno);
+            free(file);
             return;
             //exit(EXIT_FAILURE);
         }
@@ -400,6 +406,8 @@ void eslog(char *_srcfile, int line, int level, int flag, const char *msg, ...)
             slog_to_file(output, slg->fname, &mdate);
         }
     }
+
+    free(file);
 
     /* Done, unlock mutex */
     if (slg->td_safe) 

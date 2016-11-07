@@ -155,7 +155,7 @@ char* slog_get(SlogDate *pDate, char *msg, ...);
  * it just prints log without saveing in file. Argument level is
  * logging level and flag is slog flags defined in slog.h header.
  */
-void eslog(char *filename, int line, int level, int flag, const char *msg, ...);
+void eslog(const char *filename, int line, int level, int flag, const char *msg, ...);
 
 
 /*
