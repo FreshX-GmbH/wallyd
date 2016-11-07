@@ -18,6 +18,9 @@ set(WITH_KMS_DEMO off)
 # We want to gently wait for events or poll agressivly (more performant)
 set(WAIT_EV off)
 
+# Set number of compile cpu's
+set(MULTITHREADED_BUILD 1)
+
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=c99 -g")
 
 IF(CMAKE_COMPILER_IS_GNUCC)
@@ -33,6 +36,7 @@ pkg_check_modules(LIBSDLIMG SDL2_image>=2.0)
 pkg_check_modules(LIBDUV seaduk)
 set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -L../lib -L./lib -lwally")
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -std=gnu99 -DWITH_SEADUK")
+set(CMAKE_MAKE_PROGRAM "${CMAKE_MAKE_PROGRAM} -j${MULTITHREADED_BUILD}")
 
 string(REGEX REPLACE "^([0-9]+)\\.([0-9]+).*$" "\\1" DARWIN_MAJOR_VERSION "${CMAKE_SYSTEM_VERSION}")
 string(REGEX REPLACE "^([0-9]+)\\.([0-9]+).*$" "\\2" DARWIN_MINOR_VERSION "${CMAKE_SYSTEM_VERSION}")

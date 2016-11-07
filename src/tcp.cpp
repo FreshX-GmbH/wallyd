@@ -25,9 +25,7 @@ bool tcp_client::conn(string address , int port)
     }
 
     // Set Timeout
-    struct timeval tv;
-    tv.tv_sec = TIMEOUT;
-    tv.tv_usec=0;
+    struct timeval tv = {TIMEOUT,0};
     setsockopt( sock, SOL_SOCKET, SO_RCVTIMEO, (char *) &tv, sizeof(tv));
 
     if(inet_addr(address.c_str()) == -1)

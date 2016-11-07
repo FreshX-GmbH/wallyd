@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <time.h>
+#include <sys/time.h>
 
 #define BUFSIZE 65535
 #define HOST "127.0.0.1"
