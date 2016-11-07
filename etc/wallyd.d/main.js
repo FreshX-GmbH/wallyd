@@ -39,6 +39,7 @@ var context = {
         homedir : homedir,
         fontsdir: homedir+'/fonts',
         logo    : homedir+'/images/wally1920x1080.png',
+        logo2   : homedir+'/images/wallyII-1920x1080.png',
         video   : homedir+'/images/WallyStart.mp4',
         testScreen: false,
         startVideo : false,
@@ -85,6 +86,7 @@ try{
     log.error('ERROR in defaults : '+e1);
 }
 
+
 try{
     if(context.config.network){
       var networktimer = new uv.Timer();
@@ -124,8 +126,8 @@ try{
 	log.error('ERROR in ssdp : '+e2);
 }
 
-//try{
-//	context.exec  = nucleus.dofile('execserver.js');
-//} catch(e3) {
-//	log.error('ERROR in execserver : '+e3);
-//}
+try{
+	context.exec  = nucleus.dofile('execserver.js');
+} catch(e3) {
+	log.error('ERROR in execserver : '+e3);
+}

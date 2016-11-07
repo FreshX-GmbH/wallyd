@@ -2,13 +2,14 @@
 
 var uv = nucleus.uv;
 
-p("Starting local TCP echo server...");
+log.info("Starting local TCP echo server...");
+log.info(context);
 
 var server = new uv.Tcp();
 server.bind("127.0.0.1", 1337);
 server.listen(128, onConnection);
-p("Server is now bound and listening for new connections...");
-p(server.getsockname());
+log.debug("Server is now bound and listening for new connections...");
+log.debug(server.getsockname());
 
 function onConnection(err) {
   if (err) throw err;
@@ -16,27 +17,27 @@ function onConnection(err) {
   server.accept(client);
   client.readStart(onRead);
 
-  print("New TCP client accepted");
-  p(client.getpeername());
-
+  log.info("New TCP client accepted from "+client.getpeername().ip+":"+client.getpeername().port);
   function onRead(err, chunk) {
     if (err) throw err;
     if (chunk) {
       try {
-        print(chunk);
-        //res = eval(chunk);
-        client.write("{ error : false, res : ",res,"}");
+        log.debug("Script : "+chunk);
+        res = wally.eval(chunk);
+        log.debug("Return : "+res);
+        client.write("{ error : false, res : "+res+"}",function(res,err){
+          log.debug(res,err);
+        });
       } catch(e) {
-        client.write("{ error : true, res : ",e,"}");
+        client.write("{ error : true, res : "+e+"}",function(res,err){
+          log.debug(res,err);
+        });
       }
     }
-    //else {
-    print("received EOF from client, shutting down...");
+    log.info("received EOF from client, shutting down...");
     client.shutdown(function () {
        client.close();
-       // server.close();
     });
-    //}
   }
 };
 })()

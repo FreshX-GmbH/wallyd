@@ -30,6 +30,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 if(WITH_CURL STREQUAL on)
     add_library(dukcurl MODULE dukcurl.c)
     target_link_libraries(dukcurl ${LIBSDL_LIBRARIES} ${LIBDUV_LIBRARIES} ${LIBCURL_LIBRARIES})
+    add_dependencies(svg2image wally)
     install(TARGETS dukcurl DESTINATION ${LIB_INSTALL_DIR}/wallyd)
 endif()
 

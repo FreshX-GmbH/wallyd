@@ -21,6 +21,20 @@ texInfo *getTexture(const char *name){
 }
 
 int eventFilter(void *userdata, SDL_Event *event){
+    if(event->type == SDL_QUIT){
+        slog(DEBUG,LOG_SDL,"Received a quit event (%d)",event->type);
+        ph->quit = true;
+        return 0; 
+    }
+    if(event->type == SDL_KEYDOWN){
+        if(event->key.keysym.sym == 27){
+            slog(DEBUG,LOG_SDL,"Received ESC event. Quit.");
+            ph->quit = true;
+        } else {
+           slog(DEBUG,LOG_SDL,"Received a keydown event (%d)",event->key.keysym.sym);
+        }
+        return 0; 
+    }
     if(event->type < SDL_USEREVENT ){
         slog(DEBUG,LOG_SDL,"Ignoring event %d",event->type);
         return 0; 
@@ -29,14 +43,14 @@ int eventFilter(void *userdata, SDL_Event *event){
         slog(DEBUG,LOG_SDL,"Caught a ff video quit event.");
         return 0;
     }
-    if(event->user.data1 == NULL){
-        slog(INFO,LOG_SDL,"Ignoring event, no function given");
-        return 0; 
+//    if(event->user.data1 == NULL){
+//        slog(INFO,LOG_SDL,"Ignoring event, no function given");
+//        return 0; 
+//    }
+    if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
+        slog(INFO,WARN,"Intercepted an orphaned refresh timer event");
+       return 0; 
     }
-//   if(strcmp(event->user.data1,"ffvideo::refresh_timer") == 0 && ph->playVideo == false){
-//        slog(INFO,WARN,"Intercepted an orphaned refresh timer event");
-//       return 0; 
-//   }
     return 1;
 }
 
@@ -48,9 +62,9 @@ bool uiLoop(void){
     char *funcName;
     const char *param;
     wally_call_ctx *wtx;
-    SDL_Event event = { 0 };
+    SDL_Event event;
     slog(DEBUG,LOG_SDL,"UI Loop started and waiting for events (%p)",&event);
-    for(;;) {
+    while(!ph->quit) {
 	SDL_zero(event);
         param = NULL;
 #ifdef WAIT_EV
@@ -79,20 +93,24 @@ bool uiLoop(void){
         ph->uiOwnCount++;
         funcName = strdup(event.user.data1);
 	free(event.user.data1);
-        //Node *n = priqueue_pop(ph->queue);
-        //if(n){
-        // slog(DEBUG,LOG_PLUGIN,"Popped %s from queue with prio %d (num %d)",n->data->data, n->priority, n->index);
-        // priqueue_node_free(ph->queue,n);
-        //} else {
-        // slog(ERROR,LOG_PLUGIN,"Popped nothing.");
-        //}
+        Node *n = priqueue_pop(ph->queue);
+	void *param = n->data->data;
+        if(n){
+            slog(DEBUG,LOG_PLUGIN,"Popped 0x%x from queue with prio %d (num %d, type %d)",n->data->data, n->priority, n->index, n->data->type);
+            free(n);
+        } else {
+            slog(ERROR,LOG_PLUGIN,"Nothing popped.");
+        }
 
         if(event.type == WALLY_CALL_WTX){
            if(strncmp("commit",funcName,6)){
-               wtx = event.user.data2;
+//               wtx = event.user.data2;
+	       wtx = param;
                slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements. wtx at 0x%x", wtx->elements,wtx);
            } else {
-               id = atoi(event.user.data2);
+               id = atoi(param);
+	       free(param);
+               //id = atoi(event.user.data2);
                //slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d / %s",id,event.user.data2);
                //free(event.user.data2);
                wtx = ph->transactions[id];
@@ -162,7 +180,7 @@ bool uiLoop(void){
         }
         free(funcName);
     }
-    slog(DEBUG,LOG_SDL,"UI Loop finished and waiting for events");
+    slog(DEBUG,LOG_SDL,"UI Loop quit. Waiting for threads to finish");
     return true;
 }
 

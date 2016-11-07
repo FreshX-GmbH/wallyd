@@ -55,7 +55,7 @@ void freeWtxElements(wally_call_ctx* wtx){
     pthread_mutex_unlock(&ph->wtxMutex);
 }
 
-void *freeWtx(id){
+void *freeWtx(int id){
     freeWtxElements(ph->transactions[id]);
     free(ph->transactions[id]);
     return NULL;
@@ -98,7 +98,7 @@ bool pushSimpleWtx(int id, const char *fstr,const char *params){
 bool commitWtx(int id){
     char *idstr=NULL;
     asprintf(&idstr,"%d",id);
-    return callEx(strdup("commit"),NULL,idstr,CALL_TYPE_WTX,true);
+    return callEx("commit",NULL,idstr,CALL_TYPE_WTX,true);
 }
 
 bool callWtx(char *fstr, char *params){
@@ -108,10 +108,9 @@ bool callWtx(char *fstr, char *params){
 	slog(DEBUG,LOG_PLUGIN,"Single WTX Call");
         // TODO : free this in a safe way!
         //freeWtxElements(ph->wtx);
-        ph->wtx->elements=1;
-        ph->wtx->name[0] = strdup(fstr);
-        ph->wtx->param[0]= strdup(params);
-	callEx(fstr,NULL,ph->wtx,CALL_TYPE_WTX,true);
+	wally_call_ctx *wtx;
+	newSimpleWtx(&wtx,fstr,params);
+	callEx(fstr,NULL,wtx,CALL_TYPE_WTX,true);
     } else {
         pushSimpleWtx(ph->transaction, fstr, params);
     }
@@ -149,6 +148,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                     slog(INFO,LOG_PLUGIN,"call( %s(NULL) )",funcName);
                     event.type = WALLY_CALL_NULL;
                 }
+        	event.user.data2=params;
                 break;
             case CALL_TYPE_STR:
                 if(paramsTmp){
@@ -158,23 +158,28 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 } else {
                     event.type = WALLY_CALL_NULL;
                 }
+        	event.user.data2=params;
                 break;
             case CALL_TYPE_PS:
                 // TODO
                 params = paramsTmp;
                 slog(DEBUG,LOG_PLUGIN,"call( %s(<PS *>) )",funcName,paramsTmp);
+        	event.user.data2=params;
                 event.type = WALLY_CALL_PS;
                 break;
             case CALL_TYPE_CTX:
                 // TODO
                 params = paramsTmp;
                 event.type = WALLY_CALL_CTX;
+        	event.user.data2=params;
                 slog(DEBUG,LOG_PLUGIN,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
                 break;
             case CALL_TYPE_WTX:
                 slog(TRACE,LOG_PLUGIN,"WTX call");
                 params = paramsTmp;
                 event.type = WALLY_CALL_WTX;
+		slog(DEBUG,LOG_PLUGIN,"Pushed 0x%x to the queue",params);
+        	priqueue_insert_ptr(ph->queue,params,0, DEFAULT_PRIO);
                 break;
             default:
                 break;
@@ -182,9 +187,6 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         // We give up the ownership of the funcName copy + and the params copy here
         // The ui loop will free this later
         event.user.data1=funcName;
-        event.user.data2=params;
-        slog(DEBUG,LOG_PLUGIN,"Added %s to the queue",funcName);
-        priqueue_insert_ptr(ph->queue,strdup(funcName),0, DEFAULT_PRIO);
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
         if(waitThread == true){
@@ -314,9 +316,11 @@ bool openPlugin(char *path, char* name)
 
 int cleanupPlugins(void){
     unsigned int key_count = 0;
+    slog(INFO,LOG_PLUGIN,"Cleaning up loaded plugins");
     char *(*cleanupPlugin)(void *)=NULL;
-    void *keys;
-    key_count = ht_keys(ph->plugins, &keys);
+    int count =0;
+    void **keys = malloc(sizeof(void*)*ph->plugins->count);
+    count = ht_keys(ph->plugins, keys);
 
     for(int i=0; i < key_count; i++){
         // TODO : cleanup
@@ -412,6 +416,7 @@ pluginHandler *pluginsInit(void){
     ph->texturePrio = NULL;
     ph->transaction = 0;
     ph->transactionCount = 0;
+    ph->quit = false;
     initWtx(&ph->wtx,0);
     ph->transactions = malloc(sizeof(void*)*MAX_WTX);
     pthread_mutex_init(&ph->wtxMutex,0);

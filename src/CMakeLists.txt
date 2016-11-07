@@ -24,9 +24,15 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
  endif()
 endif()
 
-#set(WALLYC_SRC wallyc.cpp tcp.cpp)
-#add_executable(wallyc ${WALLYC_SRC})
-#target_link_libraries(wallyc)
+set(WALLYC_SRC wallyc.cpp tcp.cpp)
+add_executable(wallyc ${WALLYC_SRC})
+target_link_libraries(wallyc)
+install(TARGETS wallyc DESTINATION ${BIN_INSTALL_DIR})
+
+set(WALLYC_SRC wallyjs.cpp tcp.cpp)
+add_executable(wallyjs ${WALLYC_SRC})
+target_link_libraries(wallyjs)
+install(TARGETS wallyjs DESTINATION ${BIN_INSTALL_DIR})
 
 set(SDLDEMO sdldemo.c)
 add_executable(sdldemo ${SDLDEMO})

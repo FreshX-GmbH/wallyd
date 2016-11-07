@@ -92,16 +92,21 @@ function ssdp(context)
       var temp = location.replace(/^http:\/\/|^https:\/\//,'').replace('/.*','');
       var port = parseInt(temp.split(/:/) ? temp.split(/:/)[1].replace(/\/.*|\&.*|\?.*/,'') : 80);
       var host = temp.replace(/:.*|\/.*|\&.*|\?.*/,'');
-      var mac = '00:00:00:00:08:15';
-      var uuid= mac.replace(/:/g,'');
+      var uuid =config.wally.uuid;
+      var wifi = config.env.W_WFI ? config.env.W_WFI : 'false';
+      var mac= uuid.replace(/(.{2})/g,"$1:").replace(/:$/,"");
       var url = temp.replace(/^.*?\//,'/') + '?' +
       'uuid=' + uuid +
       '&arch='+config.wally.arch  +
-      '&platform=OSE-SD-' + config.wally.arch +
+      '&platform=WallyTV2-OSE-' + config.wally.arch +
       '&fw_version=' + config.wally.release + 
-      '&mac=' + mac;
+      '&mac=' + mac +
+      '&width=' + config.wally.width +
+      '&height=' + config.wally.height + 
+      '&ip=' + config.network.ip +
+      '&wifi=' + wifi;
+
       // wifi
-      // ip
       log.debug('Connecting to host : '+host+':'+port);
       screen.log('Found wallaby server at : '+host+'. Starting registration process...');
     
@@ -149,11 +154,15 @@ function ssdp(context)
       	    response.uuid = uuid;
                 p('Config : ',config);
                 if(response.configured === false){
-                    screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in 60s.');
+                    screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in 10s.');
                     var timer = new uv.Timer();
                     timer.start(0, 1000, function () {
                         demo = demo - 1;
                         if(demo < 0){
+                          screen.log('Running icinga2 dashboard demo. Please configure this system on your server at '+host+'.');
+                          var taName = '/texapps/demo.js';
+                          log.error('Running texapp '+taName);
+                          wally.evalFile(config.homedir+taName);
                           timer.stop();
                           timer.close();
                         } else {

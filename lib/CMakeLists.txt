@@ -2,9 +2,8 @@ project(libwally)
 
 set(LIB_SRC util.c
     plugins.c Hash_Table.c HNode.c
-    sys.c memfs.c murmur.c
+    sys.c memfs.c pqueue.c
     slog.c getrssmem.c ui.c
-    pqueue.c
 )
 
 add_library(wally SHARED ${LIB_SRC})

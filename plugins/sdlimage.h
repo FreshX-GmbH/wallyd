@@ -1,6 +1,8 @@
 #ifndef WALLY_SDL_H
 #define WALLY_SDL_H
 
+#define _GNU_SOURCE
+#include <stdio.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
@@ -8,9 +10,6 @@
 #ifdef RASPBERRY
 #include <GLES2/gl2.h>
 #endif
-
-#define _GNU_SOURCE
-#include <stdio.h>
 
 #include "../lib/plugins.h"
 #include "../lib/ui.h"

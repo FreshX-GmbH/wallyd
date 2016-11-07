@@ -1,0 +1,10 @@
+#!/bin/sh
+
+while [ 1 ]; do
+    HOUR=`date +'%H'`
+    sleep 3000
+    if [ "$HOUR" == "23" ]; then
+        sleep 600
+        reboot
+    fi
+done

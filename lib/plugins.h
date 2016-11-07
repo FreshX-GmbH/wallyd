@@ -123,6 +123,7 @@ typedef struct{
     pthread_mutex_t taMutex;
     bool pluginLoaderDone;
     int pluginCount;
+    bool quit;
 
     int uiAllCount;
     int uiOwnCount;
@@ -169,5 +170,6 @@ bool initWtx(wally_call_ctx** xwtx,int id);
 bool newWtx(int id, wally_call_ctx** xwtx);
 bool pushSimpleWtx(int id, const char *fstr,const char *params);
 bool commitWtx(int id);
+void *freeWtx(int id);
 
 #endif
