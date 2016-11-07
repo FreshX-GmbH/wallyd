@@ -407,7 +407,7 @@ int evalScript(void *str){
 int js_evalScript(duk_context *ctx){
     const char *str = duk_to_string(ctx,0);
     slog(DEBUG,LOG_JS,"Evaluating the script : %s",str);
-    return evalScript(str);
+    return evalScript((char*)str);
 }
 
 char *cleanupPlugin(void *p){
