@@ -55,7 +55,7 @@ int js_newTransaction(duk_context *ctx) {
    wally_call_ctx* wtx = NULL;
    ph->transactionCount=ph->transactionCount+1;
    int id = ph->transactionCount;
-   char *idstr=NULL;
+   //char *idstr=NULL;
    if(!newWtx(id,&wtx)){
       slog(ERROR,LOG_PLUGIN,"New transaction could not be created.");
       return 0; 

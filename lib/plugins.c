@@ -96,13 +96,16 @@ bool pushSimpleWtx(int id, const char *fstr,const char *params){
 }
 
 bool commitWtx(int id){
-    char *idstr=NULL;
-    asprintf(&idstr,"%d",id);
-    return callEx("commit",NULL,idstr,CALL_TYPE_WTX,true);
+    // Transaction is commited. Finish WTX and push onto priQ
+    slog(DEBUG,LOG_PLUGIN,"Transaction %d commited.",id);
+    wally_call_ctx *wtx = ph->transactions[id];
+    wtx->transaction_id = id;
+    return callEx("commit",NULL,wtx,CALL_TYPE_WTX,true);
 }
 
 bool callWtx(char *fstr, char *params){
     pthread_mutex_lock(&ph->wtxMutex);
+   // No transaction running
     if(ph->transaction == 0) {
         int ret;
 	slog(DEBUG,LOG_PLUGIN,"Single WTX Call");
@@ -112,6 +115,7 @@ bool callWtx(char *fstr, char *params){
 	newSimpleWtx(&wtx,fstr,params);
 	callEx(fstr,NULL,wtx,CALL_TYPE_WTX,true);
     } else {
+       // Transaction is running, simply push the cmd to the transaction
         pushSimpleWtx(ph->transaction, fstr, params);
     }
     pthread_mutex_unlock(&ph->wtxMutex);
@@ -131,6 +135,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
     }
     pthread_mutex_lock(&callMutex);
     void *params = NULL;
+    int localret = 0;
    // wally_call_ctx *wtx = NULL;
     char *funcName = strdup(funcNameTmp);
     ph->callCount++;   
@@ -150,32 +155,32 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 }
         	event.user.data2=params;
                 break;
-            case CALL_TYPE_STR:
-                if(paramsTmp){
-                    params = strdup(paramsTmp);
-                    slog(DEBUG,LOG_PLUGIN,"call( %s(%s) )",funcName,params);
-                    event.type = WALLY_CALL_STR;
-                } else {
-                    event.type = WALLY_CALL_NULL;
-                }
-        	event.user.data2=params;
-                break;
-            case CALL_TYPE_PS:
-                // TODO
-                params = paramsTmp;
-                slog(DEBUG,LOG_PLUGIN,"call( %s(<PS *>) )",funcName,paramsTmp);
-        	event.user.data2=params;
-                event.type = WALLY_CALL_PS;
-                break;
-            case CALL_TYPE_CTX:
-                // TODO
-                params = paramsTmp;
-                event.type = WALLY_CALL_CTX;
-        	event.user.data2=params;
-                slog(DEBUG,LOG_PLUGIN,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
-                break;
+//            case CALL_TYPE_STR:
+//                if(paramsTmp){
+//                    params = strdup(paramsTmp);
+//                    slog(DEBUG,LOG_PLUGIN,"call( %s(%s) )",funcName,params);
+//                    event.type = WALLY_CALL_STR;
+//                } else {
+//                    event.type = WALLY_CALL_NULL;
+//                }
+//        	event.user.data2=params;
+//                break;
+//            case CALL_TYPE_PS:
+//                // TODO
+//                params = paramsTmp;
+//                slog(DEBUG,LOG_PLUGIN,"call( %s(<PS *>) )",funcName,paramsTmp);
+//        	event.user.data2=params;
+//                event.type = WALLY_CALL_PS;
+//                break;
+//            case CALL_TYPE_CTX:
+//                // TODO
+//                params = paramsTmp;
+//                event.type = WALLY_CALL_CTX;
+//        	event.user.data2=params;
+//                slog(DEBUG,LOG_PLUGIN,"call( %s(<duk_ctx *>) )",funcName,paramsTmp);
+//                break;
             case CALL_TYPE_WTX:
-                slog(TRACE,LOG_PLUGIN,"WTX call");
+                slog(TRACE,LOG_PLUGIN,"WTX call : %s",funcName);
                 params = paramsTmp;
                 event.type = WALLY_CALL_WTX;
 		slog(DEBUG,LOG_PLUGIN,"Pushed 0x%x to the queue",params);
@@ -207,7 +212,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                     ph->conditionTimeout++;
                 }
         }
-        ret=0;
+        localret=0;
     } else {
         void *(*func)(void *) = ht_get_simple(ph->functions,funcName);
         if(func == NULL && thr_func == NULL) {
@@ -215,10 +220,11 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
            return false;
         }
         params = paramsTmp;
-        ret = (*func)(params);
+        localret = (*func)(params);
 	free(funcName);
     }
     pthread_mutex_unlock(&callMutex); 
+    //if(ret != NULL) ret = localret;
     return ret;
 }
 bool callWithData(char *funcname, void *ret, void *params){
@@ -230,7 +236,6 @@ bool callSync(char *funcname, void *ret, char *params){
 bool call(char *funcname, void *ret, char *params){
     slog(ERROR,LOG_PLUGIN,"call(%s(%s)) no more supported",funcname,params);
     return false;
-    //return callEx(funcname,ret,params,CALL_TYPE_STR,true);
 }
 bool callNonBlocking(char *funcname, int *ret, void *params){
     return callEx(funcname,ret,params,CALL_TYPE_PTR,false);

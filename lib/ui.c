@@ -93,29 +93,34 @@ bool uiLoop(void){
         ph->uiOwnCount++;
         funcName = strdup(event.user.data1);
 	free(event.user.data1);
+        // Pop params from prio queue
         Node *n = priqueue_pop(ph->queue);
-	void *param = n->data->data;
+	void *param = NULL;
         if(n){
+            param = n->data->data;
             slog(DEBUG,LOG_PLUGIN,"Popped 0x%x from queue with prio %d (num %d, type %d)",n->data->data, n->priority, n->index, n->data->type);
             free(n);
         } else {
             slog(ERROR,LOG_PLUGIN,"Nothing popped.");
+            continue;
         }
 
         if(event.type == WALLY_CALL_WTX){
-           if(strncmp("commit",funcName,6)){
+           // Is it a single call?
+//           if(strncmp("commit",funcName,6) == 0){
 //               wtx = event.user.data2;
 	       wtx = param;
                slog(DEBUG,LOG_PLUGIN,"Threaded WTX loop call %d elements. wtx at 0x%x", wtx->elements,wtx);
-           } else {
-               id = atoi(param);
-	       free(param);
+           //} else {
+               // or is it a transaction?
+               //id = atoi(param);
+	       //free(param);
                //id = atoi(event.user.data2);
                //slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d / %s",id,event.user.data2);
                //free(event.user.data2);
-               wtx = ph->transactions[id];
-               slog(DEBUG,LOG_PLUGIN,"Threaded WTX commit call with id %d and %d elements. wtx at 0x%x", id,wtx->elements,wtx);
-           }
+               //wtx = ph->transactions[id];
+               //slog(DEBUG,LOG_PLUGIN,"Transaction %d with %d elements commited. wtx at 0x%x", id,wtx->elements,wtx);
+           //}
            for(int i = 0; i < wtx->elements; i++){
                   slog(TRACE,LOG_PLUGIN,"WTX(0x%x) Call%d : %s(%s)",wtx, i, wtx->name[i], wtx->param[i]);
                   //thr_func(event.user.data2);
@@ -133,7 +138,7 @@ bool uiLoop(void){
                 SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
 	   }
            if(ph->transaction){
-               freeWtx(id);
+               freeWtxElements(ph->transactions[id]);
                ph->transaction = 0;
            } else {
               freeWtxElements(wtx);

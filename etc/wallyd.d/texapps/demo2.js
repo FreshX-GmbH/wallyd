@@ -61,11 +61,11 @@ function oninterval() {
 	var d2 = new Date();
         var start = d2.getTime();
 	var passed = 0;
-        wally.startTransaction();
-        gui.clearTextureNoPaint('main');
-        wallaby.renderScreen(context,context.privates,'main',dat);
-        wally.render('main');
-        wally.commitTransaction();
+	var TA = new Transaction();
+	TA.push(gui.clearTextureNoPaint.bind(null,'main'));
+        wallaby.renderScreen(TA,context,context.privates,'main',dat);
+        TA.push(wally.render.bind(null,'main'));
+	TA.commit();
 
 	passed = d2.getTime()-date.getTime();//-3600*1000;
 	var d3 = new Date();

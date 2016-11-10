@@ -31,10 +31,10 @@ function oninterval() {
 		 ' / L '+Math.ceil((grow)/(1024*1024)*100)/100+'mb'+
 		 ' / gpm '+(mymem-lastmin)+
 		 ' / T '+Math.ceil(div)+'s';
-	//wally.startTransaction();
-        gui.clearTexture('memdbg');
-	wally.setText('memdbg','black','logfont',0,1,tstat);
-	//wally.commitTransaction();
+	var TA = new Transaction();
+        TA.push(gui.clearTexture.bind(null,'memdbg'));
+	TA.push(wally.setText.bind(null,'memdbg','black','logfont',0,1,tstat));
+	TA.commit();
 	log.info(stat);
     } catch(err) {
 	//log.error('Error in memdbg : '+err);
