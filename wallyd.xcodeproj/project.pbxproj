@@ -7,13 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		657CA7111CC8F4930077576C /* buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6EF1CC8F45E0077576C /* buf.c */; };
-		657CA7131CC8F49F0077576C /* connect.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6F11CC8F45E0077576C /* connect.c */; };
-		657CA7181CC8F49F0077576C /* hashtable.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6F61CC8F45E0077576C /* hashtable.c */; settings = {COMPILER_FLAGS = "-D__WITH_MURMUR -fPIC"; }; };
-		657CA71A1CC8F49F0077576C /* jsmn.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6F81CC8F45E0077576C /* jsmn.c */; };
-		657CA71C1CC8F49F0077576C /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6FA1CC8F45E0077576C /* json.c */; };
-		657CA71E1CC8F49F0077576C /* murmur.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6FC1CC8F45E0077576C /* murmur.c */; settings = {COMPILER_FLAGS = "-D__WITH_MURMUR -fPIC"; }; };
-		657CA7201CC8F49F0077576C /* parseJson.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6FE1CC8F45E0077576C /* parseJson.c */; };
 		657CA7211CC8F49F0077576C /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA6FF1CC8F45E0077576C /* plugins.c */; settings = {COMPILER_FLAGS = "-D__WITH_MURMUR -fPIC"; }; };
 		657CA7231CC8F49F0077576C /* sys.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA7011CC8F45E0077576C /* sys.c */; settings = {COMPILER_FLAGS = "-DWITH_SEADUK"; }; };
 		657CA7241CC8F49F0077576C /* ui.c in Sources */ = {isa = PBXBuildFile; fileRef = 657CA7021CC8F45E0077576C /* ui.c */; };
@@ -33,6 +26,10 @@
 		65AE5BF81D0A332B0080FEA3 /* slog.c in Sources */ = {isa = PBXBuildFile; fileRef = 65AE5BF61D0A33030080FEA3 /* slog.c */; settings = {COMPILER_FLAGS = "-DDARWIN"; }; };
 		65B66F141D0B2DB90012E4F1 /* slog.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B66F131D0B2DAB0012E4F1 /* slog.h */; };
 		65D202581D6632A500854C78 /* getrssmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D202561D66321800854C78 /* getrssmem.c */; };
+		65D96F2C1DD5C853000D51B2 /* pqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D96F281DD5C853000D51B2 /* pqueue.c */; };
+		65D96F2D1DD5C8B7000D51B2 /* Hash_Table.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D96F241DD5C853000D51B2 /* Hash_Table.c */; };
+		65D96F2E1DD5C8B7000D51B2 /* HNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D96F261DD5C853000D51B2 /* HNode.c */; };
+		65D96F2F1DD5C8B7000D51B2 /* pqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = 65D96F281DD5C853000D51B2 /* pqueue.c */; };
 		65E98A671CC8E21E000F291F /* libSDL2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A661CC8E21E000F291F /* libSDL2.dylib */; };
 		65E98A691CC8E227000F291F /* libSDL2_image.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A681CC8E227000F291F /* libSDL2_image.dylib */; };
 		65E98A6B1CC8E22C000F291F /* libSDL2_gfx.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 65E98A6A1CC8E22C000F291F /* libSDL2_gfx.dylib */; };
@@ -83,21 +80,7 @@
 
 /* Begin PBXFileReference section */
 		657CA6E91CC8F3CD0077576C /* liblibwallyd.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibwallyd.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		657CA6EF1CC8F45E0077576C /* buf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = buf.c; path = wallyd/lib/buf.c; sourceTree = "<group>"; };
-		657CA6F01CC8F45E0077576C /* buf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = buf.h; path = wallyd/lib/buf.h; sourceTree = "<group>"; };
-		657CA6F11CC8F45E0077576C /* connect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = connect.c; path = wallyd/lib/connect.c; sourceTree = "<group>"; };
-		657CA6F21CC8F45E0077576C /* connect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = connect.h; path = wallyd/lib/connect.h; sourceTree = "<group>"; };
 		657CA6F31CC8F45E0077576C /* default.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = default.h; path = wallyd/lib/default.h; sourceTree = "<group>"; };
-		657CA6F51CC8F45E0077576C /* hashfunc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hashfunc.h; path = wallyd/lib/hashfunc.h; sourceTree = "<group>"; };
-		657CA6F61CC8F45E0077576C /* hashtable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = hashtable.c; path = wallyd/lib/hashtable.c; sourceTree = "<group>"; };
-		657CA6F71CC8F45E0077576C /* hashtable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hashtable.h; path = wallyd/lib/hashtable.h; sourceTree = "<group>"; };
-		657CA6F81CC8F45E0077576C /* jsmn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jsmn.c; path = wallyd/lib/jsmn.c; sourceTree = "<group>"; };
-		657CA6F91CC8F45E0077576C /* jsmn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jsmn.h; path = wallyd/lib/jsmn.h; sourceTree = "<group>"; };
-		657CA6FA1CC8F45E0077576C /* json.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = json.c; path = wallyd/lib/json.c; sourceTree = "<group>"; };
-		657CA6FB1CC8F45E0077576C /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json.h; path = wallyd/lib/json.h; sourceTree = "<group>"; };
-		657CA6FC1CC8F45E0077576C /* murmur.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = murmur.c; path = wallyd/lib/murmur.c; sourceTree = "<group>"; };
-		657CA6FD1CC8F45E0077576C /* murmur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = murmur.h; path = wallyd/lib/murmur.h; sourceTree = "<group>"; };
-		657CA6FE1CC8F45E0077576C /* parseJson.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = parseJson.c; path = wallyd/lib/parseJson.c; sourceTree = "<group>"; };
 		657CA6FF1CC8F45E0077576C /* plugins.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = plugins.c; path = wallyd/lib/plugins.c; sourceTree = "<group>"; };
 		657CA7001CC8F45E0077576C /* plugins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plugins.h; path = wallyd/lib/plugins.h; sourceTree = "<group>"; };
 		657CA7011CC8F45E0077576C /* sys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sys.c; path = wallyd/lib/sys.c; sourceTree = "<group>"; };
@@ -111,6 +94,12 @@
 		65D202511D6631E100854C78 /* path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = path.h; path = src/nucly/path.h; sourceTree = SOURCE_ROOT; };
 		65D202521D6631E100854C78 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = src/nucly/utils.h; sourceTree = SOURCE_ROOT; };
 		65D202561D66321800854C78 /* getrssmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = getrssmem.c; path = wallyd/lib/getrssmem.c; sourceTree = "<group>"; };
+		65D96F241DD5C853000D51B2 /* Hash_Table.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Hash_Table.c; path = wallyd/lib/Hash_Table.c; sourceTree = "<group>"; };
+		65D96F251DD5C853000D51B2 /* Hash_Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hash_Table.h; path = wallyd/lib/Hash_Table.h; sourceTree = "<group>"; };
+		65D96F261DD5C853000D51B2 /* HNode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = HNode.c; path = wallyd/lib/HNode.c; sourceTree = "<group>"; };
+		65D96F271DD5C853000D51B2 /* HNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HNode.h; path = wallyd/lib/HNode.h; sourceTree = "<group>"; };
+		65D96F281DD5C853000D51B2 /* pqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pqueue.c; path = wallyd/lib/pqueue.c; sourceTree = "<group>"; };
+		65D96F291DD5C853000D51B2 /* pqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pqueue.h; path = wallyd/lib/pqueue.h; sourceTree = "<group>"; };
 		65E989DD1CC8D48D000F291F /* wallyd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wallyd; sourceTree = BUILT_PRODUCTS_DIR; };
 		65E98A0B1CC8D518000F291F /* wallyd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wallyd.c; path = src/wallyd.c; sourceTree = "<group>"; };
 		65E98A0C1CC8D518000F291F /* wallyd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wallyd.h; path = src/wallyd.h; sourceTree = "<group>"; };
@@ -188,27 +177,19 @@
 		657CA6ED1CC8F3EA0077576C /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				65D96F241DD5C853000D51B2 /* Hash_Table.c */,
+				65D96F251DD5C853000D51B2 /* Hash_Table.h */,
+				65D96F261DD5C853000D51B2 /* HNode.c */,
+				65D96F271DD5C853000D51B2 /* HNode.h */,
+				65D96F281DD5C853000D51B2 /* pqueue.c */,
+				65D96F291DD5C853000D51B2 /* pqueue.h */,
 				65D202561D66321800854C78 /* getrssmem.c */,
 				65B66F131D0B2DAB0012E4F1 /* slog.h */,
 				65AE5BF61D0A33030080FEA3 /* slog.c */,
 				65EAEECA1D09417E0079D1A8 /* miniz.h */,
 				65EAEEC71D093F430079D1A8 /* miniz.c */,
 				65EAEEC41D0933D10079D1A8 /* memfs.c */,
-				657CA6EF1CC8F45E0077576C /* buf.c */,
-				657CA6F01CC8F45E0077576C /* buf.h */,
-				657CA6F11CC8F45E0077576C /* connect.c */,
-				657CA6F21CC8F45E0077576C /* connect.h */,
 				657CA6F31CC8F45E0077576C /* default.h */,
-				657CA6F51CC8F45E0077576C /* hashfunc.h */,
-				657CA6F61CC8F45E0077576C /* hashtable.c */,
-				657CA6F71CC8F45E0077576C /* hashtable.h */,
-				657CA6F81CC8F45E0077576C /* jsmn.c */,
-				657CA6F91CC8F45E0077576C /* jsmn.h */,
-				657CA6FA1CC8F45E0077576C /* json.c */,
-				657CA6FB1CC8F45E0077576C /* json.h */,
-				657CA6FC1CC8F45E0077576C /* murmur.c */,
-				657CA6FD1CC8F45E0077576C /* murmur.h */,
-				657CA6FE1CC8F45E0077576C /* parseJson.c */,
 				657CA6FF1CC8F45E0077576C /* plugins.c */,
 				657CA7001CC8F45E0077576C /* plugins.h */,
 				657CA7011CC8F45E0077576C /* sys.c */,
@@ -387,21 +368,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65D96F2D1DD5C8B7000D51B2 /* Hash_Table.c in Sources */,
+				65D96F2E1DD5C8B7000D51B2 /* HNode.c in Sources */,
+				65D96F2F1DD5C8B7000D51B2 /* pqueue.c in Sources */,
 				65D202581D6632A500854C78 /* getrssmem.c in Sources */,
 				65AE5BF81D0A332B0080FEA3 /* slog.c in Sources */,
 				65EAEEC91D09401B0079D1A8 /* miniz.c in Sources */,
 				65EAEEC61D0933DF0079D1A8 /* memfs.c in Sources */,
-				657CA7131CC8F49F0077576C /* connect.c in Sources */,
-				657CA7181CC8F49F0077576C /* hashtable.c in Sources */,
-				657CA71A1CC8F49F0077576C /* jsmn.c in Sources */,
-				657CA71C1CC8F49F0077576C /* json.c in Sources */,
-				657CA71E1CC8F49F0077576C /* murmur.c in Sources */,
-				657CA7201CC8F49F0077576C /* parseJson.c in Sources */,
 				657CA7211CC8F49F0077576C /* plugins.c in Sources */,
 				657CA7231CC8F49F0077576C /* sys.c in Sources */,
 				657CA7241CC8F49F0077576C /* ui.c in Sources */,
 				657CA7261CC8F49F0077576C /* util.c in Sources */,
-				657CA7111CC8F4930077576C /* buf.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,6 +386,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65D96F2C1DD5C853000D51B2 /* pqueue.c in Sources */,
 				65F40A951D6E35C100E1AF69 /* wallyd.c in Sources */,
 				65F40A911D6E2E1C00E1AF69 /* seaduk.c in Sources */,
 			);

@@ -160,11 +160,15 @@ function ssdp(context)
                         demo = demo - 1;
                         if(demo < 0){
                           screen.log('Running icinga2 dashboard demo. Please configure this system on your server at '+host+'.');
-                          var taName = '/texapps/demo.js';
-                          log.error('Running texapp '+taName);
-                          wally.evalFile(config.homedir+taName);
-                          timer.stop();
-                          timer.close();
+                          try {
+                            var taName = '/texapps/demo.js';
+                            log.error('Running texapp '+taName);
+                            wally.evalFile(config.homedir+taName);
+                            timer.stop();
+                            timer.close();
+                          } catch(e) {
+                            log.error(e);
+                          }
                         } else {
                           screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in '+demo+'s');
                         }

@@ -5,8 +5,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-
-#include <HNode.h>
+#include "HNode.h"
 
 typedef uint32_t (* HashFunc)(const void *, size_t);
 typedef int (* EqualityFunc)(void *, void *);

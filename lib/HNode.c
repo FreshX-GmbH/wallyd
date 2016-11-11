@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <HNode.h>
+#include "HNode.h"
 
 // returns pointer to HNode on success. 0 on failure
 HNode * hnode_new(

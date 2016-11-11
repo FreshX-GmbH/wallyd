@@ -31,6 +31,10 @@ bool newWtx(int id, wally_call_ctx** wtx){
 
 // Free the WTX and ALL its elements
 void freeWtxElements(wally_call_ctx* wtx){
+    if(!wtx) {
+       slog(ERROR,LOG_PLUGIN,"Can not free empty wtx. Fix this!");
+       return;
+    }
     pthread_mutex_lock(&ph->wtxMutex);
     int elements = wtx->elements, count = 0;
 //    wally_call_ctx *wtx = *xwtx;

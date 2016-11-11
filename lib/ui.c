@@ -93,7 +93,8 @@ bool uiLoop(void){
         ph->uiOwnCount++;
         funcName = strdup(event.user.data1);
 	free(event.user.data1);
-        // Pop params from prio queue
+        slog(DEBUG,LOG_PLUGIN,"New event request for %s",funcName);
+        // Pop a request from prio queue
         Node *n = priqueue_pop(ph->queue);
 	void *param = NULL;
         if(n){
@@ -129,6 +130,7 @@ bool uiLoop(void){
                       void *(*thr_func)(void *) = ht_get_simple(ph->functions,wtx->name[i]);
                       if(!thr_func){
                       	  slog(WARN,LOG_PLUGIN,"Function %s not defined (%d).",wtx->name[i],event.type);
+	                  free(funcName);
                           continue;
 		      }
                   } 
