@@ -88,6 +88,7 @@ function ssdp(context)
     }
         
     function registerClient(location){
+      var featuresB64 = Duktape.enc('base64',features);
       var port,url;
       var temp = location.replace(/^http:\/\/|^https:\/\//,'').replace('/.*','');
       var port = parseInt(temp.split(/:/) ? temp.split(/:/)[1].replace(/\/.*|\&.*|\?.*/,'') : 80);
@@ -98,7 +99,7 @@ function ssdp(context)
       var url = temp.replace(/^.*?\//,'/') + '?' +
       'uuid=' + uuid +
       '&arch='+config.wally.arch  +
-      '&platform=WallyTV2-OSE-' + config.wally.arch +
+      '&platform=WallyTV2-' + config.wally.arch +
       '&fw_version=' + config.wally.release + 
       '&mac=' + mac +
       '&width=' + config.wally.width +

@@ -22,9 +22,16 @@ nucleus.dofile('modules/transaction.js');
 
 try {
 	settings = JSON.parse(wally.readFile(homedir+'/settings.json'));
-}catch(e){
+} catch(e) {
 	log.info('No valid settings.json found in '+homedir+'/settings.json, err : '+e);
 	settings = {};
+}
+
+try {
+	features = JSON.parse(wally.readFile(homedir+'/features.json'));
+} catch(e) {
+	log.info('No valid features.json found in '+homedir+'/features.json, err : '+e);
+	features = {};
 }
 
 var context = { 
@@ -32,6 +39,7 @@ var context = {
     screen: wally,
     curl: curl,
     settings: settings,
+    features: features,
     config: {
         debug   : config.debug,
         wally   : wally.getConfig(),
