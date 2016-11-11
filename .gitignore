@@ -28,3 +28,4 @@ autoversion.h
 */cmake_install.cmake
 src/wallyc
 src/sdldemo
+src/wallyjs

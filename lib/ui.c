@@ -139,12 +139,13 @@ bool uiLoop(void){
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
                 SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
 	   }
-           if(ph->transaction){
-               freeWtxElements(ph->transactions[id]);
-               ph->transaction = 0;
-           } else {
-              freeWtxElements(wtx);
-           }
+//           if(ph->transaction){
+//              slog(WARN,LOG_PLUGIN,"Freeing wtx for id %d at 0x%x",id,ph->transactions[id]);
+//              freeWtxElements(ph->transactions[id]);
+//              ph->transaction = 0;
+//          } else {
+           freeWtxElements(wtx);
+//           }
 	   free(funcName);
            pthread_mutex_unlock(&ph->taMutex);
            continue;
