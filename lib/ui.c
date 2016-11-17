@@ -124,7 +124,8 @@ bool uiLoop(void){
                   thr_func((void*)wtx->param[i]);
            }
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
-                SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
+               slog(DEBUG,LOG_PLUGIN,"Signaling condition for %s at 0x%x",funcName, ht_get_simple(ph->functionWaitConditions,funcName));
+               SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
 	   }
 //           if(ph->transaction){
 //              slog(WARN,LOG_PLUGIN,"Freeing wtx for id %d at 0x%x",id,ph->transactions[id]);

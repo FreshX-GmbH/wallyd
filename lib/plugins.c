@@ -229,8 +229,9 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 break;
         }
         // We give up the ownership of the funcName copy + and the params copy here
-        // The ui loop will free this later
-        event.user.data1=funcName;
+        // The ui loop will free this later, hence we do a copy for us BEFORE we push the event
+        event.user.data1 = funcName;
+        char *funcBak = strdup(funcName);
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
         if(waitThread == true){
@@ -242,15 +243,14 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
 		// TODO : 
                 timeout = SDLWAITTIMEOUT;
             }
-            slog(DEBUG,LOG_PLUGIN,"Wait %d ms until %s has finished. Name/Map at 0x%x/0x%x",timeout,funcName,funcName,ph->functionWaitConditions);
-            slog(TRACE,LOG_PLUGIN,"Condition at 0x%x",ht_get_simple(ph->functionWaitConditions,funcName));
-            if(SDL_MUTEX_TIMEDOUT == 
-                    SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,timeout))
-                {
-                    slog(ERROR,LOG_PLUGIN,"Wait condition for call %s timed out!",funcName);
-                    ph->conditionTimeout++;
-                }
+            slog(DEBUG,LOG_PLUGIN,"Wait %d ms until %s has finished. Name/Map at 0x%x/0x%x",timeout,funcBak,funcBak,ph->functionWaitConditions);
+            slog(DEBUG,LOG_PLUGIN,"Condition for %s at 0x%x",funcBak,ht_get_simple(ph->functionWaitConditions,funcBak));
+            if(SDL_MUTEX_TIMEDOUT == SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcBak),ph->funcMutex,timeout)) {
+                slog(ERROR,LOG_PLUGIN,"Wait condition for call %s timed out!",funcBak);
+                ph->conditionTimeout++;
+            }
         }
+        free(funcBak);
         localret=0;
     } else {
         void *(*func)(void *) = ht_get_simple(ph->functions,funcName);
