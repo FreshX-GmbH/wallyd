@@ -501,7 +501,11 @@ int scall(const char *msg, ...)
 
     len = strlen(ap);
     char *func = strsep(&ap," ");
-    slog(DEBUG,LOG_PLUGIN,"Expanded string has %d bytes and splits into %s(%s)",len,func,ap);
+    if(ap == NULL) {
+      slog(DEBUG,LOG_PLUGIN,"Expanded string has %d bytes and splits into %s with NULL parameter",len,func,ap);
+    } else {
+      slog(DEBUG,LOG_PLUGIN,"Expanded string has %d bytes and splits into %s(%s)",len,func,ap);
+    }
 
     callWtx(func,ap);
 

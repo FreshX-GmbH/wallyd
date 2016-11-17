@@ -11,7 +11,8 @@
 pluginHandler *ph;
 pthread_mutex_t callMutex=PTHREAD_MUTEX_INITIALIZER;
 
-bool initWtx(wally_call_ctx** xwtx,int id){
+// TODO : SPP compatible version (?)
+bool spp_initWtx(wally_call_ctx** xwtx,int id){
     *xwtx = malloc(sizeof(wally_call_ctx));
     wally_call_ctx *wtx = *xwtx;
     memset(wtx,0,sizeof(wally_call_ctx));
@@ -20,13 +21,30 @@ bool initWtx(wally_call_ctx** xwtx,int id){
     wtx->transaction_id = id;
     return true;
 }
+wally_call_ctx* initWtx(int id){
+    wally_call_ctx *wtx = malloc(sizeof(wally_call_ctx));
+    memset(wtx,0,sizeof(wally_call_ctx));
+    wtx->elements = 0;
+    wtx->transaction = false;
+    wtx->transaction_id = id;
+    ph->transactions[id] = wtx;
+    return wtx;
+}
 
-bool newWtx(int id, wally_call_ctx** wtx){
+bool spp_newWtx(int id, wally_call_ctx** wtx){
     if(id > MAX_WTX){
         slog(ERROR,LOG_PLUGIN,"MAX_WTX %d reached. Can not create more transactions!",MAX_WTX);
         return false;
     }
-    return initWtx(wtx,id);
+    return spp_initWtx(wtx,id);
+}
+
+wally_call_ctx* newWtx(int id){
+    if(id > MAX_WTX){
+        slog(ERROR,LOG_PLUGIN,"MAX_WTX %d reached. Can not create more transactions!",MAX_WTX);
+        return false;
+    }
+    return initWtx(id);
 }
 
 // Free the WTX and ALL its elements
@@ -59,9 +77,9 @@ void freeWtxElements(wally_call_ctx* wtx){
     pthread_mutex_unlock(&ph->wtxMutex);
 }
 
-void *freeWtx(int id){
-    freeWtxElements(ph->transactions[id]);
-    free(ph->transactions[id]);
+void *freeWtx(wally_call_ctx* wtx){
+    freeWtxElements(wtx);
+    free(wtx);
     return NULL;
 }
 
@@ -426,7 +444,7 @@ pluginHandler *pluginsInit(void){
     ph->transaction = 0;
     ph->transactionCount = 0;
     ph->quit = false;
-    initWtx(&ph->wtx,0);
+    //initWtx(&ph->wtx,0);
     ph->transactions = malloc(sizeof(void*)*MAX_WTX);
     pthread_mutex_init(&ph->wtxMutex,0);
     pthread_mutex_init(&ph->taMutex,0);

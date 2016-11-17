@@ -69,9 +69,10 @@ int js_evalFile(duk_context *ctx) {
 int js_commitTransaction(duk_context *ctx) {
    int ret;
    slog(DEBUG,LOG_PLUGIN,"Commit a transaction.");
-   callWtx(NULL,NULL);
+   //callWtx(NULL,NULL);
+   commit();
    ph->transaction = false;
-   ph->wtx->elements=0;
+   //ph->wtx->elements=0;
    return 0;
 }
 
@@ -83,7 +84,7 @@ int js_startTransaction(duk_context *ctx) {
    }
    slog(DEBUG,LOG_PLUGIN,"Started a new transaction. Clearing WTX.");
    ph->transaction = true;
-   ph->wtx->elements=0;
+   //ph->wtx->elements=0;
    return 0;
 }
 
@@ -185,11 +186,7 @@ int js_setImageScaled(duk_context *ctx)
     int n = duk_get_top(ctx);
     const char *name = duk_to_string(ctx,0);
     const char *file = duk_to_string(ctx,1);
-    int ret;
-    //char *cs;
-    //asprintf(&cs,"%s %s",name,file);
     scall("screen::setImageScaled %s %s",name,file);
-    //free(cs);
     return 1;
 }
 
@@ -203,11 +200,7 @@ int js_setTextUTF8(duk_context *ctx)
     const char *x   = duk_to_string(ctx,3);
     const char *y   = duk_to_string(ctx,4);
     const char *txt = duk_to_string(ctx,5);
-    int ret;
-    //char *cs;
-    //asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
     scall("screen::setTextUTF8 %s %s %s %s %s %s",name,color,font,x,y,txt);
-    //free(cs);
     return 1;
 }
  
@@ -221,21 +214,12 @@ int js_setText(duk_context *ctx)
     const char *x   = duk_to_string(ctx,3);
     const char *y   = duk_to_string(ctx,4);
     const char *txt = duk_to_string(ctx,5);
-    int ret;
-    char *cs;
-    //asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
-    //callWtx("screen::setText",cs);
     scall("screen::setText %s %s %s %s %s %s",name,color,font,x,y,txt);
-    //free(cs);
     return 1;
 }
  
 int js_log(duk_context *ctx)
 {
-    // screen::setText bauch stampColor stampfont 20 0 Wally TV Test Screen
-    int n = duk_get_top(ctx);
-    //const char *text = duk_to_string(ctx,0);
-    int ret;
     scall("screen::log %s",duk_to_string(ctx,0));
     return 1;
 }
@@ -321,11 +305,7 @@ int js_loadFont(duk_context *ctx)
     if(ht_contains_simple(ph->fonts,(char *)name)){
         return true;
     }
-    char *cs;
-    int ret;
-    asprintf(&cs,"%s %s %s",name,file,size);
-    callWtx("screen::loadFont",cs);
-    free(cs);
+    scall("screen::loadFont %s %s %s",name,file,size);
     return 1;
 }
 
@@ -337,11 +317,7 @@ int js_createColor(duk_context *ctx)
     const char *name = duk_to_string(ctx,0);
     const char *RGB = duk_to_string(ctx,1);
     const char *A = duk_to_string(ctx,2);
-    char *cs;
-    int ret;
-    asprintf(&cs,"%s %s %s",name,RGB,A);
-    callWtx("screen::createColor",cs);
-    free(cs);
+    scall("screen::createColor %s %s %s",name,RGB,A);
     return 1;
 }
 
@@ -350,7 +326,7 @@ int js_destroyTexture(duk_context *ctx)
     // screen::destroyTexture name
     int n = duk_get_top(ctx);  /* #args */
     const char *name = duk_to_string(ctx,0);
-    callWtx("screen::destroyTexture",(char*)name);
+    scall("screen::destroyTexture %s",(char*)name);
     return 1;
 }
 
@@ -366,11 +342,7 @@ int js_createTexture(duk_context *ctx)
     const char *w = duk_to_string(ctx,4);
     const char *h = duk_to_string(ctx,5);
     const char *col = duk_to_string(ctx,6);
-    char *cs;
-    int ret;
-    asprintf(&cs,"%s %s %s %s %s %s %s",name,prio,x,y,w,h,col);
-    callWtx("screen::createTexture",cs);
-    free(cs);
+    scall("screen::createTexture %s %s %s %s %s %s %s",name,prio,x,y,w,h,col);
     return 1;
 }
 
@@ -385,13 +357,9 @@ int evalFile(void *file){
 
 duk_ret_t js_exec(duk_context *ctx){
    int ret;
-   char *str,*cmd;
-   char *tofree = str = strdup(duk_to_string(ctx,0));
-   assert(str != NULL);
-   cmd = strsep(&str, " \t");
-   slog(DEBUG,LOG_JS,"call : %s(%s)", cmd,str);
-   callWtx(cmd,str);
-   free(tofree);
+   const char *str = duk_to_string(ctx,0);
+   slog(DEBUG,LOG_JS,"call : %s", str);
+   scall(str);
    return 0;
 }
 

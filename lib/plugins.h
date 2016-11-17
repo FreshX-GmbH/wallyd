@@ -14,6 +14,8 @@
 #include "pqueue.h"
 #include <duktape.h>
 
+#define commit() callWtx(NULL,NULL)
+
 #define WALLY_ASSERT_PH_VALID(ph) do { \
                 assert((ph) != NULL); \
         } while (0)
@@ -136,7 +138,7 @@ typedef struct{
     void *slg;
 
     int transaction;
-    wally_call_ctx *wtx;
+//    wally_call_ctx *wtx;
 
 } pluginHandler;
 
@@ -165,12 +167,11 @@ void export_function_list(char *, const function_list_entry *);
 void wally_put_function_list(pluginHandler *, function_list_entry *);
 void wally_put_function(const char *name, int threaded, wally_c_function , int args);
 bool callWtx(char *fstr, char *params);
-void *freeWtx(int id);
+void *freeWtx(wally_call_ctx* wtx);
 void freeWtxElements(wally_call_ctx* wtx);
-bool initWtx(wally_call_ctx** xwtx,int id);
-bool newWtx(int id, wally_call_ctx** xwtx);
+wally_call_ctx* initWtx(int id);
+wally_call_ctx* newWtx(int id);
 bool pushSimpleWtx(int id, const char *fstr,const char *params);
 bool commitWtx(int id);
-void *freeWtx(int id);
 
 #endif

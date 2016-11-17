@@ -55,14 +55,14 @@ int js_newTransaction(duk_context *ctx) {
    wally_call_ctx* wtx = NULL;
    ph->transactionCount=ph->transactionCount+1;
    int id = ph->transactionCount;
-   //char *idstr=NULL;
-   if(!newWtx(id,&wtx)){
+   pthread_mutex_lock(&ph->taMutex);
+   //int ret = newWtx(id,&wtx);
+   wtx = newWtx(id);
+   pthread_mutex_unlock(&ph->taMutex);
+   if(!wtx){
       slog(ERROR,LOG_PLUGIN,"New transaction could not be created.");
       return 0; 
    }
-   //asprintf(&idstr,"%d",id);
-   //pushSimpleWtx(&wtx,strdup("commit"),idstr);
-   ph->transactions[id] = wtx;
    slog(DEBUG,LOG_PLUGIN,"New transaction %d created. WTX is at 0x%x",id,wtx);
    duk_push_number(ctx, id);
    return 1; 
