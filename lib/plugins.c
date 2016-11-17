@@ -21,13 +21,16 @@ bool spp_initWtx(wally_call_ctx** xwtx,int id){
     wtx->transaction_id = id;
     return true;
 }
+
 wally_call_ctx* initWtx(int id){
     wally_call_ctx *wtx = malloc(sizeof(wally_call_ctx));
     memset(wtx,0,sizeof(wally_call_ctx));
     wtx->elements = 0;
     wtx->transaction = false;
     wtx->transaction_id = id;
-    ph->transactions[id] = wtx;
+    if(id > 0){
+      ph->transactions[id] = wtx;
+    }
     return wtx;
 }
 
@@ -82,9 +85,8 @@ void *freeWtx(wally_call_ctx* wtx){
     free(wtx);
     return NULL;
 }
-
 // make a simple context for function f
-bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
+bool ssp_newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     *xwtx = malloc(sizeof(wally_call_ctx));
     wally_call_ctx *wtx = *xwtx;
     memset(wtx,0,sizeof(wally_call_ctx));
@@ -99,6 +101,23 @@ bool newSimpleWtx(wally_call_ctx** xwtx, const char *fstr,const char *params){
     wtx->transaction_id = 0;
     wtx->type[0] = CALL_TYPE_STR;
     return true;
+}
+
+
+// make a simple context for function f
+wally_call_ctx* newSimpleWtx(const char *fstr,const char *params){
+    wally_call_ctx *wtx = initWtx(0);
+    wtx->name[0]=strdup(fstr);
+    if(params != NULL){
+        slog(TRACE,LOG_PLUGIN,"Creating simple wtx : %s %s",fstr,params);
+        wtx->param[0]=strdup(params);
+    }
+    // also possible access
+    wtx->elements = 1;
+    wtx->transaction = false;
+    wtx->transaction_id = 0;
+    wtx->type[0] = CALL_TYPE_STR;
+    return wtx;
 }
 
 bool pushSimpleWtx(int id, const char *fstr,const char *params){
@@ -131,10 +150,8 @@ bool callWtx(char *fstr, char *params){
     if(ph->transaction == false) {
         //int ret;
 	    slog(DEBUG,LOG_PLUGIN,"Single WTX Call");
-        // TODO : free this in a safe way!
-        //freeWtxElements(ph->wtx);
 	    wally_call_ctx *wtx;
-	    newSimpleWtx(&wtx,fstr,params);
+	    wtx = newSimpleWtx(fstr,params);
 	    callEx(fstr,NULL,wtx,CALL_TYPE_WTX,true);
     } else {
        // Transaction is running, simply push the cmd to the transaction
@@ -219,16 +236,16 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         if(waitThread == true){
             // Enable the Mutex code for synced function calls
             int timeout;
-            if(ph->transaction != 0){
+            if(ph->transaction == true){
                 timeout = SDLWAITTIMEOUT_TRANSACTION;
             } else {
 		// TODO : 
-                timeout = SDLWAITTIMEOUT_TRANSACTION;
+                timeout = SDLWAITTIMEOUT;
             }
             slog(DEBUG,LOG_PLUGIN,"Wait %d ms until %s has finished. Name/Map at 0x%x/0x%x",timeout,funcName,funcName,ph->functionWaitConditions);
             slog(TRACE,LOG_PLUGIN,"Condition at 0x%x",ht_get_simple(ph->functionWaitConditions,funcName));
             if(SDL_MUTEX_TIMEDOUT == 
-                    SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,SDLWAITTIMEOUT))
+                    SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcName),ph->funcMutex,timeout))
                 {
                     slog(ERROR,LOG_PLUGIN,"Wait condition for call %s timed out!",funcName);
                     ph->conditionTimeout++;
@@ -441,10 +458,9 @@ pluginHandler *pluginsInit(void){
     ph->cloud = false;
     ph->location = NULL;
     ph->texturePrio = NULL;
-    ph->transaction = 0;
-    ph->transactionCount = 0;
+    ph->transaction = false;
+    ph->transactionCount = 1;
     ph->quit = false;
-    //initWtx(&ph->wtx,0);
     ph->transactions = malloc(sizeof(void*)*MAX_WTX);
     pthread_mutex_init(&ph->wtxMutex,0);
     pthread_mutex_init(&ph->taMutex,0);
