@@ -40,11 +40,10 @@ Transaction.prototype = {
     	log.debug('Commiting transaction '+this.ID+' with '+this.funcs.length+' elements');
 	if(this.ct){
 	    this.ct.lock(this.ID);
-	}
-    	for(var i = 0; i < this.funcs.length; i++){
-    	    this.funcs[i]();
-    	}
-	if(this.ct){
+	    // All other transactions are blocked while this loop is running!
+	    for(var i = 0; i < this.funcs.length; i++){
+	      this.funcs[i]();
+	    }
 	    this.ct.commit(this.ID);
 	}
     },

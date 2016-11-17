@@ -46,7 +46,7 @@ int js_commitTransaction(duk_context *ctx) {
    commitWtx(id);
    //freeWtx(id);
    //ph->transaction = 0;
-   //pthread_mutex_unlock(&ph->wtxMutex);
+   pthread_mutex_unlock(&ph->wtxMutex);
    return 1;
 }
 
