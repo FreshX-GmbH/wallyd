@@ -477,3 +477,39 @@ void slog_init(const char* fname, const char* conf, int lvl, int flvl, int mask,
     //else slog(INFO, LOG_UTIL, "Loading logger config from: %s", conf);
 }
 
+int scall(const char *msg, ...)
+{
+    size_t len;
+    char *retbuf;
+    va_list args;
+    char *p;
+    char *ap;
+
+    /* Lock for safe */
+    if (pthread_mutex_lock(&ph->callMutex)) {
+        slog(ERROR,LOG_PLUGIN,"Can not lock call mutex: %d\n", errno);
+        return 0;
+    }
+    /* Convert args */
+
+    if(msg == NULL)
+        return 0;
+
+    va_start(args, msg);
+    vasprintf(&ap, msg, args);
+    va_end(args);
+
+    len = strlen(ap);
+    char *func = strsep(&ap," ");
+    slog(DEBUG,LOG_PLUGIN,"Expanded string has %d bytes and splits into %s(%s)",len,func,ap);
+
+    callWtx(func,ap);
+
+    /* Done, unlock mutex */
+    if (pthread_mutex_unlock(&ph->callMutex)) {
+        slog(ERROR,LOG_PLUGIN,"Can not unlock call mutex: %d\n", errno);
+    }
+    return 0;
+}
+
+

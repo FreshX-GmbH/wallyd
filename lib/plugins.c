@@ -430,6 +430,7 @@ pluginHandler *pluginsInit(void){
     ph->transactions = malloc(sizeof(void*)*MAX_WTX);
     pthread_mutex_init(&ph->wtxMutex,0);
     pthread_mutex_init(&ph->taMutex,0);
+    pthread_mutex_init(&ph->callMutex,0);
 
     ph->funcMutex = SDL_CreateMutex();
     //ph->functionWaitConditions= malloc(sizeof(hash_table));

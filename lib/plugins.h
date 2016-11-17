@@ -119,6 +119,7 @@ typedef struct{
     int transactionCount;
 
     void *funcMutex;
+    pthread_mutex_t callMutex;
     pthread_mutex_t wtxMutex;
     pthread_mutex_t taMutex;
     bool pluginLoaderDone;

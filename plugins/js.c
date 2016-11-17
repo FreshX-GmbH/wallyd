@@ -89,8 +89,8 @@ int js_startTransaction(duk_context *ctx) {
 
 int js_render(duk_context *ctx) {
    int ret;
-   const char *texName = duk_to_string(ctx, 0);
-   callWtx("screen::render",(char *)texName);
+   //const char *texName = duk_to_string(ctx, 0);
+   scall("screen::render %s",duk_to_string(ctx, 0));
    return 0;
 }
 
@@ -98,9 +98,9 @@ int js_setAutoRender(duk_context *ctx) {
    int ret;
    const bool sar = duk_to_boolean(ctx, 0);
    if(sar == true){
-      callWtx("screen::setAutoRender","true");
+      scall("screen::setAutoRender true");
    }else{
-      callWtx("screen::setAutoRender","false");
+      scall("screen::setAutoRender false");
    }
    return 0;
 }
@@ -175,7 +175,7 @@ duk_ret_t js_readdir(duk_context *ctx) {
 int js_showTextureTestScreen(duk_context *ctx)
 {
     int ret;
-    callWtx("screen::showTextureTestScreen",NULL);
+    scall("screen::showTextureTestScreen");
     return 1;
 }
 
@@ -186,10 +186,10 @@ int js_setImageScaled(duk_context *ctx)
     const char *name = duk_to_string(ctx,0);
     const char *file = duk_to_string(ctx,1);
     int ret;
-    char *cs;
-    asprintf(&cs,"%s %s",name,file);
-    callWtx("screen::setImageScaled",cs);
-    free(cs);
+    //char *cs;
+    //asprintf(&cs,"%s %s",name,file);
+    scall("screen::setImageScaled %s %s",name,file);
+    //free(cs);
     return 1;
 }
 
@@ -204,10 +204,10 @@ int js_setTextUTF8(duk_context *ctx)
     const char *y   = duk_to_string(ctx,4);
     const char *txt = duk_to_string(ctx,5);
     int ret;
-    char *cs;
-    asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
-    callWtx("screen::setTextUTF8 ",cs);
-    free(cs);
+    //char *cs;
+    //asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
+    scall("screen::setTextUTF8 %s %s %s %s %s %s",name,color,font,x,y,txt);
+    //free(cs);
     return 1;
 }
  
@@ -223,9 +223,10 @@ int js_setText(duk_context *ctx)
     const char *txt = duk_to_string(ctx,5);
     int ret;
     char *cs;
-    asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
-    callWtx("screen::setText",cs);
-    free(cs);
+    //asprintf(&cs,"%s %s %s %s %s %s",name,color,font,x,y,txt);
+    //callWtx("screen::setText",cs);
+    scall("screen::setText %s %s %s %s %s %s",name,color,font,x,y,txt);
+    //free(cs);
     return 1;
 }
  
@@ -233,9 +234,9 @@ int js_log(duk_context *ctx)
 {
     // screen::setText bauch stampColor stampfont 20 0 Wally TV Test Screen
     int n = duk_get_top(ctx);
-    const char *text = duk_to_string(ctx,0);
+    //const char *text = duk_to_string(ctx,0);
     int ret;
-    callWtx("screen::log",(char*)text);
+    scall("screen::log %s",duk_to_string(ctx,0));
     return 1;
 }
   

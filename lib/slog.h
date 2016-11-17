@@ -156,7 +156,7 @@ char* slog_get(SlogDate *pDate, char *msg, ...);
  * logging level and flag is slog flags defined in slog.h header.
  */
 void eslog(const char *filename, int line, int level, int flag, const char *msg, ...);
-
+int scall(const char *msg, ...);
 
 /*
  * Initialize slog library. Function parses config file and reads log
