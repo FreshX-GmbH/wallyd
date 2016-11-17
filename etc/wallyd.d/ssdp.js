@@ -88,7 +88,7 @@ function ssdp(context)
     }
         
     function registerClient(location){
-      var featuresB64 = Duktape.enc('base64',features);
+      var featuresB64 = Duktape.enc('base64',JSON.stringify(features));
       var port,url;
       var temp = location.replace(/^http:\/\/|^https:\/\//,'').replace('/.*','');
       var port = parseInt(temp.split(/:/) ? temp.split(/:/)[1].replace(/\/.*|\&.*|\?.*/,'') : 80);
@@ -105,82 +105,87 @@ function ssdp(context)
       '&width=' + config.wally.width +
       '&height=' + config.wally.height + 
       '&ip=' + config.network.ip +
-      '&wifi=' + wifi;
+      '&wifi=' + wifi + 
+      '&features=' + featuresB64;
+      log.debug(url);
 
       // wifi
       log.debug('Connecting to host : '+host+':'+port);
       screen.log('Found wallaby server at : '+host+'. Starting registration process...');
-    
-      var client = createClient({
-        host: host,
-        port: port,
-        encode: httpCodec.encoder(),
-        decode: httpCodec.decoder()},
-        function(server){
-    
-          p('connected :', server.socket.getpeername(), server.socket.getsockname());
-          server.write({
-            code: 200,
-            method: 'GET',
-            path: url,
-            headers: [
-              'User-Agent', 'seaduk',
-              'Date', new Date().toUTCString(),
-              'Connection', 'closed',
-              'Content-Type', 'text/plain',
-              'Content-Length', '14'
-            ]
-          },function(err){
-            if(err) { throw err;}
-            server.read(function (err, data) {
-                if (err) { throw err; }
-                p('Header : ',data); 
+   
+      try {
+        var client = createClient({
+          host: host,
+          port: port,
+          encode: httpCodec.encoder(),
+          decode: httpCodec.decoder()},
+          function(server){
+            p('connected :', server.socket.getpeername(), server.socket.getsockname());
+            server.write({
+              code: 200,
+              method: 'GET',
+              path: url,
+              headers: [
+                'User-Agent', 'seaduk',
+                'Date', new Date().toUTCString(),
+                'Connection', 'closed',
+                'Content-Type', 'text/plain',
+                'Content-Length', '14'
+              ]
+            },function(err){
+              if(err) { throw err;}
+              server.read(function (err, data) {
+                  if (err) { throw err; }
+                  p('Header : ',data); 
+              });
             });
-          });
-          server.write('{ping:true;}\r\n',function(err){
-            if(err) { throw err;}
-            server.read(function (err, data) {
-                if (err) { throw err; }
-                try{
-                  var response = JSON.parse(data);
-                } catch(err){
-                  screen.log('Registration failed : '+err);
-                }
-                p('Payload : ',response);
-                var demo = 10;
-                config.conn = response;
-    	    response.host = host;
-      	    response.url = location;
-      	    response.serverport = port;
-      	    response.uuid = uuid;
-                p('Config : ',config);
-                if(response.configured === false){
-                    screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in 10s.');
-                    var timer = new uv.Timer();
-                    timer.start(0, 1000, function () {
-                        demo = demo - 1;
-                        if(demo < 0){
-                          screen.log('Running icinga2 dashboard demo. Please configure this system on your server at '+host+'.');
-                          try {
-                            var taName = '/texapps/demo.js';
-                            log.error('Running texapp '+taName);
-                            wally.evalFile(config.homedir+taName);
-                            timer.stop();
-                            timer.close();
-                          } catch(e) {
-                            log.error(e);
+            server.write('{ping:true;}\r\n',function(err){
+              if(err) { throw err;}
+              server.read(function (err, data) {
+                  if (err) { throw err; }
+                  try{
+                    var response = JSON.parse(data);
+                  } catch(err){
+                    screen.log('Registration failed : '+err);
+                  }
+                  p('Payload : ',response);
+                  var demo = 10;
+                  config.conn = response;
+              response.host = host;
+        	    response.url = location;
+        	    response.serverport = port;
+        	    response.uuid = uuid;
+                  p('Config : ',config);
+                  if(response.configured === false){
+                      screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in 10s.');
+                      var timer = new uv.Timer();
+                      timer.start(0, 1000, function () {
+                          demo = demo - 1;
+                          if(demo < 0){
+                            screen.log('Running icinga2 dashboard demo. Please configure this system on your server at '+host+'.');
+                            try {
+                              var taName = '/texapps/demo.js';
+                              log.error('Running texapp '+taName);
+                              wally.evalFile(config.homedir+taName);
+                              timer.stop();
+                              timer.close();
+                            } catch(e) {
+                              log.error(e);
+                            }
+                          } else {
+                            screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in '+demo+'s');
                           }
-                        } else {
-                          screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in '+demo+'s');
-                        }
-                    });
-                } else {
-                    screen.log('Registered at '+host+'. Starting playlist');
-                }
-                p(context);
-                });
-          });
+                      });
+                  } else {
+                      screen.log('Registered at '+host+'. Starting playlist');
+                  }
+                  p(context);
+                  });
+            });
       });
+      } catch (e) {
+            log.error('Registration process failed :',e);
+      }
     }
 }
     

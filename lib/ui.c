@@ -58,7 +58,7 @@ bool uiLoop(void){
     slog(DEBUG,LOG_SDL,"Setting up SDL event filter");
     SDL_SetEventFilter(eventFilter,NULL);
     //int delay=0;
-    int id;
+//    int id;
     char *funcName;
     const char *param;
     wally_call_ctx *wtx;

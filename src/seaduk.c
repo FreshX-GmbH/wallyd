@@ -7,9 +7,13 @@
 #include "nucly/path.h"
 #include "wallyd.h"
 #include "util.h"
+#include "plugins.h"
 
 extern int gargc;
 extern char *gargv[];
+
+extern pthread_cond_t core_ready_condition;
+extern pthread_mutex_t core_ready_mutex;
 
 enum build_mode {
   BUILD_LINKED,
@@ -18,10 +22,10 @@ enum build_mode {
 };
 
 
-static duk_ret_t nucleus_exit(duk_context *ctx) {
-  exit(duk_require_int(ctx, 0));
-  return 0;
-}
+//static duk_ret_t nucleus_exit(duk_context *ctx) {
+//  exit(duk_require_int(ctx, 0));
+//  return 0;
+//}
 
 static char* base;
 //static mz_zip_archive zip;
@@ -48,13 +52,13 @@ static duk_ret_t duv_path_join(duk_context *ctx) {
 }
 
 // Changes the first arg in place
-static void canonicalize(duk_context *ctx) {
-  duk_require_string(ctx, 0);
-  duk_push_c_function(ctx, duv_path_join, DUK_VARARGS);
-  duk_dup(ctx, 0);
-  duk_call(ctx, 1);
-  duk_replace(ctx, 0);
-}
+//static void canonicalize(duk_context *ctx) {
+//  duk_require_string(ctx, 0);
+//  duk_push_c_function(ctx, duv_path_join, DUK_VARARGS);
+//  duk_dup(ctx, 0);
+//  duk_call(ctx, 1);
+//  duk_replace(ctx, 0);
+//}
 
 // Changes the first arg in place
 static void resolve(duk_context *ctx) {
@@ -378,7 +382,7 @@ void build_zip(const char* source, const char* target, enum build_mode mode) {
 */
 void setupSocket(void *p){
     int ret;
-    int flags = 128;
+//    int flags = 128;
     //slog(DEBUG,FULLDEBUG,"Fifo thread starting on "FIFO);
     struct sockaddr_in addr;
     uv_ip4_addr(BIND_HOST, BIND_PORT,&addr);
@@ -393,16 +397,34 @@ void setupSocket(void *p){
 }
 
 //int main(int argc, char *argv[]) {
-void *duvThread(void *ctx){
+void *duvThread(pluginHandler *ph){
   int argc = gargc;
   char **argv = gargv;
-  bool isZip = false;
-  int argstart = 1;
+//  bool isZip = false;
+//  int argstart = 1;
 
-  uv_thread_t uv_thread;
+  slog(INFO,LOG_CORE, "Initializing duktape core");
+  duk_context *ctx = duk_create_heap(NULL, NULL, NULL, &loop,NULL);
+
+  if(!ctx) {
+     slog(ERROR,LOG_CORE, "Problem initiailizing duktape heap");
+     ph->ctx = NULL;
+     return NULL;
+  }
+  ph->ctx = ctx;
+
+  js_initSysPlugin(ctx);
+
+//  uv_thread_t uv_thread;
   uv_loop_init(&loop);
   uv_tcp_init(&loop,&tcp);
   uv_setup_args(argc, argv);
+
+  slog(DEBUG,LOG_JS,"Waiting for core and plugins to be initialized.");
+
+  pthread_cond_wait(&core_ready_condition, &core_ready_mutex);
+
+  slog(DEBUG,LOG_JS,"Core ready. Starting duktape core"); 
 
   base = argv[1];
   const char* originalBase = base;
@@ -424,7 +446,6 @@ void *duvThread(void *ctx){
   resource.scan = scan_from_disk;
 
   // Setup context with global.nucleus
-
   slog(DEBUG,LOG_JS,"Setting up socket listener. : %p",ctx);
   setupSocket(ctx);
   //printf("\nEntering UVRUN(0x%x) %s/%s (argv:%s, %s,argc:%d)\n\n",ctx,base,entry.data,argv[0],argv[1],argc);
@@ -443,6 +464,7 @@ void *duvThread(void *ctx){
   uv_run(&loop, UV_RUN_DEFAULT);
   slog(INFO,LOG_JS,"Seaduk interpreter has finished.");
   ph->uv_thr = 0;
-//  duk_destroy_heap(ctx);
+  ph->ctx = NULL;
+  duk_destroy_heap(ctx);
   return NULL;
 }

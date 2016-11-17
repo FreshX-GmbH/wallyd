@@ -1,0 +1,6 @@
+{
+  "modules":    [ "core" ],
+  "binaries":   [ "wallyd", "node" ],
+  "plugins":    [ "IcingaDemo", "CO2Demo", "WallyBill", "Photobooth" ],
+  "npm":        [ "async", "noble", "npm", "uuid" ]
+}

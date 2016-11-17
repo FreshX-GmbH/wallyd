@@ -89,5 +89,7 @@ size_t getPeakRSS();
 size_t getCurrentRSS();
 void setupSignalHandler(void);
 int c_cleanupWally(void *s);
+extern void *duvThread(pluginHandler *ph);
+extern pluginHandler *pluginsInit(void);
 
 #endif

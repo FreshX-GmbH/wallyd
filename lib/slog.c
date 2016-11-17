@@ -379,7 +379,7 @@ void eslog(const char *_srcfile, int line, int level, int flag, const char *msg,
         {
           if (level <= slg->level) {
             if (level > INFO) {
-              if (level > SLOG_INFO) {
+              if (level > INFO) {
                 sprintf(prints, "%s:%d] %s", srcfile, line, string);
                 int thr_id = (unsigned int)pthread_self();
                 printf("[%s][T:%x][%s\n", strclr(color, alarm), thr_id, slog_get_short(&mdate, "%s",prints));
@@ -480,9 +480,7 @@ void slog_init(const char* fname, const char* conf, int lvl, int flvl, int mask,
 int scall(const char *msg, ...)
 {
     size_t len;
-    char *retbuf;
     va_list args;
-    char *p;
     char *ap;
 
     /* Lock for safe */

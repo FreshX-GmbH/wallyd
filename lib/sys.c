@@ -202,7 +202,7 @@ char *initSysPlugin(){
    wally_put_function(PLUGIN_SCOPE"::loadPlugins"   ,WFUNC_SYNC, pluginLoader, 0);
    wally_put_function(PLUGIN_SCOPE"::callback"      ,WFUNC_SYNC, wally_registerCallback, 0);
 
-   js_initSysPlugin(ctx);
+//   js_initSysPlugin(ctx);
 
   return PLUGIN_SCOPE;
 }

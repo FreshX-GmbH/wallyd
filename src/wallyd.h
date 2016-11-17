@@ -31,14 +31,15 @@ extern char __BUILD_DATE;
 extern char __BUILD_NUMBER;
 extern pluginHandler *ph;
 
+extern pthread_cond_t core_ready_condition;
+extern pthread_mutex_t core_ready_mutex;
+
 extern uv_fs_t openReq;
 extern uv_fs_t readReq;
 extern uv_fs_t closeReq;
 extern uv_pipe_t server;
 extern uv_tcp_t tcp;
 extern uv_loop_t loop;
-
-void *duvThread(void *ctx);
 
 static char *startupScript;
 
@@ -71,9 +72,10 @@ void fifoThread(void *p);
 void readOptions(int argc, char **argv);
 void processStartupScript(char *file);
 void initSysPlugin(void);
-static void my_duk_fatal(duk_context *ctx, int code, const char *msg);
+//static void my_duk_fatal(duk_context *ctx, int code, const char *msg);
 extern duk_ret_t duv_main(duk_context *ctx);
 extern duk_ret_t dukopen_curl(duk_context *ctx);
+extern int js_initSysPlugin(duk_context *ctx);
 
 #ifdef RASPBERRY
 #include "bcm_host.h"

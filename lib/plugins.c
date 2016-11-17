@@ -129,13 +129,13 @@ bool callWtx(char *fstr, char *params){
     pthread_mutex_lock(&ph->wtxMutex);
    // No transaction running
     if(ph->transaction == 0) {
-        int ret;
-	slog(DEBUG,LOG_PLUGIN,"Single WTX Call");
+        //int ret;
+	    slog(DEBUG,LOG_PLUGIN,"Single WTX Call");
         // TODO : free this in a safe way!
         //freeWtxElements(ph->wtx);
-	wally_call_ctx *wtx;
-	newSimpleWtx(&wtx,fstr,params);
-	callEx(fstr,NULL,wtx,CALL_TYPE_WTX,true);
+	    wally_call_ctx *wtx;
+	    newSimpleWtx(&wtx,fstr,params);
+	    callEx(fstr,NULL,wtx,CALL_TYPE_WTX,true);
     } else {
        // Transaction is running, simply push the cmd to the transaction
         pushSimpleWtx(ph->transaction, fstr, params);

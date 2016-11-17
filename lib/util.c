@@ -10,8 +10,13 @@ char **values=NULL;
 char *logFile;
 //struct map_t *configMap;
 pthread_mutex_t logMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t core_ready_condition = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t core_ready_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 bool utilInit(int _loglevel, int _logmask, int _logfilemask){
+   // Initialize plugin system but do not load plugins yet
+   pluginsInit();
+
    ph->loglevel = _loglevel;
    ph->logmask = _logmask;
    ph->uiAllCount = 0;
@@ -23,7 +28,10 @@ bool utilInit(int _loglevel, int _logmask, int _logfilemask){
    ph->conditionTimeout = 0;
    ph->logfileHandle = stderr;
    pthread_mutex_init (&logMutex,0);
+   pthread_mutex_init (&core_ready_mutex,0);
    slog_init(NULL, WALLYD_CONFDIR"/wallyd.conf", _loglevel, 0, _logmask, _logfilemask , true);
+
+
    return true;
 }
 
@@ -177,7 +185,6 @@ void cleanupUtil(void)
 }
 
 void cleanupWally(int s){
-    void *pret;
     if(s != 0){
       slog(INFO,LOG_UTIL,"Caught signal %d", s);
     } else {

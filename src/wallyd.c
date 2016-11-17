@@ -19,16 +19,26 @@ int main(int argc, char *argv[])
     int ret;
     char *cs;
 
+    // Make argv[0] globally available
+    gargc = argc;
+    gargv[0] = strdup(argv[0]);
+    gargv[1] = startupScript;
+
     // read startup parameters
     readOptions(argc,argv);
-    // init plugin system (do not load the plugins yet)
-    pluginsInit();
+
+    // init the core (variables, log system, plugin system, duktape core)
     utilInit(DEFAULT_LOG_LEVEL, LOG_ALL,0);
     //utilInit(DEFAULT_LOG_LEVEL, LOG_ALL ^ LOG_DUMMY ^ LOG_SDL ^ LOG_PLUGIN, 0);
     //utilInit(DEFAULT_LOG_LEVEL, LOG_PLUGIN, 0);
 
     slog(INFO,LOG_CORE,"Wally Image Server R%u (Build %u) starting.",BUILD_NUMBER,BUILD_DATE);
-    slog(DEBUG,LOG_CORE,"Current Thread : %p / PH : %p",pthread_self(),ph);
+
+    // Initialize duktape thread but wait for plugins to be ready
+    pthread_mutex_lock(&core_ready_mutex);
+    if(pthread_create(&ph->uv_thr, NULL, &duvThread, ph) != 0){
+       slog(ERROR,LOG_CORE,"Failed to create seaduk thread!");
+    }
 
     // assing signal handlers for ctrl+c
     setupSignalHandler();
@@ -39,26 +49,23 @@ int main(int argc, char *argv[])
     // daemonize if set
     daemonize(ph->daemonizing);
 
-    // init curl lib
-    //url_init();
-
     // init SDL2
     if(!sdlInit()){
-      exit(1);
+        exit(1);
     }
 
     //ctx = duk_create_heap(NULL, NULL, NULL, &loop, (duk_fatal_function)my_duk_fatal);
-    ph->ctx = duk_create_heap(NULL, NULL, NULL, &loop,NULL);
-    if (!ph->ctx) {
-      slog(ERROR,LOG_CORE, "Problem initiailizing duktape heap");
-      return -1;
-    }
+    //ph->ctx = duk_create_heap(NULL, NULL, NULL, &loop,NULL);
+    //if (!ph->ctx) {
+    //  slog(ERROR,LOG_CORE, "Problem initiailizing duktape heap");
+    //  return -1;
+    //}
 
     if(ht_get_simple(ph->configMap,"basedir") != NULL) {
       ph->basedir=ht_get_simple(ph->configMap,"basedir");
     } else {
       asprintf(&ph->basedir,".");
-    }
+    } 
 
     // export system plugin functions
     initSysPlugin();
@@ -67,15 +74,20 @@ int main(int argc, char *argv[])
     if(ht_get_simple(ph->configMap,"plugins") != NULL) {
         asprintf(&cs,"%s",ht_get_simple(ph->configMap,"plugins"));
         callSync("sys::loadPlugins",&ret,cs);
+        //scall("sys::loadPlugins %s",ht_get_simple(ph->configMap,"plugins"));
         free(cs);
     } else {
         callSync("sys::loadPlugins",&ret,pluginFolder);
     }
 
     if(ph->loglevel > DEBUG){
-      hashtable_dumpkeys(ph->functions,"Exported sync commands : ");
-      hashtable_dumpkeys(ph->thr_functions,"Exported async commands : ");
+        hashtable_dumpkeys(ph->functions,"Exported sync commands : ");
+        hashtable_dumpkeys(ph->thr_functions,"Exported async commands : ");
     }
+
+    // Signal the duktape core to start
+    pthread_cond_signal(&core_ready_condition);
+    //pthread_mutex_unlock(&core_ready_mutex);
 
    slog(ERROR,LOG_CORE,"PH Size : %d, WTX Size : %d",sizeof(pluginHandler), sizeof(wally_call_ctx));
    // remove old socket
@@ -84,19 +96,14 @@ int main(int argc, char *argv[])
         slog(INFO,LOG_CORE,"Old FIFO found and removed.");
     }
 
-   slog(DEBUG,LOG_CORE,"Seaduk initializing, ctx is at 0x%x.",ph->ctx);
-   gargc = argc;
-   gargv[0] = strdup(argv[0]);
-   gargv[1] = startupScript;
-   if(pthread_create(&ph->uv_thr, NULL, &duvThread, ph->ctx) != 0){
-      slog(ERROR,LOG_CORE,"Failed to create seaduk thread!");
-   }
+   //slog(DEBUG,LOG_CORE,"Seaduk initializing, ctx is at 0x%x.",ph->ctx);
+   //if(pthread_create(&ph->uv_thr, NULL, &duvThread, ph) != 0){
+   //    slog(ERROR,LOG_CORE,"Failed to create seaduk thread!");
+   //}
 
    // Loop the SDL stuff in the main thread
    uiLoop();
-
    uv_loop_close(&loop);
-   duk_destroy_heap(ph->ctx);
    // TODO : Free this
    //void *pret;
    //if(pthread_join(ph->uv_thr,&pret) == 0){
@@ -369,8 +376,8 @@ void processStartupScript(char *file){
   free(cmds);
 }
 
-static void my_duk_fatal(duk_context *ctx, int code, const char *msg){
-    slog(ERROR,LOG_JS,"JS encountered a fatal error %d : %s",code,msg);
-    slog(ERROR,LOG_JS,"We will continue but the JS core might be unstable");
-}
+//static void my_duk_fatal(duk_context *ctx, int code, const char *msg){
+//    slog(ERROR,LOG_JS,"JS encountered a fatal error %d : %s",code,msg);
+//    slog(ERROR,LOG_JS,"We will continue but the JS core might be unstable");
+//}
 

@@ -61,7 +61,7 @@ void *ht_get_simple(HashTable *table, char *key) {
     //slog(INFO,LOG_UTIL,"get %s",key);
     assert(table);
     assert(key);
-    size_t size;
+//    size_t size;
     void *val = hashtable_get(table,key,strlen(key)+1);
     if(val == NULL){
        slog(TRACE,LOG_UTIL,"Hashtable fail (errno = %d), key not found : %s",errno,key);
