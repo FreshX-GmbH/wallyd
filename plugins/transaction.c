@@ -21,7 +21,7 @@ int c_commit(void *p){
 
 int lockTransaction(int id){
    pthread_mutex_lock(&ph->taMutex);
-   ph->transaction = id;
+   //ph->transaction[id] = id;
    slog(DEBUG,LOG_PLUGIN,"Locked transaction %d at 0x%x",id,ph->transactions[id]);
    return id;
 }
@@ -31,8 +31,7 @@ int js_lockTransaction(duk_context *ctx) {
        {"id", duk_is_number},
        {NULL}
    });
-   int id = duk_get_int(ctx, 0);
-   lockTransaction(id);
+   lockTransaction(duk_get_int(ctx, 0));
    return 1;
 }
 

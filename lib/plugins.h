@@ -49,7 +49,7 @@ typedef struct wally_call_ctx{
     int ret[WTX_SIZE];
     int type[WTX_SIZE];
     int elements;
-    int transaction;
+    bool transaction;
     int transaction_id;
 }  wally_call_ctx;
 
@@ -137,7 +137,7 @@ typedef struct{
     int conditionTimeout;
     void *slg;
 
-    int transaction;
+    bool transaction;
 //    wally_call_ctx *wtx;
 
 } pluginHandler;

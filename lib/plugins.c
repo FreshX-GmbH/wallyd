@@ -128,7 +128,7 @@ bool commitWtx(int id){
 bool callWtx(char *fstr, char *params){
     pthread_mutex_lock(&ph->wtxMutex);
    // No transaction running
-    if(ph->transaction == 0) {
+    if(ph->transaction == false) {
         //int ret;
 	    slog(DEBUG,LOG_PLUGIN,"Single WTX Call");
         // TODO : free this in a safe way!
@@ -492,3 +492,42 @@ int sendWallyCommand(char *cmd, char *log){
     fprintf(f, "%s %s\n",cmd, log);
     return fclose(f);
 }
+
+int scall(const char *msg, ...)
+{
+    size_t len;
+    va_list args;
+    char *ap;
+
+    /* Lock for safe */
+    if (pthread_mutex_lock(&ph->callMutex)) {
+        slog(ERROR,LOG_PLUGIN,"Can not lock call mutex: %d\n", errno);
+        return 0;
+    }
+    /* Convert args */
+
+    if(msg == NULL)
+        return 0;
+
+    va_start(args, msg);
+    vasprintf(&ap, msg, args);
+    va_end(args);
+
+    len = strlen(ap);
+    char *func = strsep(&ap," ");
+    if(ap == NULL) {
+      slog(DEBUG,LOG_PLUGIN,"Expanded string has %d bytes and splits into %s with NULL parameter. (T:%d)",len,func,ap,ph->transaction);
+    } else {
+      slog(DEBUG,LOG_PLUGIN,"Expanded string has %d bytes and splits into %s(%s). (T:%d)",len,func,ap,ph->transaction);
+    }
+
+    callWtx(func,ap);
+
+    /* Done, unlock mutex */
+    if (pthread_mutex_unlock(&ph->callMutex)) {
+        slog(ERROR,LOG_PLUGIN,"Can not unlock call mutex: %d\n", errno);
+    }
+    return 0;
+}
+
+
