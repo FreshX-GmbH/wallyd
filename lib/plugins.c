@@ -27,6 +27,7 @@ wally_call_ctx* initWtx(int id){
     memset(wtx,0,sizeof(wally_call_ctx));
     wtx->elements = 0;
     wtx->transaction = false;
+    wtx->can_be_reused = false;
     wtx->transaction_id = id;
     if(id > 0){
       ph->transactions[id] = wtx;
@@ -76,6 +77,9 @@ void freeWtxElements(wally_call_ctx* wtx){
             slog(TRACE,LOG_PLUGIN,"Element parameter %d already freed!",elements);
         }
     }
+    // This is needed, if we reuse the WTX (i.e. transaction.clear()) - not yet functional
+    //memset(wtx,0,sizeof(wally_call_ctx));
+
     slog(DEBUG,LOG_PLUGIN,"Freed %d elements",count); wtx->elements = 0;
     pthread_mutex_unlock(&ph->wtxMutex);
 }
@@ -141,6 +145,7 @@ bool commitWtx(int id){
     slog(DEBUG,LOG_PLUGIN,"Transaction %d commited.",id);
     wally_call_ctx *wtx = ph->transactions[id];
     wtx->transaction_id = id;
+    wtx->can_be_reused = true;
     return callEx("commit",NULL,wtx,CALL_TYPE_WTX,true);
 }
 

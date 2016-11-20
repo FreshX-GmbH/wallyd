@@ -26,6 +26,14 @@ int lockTransaction(int id){
    return id;
 }
 
+int clearTransaction(int id){
+   pthread_mutex_lock(&ph->taMutex);
+   freeWtxElements(ph->transactions[id]);
+   slog(DEBUG,LOG_PLUGIN,"Cleared transaction %d at 0x%x",id,ph->transactions[id]);
+   pthread_mutex_unlock(&ph->taMutex);
+   return id;
+}
+
 int js_lockTransaction(duk_context *ctx) {
    dschema_check(ctx, (const duv_schema_entry[]){
        {"id", duk_is_number},
@@ -35,6 +43,14 @@ int js_lockTransaction(duk_context *ctx) {
    return 1;
 }
 
+int js_clearTransaction(duk_context *ctx) {
+   dschema_check(ctx, (const duv_schema_entry[]){
+       {"id", duk_is_number},
+       {NULL}
+   });
+   clearTransaction(duk_get_int(ctx, 0));
+   return 1;
+}
 
 int js_commitTransaction(duk_context *ctx) {
    dschema_check(ctx, (const duv_schema_entry[]){
@@ -44,8 +60,6 @@ int js_commitTransaction(duk_context *ctx) {
    int id = duk_get_int(ctx, 0);
    slog(DEBUG,LOG_PLUGIN,"Commiting transaction %d at 0x%x",id,ph->transactions[id]);
    commitWtx(id);
-   //freeWtx(id);
-   //ph->transaction = 0;
    pthread_mutex_unlock(&ph->wtxMutex);
    return 1;
 }
@@ -86,8 +100,9 @@ duk_ret_t transaction_ctor(duk_context *ctx)
 
 const duk_function_list_entry taMethods[] = {
     { "newTransaction", js_newTransaction, 1},
-    { "lock",      	js_lockTransaction, 1},
-    { "commit",    	js_commitTransaction, 1},
+    { "lock",      	    js_lockTransaction, 1},
+    { "clear",          js_clearTransaction, 1},
+    { "commit",    	    js_commitTransaction, 1},
     { NULL,                   NULL, 0 }
 };
 

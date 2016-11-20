@@ -51,6 +51,7 @@ typedef struct wally_call_ctx{
     int elements;
     bool transaction;
     int transaction_id;
+    bool can_be_reused;
 }  wally_call_ctx;
 
 typedef struct{

@@ -237,8 +237,6 @@ char *resetVideo(void *p){
 int js_playDirect(duk_context *ctx)
 {
     //video::playScaled main 0 0 100% 100% http://VIDEOURL
-    int ret;
-    char *cs;
     int n = duk_get_top(ctx);
     const char *name = duk_to_string(ctx,0);
     const char *x   = duk_to_string(ctx,1);
@@ -246,31 +244,23 @@ int js_playDirect(duk_context *ctx)
     const char *w   = duk_to_string(ctx,3);
     const char *h   = duk_to_string(ctx,4);
     const char *url = duk_to_string(ctx,5);
-    asprintf(&cs,"%s %s %s %s %s %s",name,x,y,w,h,url);
-    callWtx("video::playScaledDirect",cs);
-    free(cs);
+    scall("video::playScaledDirect %s %s %s %s %s %s",name,x,y,w,h,url);
     return 1;
 }
 
 int js_play(duk_context *ctx)
 {
     //video::play main http://VIDEOURL
-    int ret;
-    char *cs;
     int n = duk_get_top(ctx);
     const char *name = duk_to_string(ctx,0);
     const char *url = duk_to_string(ctx,1);
-    asprintf(&cs,"%s %s",name,url);
-    callWtx("video::play",cs);
-    free(cs);
+    scall("video::play %s %s",name,url);
     return 1;
 }
 
 int js_playScaled(duk_context *ctx)
 {
     //video::playScaled main 0 0 100% 100% http://VIDEOURL
-    int ret;
-    char *cs;
     int n = duk_get_top(ctx);
     const char *name = duk_to_string(ctx,0);
     const char *x   = duk_to_string(ctx,1);
@@ -278,9 +268,7 @@ int js_playScaled(duk_context *ctx)
     const char *w   = duk_to_string(ctx,3);
     const char *h   = duk_to_string(ctx,4);
     const char *url = duk_to_string(ctx,5);
-    asprintf(&cs,"%s %s %s %s %s %s",name,x,y,w,h,url);
-    callWtx("video::playScaled",cs);
-    free(cs);
+    scall("video::playScaled %s %s %s %s %s %s",name,x,y,w,h,url);
     return 1;
 }
 

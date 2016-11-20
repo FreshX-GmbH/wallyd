@@ -19,7 +19,6 @@ Transaction.prototype = {
 	} else {
 	  this.ct = new CTransaction();
 	  this.ID = this.ct.newTransaction();
-	  //log.trace('Transaction '+this.ID+' has '+this.funcs.length+' elements');
 	}
     },
 
@@ -33,7 +32,7 @@ Transaction.prototype = {
     },
 
     abort: function(){
-	delete taFunctions;
+	delete funcs;
     },
 
     commit: function(){
@@ -46,5 +45,7 @@ Transaction.prototype = {
 	    }
 	    this.ct.commit(this.ID);
 	}
+	delete funcs;
+	this.ct.clear(this.ID);
     },
 }; 

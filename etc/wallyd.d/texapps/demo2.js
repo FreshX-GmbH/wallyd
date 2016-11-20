@@ -4,7 +4,7 @@ var wally = new Wally();
 var gui = new GUI();
 var date = new Date();
 var uv = nucleus.uv;
-var wallaby = require('./modules/wallaby');
+var wallaby = require('./modules/wally/wallaby');
 
 var file = config.wally.basedir+'/etc/wallyd.d/tests/wallybill.json';
 var valsfile = "/tmp/co2.js";
