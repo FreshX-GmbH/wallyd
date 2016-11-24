@@ -1,5 +1,5 @@
-nucleus.dofile('modules/compat.js');
-nucleus.dofile('modules/transaction.js');
+nucleus.dofile('modules/wally/compat.js');
+nucleus.dofile('modules/wally/transaction.js');
 
 var myTA = new Transaction();
 
