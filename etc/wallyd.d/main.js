@@ -100,18 +100,22 @@ try{
       var networktimer = new uv.Timer();
       var count = 0;
       networktimer.start(0, 100, function(){
-	screen.log('Waiting for network to get ready ('+count/10+').');
+	screen.log('Waiting for v4 network to get ready ('+count/10+').');
 	count++;
         var network = uv.interface_addresses();
         Object.keys(network).forEach(function(ifname){
           Object.keys(network[ifname]).forEach(function(addr){
             if(network[ifname][addr].internal === true)  return;
-            if(network[ifname][addr].family === 'INET6') return;
+            if(network[ifname][addr].family === 'INET6' && !network[ifname][addr].ip.match(/^fe80/)) {
+		screen.log('Waiting for v4 network to get ready ('+count/10+'). IPv6 = '+network[ifname][addr].ip);
+		return;
+	    }
 	    log.info('Found a valid IPv4 address : '+network[ifname][addr].ip);
 	    {
 		if(context.config.network.connected === false){
 		    stat = 'Network initialized. Scanning for next wallaby server';
 		    wally.log(stat);
+		    log.error(JSON.stringify(config.network));
 		    context.config.network.connected = true;
 		    context.config.network.ip = network[ifname][addr].ip;
 		    log.info(stat);

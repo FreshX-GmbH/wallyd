@@ -286,7 +286,7 @@ void hashtable_print(HashTable * h_table, char *prefix) {
 			// callback(curr->key, curr->key_len, curr->value, curr->value_len);
 			//printf("'%s' => %p,\n", (char *)curr->key, curr->value);
 			if(prefix == NULL){
-			    slog(INFO,LOG_UTIL,"%s -> 0x%x", prefix, (char *)curr->key, curr->value);
+			    slog(INFO,LOG_UTIL,"%s -> 0x%x", (char *)curr->key, curr->value);
 			} else {
 			    slog(INFO,LOG_UTIL,"%s: %s -> 0x%x", prefix, (char *)curr->key, curr->value);
 			}

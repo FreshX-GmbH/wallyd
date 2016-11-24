@@ -69,7 +69,6 @@ int js_newTransaction(duk_context *ctx) {
    ph->transactionCount=ph->transactionCount+1;
    int id = ph->transactionCount;
    pthread_mutex_lock(&ph->taMutex);
-   //int ret = newWtx(id,&wtx);
    wtx = newWtx(id);
    pthread_mutex_unlock(&ph->taMutex);
    if(!wtx){

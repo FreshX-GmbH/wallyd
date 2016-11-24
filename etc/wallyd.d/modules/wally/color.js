@@ -5,12 +5,11 @@ function Color(name,a1,a2,a3,a4) {
 
 Color.prototype = {
 
-    config: {
-      created: false,
-      a: 255
-    },
-
     initialize: function(name,a1,a2,a3,a4) {
+	this.config = {
+	  created: false,
+	  a: 255
+	};
 	if(typeof(CColor) === 'undefined'){
 	    log.warn('CColor object not available.');
 	}
@@ -55,9 +54,8 @@ Color.prototype = {
 	    return this.validate();
 	}
         if(typeof(a1) === 'number' && typeof(a2) === 'undefined') { 
-	    var str = parseInt(a1,16);
-	    this.config.string = a1;
-	    this.stringToRGB(a1);
+	    this.config.string = a1.toString(16);
+	    this.intToRGB(a1);
 	    return this.validate();
 	}
         if(typeof(a1) === 'number') { this.config.r = a1; }
@@ -82,7 +80,9 @@ Color.prototype = {
     toString:   function() {
         return JSON.stringify(this.config);
     },
-
+};
+   
+var staticColors = {
     'AliceBlue' :      'F0F8FF',
     'AntiqueWhite' :   'FAEBD7',
     'Aqua' :           '00FFFF',
@@ -137,7 +137,7 @@ Color.prototype = {
     'Gold' :           'FFD700',
     'GoldenRod' :      'DAA520',
     'Gray' :           '808080',
-    'Green' :          '008000',
+    Green:          '008000',
     'GreenYellow' :    'ADFF2F',
     'Grey' :           '808080',
     'HoneyDew' :       'F0FFF0',
@@ -231,4 +231,10 @@ Color.prototype = {
     'WhiteSmoke' :     'F5F5F5',
     'Yellow' :         'FFFF00',
     'YellowGreen' :    '9ACD32'
-}; 
+};
+
+// Add our static colors to the Color object
+for(var key in staticColors){
+  Color[key] = staticColors[key];
+}
+  

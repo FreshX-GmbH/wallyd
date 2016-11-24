@@ -1,6 +1,3 @@
-//(function(){
-//'use strict';
-
 function Transaction() {
   this.initialize();
 }
@@ -8,7 +5,7 @@ function Transaction() {
 Transaction.prototype = {
 
     ID:		0,
-    funcs:	[],
+    funcs:	null,
 
     initialize: function() {
 	this.funcs = [];

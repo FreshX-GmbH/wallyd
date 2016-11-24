@@ -207,11 +207,13 @@ int fillTexture(texInfo *TI, bool refresh)
 }
 
 int clearTexture(void *str){
+   if(!str) return false;
    slog(DEBUG,LOG_SDL,"Clearing texture %s.",str);
    return fillTexture(getTexture(strtok(str, " ")),true);
 }
 
 int clearTextureNoPaint(void *name){
+   if(!name) return false;
    slog(DEBUG,LOG_SDL,"Clearing texture %s.",name);
    return fillTexture(getTexture(name),false);
 }

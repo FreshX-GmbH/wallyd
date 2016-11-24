@@ -5,17 +5,8 @@ function Texture(name,x,y,z,h,w,color) {
 
 Texture.prototype = {
 
-    config: {
-      //name: null,
-      //x: null,
-      //y: null,
-      //z: null,
-      //h: null,
-      //w: null,
-      //color: null
-    },
-
     initialize: function(name,x,y,z,h,w,color) {
+	this.config = {};	
 	if(this.cTextureAvailable()){
 	  this.ct = new CTexture();
 	}
