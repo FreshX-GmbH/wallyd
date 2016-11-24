@@ -69,10 +69,8 @@ int js_evalFile(duk_context *ctx) {
 int js_commitTransaction(duk_context *ctx) {
    int ret;
    slog(DEBUG,LOG_PLUGIN,"Commit a transaction.");
-   //callWtx(NULL,NULL);
    commit();
    ph->transaction = false;
-   //ph->wtx->elements=0;
    return 0;
 }
 
@@ -355,7 +353,7 @@ int evalFile(void *file){
     return 0;
 }
 
-duk_ret_t js_exec(duk_context *ctx){
+duk_ret_t js_scall(duk_context *ctx){
    int ret;
    const char *str = duk_to_string(ctx,0);
    slog(DEBUG,LOG_JS,"call : %s", str);
@@ -412,7 +410,8 @@ const duk_function_list_entry wallyMethods[] = {
     { "readDir",              js_readdir, 1 },
     { "evalFile",             js_evalFile, 1 },
     { "eval",                 js_evalScript, 1 },
-    { "exec",                 js_exec, 1 },
+    { "exec",                 js_scall, 1 },
+    { "scall",                js_scall, 1 },
     { "render",               js_render, 1 },
     { "setAutoRender",        js_setAutoRender, 1 },
     { "getrss",		      js_getrss, 0},

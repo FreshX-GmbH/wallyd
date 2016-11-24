@@ -32,7 +32,9 @@ fonts = {
     logfont  : { file : fontsdir+'/Lato-Bol.ttf', size : 12},
     stampfont: { file : fontsdir+'/umbrage2.ttf',  size : 48},
     font16   : { file : fontsdir+'/Lato-Bol.ttf', size : 16},
-    hugefont : { file : fontsdir+'/Lato-Bol.ttf', size : 96}
+    hugefont : { file : fontsdir+'/Lato-Bol.ttf', size : 96},
+    chalkfont: { file : fontsdir+'/Chalkduster.ttf', size : 18},
+    chalk32: { file : fontsdir+'/Chalkduster.ttf', size : 32}
 };
 
 for (var c in colors){
@@ -52,6 +54,7 @@ if(config.testScreen === true){
 } else {
     defTA.push(screen.log.bind(null,'WallyTV starting...'));
     defTA.push(screen.setImageScaled.bind(null,'main',config.logo));
+    defTA.push(screen.setText.bind(null,'main','black','chalkfont',500,100,'beta'));
 //    screen.setText('version','black','logfont',0,0,'R'+config.wally.release/1000);
 }
 

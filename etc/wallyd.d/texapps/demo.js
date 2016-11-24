@@ -7,13 +7,13 @@ var loopDelay = 10000;
 // for direct test in nucleus
 if(typeof(Wally) === 'undefined')
 {
-        context = nucleus.dofile('modules/compat.js');
+        context = nucleus.dofile('modules/wally/compat.js');
 	gui = wally = context.wally;
         nucleus.uv.run();
 } else  {
 	wally = new Wally();
 	gui = new GUI();
-	wallaby = require('./modules/wallaby');
+	wallaby = require('./modules/wally/wallaby');
 }
 
 var date = new Date();

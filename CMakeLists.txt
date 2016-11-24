@@ -1,10 +1,10 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
 project(wallyd)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(PKG_CONFIG_USE_CMAKE_PREFIX_PATH on)
+set(MACOSX_RPATH on)
 
 # Compile video support (requires libffmpeg)
 set(WITH_VIDEO on)

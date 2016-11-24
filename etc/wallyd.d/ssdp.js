@@ -4,7 +4,7 @@
 // for direct test in nucleus
 if(typeof(Wally) === 'undefined')
 {
-        var context = nucleus.dofile('modules/compat.js');
+        var context = nucleus.dofile('modules/wally/compat.js');
         ssdp(context);
         nucleus.uv.run();
 }

@@ -18,7 +18,7 @@ var extra = nucleus.dofile('modules/extra.js');
 log.info('Seaduk modules initialized');
 var modules = homedir+'/modules.duv';
 var curl  = nucleus.dofile('modules/curl.js');
-nucleus.dofile('modules/transaction.js');
+nucleus.dofile('modules/wally/transaction.js');
 
 try {
 	settings = JSON.parse(wally.readFile(homedir+'/settings.json'));

@@ -30,8 +30,6 @@ int js_svgToImage(duk_context *ctx){
 
 int js_svgToTex(duk_context *ctx){
     SDL_Color c;
-    int ret;
-    char *callStr;
     const char *texName  = duk_require_string(ctx, 0);
     const char *fileName = duk_require_string(ctx, 1);
     const int x1 = duk_require_int(ctx, 2);
@@ -40,21 +38,15 @@ int js_svgToTex(duk_context *ctx){
     const int y2 = duk_require_int(ctx, 5);
     const int alpha = duk_require_int(ctx, 6);
     SDL_Rect r = {x1,y1,x2,y2};
-    asprintf(&callStr,"%s %s %d %d %d %d %d",texName,fileName, x1,y1,x2,y2,alpha);
-    callWtx("svg::svgToTex",callStr);
-    free(callStr);
+    scall("svg::svgToTex %s %s %d %d %d %d %d",texName,fileName, x1,y1,x2,y2,alpha);
     return 0;
 }
 
 duk_ret_t js_svgToPng(duk_context *ctx){
     SDL_Color c;
-    int ret;
-    char *callStr;
     const char *fileName = duk_require_string(ctx, 0);
     const char *pngName  = duk_require_string(ctx, 1);
-    asprintf(&callStr, "%s %s",fileName,pngName);
-    callWtx("svg::svgToPng",callStr);
-    free(callStr);
+    scall("svg::svgToPng %s %s",fileName,pngName);
     return 0;
 }
 

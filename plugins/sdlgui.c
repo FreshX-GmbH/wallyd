@@ -13,13 +13,12 @@ int js_setTargetTexture(duk_context *ctx){
     dschema_check(ctx, (const duv_schema_entry[]) {
       {"texture", duk_is_string},
       {0,0}});
-    const char *texName  = duk_require_string(ctx, 0);
-    callWtx("gui::setTargetTexture",(char*)texName);
+    scall("gui::setTargetTexture",(char*)duk_require_string(ctx, 0));
     return 0;
 }
 
 duk_ret_t js_resetTargetTexture(duk_context *ctx){
-    callWtx("gui::setTargetTexture",NULL);
+    scall("gui::setTargetTexture");
     return 0;
 }
 
@@ -28,8 +27,7 @@ duk_ret_t js_clearTexture(duk_context *ctx){
     dschema_check(ctx, (const duv_schema_entry[]) {
       {"texture", duk_is_string},
       {0,0} });
-    const char *texName  = duk_require_string(ctx, 0);
-    callWtx("screen::clearTexture",(char*)texName);
+    scall("screen::clearTexture",(char*)duk_require_string(ctx, 0));
     return 0;
 }
 
@@ -38,8 +36,7 @@ duk_ret_t js_clearTextureNoPaint(duk_context *ctx){
     dschema_check(ctx, (const duv_schema_entry[]) {
       {"texture", duk_is_string},
       {0,0} });
-    const char *texName  = duk_require_string(ctx, 0);
-    callWtx("screen::clearTextureNoPaint",(char*)texName);
+    scall("screen::clearTextureNoPaint",(char*)duk_require_string(ctx, 0));
     return 0;
 }
 
@@ -86,8 +83,6 @@ int js_loadImageFile(duk_context *ctx){
        {"alpha", duk_is_number},
        {0,0} });
     SDL_Color c;
-    int ret;
-    char *callStr;
     const char *texName  = duk_require_string(ctx, 0);
     const char *fileName = duk_require_string(ctx, 1);
     const int x1 = duk_require_int(ctx, 2);
@@ -96,9 +91,7 @@ int js_loadImageFile(duk_context *ctx){
     const int y2 = duk_require_int(ctx, 5);
     const int alpha = duk_require_int(ctx, 6);
     SDL_Rect r = {x1,y1,x2,y2};
-    asprintf(&callStr,"%s %s %d %d %d %d %d",texName,fileName, x1,y1,x2,y2,alpha);
-    callWtx("gui::loadImageFile",callStr);
-    free(callStr);
+    scall("gui::loadImageFile %s %s %d %d %d %d %d",texName,fileName, x1,y1,x2,y2,alpha);
     return 0;
 }
 
@@ -133,8 +126,6 @@ int js_loadImageMemory(duk_context *ctx){
 
 int js_drawGradient(duk_context *ctx){
     SDL_Color from,to;
-    int ret;
-    char *callStr;
     dschema_check(ctx, (const duv_schema_entry[]) {
        {"texture", duk_is_string},
        {"x1", duk_is_number},
@@ -158,17 +149,13 @@ int js_drawGradient(duk_context *ctx){
     SDL_Rect r = {x1,y1,x2,y2};
     hexToColor(fromcolor, &from);
     hexToColor(tocolor, &to);
-    asprintf(&callStr,"%s %d %d %d %d %x %x %d %d",texName,x1,y1,x2,y2,fromcolor,tocolor,horizontal, hollow);
-    callWtx("gui::drawGradient",callStr);
-    free(callStr);
+    scall("gui::drawGradient %s %d %d %d %d %x %x %d %d",texName,x1,y1,x2,y2,fromcolor,tocolor,horizontal, hollow);
     return 0;
 }
 
 int js_drawLine(duk_context *ctx)
 {
-    int ret;
     SDL_Color c;
-    char *callStr;
     dschema_check(ctx, (const duv_schema_entry[]) {
        {"texture", duk_is_string},
        {"x1", duk_is_number},
@@ -183,9 +170,7 @@ int js_drawLine(duk_context *ctx)
     const int x2 = duk_require_int(ctx, 3);
     const int y2 = duk_require_int(ctx, 4);
     const int color = duk_require_int(ctx, 5);
-    asprintf(&callStr, "%s %d %d %d %d %x",texName,x1,y1,x2,y2,color);
-    callWtx("gui::drawLine",callStr);
-    free(callStr);
+    scall("gui::drawLine %s %d %d %d %d %x",texName,x1,y1,x2,y2,color);
     return 0;
 }
 
@@ -198,23 +183,17 @@ int js_drawText(duk_context *ctx){
        {"color", duk_is_number},
        {"text", duk_is_string},
        {0,0}});
-    int ret;
-    char *callStr;
     const char *texName = duk_require_string(ctx, 0);
     const int x1 = duk_require_int(ctx, 1);
     const int y1 = duk_require_int(ctx, 2);
     const char *font = duk_require_string(ctx, 3);
     int color = duk_require_int(ctx, 4);
     const char *text = duk_require_string(ctx, 5);
-    asprintf(&callStr, "%s %d %d %s %x %s",texName,x1,y1,font,color,text);
-    callWtx("gui::drawText",callStr);
-    free(callStr);
+    scall("gui::drawText %s %d %d %s %x %s",texName,x1,y1,font,color,text);
     return 0;
 }
 
 int js_drawBox(duk_context *ctx){
-    int ret;
-    char *callStr;
     dschema_check(ctx, (const duv_schema_entry[]) {
        {"texture", duk_is_string},
        {"x", duk_is_number},
@@ -229,15 +208,11 @@ int js_drawBox(duk_context *ctx){
     const int w = duk_require_int(ctx, 3);
     const int h = duk_require_int(ctx, 4);
     const int color = duk_require_int(ctx, 5);
-    asprintf(&callStr, "%s %d %d %d %d %x",texName,x,y,w,h,color);
-    callWtx("gui::drawBox",callStr);
-    free(callStr);
+    scall("gui::drawBox %s %d %d %d %d %x",texName,x,y,w,h,color);
     return 0;
 }
 
 int js_drawFilledBox(duk_context *ctx){
-    int ret;
-    char *callStr;
     dschema_check(ctx, (const duv_schema_entry[]) {
        {"texture", duk_is_string},
        {"x", duk_is_number},
@@ -258,9 +233,7 @@ int js_drawFilledBox(duk_context *ctx){
     const int color = duk_require_int(ctx, 6);
     const int strokeCol = duk_require_int(ctx, 7);
     const int alpha = duk_require_int(ctx, 8);
-    asprintf(&callStr, "%s %d %d %d %d %d %x %x %d",texName,x,y,w,h,stroke,color, strokeCol, alpha);
-    callWtx("gui::drawFilledBox",callStr);
-    free(callStr);
+    scall("gui::drawFilledBox %s %d %d %d %d %d %x %x %d",texName,x,y,w,h,stroke,color, strokeCol, alpha);
     return 0;
 }
 

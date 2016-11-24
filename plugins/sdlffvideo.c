@@ -165,7 +165,6 @@ int js_play(duk_context *ctx)
 
   const char *texname = duk_to_string(ctx,0);
   const char *url = duk_to_string(ctx,1);
-  asprintf(&cs,"%s %s",texname,url);
 
   // Push the callback
   duk_push_heap_stash(ctx);
@@ -173,8 +172,7 @@ int js_play(duk_context *ctx)
   duk_put_prop_string(ctx, -2, "\xffon-finish");
   duk_pop(ctx);
 
-  callWtx("ffvideo::play",cs);
-  free(cs);
+  scall("ffvideo::play %s %s",texname,url);
   return 0;
 }
 
