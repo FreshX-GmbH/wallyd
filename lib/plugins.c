@@ -235,7 +235,6 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         SDL_TryLockMutex(ph->funcMutex);
         SDL_PushEvent(&event);
         if(waitThread == true){
-            // Enable the Mutex code for synced function calls
             int timeout;
             if(ph->transaction == true){
                 timeout = SDLWAITTIMEOUT_TRANSACTION;
@@ -243,8 +242,7 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
 		// TODO : 
                 timeout = SDLWAITTIMEOUT;
             }
-            slog(DEBUG,LOG_PLUGIN,"Wait %d ms until %s has finished. Name/Map at 0x%x/0x%x",timeout,funcBak,funcBak,ph->functionWaitConditions);
-            slog(DEBUG,LOG_PLUGIN,"Condition for %s at 0x%x",funcBak,ht_get_simple(ph->functionWaitConditions,funcBak));
+            slog(DEBUG,LOG_PLUGIN,"Wait %d ms until %s has finished. Name/Cnd at 0x%x/0x%x",timeout,funcBak,funcBak,ht_get_simple(ph->functionWaitConditions,funcBak));
             if(SDL_MUTEX_TIMEDOUT == SDL_CondWaitTimeout(ht_get_simple(ph->functionWaitConditions,funcBak),ph->funcMutex,timeout)) {
                 slog(ERROR,LOG_PLUGIN,"Wait condition for call %s timed out!",funcBak);
                 ph->conditionTimeout++;
