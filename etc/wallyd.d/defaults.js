@@ -44,7 +44,11 @@ for (var f in fonts) {
     defTA.push( screen.loadFont.bind(null, f,fonts[f].file, fonts[f].size));
 }
 for (var t in textures) {
-    defTA.push( screen.createTexture.bind(null, t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h,textures[t].color));
+    var color = new Color(t,textures[t].color);
+    print(color.string);
+    var tex = new Texture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h, color);
+    defTA.push(tex.create.bind(tex));
+    //new Color(t,textures[t].color)));
 }
 
 

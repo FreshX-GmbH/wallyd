@@ -19,6 +19,8 @@ log.info('Seaduk modules initialized');
 var modules = homedir+'/modules.duv';
 var curl  = nucleus.dofile('modules/curl.js');
 nucleus.dofile('modules/wally/transaction.js');
+nucleus.dofile('modules/wally/texture.js');
+nucleus.dofile('modules/wally/color.js');
 
 try {
 	settings = JSON.parse(wally.readFile(homedir+'/settings.json'));
@@ -51,6 +53,7 @@ var context = {
         video   : homedir+'/images/WallyStart.mp4',
         testScreen: false,
         startVideo : false,
+	textures: {}
     },
     uv:uv,
     p:p
@@ -108,6 +111,8 @@ try{
             if(network[ifname][addr].internal === true)  return;
             if(network[ifname][addr].family === 'INET6' && !network[ifname][addr].ip.match(/^fe80/)) {
 		screen.log('Waiting for v4 network to get ready ('+count/10+'). IPv6 = '+network[ifname][addr].ip);
+		return;
+	    } else {
 		return;
 	    }
 	    log.info('Found a valid IPv4 address : '+network[ifname][addr].ip);
