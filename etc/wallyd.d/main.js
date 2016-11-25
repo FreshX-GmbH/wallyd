@@ -97,6 +97,7 @@ try{
     log.error('ERROR in defaults : '+e1);
 }
 
+wally.scall("exit");
 
 try{
     if(context.config.network){

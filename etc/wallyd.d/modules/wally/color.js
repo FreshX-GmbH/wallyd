@@ -8,13 +8,15 @@ Color.prototype = {
     initialize: function(name,a1,a2,a3,a4) {
 	this.config = {
 	  created: false,
-	  a: 255
+	  alpha: 255,
 	};
+	this.wally =  new Wally();
+
 	if(typeof(CColor) === 'undefined'){
 	    log.warn('CColor object not available.');
 	}
 	this.set(name,a1,a2,a3,a4);
-	return this;
+//	return this.create();
     },
 
     validate: function(){
@@ -22,8 +24,8 @@ Color.prototype = {
           return [false,'Color name not set'];
         }
  
-        if(typeof(this.config.r) !== 'number' || typeof(this.config.g) !== 'number' ||
-            typeof(this.config.b) !== 'number' || typeof(this.config.a) !== 'number'){
+        if(typeof(this.config.r) !== 'number' || typeof(this.config.alpha) !== 'number' ||
+            typeof(this.config.b) !== 'number' || typeof(this.config.alpha) !== 'number'){
             return [false,'Color properties not valid'];
         }
         return true;
@@ -42,11 +44,6 @@ Color.prototype = {
     },
 
     set: function (name,a1,a2,a3,a4) {
-	print(typeof(name));
-	print(typeof(a1));
-	print(typeof(a2));
-	print(typeof(a3));
-	print(typeof(a4));
         if(typeof(name) === 'string')  { this.config.name  = name; }
         if(typeof(a1) === 'string' && typeof(a2) === 'undefined') { 
 	    this.config.string = a1;
@@ -61,7 +58,7 @@ Color.prototype = {
         if(typeof(a1) === 'number') { this.config.r = a1; }
         if(typeof(a2) === 'number') { this.config.g = a2; }
         if(typeof(a3) === 'number') { this.config.b = a3; }
-        if(typeof(a4) === 'number') { this.config.a = a4; }
+        if(typeof(a4) === 'number') { this.config.alpha = a4; }
         return this.validate();
     },
 
@@ -70,11 +67,17 @@ Color.prototype = {
     // create(name, r,g,b)
     // create(name, r,g,b,a)
     create: function(name, a1, a2, a3, a4){
-      if(validate() !== true) {
+      if(this.validate() !== true) {
       	  if(this.set(name,a1,a2,a3,a4) !== true){
-      	      return this.validate();
+      	      if(this.validate() === false){
+		  //print("Color not valid : "+JSON.stringify(this.config));
+		  return false;
+	      }
       	  }
       }
+      print("Createing color : "+JSON.stringify(this.config.string));
+      this.wally.createColor(this.config.name,this.config.string,this.config.alpha);
+      this.config.create = true;
     },
 
     toString:   function() {
@@ -137,7 +140,7 @@ var staticColors = {
     'Gold' :           'FFD700',
     'GoldenRod' :      'DAA520',
     'Gray' :           '808080',
-    Green:          '008000',
+    'Green':          '008000',
     'GreenYellow' :    'ADFF2F',
     'Grey' :           '808080',
     'HoneyDew' :       'F0FFF0',

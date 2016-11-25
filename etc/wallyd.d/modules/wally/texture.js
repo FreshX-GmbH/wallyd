@@ -1,35 +1,41 @@
 
-function Texture(name,x,y,z,h,w,color) {
-  this.initialize(name,x,y,z,h,w,color);
+function Texture(name,z,x,y,w,h,color) {
+  this.initialize(name,z,x,y,w,h,color);
 }
 
 Texture.prototype = {
 
-    initialize: function(name,x,y,z,h,w,color) {
+    initialize: function(name,z,x,y,w,h,color) {
 	this.config = {};
 	this.wally = new Wally();
 	//if(this.cTextureAvailable()){
 	//    this.ct = new CTexture();
 	//}
-	this.set(name,x,y,z,h,w,color);
+	this.set(name,z,x,y,w,h,color);
     },
 
-    set: function (name,x,y,z,h,w,color) {
+    set: function (name,z,x,y,w,h,color) {
 	if(typeof(name) === 'string') { this.config.name = name; }
-	//if(typeof(color) === 'object') { this.config.color = color; }
-	this.config.color = color;
-	if(['string','number'].indexOf(typeof(x))) { this.config.x = ''+x; }
-	if(['string','number'].indexOf(typeof(y))) { this.config.y = ''+y; }
-	if(['string','number'].indexOf(typeof(z))) { this.config.z = ''+z; }
-	if(['string','number'].indexOf(typeof(h))) { this.config.h = ''+h; }
-	if(['string','number'].indexOf(typeof(w))) { this.config.w = ''+w; }
+	if(typeof(color) === 'object') { this.config.color = color.string; }
+	if(typeof(color) === 'string') { this.config.color = color; }
+	//if(['string','number'].indexOf(typeof(x))) { 
+	this.config.x = String(x);
+	//if(['string','number'].indexOf(typeof(y))) {
+	this.config.y = String(y);
+	//if(['string','number'].indexOf(typeof(z))) { 
+	this.config.z = String(z);
+	//if(['string','number'].indexOf(typeof(h))) { 
+	this.config.h = String(h);
+	//if(['string','number'].indexOf(typeof(w))) { 
+	this.config.w = String(w);
+	//print(JSON.stringify(this.config));
 	return this.validate();
     },
 
     cTextureAvailable: function() {
 	//if((typeof(CTexture) === 'undefined') || (typeof(Wally) === 'undefined')){
 	if((typeof(Wally) === 'undefined')){
-	  print('CTexture/Wally not available.');
+	  //print('CTexture/Wally not available.');
 	  return false;
 	} else {
 	  return true;
@@ -61,24 +67,24 @@ Texture.prototype = {
 	return true;
     },
 
-    //toString: function() {
-    //    return JSON.stringify(this.config);
-    //},
+    toString: function() {
+        return JSON.stringify(this.config);
+    },
 
-    create: function(name,x,y,z,h,w,color) {
+    create: function(name,z,x,y,w,h,color) {
 	print('Create');
-	print(this.validate);
 	if(this.validate() !== true){
 	    print('Create validate');
-	    if(this.set(name,x,y,z,h,w,color) !== true){
+	    if(this.set(name,z,x,y,w,h,color) !== true){
 		print('Create set');
 		if(this.validate() === false){
 		    return false;
 		}
 	    }
 	}
-	print('CreateF : '+this.color);
-	this.wally.createTexture(this.config.name,this.config.z,this.config.x,this.config.y,this.config.w,this.config.h,Color.Green);
+	print("createTexture(",this.config.name,this.config.z,this.config.x,this.config.y,this.config.w,this.config.h,this.config.color+")");
+	this.wally.createTexture(this.config.name,this.config.z,this.config.x,this.config.y,this.config.w,this.config.h,this.config.color);
+	this.config.created = true;
 	//return this.validate();
     }
 };

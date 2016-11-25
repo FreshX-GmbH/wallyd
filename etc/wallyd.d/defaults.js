@@ -7,13 +7,12 @@ var defTA = new Transaction();
 
 var textures = {
     main      : { z: 10, x: 0,   y:    0,  w: '100%', h:-16, color : 'FFFFFF' },
-//    main2     : { z: 10, x: '50%', y:  0,  w: '50%', h:-16, color : 'FFFFFF' },
     log       : { z: 30, x: 0,   y: '-20', w: '100%', h: 20, color : 'FEFEFE' }, 
-    version   : { z: 40, x: -260, y: 0,     w: 260,     h: 16, color : 'AA44FF' },
-    memdbg    : { z: 41, x: -260, y: 16,     w: 260,     h: 16, color : 'AA44FF' },
-    netinfo   : { z: 42, x: -260, y: 32,     w: 260,     h: 16, color : 'AA44FF' },
-    stat      : { z: 43, x: -260, y: 48,     w: 260,     h: 16, color : 'AA44FF' },
-    up        : { z: 50, x: -120, y: -20,   w: 100,     h: 20, color : 'FEFEFE' },
+    version   : { z: 40, x: -260, y: 0,    w: 260,    h: 16, color : 'AA44FF' },
+    memdbg    : { z: 41, x: -260, y: 16,   w: 260,    h: 16, color : 'AA44FF' },
+    netinfo   : { z: 42, x: -260, y: 32,   w: 260,    h: 16, color : 'AA44FF' },
+    stat      : { z: 43, x: -260, y: 48,   w: 260,    h: 16, color : 'AA44FF' },
+    up        : { z: 50, x: -120, y: -20,  w: 100,    h: 20, color : 'FEFEFE' },
     netcolor  : { z: 50, x: -20, y: -20,   w: 20,     h: 20, color : '2BFF00' }
 };
 
@@ -38,19 +37,18 @@ fonts = {
 };
 
 for (var c in colors){
-    defTA.push( screen.createColor.bind(null, c,colors[c],'FF'));
+    var color = new Color(c,colors[c]);
+    defTA.push(color.create.bind(color));
 }
+
 for (var f in fonts) {
     defTA.push( screen.loadFont.bind(null, f,fonts[f].file, fonts[f].size));
 }
-for (var t in textures) {
-    var color = new Color(t,textures[t].color);
-    print(color.string);
-    var tex = new Texture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h, color);
-    defTA.push(tex.create.bind(tex));
-    //new Color(t,textures[t].color)));
-}
 
+for (var t in textures) {
+    var tex = new Texture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h, textures[t].color);
+    defTA.push(tex.create.bind(tex));
+}
 
 //   Display the test screen
 if(config.testScreen === true){
@@ -58,8 +56,6 @@ if(config.testScreen === true){
 } else {
     defTA.push(screen.log.bind(null,'WallyTV starting...'));
     defTA.push(screen.setImageScaled.bind(null,'main',config.logo));
-    defTA.push(screen.setText.bind(null,'main','black','chalkfont',500,100,'beta'));
-//    screen.setText('version','black','logfont',0,0,'R'+config.wally.release/1000);
 }
 
 defTA.commit();
