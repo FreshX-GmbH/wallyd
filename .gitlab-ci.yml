@@ -1,0 +1,30 @@
+code_style:
+    before_script:
+        # Run ssh-agent (inside the build environment)
+        - eval $(ssh-agent -s)
+
+        # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+        - ssh-add /.ssh/id_rsa
+
+        # For Docker builds disable host key checking. Be aware that by adding that
+        # you are suspectible to man-in-the-middle attacks.
+        # WARNING: Use this only with the Docker executor, if you use it with shell
+        # you will overwrite your user's SSH config.
+        - mkdir -p ~/.ssh
+        - mkdir -p /data
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+        - git diff-tree --no-commit-id --name-only -r $CI_BUILD_REF > /data/files
+        - git show -s --format=%B $CI_BUILD_REF > /data/commit
+
+        - cd /data
+        - git clone git@git.freshx.de:Wallaby-CI/wallaby-ci-lint.git
+        - cd wallaby-ci-lint
+        - npm set registry https://npm.freshx.de
+        - npm config set strict-ssl false
+        - npm install >/dev/null
+
+    script:
+        - node node_modules/gulp/bin/gulp.js lint
+
+    tags:
+        - lint
