@@ -13,7 +13,7 @@ code_style:
         - mkdir -p ~/.ssh
         - mkdir -p /data
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-        - git diff-tree --no-commit-id --name-only -r $CI_BUILD_REF > /data/files
+        - git log -m -1 --name-only --pretty="format:" $CI_BUILD_REF > /data/files
         - git show -s --format=%B $CI_BUILD_REF > /data/commit
 
         - cd /data
