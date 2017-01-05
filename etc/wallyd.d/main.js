@@ -79,11 +79,11 @@ myta.commit();
 // or immediately if startVideo==false
 context.onVideoFinished = function(){
   wally.destroyTexture('video');
-  wally.setAutoRender(false);
+  //wally.setAutoRender(false);
   try {
     for (var t in textures) {
         var taName = '/texapps/'+t+'.js';
-	log.error('Running texapp '+taName);
+	log.info('Running texapp '+taName);
 	wally.evalFile(config.homedir+taName);
     }
   } catch(err) {
@@ -97,7 +97,7 @@ try{
     log.error('ERROR in defaults : '+e1);
 }
 
-wally.scall("exit");
+//wally.scall("exit");
 
 try{
     if(context.config.network){
@@ -107,14 +107,19 @@ try{
 	screen.log('Waiting for v4 network to get ready ('+count/10+').');
 	count++;
         var network = uv.interface_addresses();
+	log.info(network);
         Object.keys(network).forEach(function(ifname){
           Object.keys(network[ifname]).forEach(function(addr){
             if(network[ifname][addr].internal === true)  return;
             if(network[ifname][addr].family === 'INET6' && !network[ifname][addr].ip.match(/^fe80/)) {
 		screen.log('Waiting for v4 network to get ready ('+count/10+'). IPv6 = '+network[ifname][addr].ip);
+		context.config.network.ip6 = network[ifname][addr].ip;
 		return;
+	    }
+            if(network[ifname][addr].family === 'INET' ){
+		context.config.network.ip = network[ifname][addr].ip;
 	    } else {
-		return;
+	        return; 
 	    }
 	    log.info('Found a valid IPv4 address : '+network[ifname][addr].ip);
 	    {
@@ -123,12 +128,11 @@ try{
 		    wally.log(stat);
 		    log.error(JSON.stringify(config.network));
 		    context.config.network.connected = true;
-		    context.config.network.ip = network[ifname][addr].ip;
 		    log.info(stat);
 		    try {
-		      context.ssdp  = nucleus.dofile('ssdp.js').ssdp(context);
+			context.ssdp  = nucleus.dofile('ssdp.js').ssdp(context,nucleus.getenv('W_SERVER'));
 		    } catch(e) {
-		      log.error('SSDP failed : ',e);
+			log.error('SSDP failed : ',e);
 		    }
 		    networktimer.stop();
 		    networktimer.close();
@@ -138,7 +142,12 @@ try{
         });
       });
     } else {
-      context.ssdp  = nucleus.dofile('ssdp.js').ssdp(context);
+        context.ssdp  = nucleus.dofile('ssdp.js').ssdp(context);
+    }
+    try{
+	context.playlist  = nucleus.dofile('playlist.js');
+    } catch(e) {
+	log.error('ERROR in playlist : '+e);
     }
 } catch(e2) {
 	log.error('ERROR in ssdp : '+e2);

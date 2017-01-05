@@ -15,11 +15,11 @@ function oninterval() {
 	if(typeof uv.interface_addresses !== 'function'){
 		ip = 'N/A';
 	}
-        if(typeof(config.conn) !== 'undefined' && typeof(config.conn.name) !== 'undefined' ){
-            name=config.conn.name;
+        if(typeof(config.connection) !== 'undefined' && typeof(config.connection.name) !== 'undefined' ){
+            name=config.connection.name;
         }
-        if(typeof(config.conn) !== 'undefined' && typeof(config.conn.host) !== 'undefined' ){
-            server=config.conn.host;
+        if(typeof(config.connection) !== 'undefined' && typeof(config.connection.host) !== 'undefined' ){
+            server=config.connection.host;
 	}
 	var tstat = "IP: "+config.network.ip+" / Name : "+name+" / Server : "+server;
 	var TA = new Transaction();

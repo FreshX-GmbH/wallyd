@@ -9,11 +9,10 @@ if(typeof(Wally) === 'undefined')
         nucleus.uv.run();
 }
 
-function ssdp(context)
+function ssdp(context,location)
 {
     nucleus.dofile('modules/bootstrap.js');
     var discovery =true;
-    var location = '';
     var createClient = require('modules/net').createClient;
     var httpCodec = require('modules/http-codec');
     var decoder = httpCodec.decoder;
@@ -26,6 +25,11 @@ function ssdp(context)
     var count = 0;
     var screen = context.screen;
 
+    log.debug("ssdp location override : ",location)
+    if(location){
+       registerClient(location);
+       return;
+    }
     start(context);
     var ssdpTimer = new uv.Timer();
     ssdpTimer.start(1000, 2000, function () {
@@ -61,7 +65,7 @@ function ssdp(context)
     
         server.bind('0.0.0.0',port);
         server.broadcast(true);
-        log.info('SSDP Server bound to port '+port)
+        log.info('SSDP Client bound to port '+port)
         
         server.send(broadcastAddress, broadcastPort, broadcastString , function (err) {
           if (err) {return err;}
@@ -93,8 +97,8 @@ function ssdp(context)
       var temp = location.replace(/^http:\/\/|^https:\/\//,'').replace('/.*','');
       var port = parseInt(temp.split(/:/) ? temp.split(/:/)[1].replace(/\/.*|\&.*|\?.*/,'') : 80);
       var host = temp.replace(/:.*|\/.*|\&.*|\?.*/,'');
-      var uuid =config.wally.uuid;
-      var wifi = config.env.W_WFI ? config.env.W_WFI : 'false';
+      var uuid = config.wally.uuid;
+      var wifi = config.env.W_WFI ? nucleus.uv.getenv('W_WFI') : 'false';
       var mac= uuid.replace(/(.{2})/g,"$1:").replace(/:$/,"");
       var url = temp.replace(/^.*?\//,'/') + '?' +
       'uuid=' + uuid +
@@ -148,14 +152,13 @@ function ssdp(context)
                   } catch(err){
                     screen.log('Registration failed : '+err);
                   }
-                  p('Payload : ',response);
                   var demo = 10;
-                  config.conn = response;
-              response.host = host;
-        	    response.url = location;
-        	    response.serverport = port;
-        	    response.uuid = uuid;
-                  p('Config : ',config);
+                  response.host = host;
+        	      response.url = location;
+        	      response.serverport = port;
+                  response.configserver = host+":"+port;
+        	      response.uuid = uuid;
+                  config.connection = response;
                   if(response.configured === false){
                       screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in 10s.');
                       var timer = new uv.Timer();
@@ -179,8 +182,7 @@ function ssdp(context)
                   } else {
                       screen.log('Registered at '+host+'. Starting playlist');
                   }
-                  p(context);
-                  });
+               });
             });
       });
       } catch (e) {

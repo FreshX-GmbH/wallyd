@@ -27,7 +27,9 @@ duk_ret_t js_clearTexture(duk_context *ctx){
     dschema_check(ctx, (const duv_schema_entry[]) {
       {"texture", duk_is_string},
       {0,0} });
-    scall("screen::clearTexture",(char*)duk_require_string(ctx, 0));
+    const char *name = (const char*)duk_require_string(ctx, 0);
+    slog(INFO,JS,"JS Clear texture %s",name);
+    scall("screen::clearTexture %s",name);
     return 0;
 }
 
@@ -36,7 +38,9 @@ duk_ret_t js_clearTextureNoPaint(duk_context *ctx){
     dschema_check(ctx, (const duv_schema_entry[]) {
       {"texture", duk_is_string},
       {0,0} });
-    scall("screen::clearTextureNoPaint",(char*)duk_require_string(ctx, 0));
+    const char *name = (char*)duk_require_string(ctx, 0);
+    slog(INFO,JS,"JS Clear texture no paint %s",name);
+    scall("screen::clearTextureNoPaint %s",name);
     return 0;
 }
 

@@ -24,7 +24,6 @@ Transaction.prototype = {
     },
 
     push: function(f){
-	//log.trace('Adding function '+f);
 	this.funcs.push(f);
     },
 

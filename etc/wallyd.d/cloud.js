@@ -62,15 +62,13 @@ function registerClient(location){
               log.debug(data.toString());
               return;
             }
-            p('Payload : ',response);
-            config.conn = response;
-            config.conn.client = client;
-            config.conn.server = server;
 	    response.host = host;
   	    response.url = location;
   	    response.serverport = port;
   	    response.uuid = uuid;
-            p('Config : ',config);
+            config.connection = response;
+            config.connection.client = client;
+            config.connection.server = server;
             sendUpdate();
          });
       });
@@ -82,11 +80,11 @@ function sendUpdate(){
   if(!context && !context.config && !context.config.conn){
     log.error('Not connected');
   }
-  var conn = context.config.conn;
+  var conn = context.config.connection;
   var url = "/wallyUpdate";
-  var server = conn.server;
+  var server = connection.server;
   var client = createClient({
-    host: conn.host,
+    host: connection.host,
     port: 3333,
     encode: httpCodec.encoder(),
     decode: httpCodec.decoder()},
