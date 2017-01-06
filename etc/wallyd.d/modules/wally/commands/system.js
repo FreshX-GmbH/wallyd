@@ -7,7 +7,7 @@ var init = function(_ctx){
     ctx = _ctx;
 };
 
-var config = function(){
+var config = function(data){
     log.info('config()');
 };
 var persist = function(){

@@ -1,18 +1,14 @@
-//'use strict';
 
 var uv = nucleus.uv;
 var playlistWaitTimer = new uv.Timer();
 var wally;
 var gui;
 var modules = {};
+var request;
 
-var request = function(url, callback){
-    callback('failed',null,null);
-};
-
-var exec = function(cmd, callback){
+var exec = function(cmd){
    if(typeof(modules[cmd.command]) !== 'undefined'){
-      modules[cmd.command](cmd.id);
+      modules[cmd.command](cmd);
    } else {
       log.error('No module for command '+cmd.command+' available');
    }
@@ -22,14 +18,27 @@ var playlist = function(){
     var commands = config.connection.commands;
     if(typeof(commands) !== 'undefined' && commands.length > 0){
         for (var id in commands){
-            exec(commands[id],function(err,data){
-                  log.info(err);
-            });
+           log.debug(commands[id]);
+           exec(commands[id]);
         }
-    } else {
-      log.info('No commands, requesting for new ones', typeof(commands));
-      // request new commands
+        config.connection.commands=[];
     }
+    log.info('No more commands, requesting configserver for new ones');
+    request('http://'+config.connection.configserver+'/command?uuid='+config.connection.uuid, function(err,header,body){
+         if(err) {
+            log.error('Could not connect to config server : '+err);
+            return restartLoop();
+         }
+         log.info(header);
+         try {
+            var response = JSON.parse(body);
+            config.connection.commands.push(response);
+         } catch(e) {
+            log.error('Could not decode server response : ',e,body);
+            return restartLoop();
+         }
+         return playlist();
+    });
 };
 
 //	Initialize and run timer
@@ -37,6 +46,9 @@ var playlistWait = function() {
     if(typeof(config.connection) === 'undefined'){
         log.error('Could not find config property');
         return;
+    }
+    if(!config.connection.commands) {
+        config.connection.commands = [];
     }
     if(config.connection.configured === true){
         log.info('System configured, running playlist with currently '+config.connection.commands.length+' commands');
@@ -111,6 +123,7 @@ var sendCommand = function(command){
 
 if(typeof(Wally) === 'undefined')
 {
+        nucleus.dofile('modules/bootstrap.js');
         context = nucleus.dofile('modules/wally/compat.js');
         gui = wally = context.wally;
         config.connection = {
@@ -120,8 +133,8 @@ if(typeof(Wally) === 'undefined')
             host: '127.0.0.1', url: 'http://127.0.0.1:8083/register', serverport: 8083,
             configserver: '127.0.0.1:8083', uuid: '0027EB109600',
             lan: { dhcp: true, ip: 'dhcp', subnet: 'auto', gw: 'auto', dns: 'auto', autoIP: '10.111.10.111' },
-            commands: [ { command: 'config', id: 'e01a2485-00d3-435a-be63-f4c876869dfa' },
-                        { command: 'show', id: '0e5bf569-872e-4d79-a316-8bb954eb1ec6' } ],
+            //commands: [ { command: 'config', id: 'e01a2485-00d3-435a-be63-f4c876869dfa' },
+            //            { command: 'show', id: '0e5bf569-872e-4d79-a316-8bb954eb1ec6' } ],
             features: {
                modules: [ 'core' ], binaries: [ 'wallyd', 'node' ],
                plugins: [ 'CO2Demo', 'WallyBill', 'Photobooth' ],
@@ -154,6 +167,8 @@ var loadModules = function(){
       log.info('Found the following commands in '+name+' :'+info);
    });
 };
+
+request = nucleus.dofile('modules/request.js').request;
 
 loadModules();
 restartLoop();

@@ -7,8 +7,8 @@ var init = function(_ctx){
     ctx = _ctx;
 };
 
-var show = function(){
-    log.info('show()');
+var show = function(command){
+    log.info('show() : '+command);
 };
 
 return {

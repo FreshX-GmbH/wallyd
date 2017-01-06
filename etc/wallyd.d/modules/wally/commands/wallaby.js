@@ -7,8 +7,8 @@ var init = function(_ctx){
     ctx = _ctx;
 };
 
-var wallaby = function(){
-    log.info('wallaby()');
+var wallaby = function(command){
+    log.info('wallaby() : '+command);
 };
 
 return {
