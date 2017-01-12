@@ -143,6 +143,22 @@ static int js_readfile(duk_context *ctx) {
 	return DUK_RET_ERROR;
 }
 
+duk_ret_t js_getMac(duk_context *ctx) {
+    const char *interface = duk_to_string(ctx, 0);
+    char *mac=malloc(18);
+    //duk_push_this(ctx);
+    
+    if(macaddr(interface,mac) != 0){
+	    duk_push_string(ctx,mac);
+	    free(mac);
+	    return 1;
+    } else {
+        free(mac);
+        return DUK_RET_ERROR;
+    }
+}
+
+
 duk_ret_t js_readdir(duk_context *ctx) {
     const char *dirname = duk_to_string(ctx, 0);
 
@@ -406,6 +422,7 @@ const duk_function_list_entry wallyMethods[] = {
     { "setTextUTF8",          js_setTextUTF8, 6 },
     { "log",                  js_log, 1 },
     { "getConfig",            js_getConfig, 0 },
+    { "getMac",               js_getMac, 1 },
     { "readFile",             js_readfile, 1 },
     { "readDir",              js_readdir, 1 },
     { "evalFile",             js_evalFile, 1 },

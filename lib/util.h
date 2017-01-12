@@ -91,5 +91,6 @@ void setupSignalHandler(void);
 int c_cleanupWally(void *s);
 extern void *duvThread(pluginHandler *ph);
 extern pluginHandler *pluginsInit(void);
+extern int macaddr(const char *iface, char *macbuf);
 
 #endif

@@ -17,6 +17,8 @@ set(WITH_KMS_DEMO off)
 
 # We want to gently wait for events or poll agressivly (more performant)
 set(WAIT_EV off)
+# We lock each call to the ui core (currently required)
+set(LOCK_CALL on)
 
 # Set number of compile cpu's
 set(MULTITHREADED_BUILD 1)
@@ -63,6 +65,9 @@ endif()
 
 if(WAIT_EV STREQUAL on)
 	set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DWAIT_EV")
+endif()
+if(WAIT_EV STREQUAL on)
+    set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DLOCK_CALL")
 endif()
 
 include_directories(${LIBUV_INCLUDE_DIRS} ${LIBSDL_INCLUDE_DIRS} ${LIBDUV_INCLUDE_DIRS} lib src)

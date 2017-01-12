@@ -123,10 +123,12 @@ bool uiLoop(void){
                   } 
                   thr_func((void*)wtx->param[i]);
            }
+#ifdef LOCK_CALL
            if(strcmp(funcName, "video::video_refresh_timer") != 0){
                slog(DEBUG,LOG_PLUGIN,"Signaling condition for %s at 0x%x",funcName, ht_get_simple(ph->functionWaitConditions,funcName));
                SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
 	   }
+#endif
 //           if(ph->transaction){
 //              slog(WARN,LOG_PLUGIN,"Freeing wtx for id %d at 0x%x",id,ph->transactions[id]);
 //              freeWtxElements(ph->transactions[id]);
@@ -171,9 +173,11 @@ bool uiLoop(void){
             default:
                   slog(ERROR,LOG_SDL,"Unknown threaded call event");
         }
+#ifdef LOCK_CALL
         if(strcmp(funcName, "video::video_refresh_timer") != 0){
              SDL_CondSignal(ht_get_simple(ph->functionWaitConditions,funcName));
         }
+#endif
         free(funcName);
     }
     slog(DEBUG,LOG_SDL,"UI Loop quit. Waiting for threads to finish");

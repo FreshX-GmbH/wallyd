@@ -92,14 +92,17 @@ function ssdp(context,location)
     }
         
     function registerClient(location){
+      log.debug(location,uuid);
       var featuresB64 = Duktape.enc('base64',JSON.stringify(features));
       var port,url;
       var temp = location.replace(/^http:\/\/|^https:\/\//,'').replace('/.*','');
+      log.debug(temp);
       var port = parseInt(temp.split(/:/) ? temp.split(/:/)[1].replace(/\/.*|\&.*|\?.*/,'') : 80);
       var host = temp.replace(/:.*|\/.*|\&.*|\?.*/,'');
-      var uuid = config.wally.uuid;
+        // TODO : network
+      var uuid = config.wally.uuid ? config.wally.uuid : wally.getMac(config.);
       var wifi = config.env.W_WFI ? nucleus.uv.getenv('W_WFI') : 'false';
-      var mac= uuid.replace(/(.{2})/g,"$1:").replace(/:$/,"");
+      var mac = uuid.replace(/(.{2})/g,"$1:").replace(/:$/,"");
       var url = temp.replace(/^.*?\//,'/') + '?' +
       'uuid=' + uuid +
       '&arch='+config.wally.arch  +

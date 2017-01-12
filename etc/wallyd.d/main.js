@@ -128,6 +128,9 @@ try{
 		    wally.log(stat);
 		    log.error(JSON.stringify(config.network));
 		    context.config.network.connected = true;
+		    context.config.network.iface = ifname;
+		    log.info('MAC : ',wally.getMac(ifname));
+		    context.config.mac = wally.getMac(ifname);
 		    log.info(stat);
 		    try {
 			context.ssdp  = nucleus.dofile('ssdp.js').ssdp(context,nucleus.getenv('W_SERVER'));

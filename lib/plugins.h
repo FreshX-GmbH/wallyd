@@ -103,6 +103,7 @@ typedef struct{
     pthread_t wallyClientThread;
     pthread_t mainThread;
     pthread_t uv_thr;
+    char macaddr[18];
     
     bool VFSOpen;
     char *VFSName;

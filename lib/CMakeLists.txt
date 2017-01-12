@@ -2,7 +2,7 @@ project(libwally)
 
 set(LIB_SRC util.c
     plugins.c Hash_Table.c HNode.c
-    sys.c memfs.c pqueue.c
+    sys.c memfs.c pqueue.c getifaddr.c
     slog.c getrssmem.c ui.c
 )
 

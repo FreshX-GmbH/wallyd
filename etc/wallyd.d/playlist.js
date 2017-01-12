@@ -44,7 +44,7 @@ var playlist = function(){
 //	Initialize and run timer
 var playlistWait = function() {
     if(typeof(config.connection) === 'undefined'){
-        log.error('Could not find config property');
+        log.warn('Playlist : Could not find a valid connection config property');
         return;
     }
     if(!config.connection.commands) {
