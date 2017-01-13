@@ -13,7 +13,7 @@ int js_setTargetTexture(duk_context *ctx){
     dschema_check(ctx, (const duv_schema_entry[]) {
       {"texture", duk_is_string},
       {0,0}});
-    scall("gui::setTargetTexture",(char*)duk_require_string(ctx, 0));
+    scall("gui::setTargetTexture %s",(char*)duk_require_string(ctx, 0));
     return 0;
 }
 

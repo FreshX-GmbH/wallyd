@@ -48,7 +48,7 @@ function findMin(data){
    return [-x,-y];
 }
 
-function renderScreen(TA,context, tree, screen, data)
+function renderScreen(TA, server, context, tree, screen, data)
 {
    var svg = new SVG();
    var json;
@@ -107,17 +107,22 @@ function renderScreen(TA,context, tree, screen, data)
         if(opts.style.gradientColor) {
             gradientColor = parseInt(opts.style.gradientColor.replace('#','0x'));
         }
+        log.debug('WR : ',obj.type,screen,X, Y, W/xScale, H/yScale, 255);
    
         if(obj.type === 'image'){
 	    if(!curl) {
 		continue;
 	    }
-            var res = TA.push(curl.get.bind(null,obj.path));
+            // TODO : request.js and put into TA
+            var imgUrl = obj.path.replace(/^undefined/,server);
+            var res = curl.get(imgUrl);
             if(res.body){
-               TA.push(wally.writeFileSync.bind(null,'/tmp/test.png',res.body));
-               //gui.loadImage(screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255);
+               wally.writeFileSync('/tmp/test.png',res.body);
+               TA.push(gui.loadImage.bind(null,screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255));
+            } else {
+            //TA.push(gui.loadImage.bind(null,screen,'/tmp/test.png',X, Y, W, H, 255));
+               log.error('Could not download from '+server+': '+imgUrl);
             }
-            TA.push(gui.loadImage.bind(null,screen,'/tmp/test.png',X, Y, W, H, 255));
             continue;
         }
         if(obj.type === 'line'){

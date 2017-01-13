@@ -150,7 +150,8 @@ duk_ret_t js_getMac(duk_context *ctx) {
     
     if(macaddr(interface,mac) != 0){
 	    duk_push_string(ctx,mac);
-	    free(mac);
+	    // TODO : do we need to free this? or is this the job of the gc?
+	    //free(mac);
 	    return 1;
     } else {
         free(mac);

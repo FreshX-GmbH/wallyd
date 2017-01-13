@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     pthread_cond_signal(&core_ready_condition);
     //pthread_mutex_unlock(&core_ready_mutex);
 
-   slog(ERROR,LOG_CORE,"PH Size : %d, WTX Size : %d",sizeof(pluginHandler), sizeof(wally_call_ctx));
+   slog(DEBUG,LOG_CORE,"PH Size : %d, WTX Size : %d",sizeof(pluginHandler), sizeof(wally_call_ctx));
    // remove old socket
     ret = unlink(FIFO);
     if(ret == 0){

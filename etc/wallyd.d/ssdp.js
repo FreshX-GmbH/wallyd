@@ -1,19 +1,13 @@
 (function(global){
 "use strict";
+var context, decodeUrl;
 
-// for direct test in nucleus
-if(typeof(Wally) === 'undefined')
-{
-        var context = nucleus.dofile('modules/wally/compat.js');
-        ssdp(context);
-        nucleus.uv.run();
-}
-
-function ssdp(context,location)
+function ssdp(context,iface,location)
 {
     nucleus.dofile('modules/bootstrap.js');
     var discovery =true;
     var createClient = require('modules/net').createClient;
+    decodeUrl = require('modules/net').decodeUrl;
     var httpCodec = require('modules/http-codec');
     var decoder = httpCodec.decoder;
     var p = context.p;
@@ -27,7 +21,7 @@ function ssdp(context,location)
 
     log.debug("ssdp location override : ",location)
     if(location){
-       registerClient(location);
+       registerClient(iface,location);
        return;
     }
     start(context);
@@ -37,7 +31,7 @@ function ssdp(context,location)
                ssdpTimer.stop();
                ssdpTimer.close();
                try {
-                   registerClient(location);
+                   registerClient(iface,location);
                } catch(e) {
                    log.error('Registration failed : ',e);
                }
@@ -91,20 +85,13 @@ function ssdp(context,location)
         });
     }
         
-    function registerClient(location){
-      log.debug(location,uuid);
+    function registerClient(iface,location){
+      var urlParts = decodeUrl(location);
       var featuresB64 = Duktape.enc('base64',JSON.stringify(features));
-      var port,url;
-      var temp = location.replace(/^http:\/\/|^https:\/\//,'').replace('/.*','');
-      log.debug(temp);
-      var port = parseInt(temp.split(/:/) ? temp.split(/:/)[1].replace(/\/.*|\&.*|\?.*/,'') : 80);
-      var host = temp.replace(/:.*|\/.*|\&.*|\?.*/,'');
-        // TODO : network
-      var uuid = config.wally.uuid ? config.wally.uuid : wally.getMac(config.);
+      var mac = wally.getMac(iface);
+      var uuid = mac.replace(/:/g,'');
       var wifi = config.env.W_WFI ? nucleus.uv.getenv('W_WFI') : 'false';
-      var mac = uuid.replace(/(.{2})/g,"$1:").replace(/:$/,"");
-      var url = temp.replace(/^.*?\//,'/') + '?' +
-      'uuid=' + uuid +
+      var url = location + '?uuid=' + uuid +
       '&arch='+config.wally.arch  +
       '&platform=WallyTV2-' + config.wally.arch +
       '&fw_version=' + config.wally.release + 
@@ -114,86 +101,73 @@ function ssdp(context,location)
       '&ip=' + config.network.ip +
       '&wifi=' + wifi + 
       '&features=' + featuresB64;
-      log.debug(url);
 
-      // wifi
-      log.debug('Connecting to host : '+host+':'+port);
-      screen.log('Found wallaby server at : '+host+'. Starting registration process...');
-   
-      try {
-        var client = createClient({
-          host: host,
-          port: port,
-          encode: httpCodec.encoder(),
-          decode: httpCodec.decoder()},
-          function(server){
-            p('connected :', server.socket.getpeername(), server.socket.getsockname());
-            server.write({
-              code: 200,
-              method: 'GET',
-              path: url,
-              headers: [
-                'User-Agent', 'seaduk',
-                'Date', new Date().toUTCString(),
-                'Connection', 'closed',
-                'Content-Type', 'text/plain',
-                'Content-Length', '14'
-              ]
-            },function(err){
-              if(err) { throw err;}
-              server.read(function (err, data) {
-                  if (err) { throw err; }
-                  p('Header : ',data); 
-              });
-            });
-            server.write('{ping:true;}\r\n',function(err){
-              if(err) { throw err;}
-              server.read(function (err, data) {
-                  if (err) { throw err; }
-                  try{
-                    var response = JSON.parse(data);
-                  } catch(err){
-                    screen.log('Registration failed : '+err);
-                  }
-                  var demo = 10;
-                  response.host = host;
-        	      response.url = location;
-        	      response.serverport = port;
-                  response.configserver = host+":"+port;
-        	      response.uuid = uuid;
-                  config.connection = response;
-                  if(response.configured === false){
-                      screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in 10s.');
-                      var timer = new uv.Timer();
-                      timer.start(0, 1000, function () {
-                          demo = demo - 1;
-                          if(demo < 0){
-                            screen.log('Running icinga2 dashboard demo. Please configure this system on your server at '+host+'.');
-                            try {
-                              var taName = '/texapps/demo.js';
-                              log.error('Running texapp '+taName);
-                              wally.evalFile(config.homedir+taName);
-                              timer.stop();
-                              timer.close();
-                            } catch(e) {
-                              log.error(e);
-                            }
-                          } else {
-                            screen.log('Registered at '+host+'. This client is not yet configured at this wallaby server. Starting demo mode in '+demo+'s');
-                          }
-                      });
-                  } else {
-                      screen.log('Registered at '+host+'. Starting playlist');
-                  }
+      log.debug('Registration at ',url);
+      screen.log('Found wallaby server at : '+location+'. Starting registration process...');
+      request(url, function(err, header, data){
+          if(err){
+              screen.log('Registration failed : '+err);
+              log.error('Register call failed : '+err);
+              return;
+          }
+          try{
+              var response = JSON.parse(data);
+          } catch(err){
+              screen.log('Registration response invalid.');
+              log.error('Registration response invalid : '+err);
+          }
+          var demo = 10;
+          response.host = urlParts.host;
+          response.url = location;
+          response.serverport = urlParts.port;
+          response.configserver = urlParts.host+":"+urlParts.port;
+          response.uuid = uuid;
+          config.connection = response;
+          if(response.configured === false){
+               screen.log('Registered at '+urlParts.host+'. This client is not yet configured at this wallaby server. Starting demo mode in 10s.');
+               var timer = new uv.Timer();
+               timer.start(0, 1000, function () {
+                    demo = demo - 1;
+                    if(demo < 0){
+                            screen.log('Running dashboard demo. Please configure this system on your server at '+urlParts.host+'.');
+                        try {
+                            var taName = '/texapps/demo.js';
+                            log.error('Running texapp '+taName);
+                            wally.evalFile(config.homedir+taName);
+                            timer.stop();
+                            timer.close();
+                        } catch(e) {
+                            log.error(e);
+                        }
+                    } else {
+                        screen.log('Registered at '+urlParts.host+'. This client is not yet configured at this wallaby server. Starting demo mode in '+demo+'s');
+                    }
                });
-            });
+          } else {
+               screen.log('Registered at '+urlParts.host+'. Starting playlist');
+          }
       });
-      } catch (e) {
-            log.error('Registration process failed :',e);
-      }
-    }
+   }
 }
-    
+
+ // for direct test in nucleus
+if(typeof(Wally) === 'undefined')
+{
+        var playlist  = nucleus.dofile('playlist.js');
+        context = nucleus.dofile('modules/wally/compat.js');
+        var features = '[]';
+        var request = nucleus.dofile('modules/request.js').request;
+        ssdp(context,'en0',nucleus.getenv('W_SERVER'));
+        try {
+            nucleus.uv.run();
+        } catch(e) {
+            log.error(e);
+        }
+}
+
+var request = nucleus.dofile('modules/request.js').request;
+var decodeUrl = nucleus.dofile('modules/request.js').decodeUrl;
+   
 return { ssdp: ssdp };
     
 })(this);

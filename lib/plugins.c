@@ -5,8 +5,8 @@
 #include <SDL_events.h>
 #include <SDL_mutex.h>
 
-#define SDLWAITTIMEOUT 2000
-#define SDLWAITTIMEOUT_TRANSACTION 10000
+#define SDLWAITTIMEOUT 3000
+#define SDLWAITTIMEOUT_TRANSACTION 30000
 
 pluginHandler *ph;
 pthread_mutex_t callMutex=PTHREAD_MUTEX_INITIALIZER;
@@ -236,11 +236,8 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
         // Make a copy of funcName and the parameter. The ui loop will free this later.
         event.user.data1 = funcName;
         char *funcBak = strdup(funcName);
-#ifdef  LOCK_CALL
         SDL_TryLockMutex(ph->funcMutex);
-#endif
         SDL_PushEvent(&event);
-#ifdef  LOCK_CALL
         if(waitThread == true){
             int timeout;
             if(ph->transaction == true){
@@ -255,7 +252,6 @@ bool callEx(char *funcNameTmp, void *ret, void *paramsTmp, int paramType,bool wa
                 ph->conditionTimeout++;
             }
         }
-#endif
         free(funcBak);
         localret=0;
     } else {

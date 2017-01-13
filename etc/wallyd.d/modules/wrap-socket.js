@@ -41,7 +41,7 @@ function wrapSocket(socket, decode, encode) {
   }
 
   function onRead(err, chunk) {
-    //p("onRaw", err, chunk);
+    //log.debug("onRaw", err, chunk);
     // If there is data and a decoder, let's process it.
     // TODO: This is probably bad design, we should consider carefully.
     //       Maybe modify the decoder interface to know about EOS events too.

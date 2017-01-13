@@ -1,8 +1,8 @@
 'use strict';
 
 var done = false;
-var s = 'WallyTV2 starting ...'.split('');
-var c = 0;
+var s = [ 'WallyTV2',' starting...' ];
+var c = 0, yc=0;
 var mainTA = new Transaction();
 var betaTA = new Transaction();
 var writeTA = new Transaction();
@@ -15,7 +15,7 @@ mainTA.push(screen.render.bind(null,'main'));
 try {
      var memTimer = new uv.Timer();
      var writeTimer = new uv.Timer();
-     memTimer.start( 1500, 1500, function(){
+     memTimer.start(1, 1, function(){
 	  //if(done === false){
 	       mainTA.commit();
 	       mainTA = betaTA;
@@ -24,16 +24,16 @@ try {
 	       mainTA.commit();
 	       memTimer.stop();
 	       memTimer.close();
-	       writeTimer.start(20,20,function(){
+	       writeTimer.start(3,600,function(){
 		  var L=s[c];
-		  if(L === undefined){
+		  //log.warn(s,l,config.wally.width);
+		  if(typeof(L) === 'undefined'){
 		      writeTimer.stop();
 		      writeTimer.close();
-		      return ;
+		      return;
 		  }
-     		  c++;
-     		  var y=20*c;
-     		  writeTA.push(screen.setTextUTF8.bind(null,'main','black','chalk32',config.wally.width*0.33+y,-80,L));
+		  c++;
+     		  writeTA.push(screen.setTextUTF8.bind(null,'main','black','chalk32',config.wally.width*0.25+160*c,-80,L));
      		  writeTA.push(screen.render.bind(null,'main'));
 		  writeTA.commit();
 		  writeTA = new Transaction();

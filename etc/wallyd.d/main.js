@@ -103,8 +103,8 @@ try{
     if(context.config.network){
       var networktimer = new uv.Timer();
       var count = 0;
-      networktimer.start(0, 100, function(){
-	screen.log('Waiting for v4 network to get ready ('+count/10+').');
+      networktimer.start(0, 500, function(){
+	screen.log('Waiting for v4 network to get ready ('+count/2+').');
 	count++;
         var network = uv.interface_addresses();
 	log.info(network);
@@ -133,7 +133,7 @@ try{
 		    context.config.mac = wally.getMac(ifname);
 		    log.info(stat);
 		    try {
-			context.ssdp  = nucleus.dofile('ssdp.js').ssdp(context,nucleus.getenv('W_SERVER'));
+			context.ssdp  = nucleus.dofile('ssdp.js').ssdp(context,ifname,nucleus.getenv('W_SERVER'));
 		    } catch(e) {
 			log.error('SSDP failed : ',e);
 		    }
