@@ -423,7 +423,7 @@ int setImageScale(void *str)
 //   return true;
 //}
 
-int setImage(char *name,int x, int y,const char *fileName){
+int setImage(char *name, int x, int y, char *fileName){
    if(!name || !fileName){
       slog(ERROR,LOG_SDL,"Wrong parameters setImage(name,x,y,file).");
       return false;
@@ -504,6 +504,7 @@ char *initPlugin(pluginHandler *_ph){
    wally_put_function(PLUGIN_SCOPE"::setText"           ,WFUNC_THRD, setText            ,1);
    wally_put_function(PLUGIN_SCOPE"::setTextUTF8"       ,WFUNC_THRD, setTextUTF8        ,1);
    wally_put_function(PLUGIN_SCOPE"::log"               ,WFUNC_THRD, renderLog          ,1);
+   wally_put_function(PLUGIN_SCOPE"::setImage"          ,WFUNC_THRD, setImage           ,1);
    wally_put_function(PLUGIN_SCOPE"::setImageScaled"    ,WFUNC_THRD, setImageScale      ,1);
    wally_put_function(PLUGIN_SCOPE"::setImageScaledSW"  ,WFUNC_THRD, setImageScaleSW    ,1);
    wally_put_function(PLUGIN_SCOPE"::setPngScaled"      ,WFUNC_THRD, setImageScale      ,1);

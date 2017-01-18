@@ -75,6 +75,32 @@ duk_ret_t js_putImage(duk_context *ctx){
     return 0;
 }
 
+int js_setImageScaled(duk_context *ctx){
+    dschema_check(ctx, (const duv_schema_entry[]) {
+       {"texture", duk_is_string},
+       {"file ", duk_is_string},
+       {0,0} });
+    SDL_Color c;
+    const char *texName  = duk_require_string(ctx, 0);
+    const char *fileName = duk_require_string(ctx, 1);
+    scall("screen::setImageScaled %s %s",texName,fileName);
+}
+
+
+int js_setImage(duk_context *ctx){
+    dschema_check(ctx, (const duv_schema_entry[]) {
+       {"texture", duk_is_string},
+       {"x1", duk_is_number},
+       {"y1", duk_is_number},
+       {"file ", duk_is_string},
+       {0,0} });
+    SDL_Color c;
+    const char *texName  = duk_require_string(ctx, 0);
+    const int x1 = duk_require_int(ctx, 1);
+    const int y1 = duk_require_int(ctx, 2);
+    const char *fileName = duk_require_string(ctx, 3);
+    scall("screen::setImage %s %d %d %s",texName,x1,y1,fileName);
+}
 
 int js_loadImageFile(duk_context *ctx){
     dschema_check(ctx, (const duv_schema_entry[]) {
@@ -427,10 +453,16 @@ int c_loadImageFile(void *_str)
    }
    SDL_QueryTexture( text, NULL, NULL, &srect.w, &srect.h );
    SDL_Rect rect = {x,y,w,h};
-   //SDL_SetTextureBlendMode(TI->texture, SDL_BLENDMODE_BLEND);
-//   SDL_SetRenderTarget( ph->renderer, TI->texture );
+   if(w == 0) {
+      rect.w = srect.w;
+   }
+   if(h == 0) {
+      rect.h = srect.h;
+   }
+   SDL_SetTextureBlendMode(TI->texture, SDL_BLENDMODE_BLEND);
+   SDL_SetRenderTarget( ph->renderer, TI->texture );
    SDL_RenderCopy( ph->renderer, text, &srect, &rect);
-//   SDL_SetRenderTarget( ph->renderer,NULL );
+   SDL_SetRenderTarget( ph->renderer,NULL );
 //   renderActive(TI->name);
    SDL_DestroyTexture(text);
    ph->textureCount--;
@@ -625,6 +657,8 @@ const duk_function_list_entry js_guiMethods[] = {
      {  "drawBox"           , js_drawBox,6},
      {  "drawLine"          , js_drawLine,6},
      {  "loadImage"         , js_loadImageFile,7},
+     {  "setImageScaled"    , js_setImageScaled,2},
+     {  "setImage"          , js_setImage,4},
      {  "drawText"          , js_drawText,6},
      {  "putImage"          , js_putImage,7},
      {  "clearTexture"      , js_clearTexture,1},

@@ -9,7 +9,7 @@ var textures = {
     main      : { z: 10, x: 0,   y:    0,  w: '100%', h:-16, color : 'FFFFFF' },
     log       : { z: 30, x: 0,   y: '-20', w: '100%', h: 20, color : 'FEFEFE' }, 
     version   : { z: 40, x: -260, y: 0,    w: 260,    h: 16, color : 'AA44FF' },
-//    memdbg    : { z: 41, x: -260, y: 16,   w: 260,    h: 16, color : 'AA44FF' },
+    memdbg    : { z: 41, x: -260, y: 16,   w: 260,    h: 16, color : 'AA44FF' },
 //    netinfo   : { z: 42, x: -260, y: 32,   w: 260,    h: 16, color : 'AA44FF' },
 //    stat      : { z: 43, x: -260, y: 48,   w: 260,    h: 16, color : 'AA44FF' },
 //    up        : { z: 50, x: -120, y: -20,  w: 100,    h: 20, color : 'FEFEFE' },

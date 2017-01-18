@@ -8,7 +8,13 @@ var request;
 
 var exec = function(cmd){
    if(typeof(modules[cmd.command]) !== 'undefined'){
-      modules[cmd.command](cmd);
+      var ret = modules[cmd.command](cmd);
+      if(ret === undefined){
+         sendSuccess(cmd.id);
+      } else {
+         log.error('Command failed : ',ret);
+         sendFailed(cmd.id,ret);
+      }
    } else {
       log.error('No module for command '+cmd.command+' available');
    }
@@ -18,8 +24,10 @@ var playlist = function(){
     var commands = config.connection.commands;
     if(typeof(commands) !== 'undefined' && commands.length > 0){
         for (var id in commands){
-           log.debug(commands[id]);
-           exec(commands[id]);
+           if(commands[id].active === true){
+               log.debug(commands[id]);
+               exec(commands[id]);
+           }
         }
         config.connection.commands=[];
     }
@@ -67,9 +75,9 @@ var restartLoop = function(){
     }
 };
 
-var sendSuccess = function(context){
+var sendSuccess = function(id){
     log.debug('Command executed successfully. Notifying server.');
-    var successURL=config.connection.configserver+'/commandsuccess?uuid='+context.config.uuid+'&cmdid='+context.cmdid;
+    var successURL=config.connection.configserver+'/commandsuccess?uuid='+config.connection.uuid+'&cmdid='+id;
     log.debug('Calling : '+successURL);
     request(successURL, function(error, response, body) {
         if(error){
@@ -81,12 +89,11 @@ var sendSuccess = function(context){
     });
 };
 
-var sendFailed = function(context, err){
+var sendFailed = function(id, err){
     log.debug('Command executed with error. Notifying server.');
-    // TODO : base64 encode error string
     err = err + '';
-    var successURL=context.config.configserver+'/commandfailed?uuid='+context.config.uuid+'&cmdid='+context.cmdid+'&err='+err.toString('base64');
-    // console.log('Calling : '+successURL);
+    var successURL=config.connection.configserver+'/commandfailed?uuid='+config.connection.uuid+'&cmdid='+id+'&err='+Duktape.enc('base64',err);
+    log.debug('Calling : '+successURL);
     request(successURL, function(error, response, body) {
         if(error){
             log.debug('Could not notify : '+error);

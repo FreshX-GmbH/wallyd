@@ -4,6 +4,7 @@ var wally = new Wally();
 var gui = new GUI();
 var date = new Date();
 var uv = nucleus.uv;
+var timeout = 15000;
 
 var memstartb = wally.getrss();
 var memstart = Math.round((memstartb/1024/1024)*100)/100+'mb';
@@ -42,7 +43,7 @@ function oninterval() {
 
 try {
     var memtimer = new uv.Timer();
-    memtimer.start( 0, 2000, oninterval);
+    memtimer.start( 0, timeout, oninterval);
 } catch(e) {
     log.error('Error in memdbg timer : '+e);
 }
