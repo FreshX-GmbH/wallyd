@@ -93,7 +93,7 @@ function ssdp(context,iface,location)
       var wifi = config.env.W_WFI ? nucleus.uv.getenv('W_WFI') : 'false';
       var url = location + '?uuid=' + uuid +
       '&arch='+config.wally.arch  +
-      '&platform=WallyTV2-' + config.wally.arch +
+      '&platform=WallyTV2-' + config.wally.arch +'-'+ config.wally.OS +
       '&fw_version=' + config.wally.release + 
       '&mac=' + mac +
       '&width=' + config.wally.width +

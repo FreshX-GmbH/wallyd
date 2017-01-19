@@ -286,6 +286,13 @@ duk_ret_t js_getConfig(duk_context *ctx)
 #ifdef __aarch64__
 	    DUK_PUSH_PROP_STRING("arch" , "arm64");
 #endif
+#if defined(LINUX)
+   DUK_PUSH_PROP_STRING("OS" , "LX");
+#elif defined(DARWIN)
+   DUK_PUSH_PROP_STRING("OS" , "OSX");
+#else
+   DUK_PUSH_PROP_STRING("OS" , "GEN");
+#endif
    DUK_PUSH_PROP_BOOL("registered", ph->registered);
    DUK_PUSH_PROP_BOOL("ssdp", ph->ssdp);
    DUK_PUSH_PROP_BOOL("cloud", ph->cloud);
