@@ -118,7 +118,7 @@ function renderScreen(TA, server, context, tree, screen, data)
             var res = curl.get(imgUrl);
             if(res.body){
                wally.writeFileSync('/tmp/test.png',res.body);
-               TA.push(gui.loadImage.bind(null,screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255));
+               TA.push(gui.loadImageScaled.bind(null,screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255));
             } else {
             //TA.push(gui.loadImage.bind(null,screen,'/tmp/test.png',X, Y, W, H, 255));
                log.error('Could not download from '+server+': '+imgUrl);

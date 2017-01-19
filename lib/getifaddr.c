@@ -2,9 +2,21 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <stdio.h>
+#ifdef DARWIN
+#include <ifaddrs.h> 
 #include <net/if_dl.h>
-#include <ifaddrs.h>
+#endif
+#include <arpa/inet.h>
+#include <netdb.h>
+#ifdef LINUX
+#include <sys/ioctl.h>
+#include <net/if.h>
+#endif
 
+// TODO : make on version work on both OS
+
+#ifdef DARWIN
 int macaddr(char *ifname, char *macaddrstr) {
     struct ifaddrs *ifap, *ifaptr;
     unsigned char *ptr;
@@ -39,3 +51,71 @@ int macaddr(char *ifname, char *macaddrstr) {
     }
 }
 
+#endif
+
+#ifdef LINUX
+int macaddr(char *ifname, char *macp)
+{
+  char buf[8192] = {0};
+  struct ifconf ifc = {0};
+  struct ifreq *ifr = NULL;
+  int sck = 0;
+  int nInterfaces = 0;
+  int i = 0;
+  char ip[INET6_ADDRSTRLEN] = {0};
+  struct ifreq *item;
+  struct sockaddr *addr;
+
+  /* Get a socket handle. */
+  sck = socket(PF_INET, SOCK_DGRAM, 0);
+  if(sck < 0)
+  {
+    perror("socket");
+    return 1;
+  }
+
+  /* Query available interfaces. */
+  ifc.ifc_len = sizeof(buf);
+  ifc.ifc_buf = buf;
+  if(ioctl(sck, SIOCGIFCONF, &ifc) < 0)
+  {
+    perror("ioctl(SIOCGIFCONF)");
+    return 1;
+  }
+
+  /* Iterate through the list of interfaces. */
+  ifr = ifc.ifc_req;
+  nInterfaces = ifc.ifc_len / sizeof(struct ifreq);
+
+  for(i = 0; i < nInterfaces; i++)
+  {
+    item = &ifr[i];
+    if(strcmp(ifname,item->ifr_name) !=0) continue;
+
+//    addr = &(item->ifr_addr);
+//
+//    /* Get the IP address*/
+//    if(ioctl(sck, SIOCGIFADDR, item) < 0)
+//    {
+//      perror("ioctl(OSIOCGIFADDR)");
+//    }
+//
+//    if (inet_ntop(AF_INET, &(((struct sockaddr_in *)addr)->sin_addr), ip, sizeof ip) == NULL)
+//        {
+//           perror("inet_ntop");
+//           continue;
+//        }
+
+    sprintf(macp, " %02x:%02x:%02x:%02x:%02x:%02x",
+    (unsigned char)item->ifr_hwaddr.sa_data[0],
+    (unsigned char)item->ifr_hwaddr.sa_data[1],
+    (unsigned char)item->ifr_hwaddr.sa_data[2],
+    (unsigned char)item->ifr_hwaddr.sa_data[3],
+    (unsigned char)item->ifr_hwaddr.sa_data[4],
+    (unsigned char)item->ifr_hwaddr.sa_data[5]);
+
+  }
+
+  return 0;
+}
+#endif
