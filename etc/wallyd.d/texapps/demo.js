@@ -13,7 +13,7 @@ if(typeof(Wally) === 'undefined')
 } else  {
 	wally = new Wally();
 	gui = new GUI();
-	wallaby = require('./modules/wally/wallaby');
+	wallaby = require('./modules/wally/wallabyRenderer');
 }
 
 var date = new Date();
