@@ -36,18 +36,21 @@ fonts = {
     chalk32: { file : fontsdir+'/Chalkduster.ttf', size : 32}
 };
 
+defTA.push(screen.log.bind(null,'Creating colors...'));
 for (var c in colors){
     var color = new Color(c,colors[c]);
-    defTA.push(color.create.bind(null,color));
+    color.create(color);
 }
 
+defTA.push(screen.log.bind(null,'Loading fonts...'));
 for (var f in fonts) {
     defTA.push(screen.loadFont.bind(null, f,fonts[f].file, fonts[f].size));
 }
 
+defTA.push(screen.log.bind(null,'Creating textures...'));
 for (var t in textures) {
     var tex = new Texture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h, textures[t].color);
-    defTA.push(tex.create.bind(null,tex));
+    tex.create(tex);
 }
 
 //   Display the test screen
