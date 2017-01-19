@@ -38,16 +38,16 @@ fonts = {
 
 for (var c in colors){
     var color = new Color(c,colors[c]);
-    defTA.push(color.create.bind(color));
+    defTA.push(color.create.bind(null,color));
 }
 
 for (var f in fonts) {
-    defTA.push( screen.loadFont.bind(null, f,fonts[f].file, fonts[f].size));
+    defTA.push(screen.loadFont.bind(null, f,fonts[f].file, fonts[f].size));
 }
 
 for (var t in textures) {
     var tex = new Texture(t,textures[t].z,textures[t].x,textures[t].y,textures[t].w,textures[t].h, textures[t].color);
-    defTA.push(tex.create.bind(tex));
+    defTA.push(tex.create.bind(null,tex));
 }
 
 //   Display the test screen

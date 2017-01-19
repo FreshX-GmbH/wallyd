@@ -5,8 +5,8 @@
 #include <SDL_events.h>
 #include <SDL_mutex.h>
 
-#define SDLWAITTIMEOUT 3000
-#define SDLWAITTIMEOUT_TRANSACTION 30000
+#define SDLWAITTIMEOUT 1000
+#define SDLWAITTIMEOUT_TRANSACTION 10000
 
 pluginHandler *ph;
 pthread_mutex_t callMutex=PTHREAD_MUTEX_INITIALIZER;
@@ -58,23 +58,25 @@ void freeWtxElements(wally_call_ctx* wtx){
        return;
     }
     pthread_mutex_lock(&ph->wtxMutex);
-    int elements = wtx->elements, count = 0;
+    int elements = wtx->elements;
+    int count = 0;
 //    wally_call_ctx *wtx = *xwtx;
-    slog(DEBUG,LOG_PLUGIN,"Free WTX %d with %d elements", wtx->transaction_id, wtx->elements);
-    for(; elements >= 0; elements--){
-        slog(TRACE,LOG_PLUGIN,"Free WTX element %d %s(%s)", elements,wtx->name[elements],wtx->param[elements]);
-        if(wtx->name[elements]){
+    slog(DEBUG,LOG_PLUGIN,"Free WTX %d with %d/%d elements", wtx->transaction_id, wtx->elements,elements);
+    for(; elements > 0; elements--){
+	int el = elements-1;
+        slog(DEBUG,LOG_PLUGIN,"Free WTX element %d %s(%s)", el,wtx->name[el],wtx->param[el]);
+        if(wtx->name[el]){
             count++;
-            free(wtx->name[elements]);
-            wtx->name[elements] = NULL;
+            free(wtx->name[el]);
+            wtx->name[el] = NULL;
         } else {
-            slog(TRACE,LOG_PLUGIN,"Element %d already freed!",elements);
+            slog(TRACE,LOG_PLUGIN,"Element %d already freed!",el);
         }
-        if(wtx->param[elements]){
-            free(wtx->param[elements]);
-            wtx->param[elements] = NULL;
+        if(wtx->param[el]){
+            free(wtx->param[el]);
+            wtx->param[el] = NULL;
         } else {
-            slog(TRACE,LOG_PLUGIN,"Element parameter %d already freed!",elements);
+            slog(TRACE,LOG_PLUGIN,"Element parameter %d already freed!",el);
         }
     }
     // This is needed, if we reuse the WTX (i.e. transaction.clear()) - not yet functional

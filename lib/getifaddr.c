@@ -1,14 +1,11 @@
-#include <stdio.h>
-#include <string.h>
+#include "plugins.h"
+#include "util.h"
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <stdio.h>
+#include <netdb.h>
 #ifdef DARWIN
 #include <ifaddrs.h> 
 #include <net/if_dl.h>
 #endif
-#include <arpa/inet.h>
-#include <netdb.h>
 #ifdef LINUX
 #include <sys/ioctl.h>
 #include <net/if.h>
@@ -17,7 +14,7 @@
 // TODO : make on version work on both OS
 
 #ifdef DARWIN
-int macaddr(char *ifname, char *macaddrstr) {
+int macaddr(const char *ifname, char *macaddrstr) {
     struct ifaddrs *ifap, *ifaptr;
     unsigned char *ptr;
     int ret = 0;
@@ -54,7 +51,7 @@ int macaddr(char *ifname, char *macaddrstr) {
 #endif
 
 #ifdef LINUX
-int macaddr(char *ifname, char *macp)
+int macaddr(const char *ifname, char *macp)
 {
   char buf[8192] = {0};
   struct ifconf ifc = {0};
@@ -66,12 +63,14 @@ int macaddr(char *ifname, char *macp)
   struct ifreq *item;
   struct sockaddr *addr;
 
+  slog(INFO,LOG_JS,"Get Mac for IF : %s",ifname);
+
   /* Get a socket handle. */
   sck = socket(PF_INET, SOCK_DGRAM, 0);
   if(sck < 0)
   {
-    perror("socket");
-    return 1;
+    slog(ERROR,LOG_UTIL,"Error in socket.");
+    return 0;
   }
 
   /* Query available interfaces. */
@@ -79,8 +78,8 @@ int macaddr(char *ifname, char *macp)
   ifc.ifc_buf = buf;
   if(ioctl(sck, SIOCGIFCONF, &ifc) < 0)
   {
-    perror("ioctl(SIOCGIFCONF)");
-    return 1;
+    slog(ERROR,LOG_UTIL,"ioctl(SIOCGIFCONF)");
+    return 0;
   }
 
   /* Iterate through the list of interfaces. */
@@ -113,9 +112,9 @@ int macaddr(char *ifname, char *macp)
     (unsigned char)item->ifr_hwaddr.sa_data[3],
     (unsigned char)item->ifr_hwaddr.sa_data[4],
     (unsigned char)item->ifr_hwaddr.sa_data[5]);
-
+    return 1;
   }
-
+  slog(WARN,LOG_JS,"Mac of %s not found.",ifname);
   return 0;
 }
 #endif

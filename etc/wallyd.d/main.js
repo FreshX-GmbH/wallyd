@@ -130,7 +130,9 @@ try{
 		    log.error(JSON.stringify(config.network));
 		    context.config.network.connected = true;
 		    context.config.network.iface = ifname;
+		    log.error('PreMac : '+ifname);
 		    log.info('MAC : ',wally.getMac(ifname));
+		    log.error('PostMac : '+ifname);
 		    context.config.mac = wally.getMac(ifname);
 		    log.info(stat);
 		    try {
