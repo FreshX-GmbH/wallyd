@@ -66,9 +66,9 @@ int js_commitTransaction(duk_context *ctx) {
 
 int js_newTransaction(duk_context *ctx) {
    wally_call_ctx* wtx = NULL;
-   ph->transactionCount=ph->transactionCount+1;
-   int id = ph->transactionCount;
+   int id = ph->transactionCount+1;
    pthread_mutex_lock(&ph->taMutex);
+   ph->transactionCount=ph->transactionCount+1;
    wtx = newWtx(id);
    pthread_mutex_unlock(&ph->taMutex);
    if(!wtx){
