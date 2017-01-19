@@ -105,7 +105,7 @@ int macaddr(const char *ifname, char *macp)
 //           continue;
 //        }
 
-    sprintf(macp, " %02x:%02x:%02x:%02x:%02x:%02x",
+    sprintf(macp, "%02x:%02x:%02x:%02x:%02x:%02x",
     (unsigned char)item->ifr_hwaddr.sa_data[0],
     (unsigned char)item->ifr_hwaddr.sa_data[1],
     (unsigned char)item->ifr_hwaddr.sa_data[2],
