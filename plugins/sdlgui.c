@@ -372,7 +372,7 @@ int c_drawGradient(void *_str)
     int hol=atoi(holStr);
     hexToColor(strtol(fcolStr,NULL,16), &fromcol);
     hexToColor(strtol(tcolStr,NULL,16), &tocol);
-    slog(DEBUG,LOG_JS, "c_drawGradient %s {%d,%d,%d,%d} {...}{...} %d %d",texName,x1,y1,x2,y2,!hor, hol);
+    slog(INFO,LOG_JS, "c_drawGradient %s {%d,%d,%d,%d} {%s}{%s} %d %d",texName,x1,y1,x2,y2,fcolStr,tcolStr,!hor, hol);
     drawGradient(texName, r, fromcol,tocol,!hor,hol);
     renderActive(texName);
     return 0;
@@ -593,8 +593,8 @@ void drawGradient(const char *textureName, SDL_Rect rect,const SDL_Color col1, S
   float rstep = fabs(fr/run)*rdir;
   float gstep = fabs(fg/run)*gdir;
   float bstep = fabs(fb/run)*bdir;
-  slog(TRACE,DEBUG,"Rect {%d,%d,%d,%d}",rect.x,rect.y,rect.w,rect.h);
-  slog(TRACE,DEBUG,"Run %d, Steps %f, FMAX:%f, FMIN:%f r:%f,g:%f,b:%f",run,steps, maxrun,minrun,rstep, gstep, bstep);
+  slog(INFO,DEBUG,"Rect {%d,%d,%d,%d}",rect.x,rect.y,rect.w,rect.h);
+  slog(INFO,DEBUG,"Run %d, Steps %f, FMAX:%f, FMIN:%f r:%f,g:%f,b:%f",run,steps, maxrun,minrun,rstep, gstep, bstep);
   for (int i=0; i <= run; ++i) {
     int r = rbase+i*rstep;
     int g = gbase+i*gstep;

@@ -21,6 +21,16 @@ var text = function(command){
 
 };
 
+var gradient = function(command){
+    log.info('gradient() : '+command.url);
+    var params = command.url.split(/ /);
+    gui.clearTextureNoPaint(params[0]);
+    gui.setTargetTexture(params[0]);
+    //params[5] = params[5].
+    wally.scall('gui::drawGradient '+command.url);
+    screen.render(params[0]);
+};
+
 var showImage = function(command){
     log.info('Requesting Image URL : ',command.url)
     var url=decodeUrl(command.url);
@@ -31,7 +41,11 @@ var showImage = function(command){
         var code = res.code;
         var headers = res.headers;
         var image = res.body;
-        screen.log('Loading image from '+command.url+' updating every '+command.wait+' seconds');
+        if(command.wait > command.delay){
+            screen.log('Loading image once from '+command.url);
+        } else {
+            screen.log('Loading image from '+command.url+' updating every '+command.wait+' seconds');
+        }
         if(res.body){
            wally.writeFileSync('/tmp/test.png',res.body);
            TA.push(gui.clearTextureNoPaint.bind(null,'main'));
@@ -57,6 +71,7 @@ return {
     showImage: showImage,
     video: video,
     text: text,
+    gradient: gradient,
     init: init
 };
 
