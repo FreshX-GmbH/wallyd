@@ -72,23 +72,28 @@ function request(location, callback)
              server.write(req, function(err){
                 if (err) { 
                     log.debug('write() error : ',err);
+                    server.socket.close();
                     return callback(err,null); 
                 }
                 server.read(function (err, header) {
                     if (err) { 
                         log.debug('read() error : ',err);
+                        server.socket.close();
                         return callback(err,null); 
                     }
                     server.write('0\r\n',function(err){
                         if (err) { 
                             log.debug('write() error : ',err);
+                            server.socket.close();
                             return callback(err,null); 
                         }
                         server.read(function (err, body) {
                             if (err) { 
                                 log.debug('read() error : ',err);
+                                server.socket.close();
                                 return callback(err,null); 
                             }
+                            server.socket.close();
                             return callback(null,header,body);
                         });
                     });

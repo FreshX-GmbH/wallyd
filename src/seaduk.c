@@ -26,6 +26,15 @@ enum build_mode {
 //  exit(duk_require_int(ctx, 0));
 //  return 0;
 //}
+//
+
+static void my_duk_fatal(duk_context *ctx, int code, const char *msg){
+    slog(ERROR,LOG_JS,"JS encountered a fatal error %d : %s",code,msg);
+    duk_dump_context_stderr(ctx);
+    duk_get_prop_string(ctx, -1, "stack");
+    slog(ERROR, LOG_JS, "Uncaught %s\n", duk_safe_to_string(ctx, -1));
+    exit(1);
+}
 
 static char* base;
 //static mz_zip_archive zip;
@@ -404,7 +413,7 @@ void *duvThread(pluginHandler *ph){
 //  int argstart = 1;
 
   slog(INFO,LOG_CORE, "Initializing duktape core");
-  duk_context *ctx = duk_create_heap(NULL, NULL, NULL, &loop,NULL);
+  duk_context *ctx = duk_create_heap(NULL, NULL, NULL, &loop,my_duk_fatal);
 
   if(!ctx) {
      slog(ERROR,LOG_CORE, "Problem initiailizing duktape heap");
@@ -451,9 +460,9 @@ void *duvThread(pluginHandler *ph){
   //printf("\nEntering UVRUN(0x%x) %s/%s (argv:%s, %s,argc:%d)\n\n",ctx,base,entry.data,argv[0],argv[1],argc);
   duk_put_nucleus(ctx, argc, argv, argc);
 
-  duk_push_string(ctx, "nucleus.dofile('");
+  duk_push_string(ctx, "try { nucleus.dofile('");
   duk_push_lstring(ctx, entry.data, entry.len);
-  duk_push_string(ctx, "')");
+  duk_push_string(ctx, "') } catch(e) { print(e.stack);}");
   duk_concat(ctx, 3);
   if (duk_peval(ctx)) {
     duk_dump_context_stderr(ctx);
@@ -468,3 +477,4 @@ void *duvThread(pluginHandler *ph){
   duk_destroy_heap(ctx);
   return NULL;
 }
+

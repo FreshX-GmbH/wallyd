@@ -125,6 +125,29 @@ int js_loadImageFile(duk_context *ctx){
     return 0;
 }
 
+int js_loadImageFileScaled(duk_context *ctx){
+    dschema_check(ctx, (const duv_schema_entry[]) {
+       {"texture", duk_is_string},
+       {"file ", duk_is_string},
+       {"x1", duk_is_number},
+       {"y1", duk_is_number},
+       {"x2", duk_is_number},
+       {"y2", duk_is_number},
+       {"alpha", duk_is_number},
+       {0,0} });
+    SDL_Color c;
+    const char *texName  = duk_require_string(ctx, 0);
+    const char *fileName = duk_require_string(ctx, 1);
+    const int x1 = duk_require_int(ctx, 2);
+    const int y1 = duk_require_int(ctx, 3);
+    const int x2 = duk_require_int(ctx, 4);
+    const int y2 = duk_require_int(ctx, 5);
+    const int alpha = duk_require_int(ctx, 6);
+    SDL_Rect r = {x1,y1,x2,y2};
+    scall("gui::loadImageFile %s %s %d %d %d %d %d",texName,fileName, x1,y1,x2,y2,alpha);
+    return 0;
+}
+
 int js_loadImageMemory(duk_context *ctx){
     dschema_check(ctx, (const duv_schema_entry[]) {
        {"texture", duk_is_string},
@@ -444,7 +467,7 @@ int c_loadImageFile(void *_str)
    }
 
    SDL_Rect srect = { 0,0,0,0 };
-   slog(DEBUG,LOG_JS,"Loading image %s",fileName);
+   slog(INFO,LOG_JS,"Loading image %s position to %d,%d,%d,%d",fileName,x,y,w,h);
    SDL_Texture *text = IMG_LoadTexture(ph->renderer,fileName);
    ph->textureCount++;
    if(text == NULL){
@@ -459,6 +482,10 @@ int c_loadImageFile(void *_str)
    if(h == 0) {
       rect.h = srect.h;
    }
+   //slog(DEBUG,LOG_SDL,"Calling scaleToTexture(%s,Rect({%d,%d,%d,%d}) )",TI->name,rect.x,rect.y,rect.w,rect.h);
+   //scaleToTexture(TI,text,&rect);
+   slog(DEBUG,LOG_TEXTURE,"Scaling texture({%d,%d,%d,%d}) to texture %s {%d,%d,%d,%d}",
+       srect.x,srect.y,srect.w, srect.h,TI->name, rect.x,rect.y,rect.w,rect.h);
    SDL_SetTextureBlendMode(TI->texture, SDL_BLENDMODE_BLEND);
    SDL_SetRenderTarget( ph->renderer, TI->texture );
    SDL_RenderCopy( ph->renderer, text, &srect, &rect);
@@ -466,6 +493,12 @@ int c_loadImageFile(void *_str)
 //   renderActive(TI->name);
    SDL_DestroyTexture(text);
    ph->textureCount--;
+
+   //SDL_Rect mr = {0, 0, TI->rect->w, TI->rect->h};
+
+   //SDL_SetTextureBlendMode(TI->texture, SDL_BLENDMODE_BLEND);
+   //SDL_SetRenderTarget( ph->renderer, TI->texture );
+   //SDL_RenderCopy( ph->renderer, src, origRect, &mr);
    return true;
 }
 

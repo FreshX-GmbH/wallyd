@@ -20,18 +20,18 @@ var wallaby = function(command){
     var url=decodeUrl(command.url);
     var server = url.proto+url.host+':'+url.port;
     try {
-        var res  = curl.get(command.url);
-        var code = res.code;
-        var headers = res.headers;
-        var jsondata = res.body;
+//        var res  = curl.get(command.url);
+//        var code = res.code;
+//        var headers = res.headers;
+//        var jsondata = res.body;
+//      TODO : fix request.js buffer bug
+      request(command.url,function(err,header,jsondata){
+	if(err){
+	    log.error('Could not access wallaby json');
+	    return err;
+	}
 	log.info('Wallaby Screen return code : ',code);
 	log.info('Wallaby Screen headers : ',headers);
-//      TODO : fix request.js buffer bug
-//      var json = request(command.url,function(err,header,jsondata){
-//	if(err){
-//	    log.error('Could not access wallaby json');
-//	    return err;
-//	}
 	try{
 	   var json = JSON.parse(jsondata);
 	}catch(e){
@@ -53,8 +53,9 @@ var wallaby = function(command){
    	        wally.log('ERROR: Show wallaby screen failed : '+err);
 	     }
    	 }
+      });
     } catch(e2){
-	log.error('Wallaby Curl failed.',e2);
+	log.error('Wallaby Request/Curl failed.',e2);
     }
 };
 

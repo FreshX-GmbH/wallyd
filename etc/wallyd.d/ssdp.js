@@ -104,7 +104,10 @@ function ssdp(context,iface,location)
 
       log.debug('Registration at ',url);
       screen.log('Found wallaby server at : '+location+'. Starting registration process...');
-      request(url, function(err, header, data){
+      try {
+        request(url, function(err, header, data){
+          print(header);
+          print(data);
           if(err){
               screen.log('Registration failed : '+err);
               log.error('Register call failed : '+err);
@@ -115,6 +118,7 @@ function ssdp(context,iface,location)
           } catch(err){
               screen.log('Registration response invalid.');
               log.error('Registration response invalid : '+err);
+              return;
           }
           var demo = 10;
           response.host = urlParts.host;
@@ -147,6 +151,9 @@ function ssdp(context,iface,location)
                screen.log('Registered at '+urlParts.host+'. Starting playlist');
           }
       });
+      } catch(e){
+         log.error('Registration request failed : ',e);
+      }
    }
 }
 

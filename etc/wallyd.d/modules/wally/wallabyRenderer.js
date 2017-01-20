@@ -2,9 +2,14 @@
 
 //var qr = require('modules/qr/qr');
 var uv = nucleus.uv;
-var gui = new GUI();
-var wally = new Wally();
-var config = wally.getConfig();
+if(typeof(compatMode) === "unknown"){
+   var compatMode = false;
+}
+if(compatMode){
+   var gui = new GUI();
+   var wally = new Wally();
+   var config = wally.getConfig();
+}
 
 function parseString(str){
     if( str === undefined ) return "";
@@ -108,8 +113,23 @@ function renderScreen(TA, server, context, tree, screen, data)
             gradientColor = parseInt(opts.style.gradientColor.replace('#','0x'));
         }
         log.debug('WR : ',obj.type,screen,X, Y, W/xScale, H/yScale, 255);
-   
+
         if(obj.type === 'image'){
+            // TODO : request.js and put into TA
+            var imgUrl = obj.path.replace(/^undefined/,server);
+            var res = request(imgUrl, function(err, header, data){
+               if(data){
+                  wally.writeFileSync('/tmp/test.png',data);
+                  TA.push(gui.loadImage.bind(null,screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255));
+               } else {
+                  log.error('Could not download from '+server+': '+imgUrl);
+               }
+               return;
+           });
+           continue;
+        }
+   
+        if(obj.type === 'image2'){
 	    if(!curl) {
 		continue;
 	    }
@@ -118,7 +138,7 @@ function renderScreen(TA, server, context, tree, screen, data)
             var res = curl.get(imgUrl);
             if(res.body){
                wally.writeFileSync('/tmp/test.png',res.body);
-               TA.push(gui.loadImageScaled.bind(null,screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255));
+               TA.push(gui.loadImage.bind(null,screen,'/tmp/test.png',X, Y, W/xScale, H/yScale, 255));
             } else {
             //TA.push(gui.loadImage.bind(null,screen,'/tmp/test.png',X, Y, W, H, 255));
                log.error('Could not download from '+server+': '+imgUrl);

@@ -5,9 +5,11 @@
     var log = nucleus.dofile('modules/log.js');
     print('Running in nucleus compat mode.');
     var screen = {
-       log: print
+       log: log.screen
     };
-    var wally = {};
+    var wally = {
+       log: log.screen
+    };
     var config= {
       wally : {
         arch:'nucleus',
@@ -33,6 +35,7 @@
         config : config,
         uv : nucleus.uv
     }
+    global.compatMode = true;
     global.log = log;
     global.uv = nucleus.uv;
     global.utils = utils;
@@ -42,6 +45,11 @@
     global.wally = wally;
     global.Wally = wally;
     global.config.env = nucleus.envkeys();
+    global.gui = {
+        drawText: log.screen,
+        drawLine: log.screen
+    }
+
 
     return context;
   }
