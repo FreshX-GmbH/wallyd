@@ -46,7 +46,7 @@ var playlist = function(){
             return restartLoop();
          }
          return playlist();
-    });
+    },['Connection','keep-alive']);
 };
 
 //	Initialize and run timer
@@ -60,28 +60,32 @@ var playlistWait = function() {
     }
     if(config.connection.configured === true){
         log.info('System configured, running playlist with currently '+config.connection.commands.length+' commands');
-        playlist();
         playlistWaitTimer.stop();
         playlistWaitTimer.close();
+        playlist();
     }
 };
 
-var restartLoop = function(){
+var restartLoop = function(delay){
+    if(!delay) {
+        delay = 2000;
+    }
     log.info('Playlist waiting for connection');
     try {
-        playlistWaitTimer.start( 0, 6000, playlistWait);
+        playlistWaitTimer.start( 0, delay, playlistWait);
     } catch(e) {
-        log.error('Error in playlistWait timer : '+e);
+        log.error('Error in playlistWait timer : '+e.stack);
     }
 };
 
 var sendSuccess = function(id){
-    log.debug('Command executed successfully. Notifying server.');
+    log.debug('Command '+id+' executed successfully. Notifying server.');
     var successURL=config.connection.configserver+'/commandsuccess?uuid='+config.connection.uuid+'&cmdid='+id;
     log.debug('Calling : '+successURL);
     request(successURL, function(error, response, body) {
         if(error){
-            log.debug('Could not notify : '+error);
+           log.debug('Could not notify : '+error);
+           return;
         }
         // setTimeout(function() {
         //     exports.loop(context.opts);
@@ -90,7 +94,7 @@ var sendSuccess = function(id){
 };
 
 var sendFailed = function(id, err){
-    log.debug('Command executed with error. Notifying server.');
+    log.debug('Command '+id+' executed with error. Notifying server.');
     err = err + '';
     var successURL=config.connection.configserver+'/commandfailed?uuid='+config.connection.uuid+'&cmdid='+id+'&err='+Duktape.enc('base64',err);
     log.debug('Calling : '+successURL);
@@ -181,5 +185,6 @@ loadModules();
 restartLoop();
 
 if(typeof(Wally) === 'undefined'){
+    var wally = Wally;
     nucleus.uv.run();
 }

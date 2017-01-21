@@ -41,7 +41,7 @@ function wrapSocket(socket, decode, encode) {
   }
 
   function onRead(err, chunk) {
-    //log.debug("onRaw", err, chunk);
+    log.debug("onRawRead", err, (''+chunk).length);
     // If there is data and a decoder, let's process it.
     // TODO: This is probably bad design, we should consider carefully.
     //       Maybe modify the decoder interface to know about EOS events too.
@@ -82,7 +82,7 @@ function wrapSocket(socket, decode, encode) {
   }
 
   function onData(err, data) {
-    //p("onData", err, data);
+    //print("onData", err, data);
     // If there is a waiting reader, give it the data.
     if (reader > writer) {
       var callback = queue[writer++];
@@ -140,7 +140,6 @@ function wrapSocket(socket, decode, encode) {
       socket.close();
     }
   }
-
 
   read.update = function (newDecode) {
     decode = newDecode;

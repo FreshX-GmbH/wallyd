@@ -211,12 +211,14 @@ function decoder() {
       // Inspect a few headers and remember the values
       if (lowerKey === "content-length") {
         contentLength = parseInt(value);
+        head.contentLength = contentLength;
       }
       else if (lowerKey === "transfer-encoding") {
         chunkedEncoding = value.toLowerCase() === "chunked";
       }
       else if (lowerKey === "connection") {
         head.keepAlive = value.toLowerCase() === "keep-alive";
+        log.debug('Connection set to keep-alive');
       }
       headers.push(key, value);
     }
@@ -233,6 +235,7 @@ function decoder() {
     }
     else if (contentLength !== undefined) {
       bytesLeft = contentLength;
+      print('Counting decode mode : ',bytesLeft);
       mode = decodeCounted;
     }
     else if (!head.keepAlive) {
@@ -274,6 +277,7 @@ function decoder() {
   }
 
   function decodeCounted(chunk) {
+    print('Decode counted chunk, size :',chunk.length);
     if (bytesLeft === 0) {
       mode = decodeEmpty;
       return mode(chunk);

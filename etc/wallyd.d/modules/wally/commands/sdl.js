@@ -35,19 +35,25 @@ var showImage = function(command){
     log.info('Requesting Image URL : ',command.url)
     var url=decodeUrl(command.url);
     var server = url.proto+url.host+':'+url.port;
+    if(command.wait > command.delay){
+        screen.log('Loading image once from '+command.url);
+    } else {
+        screen.log('Loading image from '+command.url+' updating every '+command.wait+' seconds');
+    }
     try {
-        var TA = new Transaction();
-        var res  = curl.get(command.url);
-        var code = res.code;
-        var headers = res.headers;
-        var image = res.body;
-        if(command.wait > command.delay){
-            screen.log('Loading image once from '+command.url);
-        } else {
-            screen.log('Loading image from '+command.url+' updating every '+command.wait+' seconds');
+      request(command.url,function(err,header,image){
+        if(err) {
+            return err;
         }
-        if(res.body){
-           wally.writeFileSync('/tmp/test.png',res.body);
+        var TA = new Transaction();
+        //var res  = curl.get(command.url);
+        //var code = res.code;
+        //var headers = res.headers;
+        //var image = res.body;
+        var headers = header;
+        if(image){
+           wally.writeFileSync('/tmp/test.png',image);
+           log.info('Image saved to /tmp/test.png');
            TA.push(gui.clearTextureNoPaint.bind(null,'main'));
            //TA.push(gui.setImage.bind(null,'main',0,0,'/tmp/test.png'));
            TA.push(gui.loadImage.bind(null,'main','/tmp/test.png',0 , 0, 0, 0, 255));
@@ -59,10 +65,11 @@ var showImage = function(command){
            //screen.render('main');
            //gui.resetTargetTexture();
         } else {
-           log.error('Could not download from '+server+': '+imgUrl);
+           log.error('Could not download from '+server+': '+command.url,'. Error :',err);
         }
+      });
     } catch(e2){
-	log.error('Image Curl failed.',e2);
+	log.error('Image Request/Curl failed.',e2);
         return e2;
     }
 };

@@ -12,7 +12,11 @@ Transaction.prototype = {
 	if(typeof(CTransaction) === 'undefined'){
 	  log.warn('CTransactions not available.');
 	  this.ID = 15;
-	  this.ct = null;
+	  this.ct = {
+	    lock:   function(a){ log.screen('LOCK : ',a);},
+	    commit: function(a){ log.screen('COMMIT : ',a);},
+	    clear:  function(a){ log.screen('CLEAR : ',a);}
+	  };
 	} else {
 	  this.ct = new CTransaction();
 	  this.ID = this.ct.newTransaction();

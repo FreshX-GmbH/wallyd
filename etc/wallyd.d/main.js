@@ -4,6 +4,7 @@ var config = wally.getConfig();
 var homedir = config.basedir+'/etc/wallyd.d';
 var uv = nucleus.uv;
 var gui = new GUI();
+var compatMode = false;
 
 var modules = homedir+'/modules';
 nucleus.dofile('modules/bootstrap.js')

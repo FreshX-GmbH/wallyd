@@ -2,13 +2,17 @@
 
 //var qr = require('modules/qr/qr');
 var uv = nucleus.uv;
-if(typeof(compatMode) === "unknown"){
-   var compatMode = false;
-}
-if(compatMode){
+
+if(!context.compatMode){
    var gui = new GUI();
    var wally = new Wally();
    var config = wally.getConfig();
+   var svg = new SVG();
+}else{
+   log.warn('Running wallaby renderer in compat mode. Screen commands will be printed.');
+   var wally = Wally;
+   var gui = Wally;
+   var config = context.config;
 }
 
 function parseString(str){
@@ -55,7 +59,6 @@ function findMin(data){
 
 function renderScreen(TA, server, context, tree, screen, data)
 {
-   var svg = new SVG();
    var json;
    var maxWidth=0, maxHeight=0;
    var xScale=1.0, yScale=1.0;
@@ -83,6 +86,7 @@ function renderScreen(TA, server, context, tree, screen, data)
    for(var i = 0; i < data.objects.length; i++){
         var obj = data.objects[i];
 	var opts = obj.options;
+	var style = obj.options.style;
 	var value = obj.value;
         var X = ~~((opts.geometry.x+rX)*xScale);
         var Y = ~~((opts.geometry.y+rY)*yScale);
@@ -146,17 +150,22 @@ function renderScreen(TA, server, context, tree, screen, data)
             continue;
         }
         if(obj.type === 'line'){
-            TA.push(gui.drawLine.bind(null,screen,X, Y, X + W, Y, 0));
+            log.debug(obj);
+            if(style.direction && style.direction === 'south'){
+               TA.push(gui.drawLine.bind(null,screen,X, Y, X , Y + H, 1));
+            } else {
+               TA.push(gui.drawLine.bind(null,screen,X, Y, X + W, Y, 1));
+            }
             continue;
 	}
-	// TODO
+	// TODO : do we draw boxes without an edge / edge = 0?
         if(obj.type === 'rect'){
 	    if(opts.edge && opts.edge > 0 ){
-	       log.error(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
+	       log.debug(screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha);
 	       TA.push(gui.drawFilledBox.bind(null,screen, X, Y, W, H, parseInt(opts.edge), fillColor, color, alpha));
 	    } else {
-	       log.error(screen, X, Y, W, H, 0, fillColor, color, alpha);
-	       TA.push(gui.drawFilledBox.bind(null,screen, X, Y, W, H, 0, fillColor, color, alpha));
+	       log.debug(screen, X, Y, W, H, 1, fillColor, color, alpha);
+	       TA.push(gui.drawFilledBox.bind(null,screen, X, Y, W, H, 1, fillColor, color, alpha));
             
             }
             continue;
@@ -187,10 +196,14 @@ function renderScreen(TA, server, context, tree, screen, data)
 	    if(W === 0 || H === 0 || value === undefined || value.length === 0){
 		 continue;
 	    }
-	    //log.debug(obj);
-            var fName = 'font'+H;
+            if(style.fontSize){
+               var fontSize = style.fontSize;
+            } else {
+               var fontSize = H;
+            }
+            var fName = 'font'+fontSize;
             var val = "";
-            TA.push(wally.loadFont.bind(null,fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', H));
+            TA.push(wally.loadFont.bind(null,fName, config.basedir+'/etc/wallyd.d/fonts/Lato-Bol.ttf', fontSize));
             if(value.match(/\$_./)){
                var destVal = parseString(value);
                TA.push(gui.drawText.bind(null,screen,X, Y, fName, color, destVal));

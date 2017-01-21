@@ -3,13 +3,8 @@
     nucleus.dofile('modules/bootstrap.js');
     var utils = nucleus.dofile('modules/utils.js');
     var log = nucleus.dofile('modules/log.js');
+    var transaction = nucleus.dofile('modules/wally/transaction.js');
     print('Running in nucleus compat mode.');
-    var screen = {
-       log: log.screen
-    };
-    var wally = {
-       log: log.screen
-    };
     var config= {
       wally : {
         arch:'nucleus',
@@ -27,30 +22,42 @@
         ]
       }
     };
-    var context = {
-        utils : utils,
-        p : utils.prettyPrint,
-        log : log,
-        screen : screen,
-        config : config,
-        uv : nucleus.uv
-    }
     global.compatMode = true;
     global.log = log;
     global.uv = nucleus.uv;
     global.utils = utils;
     global.p = utils.p;
     global.config = config;
-    wally.getMac = function(iface){ return '00:00:00:00:08:15';};
-    global.wally = wally;
-    global.Wally = wally;
     global.config.env = nucleus.envkeys();
-    global.gui = {
-        drawText: log.screen,
-        drawLine: log.screen
+    global.SVG = {
+    };
+    global.wally = {
+       log: log.screen,
+       getMac:     function(iface){ return '00:00:00:00:08:15';},
+   	   render:     function(){ log.screen('render : '+Array.prototype.slice.call(arguments).join(" "));},
+   	   drawText:   function(){ log.screen('drawText : '+Array.prototype.slice.call(arguments).join(" "));},
+   	   drawLine:   function(){ log.screen('drawLine : '+Array.prototype.slice.call(arguments).join(" "));},
+   	   loadFont:   function(){ log.screen('loadFont : '+Array.prototype.slice.call(arguments).join(" "));},
+   	   loadImage:  function(){ log.screen('loadImage: '+Array.prototype.slice.call(arguments).join(" "));},
+       setAutoRender: log.screen,
+       writeFileSync: log.screen,
+       // GUI
+       clearTextureNoPaint: log.screen,
+       setTargetTexture: log.screen,
+       drawFilledBox: log.screen
+    };
+    global.screen = global.wally;
+    global.Wally = global.wally;
+    var context = {
+        compatMode: true,
+        utils : utils,
+        p : utils.prettyPrint,
+        log : log,
+        screen : global.screen,
+        wally : global.wally,
+        config : config,
+        uv : nucleus.uv
     }
-
-
     return context;
   }
 })(this);
