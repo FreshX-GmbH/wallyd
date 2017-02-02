@@ -10,9 +10,9 @@ function getImage(url){
            return(err);
         }
         try {
-           //var response = JSON.parse(body);
-            log.info('H:',header);
-            log.info('B:',body);
+           log.info('H:',header);
+           log.info('B:',body.length);
+           //log.info('B:',body);
         } catch(e) {
            log.error('Could not decode server response : ',e,body);
         }

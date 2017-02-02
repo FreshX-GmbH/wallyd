@@ -49,12 +49,11 @@ function wrapSocket(socket, decode, encode) {
       // Feed the data to the decoder
       log.debug("onRawRead decode", err);
       if(typeof(readBuffer) === 'object'){
-          log.debug("onRawRead is object");
-          var rb = new Buffer(readBuffer.length);
-          log.debug("readBuffer is now ",typeof(rb));
+          var rb = new Buffer(readBuffer);
+          log.debug("readBuffer is object. convert is now ",typeof(rb),rb.length);
       } 
       log.debug("onRawRead decode", typeof(readBuffer),typeof(chunk));
-      log.debug("onRawRead decode", readBuffer,chunk);
+      //log.debug("onRawRead decode", readBuffer,chunk);
       readBuffer = decode.concat(readBuffer, chunk);
       return process();
     }
@@ -90,7 +89,7 @@ function wrapSocket(socket, decode, encode) {
   }
 
   function onData(err, data) {
-    //print("onData", err, data);
+    print("onData", err, data.length);
     // If there is a waiting reader, give it the data.
     if (reader > writer) {
       var callback = queue[writer++];

@@ -59,6 +59,7 @@ function request(location, optionalHeaders, callback)
                keepalive=true;
            }
       }
+      log.debug(headers);
       try {
         nucleus.uv.getaddrinfo({ node: host }, function (err, results) {
             if(err) {
@@ -114,7 +115,6 @@ function request(location, optionalHeaders, callback)
                  });
              });
         });
-        log.warn("request call exit");
       } catch(e) {
 //          log.warn("request call exit");
           return callback(e,null);

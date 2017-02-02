@@ -218,7 +218,7 @@ function decoder() {
       }
       else if (lowerKey === "connection") {
         head.keepAlive = value.toLowerCase() === "keep-alive";
-        log.debug('Connection set to keep-alive');
+        log.debug('Connection keepalive : ',head.keepAlive);
       }
       headers.push(key, value);
     }
@@ -310,11 +310,14 @@ function decoder() {
 
 // Concat using node.js style Buffer APIs (works in duktape too)
 function concat(buffer, chunk) {
-//  log.error('CONCAT(b) : ',typeof(buffer));
-//  log.error('CONCAT(c) : ',typeof(chunk));
-//  log.error('CONCAT(d) : ',typeof(chunk.data));
-  if(typeof(chunk) === 'buffer' && typeof(chunk.data) === 'undefined'){
-      return buffer;
+  if(buffer){
+    var b = Buffer(buffer);
+    //if(b.data){
+    return Buffer.concat(b, chunk);
+    //} else {
+    //  return Buffer(chunk);
+    //}
+  } else {
+    return Buffer(chunk);
   }
-  return buffer ? Buffer.concat(Buffer(buffer), chunk.data): Buffer(chunk.data);
 }
