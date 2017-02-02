@@ -47,6 +47,14 @@ function wrapSocket(socket, decode, encode) {
     //       Maybe modify the decoder interface to know about EOS events too.
     if (!err && chunk && decode) {
       // Feed the data to the decoder
+      log.debug("onRawRead decode", err);
+      if(typeof(readBuffer) === 'object'){
+          log.debug("onRawRead is object");
+          var rb = new Buffer(readBuffer.length);
+          log.debug("readBuffer is now ",typeof(rb));
+      } 
+      log.debug("onRawRead decode", typeof(readBuffer),typeof(chunk));
+      log.debug("onRawRead decode", readBuffer,chunk);
       readBuffer = decode.concat(readBuffer, chunk);
       return process();
     }

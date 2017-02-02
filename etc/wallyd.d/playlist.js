@@ -8,14 +8,15 @@ var request;
 
 var exec = function(cmd){
    if(typeof(modules[cmd.command]) !== 'undefined'){
-      var ret = modules[cmd.command](cmd);
-      if(ret === undefined){
-         sendSuccess(cmd.id);
-      } else {
-         log.error('Command failed : ',ret);
-         sendFailed(cmd.id,ret);
-      }
-   } else {
+      var ret = modules[cmd.command](cmd,function(err){
+         if(ret === undefined){
+           sendSuccess(cmd.id);
+         } else {
+           log.error('Command failed : ',ret);
+           sendFailed(cmd.id,ret);
+         }
+      });
+  } else {
       log.error('No module for command '+cmd.command+' available');
    }
 };
@@ -32,7 +33,8 @@ var playlist = function(){
         config.connection.commands=[];
     }
     log.info('No more commands, requesting configserver for new ones');
-    request('http://'+config.connection.configserver+'/command?uuid='+config.connection.uuid, function(err,header,body){
+    request('http://'+config.connection.configserver+'/command?uuid='+config.connection.uuid,
+            ['Connection','keep-alive'], function(err,header,body){
          if(err) {
             log.error('Could not connect to config server : '+err);
             return restartLoop();
@@ -46,11 +48,12 @@ var playlist = function(){
             return restartLoop();
          }
          return playlist();
-    },['Connection','keep-alive']);
+    });
 };
 
 //	Initialize and run timer
 var playlistWait = function() {
+    log.debug('PlaylistWait started');
     if(typeof(config.connection) === 'undefined'){
         log.warn('Playlist : Could not find a valid connection config property');
         return;
@@ -70,8 +73,8 @@ var restartLoop = function(delay){
     if(!delay) {
         delay = 2000;
     }
-    log.info('Playlist waiting for connection');
     try {
+        log.info('Playlist starting a new connection in '+delay+' ms');
         playlistWaitTimer.start( 0, delay, playlistWait);
     } catch(e) {
         log.error('Error in playlistWait timer : '+e.stack);
@@ -139,13 +142,11 @@ if(typeof(Wally) === 'undefined')
         gui = wally = context.wally;
         config.connection = {
             name: 'Nucleus Client', configured: true,
-            mac: '00:27:EB:10:96:00', type: 'WallyTV2-x86_64', arch: 'x86_64',
+            mac: '00:00:00:00:08:15', type: 'WallyTV2-x86_64', arch: 'x86_64',
             firmwareVersion: '1794', lastdetection: '2017-01-05T14:21:02.247Z',
             host: '127.0.0.1', url: 'http://127.0.0.1:8083/register', serverport: 8083,
-            configserver: '127.0.0.1:8083', uuid: '0027EB109600',
+            configserver: '127.0.0.1:8083', uuid: '000000000815',
             lan: { dhcp: true, ip: 'dhcp', subnet: 'auto', gw: 'auto', dns: 'auto', autoIP: '10.111.10.111' },
-            //commands: [ { command: 'config', id: 'e01a2485-00d3-435a-be63-f4c876869dfa' },
-            //            { command: 'show', id: '0e5bf569-872e-4d79-a316-8bb954eb1ec6' } ],
             features: {
                modules: [ 'core' ], binaries: [ 'wallyd', 'node' ],
                plugins: [ 'CO2Demo', 'WallyBill', 'Photobooth' ],
@@ -184,7 +185,7 @@ request = nucleus.dofile('modules/request.js').request;
 loadModules();
 restartLoop();
 
-if(typeof(Wally) === 'undefined'){
+if(typeof(Wally) === 'undefined' || compatMode === true){
     var wally = Wally;
     nucleus.uv.run();
 }

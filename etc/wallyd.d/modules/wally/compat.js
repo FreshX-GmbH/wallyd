@@ -39,6 +39,7 @@
    	   drawLine:   function(){ log.screen('drawLine : '+Array.prototype.slice.call(arguments).join(" "));},
    	   loadFont:   function(){ log.screen('loadFont : '+Array.prototype.slice.call(arguments).join(" "));},
    	   loadImage:  function(){ log.screen('loadImage: '+Array.prototype.slice.call(arguments).join(" "));},
+   	   setText:    function(){ log.screen('setText: '+Array.prototype.slice.call(arguments).join(" "));},
        setAutoRender: log.screen,
        writeFileSync: log.screen,
        // GUI

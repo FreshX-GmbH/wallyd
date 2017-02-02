@@ -235,7 +235,7 @@ function decoder() {
     }
     else if (contentLength !== undefined) {
       bytesLeft = contentLength;
-      print('Counting decode mode : ',bytesLeft);
+      print('Counting decode mode, left : ',bytesLeft);
       mode = decodeCounted;
     }
     else if (!head.keepAlive) {
@@ -269,7 +269,7 @@ function decoder() {
       mode = decodeHead;
     }
     chunk = slice(chunk, match[0].length);
-    //p('Chunk size length :',match[0].length);
+    p('Chunk size length :',match[0].length);
     //p('Chunk tail :',indexOf(chunk, "\r\n"));
     assert(indexOf(chunk, "\r\n") === length, "Invalid chunk tail");
     //assert(indexOf(chunk, "\r\n") === 0, "Invalid chunk tail");
@@ -295,7 +295,7 @@ function decoder() {
       bytesLeft -= length;
       return [chunk, ""];
     }
-
+    log.debug('Chunk sliced : ', bytesLeft);
     return [slice(chunk, 0, bytesLeft), slice(chunk, bytesLeft + 1)];
   }
 
@@ -310,5 +310,11 @@ function decoder() {
 
 // Concat using node.js style Buffer APIs (works in duktape too)
 function concat(buffer, chunk) {
-  return buffer ? Buffer.concat(buffer, chunk): Buffer(chunk);
+//  log.error('CONCAT(b) : ',typeof(buffer));
+//  log.error('CONCAT(c) : ',typeof(chunk));
+//  log.error('CONCAT(d) : ',typeof(chunk.data));
+  if(typeof(chunk) === 'buffer' && typeof(chunk.data) === 'undefined'){
+      return buffer;
+  }
+  return buffer ? Buffer.concat(Buffer(buffer), chunk.data): Buffer(chunk.data);
 }

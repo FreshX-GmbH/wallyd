@@ -12,7 +12,7 @@ var init = function(_ctx){
     wallabyRenderer = require('modules/wally/wallabyRenderer');
 };
 
-var wallaby = function(command){
+var wallaby = function(command,callback){
     log.info('Running wallaby() : '+command.url);
     wally.log('Loading Wallaby screen from '+command.url);
     var url=decodeUrl(command.url);
@@ -26,7 +26,7 @@ var wallaby = function(command){
       request(command.url,function(err,header,jsondata){
 	if(err){
 	    log.error('Could not access wallaby json');
-	    return err;
+	    return callback(err);
 	}
 	var code = header.code;
 	log.info('Wallaby Screen return code : ',code);
@@ -36,7 +36,7 @@ var wallaby = function(command){
 	}catch(e){
 	    log.error('Wallaby Screen data invalid : ',e);
 	//    print(jsondata);
-	    return err;
+	    return callback(err);
 	}
 	//log.info('Wallaby Server returned : ',Object.keys(json));
         if(json.pages){
@@ -48,16 +48,17 @@ var wallaby = function(command){
    	        wallabyRenderer.renderScreen(renderTA,server,context,context.privates,'main',json.pages[0]);
    	        renderTA.push(wally.render.bind(null,'main'));
    	        renderTA.commit();
+		return callback(null);
    	     } catch(err) {
    	        log.error('ERROR: Show wallaby screen failed : '+err);
    	        wally.log('ERROR: Show wallaby screen failed : '+err);
-	        return err;
+		return callback(err);
 	     }
    	 }
       });
     } catch(e2){
 	log.error('Wallaby Request/Curl failed.',e2);
-	return err;
+	return callback(err);
     }
 };
 

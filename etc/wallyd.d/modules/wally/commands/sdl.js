@@ -10,18 +10,19 @@ var init = function(_ctx){
     curl = nucleus.dofile('modules/curl.js');
 };
 
-var video = function(command){
+var video = function(command,callback){
     log.info('video() : '+command);
+    return callback(null);
 };
 
-var text = function(command){
+var text = function(command,callback){
     log.info('text() : '+command);
     screen.setText('main','black','chalk32',10,10,command.url);
     screen.render('main');
-
+    return callback(null);
 };
 
-var gradient = function(command){
+var gradient = function(command,callback){
     log.info('gradient() : '+command.url);
     var params = command.url.split(/ /);
     gui.clearTextureNoPaint(params[0]);
@@ -29,9 +30,10 @@ var gradient = function(command){
     //params[5] = params[5].
     wally.scall('gui::drawGradient '+command.url);
     screen.render(params[0]);
+    return callback(null);
 };
 
-var showImage = function(command){
+var showImage = function(command,callback){
     log.info('Requesting Image URL : ',command.url)
     var url=decodeUrl(command.url);
     var server = url.proto+url.host+':'+url.port;
@@ -43,7 +45,7 @@ var showImage = function(command){
     try {
       request(command.url,function(err,header,image){
         if(err) {
-            return err;
+            return callback(err);
         }
         var TA = new Transaction();
         //var res  = curl.get(command.url);
@@ -64,13 +66,15 @@ var showImage = function(command){
            //gui.loadImage('main','/tmp/test.png',0 , 0, 1000,600, 127);
            //screen.render('main');
            //gui.resetTargetTexture();
+           return callback(null);
         } else {
            log.error('Could not download from '+server+': '+command.url,'. Error :',err);
+           return callback(err);
         }
       });
     } catch(e2){
 	log.error('Image Request/Curl failed.',e2);
-        return e2;
+        return callback(e2);
     }
 };
 
