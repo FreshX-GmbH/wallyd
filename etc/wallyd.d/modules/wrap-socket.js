@@ -41,19 +41,12 @@ function wrapSocket(socket, decode, encode) {
   }
 
   function onRead(err, chunk) {
-    log.debug("onRawRead", err, (''+chunk).length);
+    // p("onRaw", err, chunk);
     // If there is data and a decoder, let's process it.
     // TODO: This is probably bad design, we should consider carefully.
     //       Maybe modify the decoder interface to know about EOS events too.
     if (!err && chunk && decode) {
       // Feed the data to the decoder
-      log.debug("onRawRead decode", err);
-      if(typeof(readBuffer) === 'object'){
-          var rb = new Buffer(readBuffer);
-          log.debug("readBuffer is object. convert is now ",typeof(rb),rb.length);
-      } 
-      log.debug("onRawRead decode", typeof(readBuffer),typeof(chunk));
-      //log.debug("onRawRead decode", readBuffer,chunk);
       readBuffer = decode.concat(readBuffer, chunk);
       return process();
     }
@@ -62,7 +55,7 @@ function wrapSocket(socket, decode, encode) {
       checkClose();
     }
 
-    // Otherwise forward everything directly to onData
+    // Otherwise forward everything  directly to onData
     return onData(err, chunk);
   }
 
@@ -71,10 +64,7 @@ function wrapSocket(socket, decode, encode) {
       // Run the data through the decoder, catching any parse errors.
       var out;
       try { out = decode(readBuffer); }
-      catch (err) { 
-        p(err); 
-        return onData(err); 
-      }
+      catch (err) { return onData(err); }
 
       // If the decoder wants more data, we're done here. Wait for it.
       if (!out) break;
@@ -89,7 +79,7 @@ function wrapSocket(socket, decode, encode) {
   }
 
   function onData(err, data) {
-    print("onData", err, data.length);
+    // p("onData", err, data);
     // If there is a waiting reader, give it the data.
     if (reader > writer) {
       var callback = queue[writer++];
@@ -129,7 +119,6 @@ function wrapSocket(socket, decode, encode) {
     }
     if (data && encode) data = encode(data);
 
-    //p(data);
     // Normalize data to buffer or null
     if (data || typeof data === 'string') {
       return socket.write(data, callback);
@@ -147,6 +136,7 @@ function wrapSocket(socket, decode, encode) {
       socket.close();
     }
   }
+
 
   read.update = function (newDecode) {
     decode = newDecode;

@@ -211,14 +211,12 @@ function decoder() {
       // Inspect a few headers and remember the values
       if (lowerKey === "content-length") {
         contentLength = parseInt(value);
-        head.contentLength = contentLength;
       }
       else if (lowerKey === "transfer-encoding") {
         chunkedEncoding = value.toLowerCase() === "chunked";
       }
       else if (lowerKey === "connection") {
         head.keepAlive = value.toLowerCase() === "keep-alive";
-        log.debug('Connection keepalive : ',head.keepAlive);
       }
       headers.push(key, value);
     }
@@ -235,7 +233,6 @@ function decoder() {
     }
     else if (contentLength !== undefined) {
       bytesLeft = contentLength;
-      print('Counting decode mode, left : ',bytesLeft);
       mode = decodeCounted;
     }
     else if (!head.keepAlive) {
@@ -258,9 +255,7 @@ function decoder() {
   }
 
   function decodeChunked(chunk) {
-    // Strip off the chunk size
     var match = chunk.toString().match(/^([0-9a-f]+)([^][^])/i);
-    //var match = chunk.match(/^([0-9a-f]+)([^][^])/i);
     if (!match) return;
     assert(match[2] === '\r\n', "Invalid chunk encoding header");
     var length = parseInt(match[1], 16);
@@ -269,15 +264,11 @@ function decoder() {
       mode = decodeHead;
     }
     chunk = slice(chunk, match[0].length);
-    p('Chunk size length :',match[0].length);
-    //p('Chunk tail :',indexOf(chunk, "\r\n"));
-    assert(indexOf(chunk, "\r\n") === length, "Invalid chunk tail");
-    //assert(indexOf(chunk, "\r\n") === 0, "Invalid chunk tail");
+    assert(indexOf(chunk, "\r\n") === 0, "Invalid chunk tail");
     return [slice(chunk, 0, length), slice(chunk, length + 2)];
   }
 
   function decodeCounted(chunk) {
-    print('Decode counted chunk, size :',chunk.length);
     if (bytesLeft === 0) {
       mode = decodeEmpty;
       return mode(chunk);
@@ -295,7 +286,7 @@ function decoder() {
       bytesLeft -= length;
       return [chunk, ""];
     }
-    log.debug('Chunk sliced : ', bytesLeft);
+
     return [slice(chunk, 0, bytesLeft), slice(chunk, bytesLeft + 1)];
   }
 
@@ -310,14 +301,15 @@ function decoder() {
 
 // Concat using node.js style Buffer APIs (works in duktape too)
 function concat(buffer, chunk) {
-  if(buffer){
-    var b = Buffer(buffer);
-    //if(b.data){
-    return Buffer.concat(b, chunk);
-    //} else {
-    //  return Buffer(chunk);
-    //}
-  } else {
-    return Buffer(chunk);
-  }
+   if(typeof(buffer) === 'undefined'){
+        return Buffer(chunk);
+   }
+   if(typeof(chunk) === 'undefined'){
+        return buffer;
+   }
+   if(typeof(chunk) === 'buffer'){
+      var a = new Buffer(chunk);
+      chunk = a; 
+   }
+   return Buffer.concat(buffer, chunk);
 }

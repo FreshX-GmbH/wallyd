@@ -8,6 +8,7 @@
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_Surface* screenSurface = NULL;
+SDL_Texture *text = NULL;
 SDL_Event event;
 bool quit = false;
 int rot = 0;
@@ -53,13 +54,17 @@ int main( int argc, char* args[] )
 
     while(!quit)
     {
-        while(SDL_PollEvent(&event) != 0)
-        {
-            if(event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_APP_TERMINATING || event.type == SDL_KEYDOWN || event.type == SDL_QUIT)
-            {
-                quit = true;
-            }
-        }
+       //while(SDL_PollEvent(&event) != 0)
+       //{
+       //     if(event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_APP_TERMINATING || event.type == SDL_KEYDOWN || event.type == SDL_QUIT)
+       //     {
+       //         quit = true;
+       //     }
+       sleep(1);
+       if(text && renderer) {
+           SDL_DestroyTexture(text);
+           SDL_RenderPresent( renderer );
+       }
     }
     closeSDL();
     return 0;
@@ -90,7 +95,7 @@ bool dumpModes()
 }
 bool loadSDL(bool mode2d)
 {
-    struct timespec t = { 0, 6000000};
+    struct timespec t = { 0, 3000000};
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0) {
         printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 	return false;
@@ -109,11 +114,13 @@ bool loadSDL(bool mode2d)
     } else {
        //renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC );
        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED| SDL_RENDERER_TARGETTEXTURE );
+       SDL_ShowCursor( 0 );
+
        if(renderer == NULL){
             printf( "Renderer could not initialize : %s\n", IMG_GetError() );
             return false;
        }
-       for(int i = 255; i > 0;i--){
+       for(int i = 0; i < 255;i++){
             SDL_SetRenderDrawColor(renderer, i, i, i, 0xFF);
             SDL_RenderClear(renderer);
             SDL_RenderPresent( renderer );
@@ -145,7 +152,7 @@ bool loadImage(char *name,bool mode2d)
     } else {
     
        SDL_Rect rect={0,0,0,0};
-       SDL_Texture *text = IMG_LoadTexture(renderer,name);
+       text = IMG_LoadTexture(renderer,name);
        if(text == NULL){
            printf("Error loading image : %s\n",IMG_GetError());
            return false;
@@ -156,7 +163,7 @@ bool loadImage(char *name,bool mode2d)
        } else {
        		SDL_RenderCopyEx( renderer, text, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
        }
-       SDL_DestroyTexture(text);
+       //SDL_DestroyTexture(text);
        SDL_RenderPresent( renderer );
     }
     return true;
