@@ -8,63 +8,79 @@
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_Surface* screenSurface = NULL;
-SDL_Texture *text = NULL;
 SDL_Event event;
 bool quit = false;
 int rot = 0;
 
-bool loadSDL(bool);
-bool loadImage(char *name,bool mode);
+bool loadSDL();
+bool fadeImage(SDL_Texture *text, int rot, bool reverse);
+bool showTexture(SDL_Texture *text, int rot);
+SDL_Texture* loadImage(char *name);
 void closeSDL();
 bool dumpModes(void);
 
 
 int main( int argc, char* args[] )
 {
-    bool mode2d = false;
+    SDL_Texture *t1 = NULL;
+    SDL_Texture *t2 = NULL;
+    SDL_Texture *t3 = NULL;
     int argadd = 0;
 
     if(argc < 2){
-        printf("Usage : %s (V"VERSION") [2] <imagefile> [degree]\n\t-2 for 2D surface mode only\n\tdegree to turn (only in 3D mode)\n",args[0]);
+        printf("Usage : %s (V"VERSION") [degree] <defaultimage> <fadeimage 1> [<fadeimage 2> <...>]\n",args[0]);
         exit(1);
     }
     printf("%s (V"VERSION")\n" ,args[0]);
-    if(argc > 2){
-        if(args[1][0]=='2'){
-            printf("Using 2D/Surface mode only\n");
-            mode2d = true;
-            argadd=1;
-        } else {
-            rot = strtol(args[2],NULL,10);
-            if(!rot) {
-                printf("Could not convert %s to a number\n",args[2]);
-                exit(1);
-            }
-        }
+    rot = strtol(args[1],NULL,10);
+    if(!rot) {
+        printf("Could not convert %s to a number\n",args[1]);
+    //    exit(1);
     }
-    if(!loadSDL(mode2d)){
-        exit(1);
-    }
+    loadSDL();
     if(!dumpModes()){
         exit(1);
     }
-    if(!loadImage(args[1+argadd],mode2d)){
-        exit(1);
+    t1 = loadImage(args[2]);
+    if(argc >3){
+       t2 = loadImage(args[3]);
     }
+    if(argc > 4){
+       t3 = loadImage(args[4]);
+    }
+    sleep(1);
+    if(t2){
+      fadeImage(t2, rot, false);
+      fadeImage(t2, rot, true);
+      if(t3){
+          if(strcmp(args[2],args[argc-1]) != 0){
+              fadeImage(t3, rot, false);
+              fadeImage(t3, rot, true);
+          }
+      }
+    }
+    // Fade in final image
+    fadeImage(t1,rot, false);
 
     while(!quit)
     {
-       //while(SDL_PollEvent(&event) != 0)
-       //{
-       //     if(event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_APP_TERMINATING || event.type == SDL_KEYDOWN || event.type == SDL_QUIT)
-       //     {
-       //         quit = true;
-       //     }
-       sleep(1);
-       if(text && renderer) {
-           SDL_DestroyTexture(text);
-           SDL_RenderPresent( renderer );
+       while(SDL_PollEvent(&event) != 0)
+       {
+           if(event.type == SDL_MOUSEBUTTONDOWN || 
+               event.type == SDL_APP_TERMINATING || 
+               event.type == SDL_KEYDOWN || 
+               event.type == SDL_QUIT)
+           {
+                quit = true;
+           }
+       //sleep(1);
+       showTexture(t1, rot);
+       //printf("%p %p\n",text,renderer);
        }
+    }
+    SDL_DestroyTexture(t1);
+    if(t2) {
+        SDL_DestroyTexture(t2);
     }
     closeSDL();
     return 0;
@@ -93,9 +109,9 @@ bool dumpModes()
     }
     return true;
 }
-bool loadSDL(bool mode2d)
+bool loadSDL()
 {
-    struct timespec t = { 0, 3000000};
+    bool mode2d = false;
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0) {
         printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 	return false;
@@ -120,20 +136,49 @@ bool loadSDL(bool mode2d)
             printf( "Renderer could not initialize : %s\n", IMG_GetError() );
             return false;
        }
-       for(int i = 0; i < 255;i++){
-            SDL_SetRenderDrawColor(renderer, i, i, i, 0xFF);
-            SDL_RenderClear(renderer);
-            SDL_RenderPresent( renderer );
-            nanosleep(&t,NULL);
-       }
     }
     return true;
 }
 
-bool loadImage(char *name,bool mode2d)
+bool showTexture(SDL_Texture *text, int rot){
+         if(rot == 0){
+       	        SDL_RenderCopy( renderer, text, NULL, NULL);
+         } else {
+    	        SDL_RenderCopyEx( renderer, text, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
+         }
+         SDL_RenderPresent( renderer );
+}
+
+bool fadeImage(SDL_Texture *text, int rot, bool reverse){
+    struct timespec t = { 0, 5000000};
+    SDL_SetRenderDrawColor(renderer, 0,0,0, 0xFF);
+    SDL_RenderClear(renderer);
+    int v = 0;
+    for(int i = 0; i < 255;i++){
+       if(reverse){
+          v = 255-i; 
+       } else {
+          v = i;
+       }
+     //    SDL_SetRenderDrawColor(renderer, i,i,i, 0xFF);
+    //     SDL_RenderClear(renderer);
+   //      SDL_RenderPresent( renderer );
+   //      nanosleep(&t,NULL);
+//rot=i*360/255;
+         //SDL_SetTextureBlendMode(text, SDL_BLENDMODE_BLEND);
+         //SDL_SetTextureAlphaMod(text,i);
+         SDL_SetTextureColorMod(text, v, v, v);
+         showTexture(text, rot);
+         nanosleep(&t,NULL);
+    }
+}
+
+SDL_Texture *loadImage(char *name)
 {
+    bool mode2d = false;
     bool success = true;
     SDL_Surface* image = NULL;
+    SDL_Texture* text = NULL;
 
     if(mode2d == true){
         image = IMG_Load( name );
@@ -157,16 +202,16 @@ bool loadImage(char *name,bool mode2d)
            printf("Error loading image : %s\n",IMG_GetError());
            return false;
        }
-//       SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-       if(rot == 0){
-       		SDL_RenderCopy( renderer, text, NULL, NULL);
-       } else {
-       		SDL_RenderCopyEx( renderer, text, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
-       }
+       SDL_SetTextureBlendMode(text, SDL_BLENDMODE_BLEND);
+       //if(rot == 0){
+       //		SDL_RenderCopy( renderer, text, NULL, NULL);
+       //} else {
+       //		SDL_RenderCopyEx( renderer, text, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
+       //}
        //SDL_DestroyTexture(text);
-       SDL_RenderPresent( renderer );
+       //SDL_RenderPresent( renderer );
     }
-    return true;
+    return text;
 }
 
 
