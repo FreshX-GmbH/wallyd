@@ -5,6 +5,9 @@
 #include <time.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <string.h>
 
 #define VERSION "0.11"
 
@@ -32,7 +35,8 @@ SDL_Texture* loadImage(char *name);
 void closeSDL();
 bool dumpModes(void);
 SDL_Texture* renderLog(char *strTmp,int *w, int *h);
-void logListener(void *);
+void* logListener(void *);
+int sgetline(int fd, char ** out);
 
 int main( int argc, char* args[] )
 {
@@ -91,7 +95,7 @@ int main( int argc, char* args[] )
        {
            if(event.type == SDL_MOUSEBUTTONDOWN || 
                event.type == SDL_APP_TERMINATING || 
-               event.type == SDL_KEYDOWN || 
+           //    event.type == SDL_KEYDOWN || 
                event.type == SDL_QUIT)
            {
                 quit = true;
@@ -213,7 +217,7 @@ bool fadeImage(SDL_Texture *text, int rot, bool reverse){
     //     SDL_RenderClear(renderer);
    //      SDL_RenderPresent( renderer );
    //      nanosleep(&t,NULL);
-//rot=i*360/255;
+   //rot=i*360/255;
          //SDL_SetTextureBlendMode(text, SDL_BLENDMODE_BLEND);
          //SDL_SetTextureAlphaMod(text,i);
          SDL_SetTextureColorMod(text, v, v, v);
@@ -303,12 +307,128 @@ SDL_Texture* renderLog(char *str,int *w, int *h)
    return text;
 }
 
-void logListener(void *ptr){
+void* logListener(void *ptr){
    int i = 0;
    sleep(4);
-   while ( 1 ) {
-      sleep(1);
-      asprintf(&logStr,"Hello Wally %d!",i);
-      i++;
+   int sockfd, newsockfd, portno;
+   socklen_t clilen;
+   struct sockaddr_in serv_addr, cli_addr;
+   int  n;
+   //char buffer[1024];
+   char *buffer;
+   char *oldStr = NULL;
+   SDL_Event sdlevent;
+   
+   /* First call to socket() function */
+   sockfd = socket(AF_INET, SOCK_STREAM, 0);
+   
+   if (sockfd < 0) {
+      perror("ERROR opening socket");
+      exit(1);
    }
+   
+   /* Initialize socket structure */
+   bzero((char *) &serv_addr, sizeof(serv_addr));
+   portno = 1109;
+   
+   serv_addr.sin_family = AF_INET;
+   serv_addr.sin_addr.s_addr = INADDR_ANY;
+   serv_addr.sin_port = htons(portno);
+   
+   /* Now bind the host address using bind() call.*/
+   if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+      perror("ERROR on binding");
+      exit(1);
+   }
+      
+   listen(sockfd,5);
+   clilen = sizeof(cli_addr);
+   
+   while (1) {
+      newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
+      if (newsockfd < 0) {
+         perror("ERROR on accept");
+         return NULL;
+      }
+  
+      while ( n = sgetline(newsockfd, &buffer)){
+//      bzero(buffer,256);
+//      n = read( newsockfd,buffer,255 );
+      
+         if (n < 0) {
+            close(newsockfd);
+            break;
+         }
+         n = write(newsockfd,buffer,n);
+      
+         if (n < 0) {
+            close(newsockfd);
+            break;
+         }
+         oldStr = logStr;
+         logStr = strndup(buffer,n-1);
+
+         sdlevent.type = SDL_USEREVENT;
+         SDL_PushEvent(&sdlevent);
+
+         free(buffer);
+         free(oldStr);
+      }
+   }
+   return NULL;
+}
+
+int sgetline(int fd, char ** out)
+{
+    int buf_size = 1024;
+    int bytesloaded = 0;
+    int ret;
+    char buf;
+    char * buffer = malloc(buf_size);
+    char * newbuf;
+
+    if (NULL == buffer)
+        return -1;
+
+    while ( 1 )
+    {
+        // read a single byte
+        ret = read(fd, &buf, 1);
+        if (ret < 1)
+        {
+            // error or disconnect
+            free(buffer);
+            return -1;
+        }
+
+        buffer[bytesloaded] = buf;
+        bytesloaded++;
+
+        // has end of line been reached?
+        if (buf == '\n')
+            break; // yes
+
+        // is more memory needed?
+        if (bytesloaded >= buf_size)
+        {
+            buf_size += 128;
+            newbuf = realloc(buffer, buf_size);
+
+            if (NULL == newbuf)
+            {
+                free(buffer);
+                return -1;
+            }
+
+            buffer = newbuf;
+        }
+    }
+
+    // if the line was terminated by "\r\n", ignore the
+    // "\r". the "\n" is not in the buffer
+    if ((bytesloaded) && (buffer[bytesloaded-1] == '\r'))
+        bytesloaded--;
+
+    *out = buffer; // complete line
+    return bytesloaded; // number of bytes in the line, not counting the line break
 }
