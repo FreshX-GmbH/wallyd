@@ -1,24 +1,38 @@
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <SDL_image.h>
 #include <stdbool.h>
 #include <time.h>
+#include <unistd.h>
+#include <pthread.h>
 
 #define VERSION "0.11"
+
+#define BASE "."
+#define FONT "/etc/wallyd.d/fonts/FreeMono.ttf"
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 SDL_Surface* screenSurface = NULL;
+TTF_Font *font = NULL;
 SDL_Event event;
+SDL_Color black = {0,0,0,255};
+SDL_Color white = {255,255,255,255};
 bool quit = false;
-int rot = 0;
+int rot = 0, h = 0, w = 0;
+pthread_t log_thr;
+
+char *logStr = NULL;
 
 bool loadSDL();
+bool loadFont(char *file, int size);
 bool fadeImage(SDL_Texture *text, int rot, bool reverse);
 bool showTexture(SDL_Texture *text, int rot);
 SDL_Texture* loadImage(char *name);
 void closeSDL();
 bool dumpModes(void);
-
+SDL_Texture* renderLog(char *strTmp,int *w, int *h);
+void logListener(void *);
 
 int main( int argc, char* args[] )
 {
@@ -26,6 +40,7 @@ int main( int argc, char* args[] )
     SDL_Texture *t2 = NULL;
     SDL_Texture *t3 = NULL;
     int argadd = 0;
+    logStr = strdup("Hello Wally!");
 
     if(argc < 2){
         printf("Usage : %s (V"VERSION") [degree] <defaultimage> <fadeimage 1> [<fadeimage 2> <...>]\n",args[0]);
@@ -41,6 +56,13 @@ int main( int argc, char* args[] )
     if(!dumpModes()){
         exit(1);
     }
+    if(!loadFont(BASE""FONT,16)){
+          exit(1);
+    }
+    if(pthread_create(&log_thr, NULL, &logListener, NULL) != 0){
+       printf("Failed to create listener thread!\n");
+       exit(1);
+    }
     t1 = loadImage(args[2]);
     if(argc >3){
        t2 = loadImage(args[3]);
@@ -48,6 +70,7 @@ int main( int argc, char* args[] )
     if(argc > 4){
        t3 = loadImage(args[4]);
     }
+    printf("Screen size : %dx%d\n",w,h);
     sleep(1);
     if(t2){
       fadeImage(t2, rot, false);
@@ -101,6 +124,11 @@ bool dumpModes()
     for (j=0; j<display_count; j++){
         SDL_GetDisplayBounds(j,&r);
         printf("Display %d boundaries : %d x %d\n",j,r.w,r.h);
+        // Store size of first display
+        if(j == 0){
+            w = r.w;
+            h = r.h;
+        }
         for (i=0; i<SDL_GetNumDisplayModes(j); i++){
           SDL_GetDisplayMode(j,i,&mode);
           f = mode.format;
@@ -123,6 +151,10 @@ bool loadSDL()
         printf( "SDL_image could not initialize PNG and JPG! SDL_image Error: %s\n", IMG_GetError() );
 	return false;
     }
+    if ( TTF_Init() == -1 ) {
+        printf( "SDL_TTF could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+	return false;
+    }
     window = SDL_CreateWindow("wallyd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0,0, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_SHOWN);
     
     if(mode2d){
@@ -140,13 +172,30 @@ bool loadSDL()
     return true;
 }
 
-bool showTexture(SDL_Texture *text, int rot){
-         if(rot == 0){
-       	        SDL_RenderCopy( renderer, text, NULL, NULL);
-         } else {
-    	        SDL_RenderCopyEx( renderer, text, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
-         }
-         SDL_RenderPresent( renderer );
+bool showTexture(SDL_Texture *tex1, int rot){
+      //SDL_Rect r = { h-16, 0, h, w };
+      SDL_Rect r = {0, 0, 32, w };
+      int tw,th;
+      SDL_Texture *tex2;
+      if(logStr) {
+         tex2 = renderLog(logStr,&r.w, &r.h);
+         r.x = 0;
+         r.y = h - r.h;
+      }
+      if(rot == 0){
+       	        SDL_RenderCopy( renderer, tex1, NULL, NULL);
+                //if(tex2) {
+       	            SDL_RenderCopy( renderer, tex2, NULL, &r);
+                //}
+      } else {
+    	        SDL_RenderCopyEx( renderer, tex1, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
+                //if(tex2){
+    	            SDL_RenderCopyEx( renderer, tex2, NULL, &r,rot, NULL,SDL_FLIP_NONE);
+                //}
+      }
+      SDL_RenderPresent( renderer );
+      SDL_DestroyTexture( tex2 );
+      return true;
 }
 
 bool fadeImage(SDL_Texture *text, int rot, bool reverse){
@@ -171,6 +220,7 @@ bool fadeImage(SDL_Texture *text, int rot, bool reverse){
          showTexture(text, rot);
          nanosleep(&t,NULL);
     }
+    return true;
 }
 
 SDL_Texture *loadImage(char *name)
@@ -214,6 +264,16 @@ SDL_Texture *loadImage(char *name)
     return text;
 }
 
+bool loadFont(char *file, int size){
+   font = TTF_OpenFont( file, size );
+   if ( font == NULL ) {
+      printf("Failed to load font : %s ",TTF_GetError());
+      return false;
+   } else {
+      return true;
+   }
+}
+
 
 void closeSDL()
 {
@@ -222,4 +282,33 @@ void closeSDL()
     window = NULL;
     renderer = NULL;
     SDL_Quit();
+}
+
+SDL_Texture* renderLog(char *str,int *w, int *h)
+{
+   SDL_Rect dest;
+   SDL_Surface *rsurf,*surf;
+   SDL_Texture *text;
+
+   surf = TTF_RenderUTF8_Blended( font, str, black );
+
+   text = SDL_CreateTextureFromSurface( renderer, surf );
+
+   SDL_QueryTexture( text, NULL, NULL, w, h );
+   //*w = dest.w;
+   //*h = dest.h;
+//   printf("Font text : %dx%d\n",dest.w, dest.h);
+   //memcpy(d, &dest, sizeof(dest));
+   SDL_FreeSurface( surf );
+   return text;
+}
+
+void logListener(void *ptr){
+   int i = 0;
+   sleep(4);
+   while ( 1 ) {
+      sleep(1);
+      asprintf(&logStr,"Hello Wally %d!",i);
+      i++;
+   }
 }

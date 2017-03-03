@@ -36,7 +36,7 @@ install(TARGETS wallyjs DESTINATION ${BIN_INSTALL_DIR})
 
 set(WALLYS wallystart.c)
 add_executable(wallystart ${WALLYS})
-target_link_libraries(wallystart ${LIBSDL_LIBRARIES} ${LIBSDLIMG_LIBRARIES})
+target_link_libraries(wallystart ${LIBSDL_LIBRARIES} ${LIBSDLIMG_LIBRARIES} ${LIBSDLTTF_LIBRARIES} SDL2_gfx)
 install(TARGETS wallystart DESTINATION ${BIN_INSTALL_DIR})
 
 set(DWALLYD_SRC wallyd.c nucly/env.c nucly/path.c seaduk.c ../lib/miniz.c)
