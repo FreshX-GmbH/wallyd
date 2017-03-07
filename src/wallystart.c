@@ -9,7 +9,7 @@
 #include <netinet/in.h>
 #include <string.h>
 
-#define VERSION "0.11"
+#define VERSION "0.12"
 
 #define BASE "."
 #define FONT "/etc/wallyd.d/fonts/FreeMono.ttf"
