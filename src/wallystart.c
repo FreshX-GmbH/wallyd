@@ -29,7 +29,7 @@ char *logStr = NULL;
 
 bool loadSDL();
 bool loadFont(char *file, int size);
-bool fadeImage(SDL_Texture *text, int rot, bool reverse);
+bool fadeImage(SDL_Texture *text, int rot, bool reverse, long delay);
 bool showTexture(SDL_Texture *text, int rot);
 SDL_Texture* loadImage(char *name);
 void closeSDL();
@@ -77,17 +77,17 @@ int main( int argc, char* args[] )
     printf("Screen size : %dx%d\n",w,h);
     sleep(1);
     if(t2){
-      fadeImage(t2, rot, false);
-      fadeImage(t2, rot, true);
+      fadeImage(t2, rot, false, 9000000);
+      fadeImage(t2, rot, true, 5000000);
       if(t3){
           if(strcmp(args[2],args[argc-1]) != 0){
-              fadeImage(t3, rot, false);
-              fadeImage(t3, rot, true);
+              fadeImage(t3, rot, false, 9000000);
+              fadeImage(t3, rot, true, 5000000);
           }
       }
     }
     // Fade in final image
-    fadeImage(t1,rot, false);
+    fadeImage(t1,rot, false, 9000000);
 
     while(!quit)
     {
@@ -202,8 +202,8 @@ bool showTexture(SDL_Texture *tex1, int rot){
       return true;
 }
 
-bool fadeImage(SDL_Texture *text, int rot, bool reverse){
-    struct timespec t = { 0, 5000000};
+bool fadeImage(SDL_Texture *text, int rot, bool reverse, long delay){
+    struct timespec t = { 0, delay};
     SDL_SetRenderDrawColor(renderer, 0,0,0, 0xFF);
     SDL_RenderClear(renderer);
     int v = 0;
