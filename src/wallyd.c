@@ -376,8 +376,5 @@ void processStartupScript(char *file){
   free(cmds);
 }
 
-//static void my_duk_fatal(duk_context *ctx, int code, const char *msg){
-//    slog(ERROR,LOG_JS,"JS encountered a fatal error %d : %s",code,msg);
-//    slog(ERROR,LOG_JS,"We will continue but the JS core might be unstable");
-//}
+
 
