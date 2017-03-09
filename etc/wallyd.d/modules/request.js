@@ -59,6 +59,7 @@ function request(location, optionalHeaders, callback)
                keepalive=true;
            }
       }
+      log.debug(headers);
       try {
         nucleus.uv.getaddrinfo({ node: host }, function (err, results) {
             if(err) {

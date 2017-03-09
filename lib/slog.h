@@ -26,6 +26,10 @@
 #ifndef __SLOG_H__
 #define __SLOG_H__
 
+#ifdef WALLYSTART
+extern void* globalSLG;
+#endif
+
 #ifndef    CLOCK_REALTIME
 #define    CLOCK_REALTIME    0x2d4e1588
 #endif

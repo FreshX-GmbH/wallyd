@@ -34,14 +34,14 @@ add_executable(wallyjs ${WALLYC_SRC})
 target_link_libraries(wallyjs)
 install(TARGETS wallyjs DESTINATION ${BIN_INSTALL_DIR})
 
-set(SDLDEMO sdldemo.c)
-add_executable(sdldemo ${SDLDEMO})
-target_link_libraries(sdldemo ${LIBSDL_LIBRARIES} ${LIBSDLIMG_LIBRARIES})
-install(TARGETS sdldemo DESTINATION ${BIN_INSTALL_DIR})
-
 set(DWALLYD_SRC wallyd.c nucly/env.c nucly/path.c seaduk.c ../lib/miniz.c)
 add_executable(wallyd ${DWALLYD_SRC})
 target_link_libraries(wallyd ${LIBUV_LIBRARIES} ${LIBSDL_LIBRARIES} wally seaduk)
 
 install(TARGETS wallyd DESTINATION ${BIN_INSTALL_DIR})
 
+set(WALLYS wallystart.c ../lib/slog.c)
+set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -DWALLYSTART")
+add_executable(wallystart ${WALLYS})
+target_link_libraries(wallystart ${LIBSDL_LIBRARIES} ${LIBSDLIMG_LIBRARIES} ${LIBSDLTTF_LIBRARIES} SDL2_gfx pthread)
+install(TARGETS wallystart DESTINATION ${BIN_INSTALL_DIR})
