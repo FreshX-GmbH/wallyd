@@ -114,7 +114,6 @@ function request(location, optionalHeaders, callback)
                  });
              });
         });
-        log.warn("request call exit");
       } catch(e) {
 //          log.warn("request call exit");
           return callback(e,null);

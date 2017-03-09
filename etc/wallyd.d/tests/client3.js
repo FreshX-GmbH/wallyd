@@ -7,7 +7,8 @@ function getImage(url){
     request(url, function(err,header,body){
         if(err) {
            log.error('Could not connect to server : '+err);
-           return(err);
+           throw err;
+         //  return(err);
         }
         try {
            //var response = JSON.parse(body);
