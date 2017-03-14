@@ -39,7 +39,7 @@ int main( int argc, char* argv[] )
     }
     slog(INFO,LOG_CORE,"Screen size : %dx%d",w,h);
 
-    processStartupScript(START);
+    processStartupScript(start);
 
     while(!quit)
     {

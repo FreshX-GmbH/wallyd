@@ -9,6 +9,7 @@
 #include <netinet/in.h>
 #include <string.h>
 #include "../lib/slog.h"
+#include "../lib/autoversion.h"
 
 #define VERSION "0.13"
 #define BASE "."

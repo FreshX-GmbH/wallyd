@@ -37,6 +37,22 @@ extern void* globalSLG;
 #define    CLOCK_MONOTONIC   0x0
 #endif
 
+#define FATAL       0
+#define ERROR       1
+#define WARN        2
+#define INFO        3
+#define DEBUG       4
+#define TRACE       5
+
+// Change to 0 or 1 in production
+//#ifndef __FULLDEBUG
+//#define DEFAULT_LOG_LEVEL 3
+//#else
+#define DEFAULT_LOG_LEVEL 4
+//#endif
+
+
+
 typedef enum {
   DUMMY,
   TEXTURE,
@@ -70,7 +86,6 @@ extern "C" {
 #endif
 
 #include <pthread.h>
-#include "util.h"
 
 /* Definations for version info */
 #define SLOGVERSION_MAX  1

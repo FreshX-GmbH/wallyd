@@ -49,23 +49,6 @@
 // Maximal json items to parse and store
 #define JSONMAXCONF 2048
 
-#define FATAL       0
-#define ERROR       1
-#define WARN        2
-#define INFO        3
-#define DEBUG       4
-#define TRACE       5
-
-// Change to 0 or 1 in production
-//#ifndef __FULLDEBUG
-//#define DEFAULT_LOG_LEVEL 3
-//#else
-#define DEFAULT_LOG_LEVEL 4
-//#endif
-//#define log(...) log_print(__LINE__, __FILE__, __VA_ARGS__ )
-//#define log(...) log4c_log(__LINE__,__FILE__,__VA_ARGS__)
-//#define log(level,...) slog(0,level,__VA_ARGS__)
-
 // UTIL
 char *replace(const char *src, const char *from, const char *to);
 const char *getConfigEntry(const char *key);
