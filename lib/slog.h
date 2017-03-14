@@ -28,6 +28,8 @@
 
 #ifdef WALLYSTART
 extern void* globalSLG;
+#else
+#include "util.h"
 #endif
 
 #ifndef    CLOCK_REALTIME
