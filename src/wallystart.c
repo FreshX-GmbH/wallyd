@@ -26,10 +26,14 @@ int main( int argc, char* argv[] )
     slog(INFO,LOG_CORE,"%s (V"VERSION")" ,argv[0]);
     rot = 0;
 
-    loadSDL();
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
     if(!dumpModes()){
         exit(1);
     }
+    if(!loadSDL()){
+        slog(ERROR,LOG_CORE,"Failed to initialize SDL. Exit");
+    }
+
     if(!loadFont(BASE""FONT,16)){
           exit(1);
     }
