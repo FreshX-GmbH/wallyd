@@ -101,7 +101,7 @@ bool loadSDL()
 {
     bool mode2d = false;
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0) {
-        slog(ERROR, LOG_CORE, "SDL_image could not initialize! SDL_image Error: %s", IMG_GetError() );
+        slog(ERROR, LOG_CORE, "SDL could not initialize! SDL Error: %s", IMG_GetError() );
 	return false;
     }
     int flags=IMG_INIT_JPG|IMG_INIT_PNG;
@@ -115,7 +115,7 @@ bool loadSDL()
         slog(ERROR,LOG_CORE, "SDL_TTF could not initialize! SDL_ttf Error: %s", TTF_GetError() );
 	return false;
     }
-    window = SDL_CreateWindow("wallyd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0,0, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("wallyd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0,0, SDL_WINDOW_FULLSCREEN | SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_GRABBED);
     
     if(mode2d){
            screenSurface = SDL_GetWindowSurface( window );
