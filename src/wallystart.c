@@ -1,16 +1,19 @@
 #include "wallystart.h"
 
 char *repl_str(const char *str, const char *from, const char *to);
+void hexToColor(char * colStr, SDL_Color *c);
 
 SDL_Texture *t1 = NULL;
 SDL_Texture *t2 = NULL;
+char *color;
 
 int main( int argc, char* argv[] )
 {
     SDL_Texture *t3 = NULL;
     int argadd = 0;
     char *start;
-    logStr = strdup("Hello Wally!");
+    logStr = strdup(" ");
+    color = strdup("0xffffff");
 
     slog_init(NULL, WALLYD_CONFDIR"/wallyd.conf", DEFAULT_LOG_LEVEL, 0, LOG_ALL, LOG_ALL , true);
 
@@ -36,7 +39,7 @@ int main( int argc, char* argv[] )
     }
     slog(INFO,LOG_CORE,"Screen size : %dx%d",w,h);
 
-    processStartupScript(START);
+    processStartupScript(start);
 
     while(!quit)
     {
@@ -133,18 +136,18 @@ bool showTexture(SDL_Texture *tex1, int rot){
       if(logStr) {
          tex2 = renderLog(logStr,&r.w, &r.h);
          r.x = 0;
-         r.y = h - r.h;
+         r.y = h - r.h - 1;
       }
       if(rot == 0){
        	        SDL_RenderCopy( renderer, tex1, NULL, NULL);
-                //if(tex2) {
+                if(tex2) {
        	            SDL_RenderCopy( renderer, tex2, NULL, &r);
-                //}
+                }
       } else {
     	        SDL_RenderCopyEx( renderer, tex1, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
-                //if(tex2){
+                if(tex2){
     	            SDL_RenderCopyEx( renderer, tex2, NULL, &r,rot, NULL,SDL_FLIP_NONE);
-                //}
+                }
       }
       SDL_RenderPresent( renderer );
       SDL_DestroyTexture( tex2 );
@@ -159,7 +162,6 @@ bool fadeOver(SDL_Texture *t1, SDL_Texture *t2,int rot, long delay){
     SDL_SetTextureBlendMode(t1, SDL_BLENDMODE_BLEND);
     SDL_SetTextureBlendMode(t2, SDL_BLENDMODE_BLEND);
     for(int i = 255; i >= 0;i--){
-         slog(DEBUG,LOG_CORE,"Fade over step %d",i);
          SDL_SetRenderTarget(renderer, temp);
     	 SDL_RenderCopyEx( renderer, t2, NULL, NULL,rot, NULL,SDL_FLIP_NONE);
          SDL_SetTextureAlphaMod(t1,i);
@@ -169,6 +171,7 @@ bool fadeOver(SDL_Texture *t1, SDL_Texture *t2,int rot, long delay){
          nanosleep(&t,NULL);
     }
     SDL_DestroyTexture(temp);
+    SDL_SetTextureAlphaMod(t1,255);
     return true;
 }
 
@@ -264,17 +267,16 @@ SDL_Texture* renderLog(char *str,int *w, int *h)
    SDL_Rect dest;
    SDL_Surface *rsurf,*surf;
    SDL_Texture *text;
+   SDL_Color *c = malloc(sizeof(SDL_Color));
 
-   surf = TTF_RenderUTF8_Blended( font, str, black );
+   hexToColor(color,c);
 
+   surf = TTF_RenderUTF8_Blended( font, str, *c );
    text = SDL_CreateTextureFromSurface( renderer, surf );
 
    SDL_QueryTexture( text, NULL, NULL, w, h );
-   //*w = dest.w;
-   //*h = dest.h;
-//   slog("Font text : %dx%d",dest.w, dest.h);
-   //memcpy(d, &dest, sizeof(dest));
    SDL_FreeSurface( surf );
+   free(c);
    return text;
 }
 
@@ -442,7 +444,6 @@ bool processCommand(char *buf)
         unsigned long cmdLen = strlen(cmd);
         lineCopy = repl_str(cmd, "$CONF", WALLYD_CONFDIR);
         void *linePtr = lineCopy;
-        slog(DEBUG,LOG_CORE,"Processing line (%d) : %s",cmdLen,lineCopy);
         if(cmd[0] != '#') {
             validCmd++;
             char *myCmd = strsep(&lineCopy, " ");
@@ -453,7 +454,7 @@ bool processCommand(char *buf)
                 slog(DEBUG,LOG_CORE,"Fadein %s with delay %u",file, delay);
                 if(file && delay) {
                     t1 = loadImage(file);
-                    fadeImage(t1, rot, false, 9000000);
+                    fadeImage(t1, rot, false, delay);
                 } else {
                     slog(DEBUG,LOG_CORE,"fadein <delay> <file>");
                 }
@@ -465,11 +466,33 @@ bool processCommand(char *buf)
                 slog(DEBUG,LOG_CORE,"Fadeover %s with delay %u",file, delay);
                 if(file && delay) {
                     t2 = loadImage(file);
-                    fadeOver(t1, t2, rot, 9000000);
+                    fadeOver(t1, t2, rot, delay);
                     SDL_DestroyTexture(t1);
                     t1 = t2;
                 } else {
                     slog(DEBUG,LOG_CORE,"fadeover <delay> <file>");
+                }
+            }
+            else if(strcmp(myCmd,"fadeloop") == 0){
+                char *loopStr = strsep(&lineCopy, " ");
+                char *delayStr = strsep(&lineCopy, " ");
+                char *fileA  = strsep(&lineCopy, " ");
+                char *fileB  = strsep(&lineCopy, " ");
+                long delay = atol(delayStr);
+                long loop = atol(loopStr);
+                slog(DEBUG,LOG_CORE,"Fadeloop %d times from  %s to %s with delay %u",loop, fileA, fileB, delay);
+                if(fileA && fileB && loop && delay) {
+                    t1 = loadImage(fileA);
+                    t2 = loadImage(fileB);
+                    for(int i = 0; i < loop; i++){
+                        fadeOver(t1, t2, rot, delay);
+                        fadeOver(t2, t1, rot, delay);
+                    }
+                    fadeOver(t1, t2, rot, delay);
+                    SDL_DestroyTexture(t1);
+                    t1 = t2;
+                } else {
+                    slog(DEBUG,LOG_CORE,"fadeloop <num> <delay> <fileA> <fileB>");
                 }
             }
             else if(strcmp(myCmd,"fadeout") == 0){
@@ -486,10 +509,25 @@ bool processCommand(char *buf)
                 }
                 SDL_DestroyTexture(t1);
             }
+            else if(strcmp(myCmd,"clearlog") == 0){
+                free(logStr);
+                char *logStr = strdup(" ");
+                slog(DEBUG,LOG_CORE,"clearlog");
+            }
+            else if(strcmp(myCmd,"log") == 0){
+                if(logStr) free(logStr);
+                logStr = strdup(cmd+4);
+                slog(DEBUG,LOG_CORE,"Set log to %s", logStr);
+            }
             else if(strcmp(myCmd,"rot") == 0){
                 char *rotStr = strsep(&lineCopy, " ");
                 rot = atoi(rotStr);
                 slog(DEBUG,LOG_CORE,"Set rotation to %u", rot);
+            }
+            else if(strcmp(myCmd,"color") == 0){
+                free(color);
+                color = strdup(strsep(&lineCopy, " "));
+                slog(DEBUG,LOG_CORE,"Set color to %s", color);
             }
             else if(strcmp(myCmd,"sleep") == 0){
                 char *sleepStr = strsep(&lineCopy, " ");
@@ -593,4 +631,14 @@ end_repl_str:
 	 * which will be NULL in the event of an error. */
 	free(pos_cache);
 	return ret;
+}
+
+
+void hexToColor(char* colStr, SDL_Color *c)
+{
+   int color = strtol(colStr,NULL,16);
+   c->r = (color >> 16) & 0xff;
+   c->g = (color >> 8)  & 0xff;
+   c->b = color & 0xff;
+   c->a = 0;
 }
